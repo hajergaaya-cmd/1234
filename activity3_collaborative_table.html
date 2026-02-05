@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشاط 3: الجدول التعاوني</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #00b894;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .instruction {
+            background: #d1f2eb;
+            border-right: 4px solid #00b894;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .table-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .column.data {
+            border-top: 5px solid #ffc107;
+        }
+
+        .column.info {
+            border-top: 5px solid #4caf50;
+        }
+
+        .column h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .column.data h2 {
+            background: #ffc107;
+            color: white;
+        }
+
+        .column.info h2 {
+            background: #4caf50;
+            color: white;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+        }
+
+        .input-area button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .column.data .input-area button {
+            background: #ffc107;
+            color: white;
+        }
+
+        .column.info .input-area button {
+            background: #4caf50;
+            color: white;
+        }
+
+        .input-area button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .items-list {
+            min-height: 300px;
+        }
+
+        .item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .item span {
+            font-size: 1.1em;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+            transform: scale(1.1);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 3em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-card .label {
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .examples {
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .examples h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .example-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .example-item strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .table-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 الجدول التعاوني التفاعلي 📊</h1>
+        <p class="subtitle">نشاط جماعي - الهدف الأول</p>
+
+        <div class="instruction">
+            👥 <strong>تعليمات النشاط:</strong><br>
+            • املأ العمودين بأمثلة من اختيارك<br>
+            • أضف على الأقل 3 أمثلة في كل عمود<br>
+            • فكّر: ما الفرق بين البيانات والمعلومات؟
+        </div>
+
+        <div class="examples">
+            <h3>💡 أمثلة توضيحية:</h3>
+            <div class="example-grid">
+                <div class="example-item">
+                    <strong>بيانات:</strong>
+                    15، قلم، سلة، 8/03/2018
+                </div>
+                <div class="example-item">
+                    <strong>معلومات:</strong>
+                    درجة الحرارة اليوم 15 درجة، تاريخ التسجيل: 8/03/2018
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="column data">
+                <h2>📋 بيانات</h2>
+                <div class="input-area">
+                    <input type="text" id="dataInput" placeholder="أضف مثالاً على البيانات..." />
+                    <button onclick="addItem('data')">➕ إضافة</button>
+                </div>
+                <div class="items-list" id="dataList"></div>
+            </div>
+
+            <div class="column info">
+                <h2>💡 معلومات</h2>
+                <div class="input-area">
+                    <input type="text" id="infoInput" placeholder="أضف مثالاً على المعلومات..." />
+                    <button onclick="addItem('info')">➕ إضافة</button>
+                </div>
+                <div class="items-list" id="infoList"></div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <span class="number" id="dataCount">0</span>
+                <span class="label">أمثلة البيانات</span>
+            </div>
+            <div class="stat-card">
+                <span class="number" id="infoCount">0</span>
+                <span class="label">أمثلة المعلومات</span>
+            </div>
+            <div class="stat-card">
+                <span class="number" id="totalCount">0</span>
+                <span class="label">المجموع الكلي</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dataItems = [];
+        const infoItems = [];
+
+        function addItem(type) {
+            const inputId = type === 'data' ? 'dataInput' : 'infoInput';
+            const input = document.getElementById(inputId);
+            const value = input.value.trim();
+
+            if (!value) {
+                alert('⚠️ الرجاء كتابة مثال!');
+                return;
+            }
+
+            if (type === 'data') {
+                dataItems.push(value);
+                renderList('data');
+            } else {
+                infoItems.push(value);
+                renderList('info');
+            }
+
+            input.value = '';
+            input.focus();
+            updateStats();
+        }
+
+        function renderList(type) {
+            const items = type === 'data' ? dataItems : infoItems;
+            const listId = type === 'data' ? 'dataList' : 'infoList';
+            const list = document.getElementById(listId);
+
+            list.innerHTML = items.map((item, index) => `
+                <div class="item">
+                    <span>${item}</span>
+                    <button class="delete-btn" onclick="deleteItem('${type}', ${index})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteItem(type, index) {
+            if (type === 'data') {
+                dataItems.splice(index, 1);
+                renderList('data');
+            } else {
+                infoItems.splice(index, 1);
+                renderList('info');
+            }
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('dataCount').textContent = dataItems.length;
+            document.getElementById('infoCount').textContent = infoItems.length;
+            document.getElementById('totalCount').textContent = dataItems.length + infoItems.length;
+        }
+
+        // معالجة Enter
+        document.getElementById('dataInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addItem('data');
+        });
+
+        document.getElementById('infoInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addItem('info');
+        });
+
+        // بيانات تجريبية
+        const sampleData = ['15', 'قلم', 'سلة', '8/03/2018'];
+        const sampleInfo = ['درجة الحرارة اليوم 15 درجة', 'عمر سعد 25 سنة'];
+
+        setTimeout(() => {
+            dataItems.push(...sampleData);
+            infoItems.push(...sampleInfo);
+            renderList('data');
+            renderList('info');
+            updateStats();
+        }, 500);
+    </script>
+</body>
+</html>

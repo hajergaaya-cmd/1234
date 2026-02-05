@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشاط 2: الفيديو التفاعلي</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #f5576c;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .video-section {
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.5em;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .video-placeholder .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .content-section {
+            margin-bottom: 30px;
+        }
+
+        .content-card {
+            background: #f8f9ff;
+            border-right: 5px solid #f5576c;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .content-card h3 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .content-card p {
+            line-height: 1.8;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .example {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 2px dashed #f5576c;
+        }
+
+        .question-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .question-overlay.active {
+            display: flex;
+        }
+
+        .question-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .question-box h2 {
+            color: #f5576c;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 20px;
+            background: #f8f9ff;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .option:hover {
+            background: #f5576c;
+            color: white;
+            border-color: #f5576c;
+            transform: translateX(-5px);
+        }
+
+        .option.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .option.wrong {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.1em;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .feedback.wrong {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .next-btn {
+            display: none;
+            margin: 20px auto 0;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .next-btn.show {
+            display: block;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .progress {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .progress-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+
+        .progress-dot.active {
+            background: #f5576c;
+        }
+
+        .progress-dot.completed {
+            background: #4caf50;
+        }
+
+        .start-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 الفيديو التفاعلي 🎬</h1>
+        <p class="subtitle">نشاط استكشافي فردي - الهدف الأول</p>
+
+        <div class="video-section">
+            <div class="video-placeholder">
+                <div class="icon">▶️</div>
+                <div>الفرق بين البيانات والمعلومات</div>
+                <div style="font-size: 0.6em; margin-top: 10px;">فيديو تعليمي تفاعلي مدته 3 دقائق</div>
+            </div>
+        </div>
+
+        <div class="progress" id="progress">
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+
+        <div class="content-section">
+            <div class="content-card">
+                <h3>📊 ما هي البيانات؟</h3>
+                <p>
+                    البيانات هي الحقائق الأولية الموجودة حولنا بشكلها الخارجي الظاهر. 
+                    البيانات قد تكون أرقاماً أو حروفاً أو رموزاً ولا تعطي معنى واضحاً بذاتها.
+                </p>
+                <div class="example">
+                    <strong>أمثلة على البيانات:</strong><br>
+                    25 | قلم | سلة | 8/03/2018
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>💡 ما هي المعلومات؟</h3>
+                <p>
+                    المعلومات هي النتائج المفيدة الناتجة عن معالجة وتنظيم البيانات. 
+                    عندما يتم تنظيم البيانات وربطها معاً تصبح معلومات مفهومة ومفيدة.
+                </p>
+                <div class="example">
+                    <strong>أمثلة على المعلومات:</strong><br>
+                    عمر سعد 25 سنة | درجة الحرارة اليوم 25 درجة
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>🔄 العلاقة بينهما</h3>
+                <p>
+                    البيانات هي المدخلات → تتم معالجتها وتنظيمها → تصبح معلومات مفيدة (المخرجات)
+                </p>
+            </div>
+        </div>
+
+        <button class="start-btn" onclick="startQuestions()">ابدأ الأسئلة التفاعلية 🚀</button>
+
+        <div id="scoreDisplay" style="display: none;" class="score-display">
+            نتيجتك: <span id="scoreText">0/3</span> ✨
+        </div>
+    </div>
+
+    <div class="question-overlay" id="questionOverlay">
+        <div class="question-box">
+            <h2>❓ سؤال تفاعلي</h2>
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="feedback" id="feedback"></div>
+            <button class="next-btn" id="nextBtn">السؤال التالي ⬅️</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "هل الرقم 25 وحده يعتبر معلومة مفيدة؟",
+                options: [
+                    { text: "نعم، هو معلومة واضحة", correct: false },
+                    { text: "لا، هو مجرد بيانات بدون سياق", correct: true },
+                    { text: "يعتمد على الموقف", correct: false }
+                ],
+                feedback: {
+                    correct: "ممتاز! 👏 الرقم 25 وحده مجرد بيانات، يحتاج إلى سياق ليصبح معلومة مفيدة.",
+                    wrong: "❌ الإجابة الصحيحة: الرقم 25 وحده مجرد بيانات، يحتاج إلى معنى أو سياق ليصبح معلومة."
+                }
+            },
+            {
+                question: "ماذا لو قلنا: 'عمر سعد 25 سنة'؟",
+                options: [
+                    { text: "هذه بيانات فقط", correct: false },
+                    { text: "هذه معلومة مفيدة", correct: true },
+                    { text: "لا أعرف", correct: false }
+                ],
+                feedback: {
+                    correct: "رائع! 🎉 عندما نربط الرقم بمعنى (عمر سعد)، يصبح معلومة واضحة ومفيدة.",
+                    wrong: "❌ الإجابة الصحيحة: عندما نربط البيانات بالمعنى (عمر سعد 25 سنة) تصبح معلومة مفيدة."
+                }
+            },
+            {
+                question: "أي من التالي يعتبر بيانات وليس معلومات؟",
+                options: [
+                    { text: "تاريخ ميلاد أحمد 15 يناير 2010", correct: false },
+                    { text: "قلم، كرسي، 8/03/2018", correct: true },
+                    { text: "الطقس اليوم غائم ودرجة الحرارة 20 درجة", correct: false }
+                ],
+                feedback: {
+                    correct: "ممتاز جداً! 🌟 هذه بيانات منفصلة بدون ترابط أو معنى واضح.",
+                    wrong: "❌ الإجابة الصحيحة: (قلم، كرسي، 8/03/2018) هي بيانات منفصلة، أما الأخرى فهي معلومات مترابطة."
+                }
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function startQuestions() {
+            document.getElementById('questionOverlay').classList.add('active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionText').textContent = q.question;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option.text;
+                optionDiv.onclick = () => checkAnswer(index, option.correct);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('nextBtn').classList.remove('show');
+            
+            updateProgress();
+        }
+
+        function checkAnswer(index, isCorrect) {
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.style.pointerEvents = 'none';
+                if (i === index) {
+                    opt.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
+                if (questions[currentQuestion].options[i].correct) {
+                    opt.classList.add('correct');
+                }
+            });
+
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = isCorrect ? 
+                questions[currentQuestion].feedback.correct : 
+                questions[currentQuestion].feedback.wrong;
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+
+            if (isCorrect) score++;
+
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        document.getElementById('nextBtn').onclick = function() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                finishQuiz();
+            }
+        };
+
+        function updateProgress() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.remove('active', 'completed');
+                if (i < currentQuestion) {
+                    dot.classList.add('completed');
+                } else if (i === currentQuestion) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        function finishQuiz() {
+            document.getElementById('questionOverlay').classList.remove('active');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            document.getElementById('scoreText').textContent = `${score}/${questions.length}`;
+            scoreDisplay.style.display = 'block';
+            
+            if (score === questions.length) {
+                scoreDisplay.innerHTML += '<br>🏆 ممتاز! أجبت على جميع الأسئلة بشكل صحيح!';
+            }
+        }
+    </script>
+</body>
+</html>

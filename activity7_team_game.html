@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشاط 7: اللعبة التنافسية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .teams-score {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .team-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .team-card.team1 { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .team-card.team2 { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .team-card.team3 { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .team-card.team4 { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
+
+        .team-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .team-score {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .game-area {
+            background: white;
+            padding: 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .question-number {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 2em;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        .timer-bar {
+            background: rgba(255,255,255,0.3);
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            background: #4caf50;
+            height: 100%;
+            transition: width 1s linear;
+        }
+
+        .answer-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .option-btn {
+            padding: 40px 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn.numeric { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .option-btn.alpha { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        .option-btn.alphanumeric { background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); }
+
+        .option-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .option-btn:active {
+            transform: translateY(0);
+        }
+
+        .option-btn.correct {
+            animation: correctPulse 0.6s;
+        }
+
+        .option-btn.wrong {
+            animation: wrongShake 0.6s;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); background: #27ae60; }
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .feedback {
+            text-align: center;
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideDown 0.5s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .next-question-btn {
+            display: none;
+            margin: 0 auto;
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3em;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .next-question-btn.show {
+            display: block;
+        }
+
+        .next-question-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .final-results {
+            display: none;
+            text-align: center;
+        }
+
+        .final-results.show {
+            display: block;
+        }
+
+        .winner-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .trophy {
+            font-size: 6em;
+            margin-bottom: 20px;
+        }
+
+        .winner-text {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .winner-score {
+            font-size: 4em;
+            font-weight: bold;
+        }
+
+        .final-standings {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .restart-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.4em;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        @media (max-width: 900px) {
+            .teams-score {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .answer-options {
+                grid-template-columns: 1fr;
+            }
+
+            .final-standings {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 لعبة تصنيف البيانات 🎮</h1>
+            <p style="font-size: 1.2em; color: #666;">نشاط جماعي تنافسي - الهدف الثاني</p>
+        </div>
+
+        <div class="teams-score">
+            <div class="team-card team1">
+                <div class="team-name">🔴 الفريق الأحمر</div>
+                <div class="team-score" id="score1">0</div>
+            </div>
+            <div class="team-card team2">
+                <div class="team-name">🔵 الفريق الأزرق</div>
+                <div class="team-score" id="score2">0</div>
+            </div>
+            <div class="team-card team3">
+                <div class="team-name">🟢 الفريق الأخضر</div>
+                <div class="team-score" id="score3">0</div>
+            </div>
+            <div class="team-card team4">
+                <div class="team-name">🟡 الفريق الأصفر</div>
+                <div class="team-score" id="score4">0</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div id="gameContent">
+                <div class="question-card">
+                    <div class="question-number">السؤال <span id="qNum">1</span> من 10</div>
+                    <div class="question-text" id="questionText">صنّف البيان التالي:</div>
+                    <div class="question-text" style="margin-top: 20px; font-size: 2.5em; color: #ffe66d;" id="dataItem">0561234567</div>
+                    <div class="timer-bar">
+                        <div class="timer-fill" id="timerFill"></div>
+                    </div>
+                </div>
+
+                <div class="answer-options">
+                    <button class="option-btn numeric" onclick="selectAnswer('numeric')">
+                        🔢<br>بيانات عددية
+                    </button>
+                    <button class="option-btn alpha" onclick="selectAnswer('alpha')">
+                        🔤<br>بيانات أبجدية
+                    </button>
+                    <button class="option-btn alphanumeric" onclick="selectAnswer('alphanumeric')">
+                        🔢🔤<br>بيانات أبجدية عددية
+                    </button>
+                </div>
+
+                <div class="feedback" id="feedback"></div>
+                <button class="next-question-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي ➡️</button>
+            </div>
+
+            <div class="final-results" id="finalResults">
+                <div class="winner-card">
+                    <div class="trophy">🏆</div>
+                    <div class="winner-text" id="winnerText">الفريق الفائز</div>
+                    <div class="winner-score" id="winnerScore">0 نقطة</div>
+                </div>
+
+                <div class="final-standings" id="standings"></div>
+
+                <button class="restart-btn" onclick="restartGame()">🔄 لعبة جديدة</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { data: "0561234567", correct: "alphanumeric" },
+            { data: "Qatar Airways", correct: "alpha" },
+            { data: "125.5", correct: "numeric" },
+            { data: "Ahmed Ali", correct: "alpha" },
+            { data: "F-16", correct: "alphanumeric" },
+            { data: "-45", correct: "numeric" },
+            { data: "Computer", correct: "alpha" },
+            { data: "Room-203", correct: "alphanumeric" },
+            { data: "2024", correct: "numeric" },
+            { data: "06:30 PM", correct: "alphanumeric" }
+        ];
+
+        let currentQ = 0;
+        let scores = [0, 0, 0, 0];
+        let currentTeam = 0;
+        let answered = false;
+        let timeLeft = 100;
+        let timerInterval;
+
+        function showQuestion() {
+            answered = false;
+            timeLeft = 100;
+            
+            const q = questions[currentQ];
+            document.getElementById('qNum').textContent = currentQ + 1;
+            document.getElementById('dataItem').textContent = q.data;
+
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('nextBtn').classList.remove('show');
+
+            const options = document.querySelectorAll('.option-btn');
+            options.forEach(btn => {
+                btn.style.pointerEvents = 'auto';
+                btn.className = btn.className.replace(' correct', '').replace(' wrong', '');
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            const fill = document.getElementById('timerFill');
+            fill.style.width = '100%';
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft -= 2;
+                fill.style.width = timeLeft + '%';
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    if (!answered) {
+                        selectAnswer(null); // timeout
+                    }
+                }
+            }, 100);
+        }
+
+        function selectAnswer(answer) {
+            if (answered) return;
+            answered = true;
+            clearInterval(timerInterval);
+
+            const q = questions[currentQ];
+            const isCorrect = answer === q.correct;
+
+            const options = document.querySelectorAll('.option-btn');
+            options.forEach(btn => {
+                btn.style.pointerEvents = 'none';
+                if (btn.classList.contains(answer)) {
+                    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
+                if (btn.classList.contains(q.correct)) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            const feedback = document.getElementById('feedback');
+            const teamNames = ['الفريق الأحمر', 'الفريق الأزرق', 'الفريق الأخضر', 'الفريق الأصفر'];
+
+            if (answer === null) {
+                feedback.textContent = '⏰ انتهى الوقت!';
+                feedback.className = 'feedback show wrong';
+            } else if (isCorrect) {
+                scores[currentTeam]++;
+                updateScore(currentTeam);
+                feedback.textContent = `✅ إجابة صحيحة! ${teamNames[currentTeam]} يحصل على نقطة! 🎉`;
+                feedback.className = 'feedback show correct';
+            } else {
+                feedback.textContent = `❌ إجابة خاطئة! الإجابة الصحيحة: ${getTypeNameAr(q.correct)}`;
+                feedback.className = 'feedback show wrong';
+            }
+
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function getTypeNameAr(type) {
+            const types = {
+                'numeric': 'بيانات عددية',
+                'alpha': 'بيانات أبجدية',
+                'alphanumeric': 'بيانات أبجدية عددية'
+            };
+            return types[type];
+        }
+
+        function updateScore(team) {
+            document.getElementById(`score${team + 1}`).textContent = scores[team];
+        }
+
+        function nextQuestion() {
+            currentTeam = (currentTeam + 1) % 4;
+            currentQ++;
+
+            if (currentQ < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('gameContent').style.display = 'none';
+            document.getElementById('finalResults').classList.add('show');
+
+            const maxScore = Math.max(...scores);
+            const winnerIndex = scores.indexOf(maxScore);
+            const teamNames = ['🔴 الفريق الأحمر', '🔵 الفريق الأزرق', '🟢 الفريق الأخضر', '🟡 الفريق الأصفر'];
+            const teamClasses = ['team1', 'team2', 'team3', 'team4'];
+
+            document.getElementById('winnerText').textContent = teamNames[winnerIndex];
+            document.getElementById('winnerScore').textContent = maxScore + ' نقطة';
+
+            const standings = scores.map((score, i) => ({ team: i, score: score }))
+                .sort((a, b) => b.score - a.score);
+
+            const standingsHTML = standings.map((item, rank) => `
+                <div class="team-card ${teamClasses[item.team]}">
+                    <div style="font-size: 2em; margin-bottom: 10px;">${rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : '📊'}</div>
+                    <div class="team-name">${teamNames[item.team]}</div>
+                    <div class="team-score">${item.score}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('standings').innerHTML = standingsHTML;
+        }
+
+        function restartGame() {
+            currentQ = 0;
+            scores = [0, 0, 0, 0];
+            currentTeam = 0;
+
+            for (let i = 0; i < 4; i++) {
+                updateScore(i);
+            }
+
+            document.getElementById('gameContent').style.display = 'block';
+            document.getElementById('finalResults').classList.remove('show');
+
+            showQuestion();
+        }
+
+        // Start game
+        showQuestion();
+    </script>
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشاط 8: بطاقة الخروج الرقمية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-right: 5px solid #2196f3;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #1565c0;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .info-box p {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .question-block {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .question-block:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .question-label {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .required {
+            color: #f44336;
+            font-size: 0.9em;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-family: inherit;
+            transition: all 0.3s;
+            resize: vertical;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .input-field.error {
+            border-color: #f44336;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 0.9em;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .examples {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 0.95em;
+            color: #856404;
+        }
+
+        .examples strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .char-counter {
+            text-align: left;
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.4em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-top: 30px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-screen.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            font-size: 6em;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 2.5em;
+            color: #4caf50;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .summary-box {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: right;
+            margin-bottom: 30px;
+        }
+
+        .summary-box h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .summary-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .summary-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .summary-item p {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .question-label {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="formSection">
+            <h1>📋 بطاقة الخروج الرقمية 📋</h1>
+            <p class="subtitle">تقييم نهائي - الهدف الثاني: أنواع البيانات</p>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="info-box">
+                <h3>📝 تعليمات</h3>
+                <p>أجب على الأسئلة التالية بكل صدق. هذا التقييم يساعد المعلم على فهم ما تعلمته اليوم. جميع الأسئلة مطلوبة ما عدا السؤال الأخير.</p>
+            </div>
+
+            <form id="exitTicketForm">
+                <!-- السؤال 1 -->
+                <div class="question-block">
+                    <label class="question-label">
+                        <span>1️⃣</span>
+                        <span>اذكر الأنواع الثلاثة للبيانات</span>
+                        <span class="required">*</span>
+                    </label>
+                    <textarea 
+                        class="input-field" 
+                        id="q1" 
+                        rows="4" 
+                        placeholder="اكتب الأنواع الثلاثة هنا...
+مثال: النوع الأول هو..."></textarea>
+                    <div class="char-counter" id="counter1">0 / 150 حرف</div>
+                    <div class="error-message" id="error1">⚠️ هذا السؤال مطلوب</div>
+                </div>
+
+                <!-- السؤال 2 -->
+                <div class="question-block">
+                    <label class="question-label">
+                        <span>2️⃣</span>
+                        <span>أعط مثالاً واحداً لكل نوع</span>
+                        <span class="required">*</span>
+                    </label>
+                    <div style="margin-bottom: 15px;">
+                        <input 
+                            type="text" 
+                            class="input-field" 
+                            id="example1" 
+                            placeholder="مثال على البيانات العددية"
+                            style="margin-bottom: 10px;">
+                        <input 
+                            type="text" 
+                            class="input-field" 
+                            id="example2" 
+                            placeholder="مثال على البيانات الأبجدية"
+                            style="margin-bottom: 10px;">
+                        <input 
+                            type="text" 
+                            class="input-field" 
+                            id="example3" 
+                            placeholder="مثال على البيانات الأبجدية العددية">
+                    </div>
+                    <div class="examples">
+                        <strong>💡 تلميح:</strong>
+                        عددية: مثل 25، 13.5<br>
+                        أبجدية: مثل Ahmed، Qatar<br>
+                        أبجدية عددية: مثل A-15، 08:30 PM
+                    </div>
+                    <div class="error-message" id="error2">⚠️ يجب كتابة ثلاثة أمثلة</div>
+                </div>
+
+                <!-- السؤال 3 -->
+                <div class="question-block">
+                    <label class="question-label">
+                        <span>3️⃣</span>
+                        <span>ما الشيء الذي لم تفهمه جيداً في الدرس؟</span>
+                        <span style="color: #999; font-size: 0.8em;">(اختياري)</span>
+                    </label>
+                    <textarea 
+                        class="input-field" 
+                        id="q3" 
+                        rows="3" 
+                        placeholder="اكتب هنا إذا كان هناك شيء تريد توضيحه أكثر... (اختياري)"></textarea>
+                    <div class="char-counter" id="counter3">0 / 200 حرف</div>
+                </div>
+
+                <!-- السؤال 4 - تقييم الدرس -->
+                <div class="question-block">
+                    <label class="question-label">
+                        <span>4️⃣</span>
+                        <span>كيف تقيّم فهمك للدرس؟</span>
+                        <span class="required">*</span>
+                    </label>
+                    <div style="display: flex; gap: 10px; justify-content: space-around; margin-top: 15px;">
+                        <label style="cursor: pointer; text-align: center;">
+                            <input type="radio" name="rating" value="5" style="display: none;">
+                            <div class="rating-btn" data-value="5">😍<br>ممتاز</div>
+                        </label>
+                        <label style="cursor: pointer; text-align: center;">
+                            <input type="radio" name="rating" value="4" style="display: none;">
+                            <div class="rating-btn" data-value="4">😊<br>جيد جداً</div>
+                        </label>
+                        <label style="cursor: pointer; text-align: center;">
+                            <input type="radio" name="rating" value="3" style="display: none;">
+                            <div class="rating-btn" data-value="3">🙂<br>جيد</div>
+                        </label>
+                        <label style="cursor: pointer; text-align: center;">
+                            <input type="radio" name="rating" value="2" style="display: none;">
+                            <div class="rating-btn" data-value="2">😐<br>مقبول</div>
+                        </label>
+                        <label style="cursor: pointer; text-align: center;">
+                            <input type="radio" name="rating" value="1" style="display: none;">
+                            <div class="rating-btn" data-value="1">😕<br>محتاج مساعدة</div>
+                        </label>
+                    </div>
+                    <div class="error-message" id="error4">⚠️ الرجاء اختيار تقييم</div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    إرسال الإجابات ✅
+                </button>
+            </form>
+        </div>
+
+        <div class="success-screen" id="successScreen">
+            <div class="success-icon">🎉</div>
+            <div class="success-title">تم الإرسال بنجاح!</div>
+            <div class="success-message">
+                شكراً لك على إكمال بطاقة الخروج!<br>
+                إجاباتك ستساعد المعلم على تحسين الدروس القادمة.
+            </div>
+
+            <div class="summary-box">
+                <h3>📊 ملخص إجاباتك</h3>
+                <div class="summary-item">
+                    <strong>الأنواع الثلاثة:</strong>
+                    <p id="summary1"></p>
+                </div>
+                <div class="summary-item">
+                    <strong>الأمثلة:</strong>
+                    <p id="summary2"></p>
+                </div>
+                <div class="summary-item">
+                    <strong>تقييمك للدرس:</strong>
+                    <p id="summary4"></p>
+                </div>
+            </div>
+
+            <div class="badge">🏆 أحسنت! درس مكتمل</div>
+        </div>
+    </div>
+
+    <style>
+        .rating-btn {
+            padding: 20px;
+            background: #f8f9ff;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+
+        .rating-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        input[type="radio"]:checked + .rating-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+    </style>
+
+    <script>
+        // Character counters
+        document.getElementById('q1').addEventListener('input', function() {
+            const counter = document.getElementById('counter1');
+            counter.textContent = `${this.value.length} / 150 حرف`;
+            updateProgress();
+        });
+
+        document.getElementById('q3').addEventListener('input', function() {
+            const counter = document.getElementById('counter3');
+            counter.textContent = `${this.value.length} / 200 حرف`;
+        });
+
+        // Update progress bar
+        function updateProgress() {
+            const q1 = document.getElementById('q1').value.trim();
+            const ex1 = document.getElementById('example1').value.trim();
+            const ex2 = document.getElementById('example2').value.trim();
+            const ex3 = document.getElementById('example3').value.trim();
+            const rating = document.querySelector('input[name="rating"]:checked');
+
+            let completed = 0;
+            if (q1) completed += 25;
+            if (ex1 && ex2 && ex3) completed += 50;
+            if (rating) completed += 25;
+
+            document.getElementById('progressFill').style.width = completed + '%';
+        }
+
+        // Rating buttons
+        document.querySelectorAll('input[name="rating"]').forEach(radio => {
+            radio.addEventListener('change', updateProgress);
+        });
+
+        // Form submission
+        document.getElementById('exitTicketForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validate
+            let isValid = true;
+
+            const q1 = document.getElementById('q1').value.trim();
+            if (!q1) {
+                document.getElementById('q1').classList.add('error');
+                document.getElementById('error1').classList.add('show');
+                isValid = false;
+            } else {
+                document.getElementById('q1').classList.remove('error');
+                document.getElementById('error1').classList.remove('show');
+            }
+
+            const ex1 = document.getElementById('example1').value.trim();
+            const ex2 = document.getElementById('example2').value.trim();
+            const ex3 = document.getElementById('example3').value.trim();
+            if (!ex1 || !ex2 || !ex3) {
+                document.getElementById('example1').classList.add('error');
+                document.getElementById('example2').classList.add('error');
+                document.getElementById('example3').classList.add('error');
+                document.getElementById('error2').classList.add('show');
+                isValid = false;
+            } else {
+                document.getElementById('example1').classList.remove('error');
+                document.getElementById('example2').classList.remove('error');
+                document.getElementById('example3').classList.remove('error');
+                document.getElementById('error2').classList.remove('show');
+            }
+
+            const rating = document.querySelector('input[name="rating"]:checked');
+            if (!rating) {
+                document.getElementById('error4').classList.add('show');
+                isValid = false;
+            } else {
+                document.getElementById('error4').classList.remove('show');
+            }
+
+            if (!isValid) {
+                alert('⚠️ الرجاء إكمال جميع الحقول المطلوبة');
+                return;
+            }
+
+            // Show success
+            const ratingLabels = {
+                '5': '😍 ممتاز',
+                '4': '😊 جيد جداً',
+                '3': '🙂 جيد',
+                '2': '😐 مقبول',
+                '1': '😕 محتاج مساعدة'
+            };
+
+            document.getElementById('summary1').textContent = q1;
+            document.getElementById('summary2').innerHTML = `
+                • عددية: ${ex1}<br>
+                • أبجدية: ${ex2}<br>
+                • أبجدية عددية: ${ex3}
+            `;
+            document.getElementById('summary4').textContent = ratingLabels[rating.value];
+
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('successScreen').classList.add('show');
+
+            // Log data (في التطبيق الحقيقي سيتم إرساله للخادم)
+            console.log({
+                q1: q1,
+                examples: [ex1, ex2, ex3],
+                q3: document.getElementById('q3').value.trim(),
+                rating: rating.value,
+                timestamp: new Date().toISOString()
+            });
+        });
+
+        // Track input changes
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('input', updateProgress);
+        });
+    </script>
+</body>
+</html>

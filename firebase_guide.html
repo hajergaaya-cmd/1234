@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل استخدام Firebase - خطوة بخطوة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #FF6B00 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.3em;
+            margin-bottom: 40px;
+        }
+
+        .step-card {
+            background: #f8f9ff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-right: 5px solid #FF6B00;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #FF6B00 0%, #FFA500 100%);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .step-content {
+            line-height: 1.8;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .step-content p {
+            margin-bottom: 15px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .code-block code {
+            color: #a6e22e;
+        }
+
+        .code-block .comment {
+            color: #75715e;
+        }
+
+        .code-block .string {
+            color: #e6db74;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 3px solid #ffc107;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .warning-box p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .tip-box {
+            background: #d1ecf1;
+            border: 3px solid #17a2b8;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .tip-box p {
+            color: #0c5460;
+            line-height: 1.6;
+        }
+
+        .image-placeholder {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        .checklist {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B00 0%, #FFA500 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        ol {
+            margin-right: 25px;
+            line-height: 2;
+        }
+
+        ol li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .step-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 دليل Firebase الشامل</h1>
+        <p class="subtitle">تعلمي كيفية ربط الأنشطة التفاعلية بقاعدة بيانات Firebase</p>
+
+        <!-- الخطوة 1 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">إنشاء حساب Firebase</div>
+            </div>
+            <div class="step-content">
+                <ol>
+                    <li>اذهبي إلى موقع Firebase: <a href="https://firebase.google.com" target="_blank">firebase.google.com</a></li>
+                    <li>اضغطي على <span class="highlight">Get Started</span> أو <span class="highlight">Go to Console</span></li>
+                    <li>سجلي الدخول باستخدام حساب Google الخاص بك</li>
+                    <li>ستُنقلين إلى Firebase Console (لوحة التحكم)</li>
+                </ol>
+
+                <div class="tip-box">
+                    <h4>💡 نصيحة</h4>
+                    <p>استخدمي حساب Gmail الذي ذكرته (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0e666f646b7c696f6f776f4e69636f6762206d6163">[email&#160;protected]</a>) لتسهيل الإدارة</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 2 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">إنشاء مشروع جديد</div>
+            </div>
+            <div class="step-content">
+                <ol>
+                    <li>في Firebase Console، اضغطي على <span class="highlight">Add Project</span> أو <span class="highlight">إضافة مشروع</span></li>
+                    <li>أدخلي اسم المشروع، مثال: <span class="highlight">"أنشطة-البيانات-والمعلومات"</span></li>
+                    <li>اضغطي <span class="highlight">Continue</span></li>
+                    <li>يمكنك تعطيل Google Analytics (غير مطلوب للبداية)</li>
+                    <li>اضغطي <span class="highlight">Create Project</span></li>
+                    <li>انتظري حتى يتم إنشاء المشروع (حوالي 30 ثانية)</li>
+                    <li>اضغطي <span class="highlight">Continue</span> للدخول إلى لوحة التحكم</li>
+                </ol>
+
+                <div class="image-placeholder">
+                    📸 ستظهر لك شاشة إنشاء المشروع مع حقل لكتابة الاسم
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 3 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">تفعيل Firestore Database</div>
+            </div>
+            <div class="step-content">
+                <p><strong>Firestore</strong> هي قاعدة البيانات التي ستخزن فيها إجابات الطلاب.</p>
+                
+                <ol>
+                    <li>من القائمة الجانبية، اضغطي على <span class="highlight">Firestore Database</span></li>
+                    <li>اضغطي على <span class="highlight">Create Database</span></li>
+                    <li>اختاري <span class="highlight">Start in test mode</span> (للتجربة)</li>
+                    <li>اختاري الموقع الأقرب لك (مثال: europe-west2 للشرق الأوسط)</li>
+                    <li>اضغطي <span class="highlight">Enable</span></li>
+                </ol>
+
+                <div class="warning-box">
+                    <h4>⚠️ مهم جداً</h4>
+                    <p><strong>Test mode</strong> يسمح بالقراءة والكتابة لمدة 30 يوم فقط. بعدها ستحتاجين لتفعيل قواعد الأمان (سأوضح لك كيف لاحقاً)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 4 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <div class="step-title">تسجيل تطبيق ويب</div>
+            </div>
+            <div class="step-content">
+                <p>الآن نحتاج إلى "مفاتيح الاتصال" بين النشاط وFirebase</p>
+                
+                <ol>
+                    <li>في لوحة التحكم الرئيسية، اضغطي على أيقونة <span class="highlight">&lt;/&gt;</span> (Web)</li>
+                    <li>أدخلي اسماً للتطبيق، مثال: <span class="highlight">"نشاط التفكير الزوجي"</span></li>
+                    <li>لا تحتاجين لتفعيل Firebase Hosting</li>
+                    <li>اضغطي <span class="highlight">Register App</span></li>
+                    <li><strong>مهم:</strong> ستظهر لك الآن معلومات Firebase Config - انسخيها!</li>
+                </ol>
+
+                <div class="code-block">
+// ستظهر لك معلومات بهذا الشكل:
+const firebaseConfig = {
+  <span class="string">apiKey</span>: <span class="string">"AIzaSyXXXXXXXXXXXXXXXXXXXXX"</span>,
+  <span class="string">authDomain</span>: <span class="string">"your-project.firebaseapp.com"</span>,
+  <span class="string">projectId</span>: <span class="string">"your-project-id"</span>,
+  <span class="string">storageBucket</span>: <span class="string">"your-project.appspot.com"</span>,
+  <span class="string">messagingSenderId</span>: <span class="string">"123456789"</span>,
+  <span class="string">appId</span>: <span class="string">"1:123456789:web:xxxxx"</span>
+};
+                </div>
+
+                <div class="warning-box">
+                    <h4>⚠️ احتفظي بهذه المعلومات</h4>
+                    <p>ستحتاجينها لاحقاً! انسخيها في ملف نصي أو احتفظي بالصفحة مفتوحة</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 5 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <div class="step-title">تحديث ملف النشاط</div>
+            </div>
+            <div class="step-content">
+                <p>الآن سأعطيك ملف النشاط الجديد المعدّل ليعمل مع Firebase!</p>
+                
+                <p><strong>ما عليك فعله:</strong></p>
+                <ol>
+                    <li>افتحي الملف الجديد الذي سأعطيك إياه</li>
+                    <li>ابحثي عن السطر الذي يقول: <span class="highlight">// ضعي معلومات Firebase هنا</span></li>
+                    <li>الصقي معلومات firebaseConfig التي نسختيها في الخطوة 4</li>
+                    <li>احفظي الملف</li>
+                </ol>
+
+                <div class="tip-box">
+                    <h4>💡 سهل جداً</h4>
+                    <p>سأنشئ لك الملف جاهزاً، كل ما عليك فعله هو نسخ ولصق معلومات Firebase فقط!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 6 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">6</div>
+                <div class="step-title">مشاهدة الإجابات</div>
+            </div>
+            <div class="step-content">
+                <p>بعد أن يرسل الطلاب إجاباتهم، يمكنك مشاهدتها بطريقتين:</p>
+                
+                <h3 style="margin: 20px 0;">الطريقة 1: مباشرة في Firebase Console</h3>
+                <ol>
+                    <li>اذهبي إلى Firebase Console</li>
+                    <li>اضغطي على <span class="highlight">Firestore Database</span></li>
+                    <li>اختاري <span class="highlight">Data</span></li>
+                    <li>ستجدين مجلد اسمه <span class="highlight">pair-answers</span></li>
+                    <li>كل إجابة ستكون وثيقة منفصلة بداخلها</li>
+                </ol>
+
+                <h3 style="margin: 20px 0;">الطريقة 2: لوحة التحكم المخصصة (الأفضل)</h3>
+                <p>سأنشئ لك لوحة تحكم مخصصة متصلة بFirebase مباشرة، تعرض جميع الإجابات بشكل جميل ومنظم!</p>
+            </div>
+        </div>
+
+        <!-- الخطوة 7 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">7</div>
+                <div class="step-title">تأمين قاعدة البيانات (مهم!)</div>
+            </div>
+            <div class="step-content">
+                <p>بعد 30 يوم من Test Mode، ستحتاجين لتحديث قواعد الأمان:</p>
+                
+                <ol>
+                    <li>في Firestore Database، اضغطي على تبويب <span class="highlight">Rules</span></li>
+                    <li>استبدلي القواعد الموجودة بالقواعد التالية:</li>
+                </ol>
+
+                <div class="code-block">
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    <span class="comment">// السماح بالكتابة للجميع (للطلاب)</span>
+    match /pair-answers/{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+                </div>
+
+                <div class="warning-box">
+                    <h4>⚠️ للاستخدام التعليمي فقط</h4>
+                    <p>هذه القواعد تسمح للجميع بالقراءة والكتابة. للاستخدام الفعلي، يُفضل إضافة مصادقة أو قيود إضافية</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- قائمة التحقق -->
+        <div class="step-card" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-color: #28a745;">
+            <div class="step-header">
+                <div class="step-number">✓</div>
+                <div class="step-title">قائمة التحقق النهائية</div>
+            </div>
+            <div class="step-content">
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check1">
+                        <label for="check1">أنشأت حساب Firebase</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check2">
+                        <label for="check2">أنشأت مشروع جديد</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check3">
+                        <label for="check3">فعّلت Firestore Database</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check4">
+                        <label for="check4">سجّلت تطبيق ويب وحصلت على Firebase Config</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check5">
+                        <label for="check5">نسخت معلومات firebaseConfig</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check6">
+                        <label for="check6">جاهزة للخطوة التالية!</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- أزرار التنقل -->
+        <div class="button-group" style="justify-content: center;">
+            <a href="https://firebase.google.com" target="_blank" class="btn btn-primary">
+                🔥 اذهبي إلى Firebase
+            </a>
+            <button class="btn btn-secondary" onclick="window.print()">
+                🖨️ طباعة الدليل
+            </button>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 2px solid #f0f0f0; color: #666;">
+            <p style="font-size: 1.2em;">✨ بعد إكمال هذه الخطوات، س�

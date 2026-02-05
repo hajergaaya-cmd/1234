@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل رفع المشروع على GitHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #24292e 0%, #2c3e50 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #24292e 0%, #2c3e50 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .github-logo {
+            text-align: center;
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.3em;
+            margin-bottom: 40px;
+        }
+
+        .step-card {
+            background: #f8f9ff;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-right: 5px solid #24292e;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #24292e 0%, #2c3e50 100%);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 2em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .step-content {
+            line-height: 1.8;
+            color: #333;
+            font-size: 1.15em;
+        }
+
+        .step-content p {
+            margin-bottom: 15px;
+        }
+
+        .step-content ol {
+            margin-right: 30px;
+            line-height: 2;
+        }
+
+        .step-content li {
+            margin-bottom: 12px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #856404;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 3px solid #ffc107;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .warning-box p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .tip-box {
+            background: #d4edda;
+            border: 3px solid #28a745;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box h4 {
+            color: #155724;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .tip-box p {
+            color: #155724;
+            line-height: 1.6;
+        }
+
+        .screenshot-placeholder {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 1.2em;
+        }
+
+        .button-link {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #24292e 0%, #2c3e50 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+
+        .button-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(36, 41, 46, 0.4);
+        }
+
+        .final-result {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 3px solid #28a745;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .final-result h2 {
+            color: #155724;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .final-result p {
+            color: #155724;
+            font-size: 1.3em;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .step-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="github-logo">⚫</div>
+        <h1>دليل رفع المشروع على GitHub</h1>
+        <p class="subtitle">خطوة بخطوة - سهل وواضح</p>
+
+        <!-- الخطوة 1 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">إنشاء حساب GitHub</div>
+            </div>
+            <div class="step-content">
+                <ol>
+                    <li>اذهبي إلى <a href="https://github.com" target="_blank">github.com</a></li>
+                    <li>اضغطي على <span class="highlight">Sign up</span></li>
+                    <li>أدخلي البريد الإلكتروني: <strong>hajergaaya@gmail.com</strong></li>
+                    <li>اختاري كلمة مرور قوية</li>
+                    <li>اختاري اسم مستخدم (username) - سيظهر في رابط موقعك</li>
+                    <li>أكملي التحقق وفعّلي الحساب من البريد</li>
+                </ol>
+
+                <div class="tip-box">
+                    <h4>💡 نصيحة</h4>
+                    <p>اختاري username احترافي مثل: <strong>hajergaaya</strong> أو <strong>teacher-activities</strong><br>
+                    سيصبح رابط موقعك: <strong>https://username.github.io/project-name</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 2 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">إنشاء Repository جديد</div>
+            </div>
+            <div class="step-content">
+                <p>Repository = مستودع = مجلد المشروع</p>
+                
+                <ol>
+                    <li>بعد تسجيل الدخول، اضغطي على <span class="highlight">+</span> في الأعلى</li>
+                    <li>اختاري <span class="highlight">New repository</span></li>
+                    <li>املئي البيانات:
+                        <ul style="margin-right: 30px; margin-top: 10px;">
+                            <li><strong>Repository name:</strong> data-information-activities</li>
+                            <li><strong>Description:</strong> أنشطة تفاعلية - البيانات والمعلومات</li>
+                            <li><strong>Public:</strong> اختاري Public (عام)</li>
+                            <li>✅ ضعي علامة على <strong>Add a README file</strong></li>
+                        </ul>
+                    </li>
+                    <li>اضغطي <span class="highlight">Create repository</span></li>
+                </ol>
+
+                <div class="screenshot-placeholder">
+                    📸 ستظهر لك شاشة إنشاء Repository
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 3 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">رفع الملفات</div>
+            </div>
+            <div class="step-content">
+                <p><strong>الطريقة السهلة (بدون Git):</strong></p>
+                
+                <ol>
+                    <li>في صفحة المشروع، اضغطي على <span class="highlight">Add file</span></li>
+                    <li>اختاري <span class="highlight">Upload files</span></li>
+                    <li>اسحبي جميع ملفات HTML إلى المنطقة المخصصة<br>
+                        <small>(أو اضغطي "choose your files" واختاري الملفات)</small>
+                    </li>
+                    <li>انتظري حتى يكتمل الرفع</li>
+                    <li>اكتبي رسالة في خانة Commit: <strong>"إضافة جميع الأنشطة"</strong></li>
+                    <li>اضغطي <span class="highlight">Commit changes</span></li>
+                </ol>
+
+                <div class="warning-box">
+                    <h4>⚠️ مهم</h4>
+                    <p>تأكدي من رفع جميع الملفات دفعة واحدة، بما فيها:<br>
+                    • index.html (الأهم!)<br>
+                    • activity1 حتى activity8<br>
+                    • teacher_dashboard.html<br>
+                    • جميع الملفات الأخرى</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 4 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <div class="step-title">تفعيل GitHub Pages</div>
+            </div>
+            <div class="step-content">
+                <p>الآن سنحوّل المشروع إلى موقع ويب حقيقي!</p>
+                
+                <ol>
+                    <li>في صفحة المشروع، اضغطي على <span class="highlight">Settings</span> (الإعدادات)</li>
+                    <li>من القائمة الجانبية، اضغطي على <span class="highlight">Pages</span></li>
+                    <li>في قسم "Source" (المصدر):
+                        <ul style="margin-right: 30px; margin-top: 10px;">
+                            <li>Branch: اختاري <strong>main</strong></li>
+                            <li>Folder: اتركيها على <strong>/ (root)</strong></li>
+                        </ul>
+                    </li>
+                    <li>اضغطي <span class="highlight">Save</span></li>
+                    <li>انتظري دقيقة أو دقيقتين...</li>
+                    <li>ستظهر رسالة خضراء بالرابط! 🎉</li>
+                </ol>
+
+                <div class="code-block">
+Your site is published at:
+https://username.github.io/data-information-activities/
+                </div>
+
+                <div class="tip-box">
+                    <h4>✅ تم بنجاح!</h4>
+                    <p>الموقع الآن مباشر على الإنترنت! انسخي الرابط وشاركيه مع الطالبات</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 5 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <div class="step-title">اختبار الموقع</div>
+            </div>
+            <div class="step-content">
+                <ol>
+                    <li>افتحي الرابط في متصفح جديد</li>
+                    <li>يجب أن ترى الصفحة الرئيسية مع جميع الأنشطة</li>
+                    <li>جرّبي الضغط على أحد الأنشطة للتأكد من عمله</li>
+                    <li>إذا عمل كل شيء - مبروك! 🎉</li>
+                </ol>
+
+                <div class="warning-box">
+                    <h4>⚠️ إذا لم يعمل الموقع</h4>
+                    <p>• انتظري 5-10 دقائق (أحياناً يأخذ وقت)<br>
+                    • تأكدي أن ملف index.html موجود<br>
+                    • تأكدي أن GitHub Pages مفعّل من Settings → Pages<br>
+                    • جرّبي تحديث الصفحة (Ctrl + F5)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- الخطوة 6 -->
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-number">6</div>
+                <div class="step-title">مشاركة الرابط</div>
+            </div>
+            <div class="step-content">
+                <p>الآن يمكنك مشاركة الرابط بعدة طرق:</p>
+                
+                <ol>
+                    <li><strong>WhatsApp:</strong> أرسلي الرابط مباشرة للمجموعة</li>
+                    <li><strong>منصة مدرستي:</strong> أضيفي الرابط كمصدر تعليمي</li>
+                    <li><strong>QR Code:</strong> حوّلي الرابط إلى QR Code (استخدمي qr-code-generator.com)</li>
+                    <li><strong>Google Classroom:</strong> أضيفي الرابط كمادة</li>
+                </ol>
+
+                <div class="tip-box">
+                    <h4>💡 نصيحة احترافية</h4>
+                    <p>اجعلي الرابط أقصر باستخدام خدمة مثل:<br>
+                    • <strong>bit.ly</strong><br>
+                    • <strong>tinyurl.com</strong><br>
+                    مثال: من <code>username.github.io/data-information-activities</code><br>
+                    إلى: <code>bit.ly/data-activities</code></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- النتيجة النهائية -->
+        <div class="final-result">
+            <h2>🎉 تهانينا! 🎉</h2>
+            <p>
+                أصبح لديكِ الآن موقع ويب احترافي يحتوي على:<br><br>
+                ✅ 8 أنشطة تفاعلية<br>
+                ✅ صفحة رئيسية منظمة<br>
+                ✅ رابط يمكن مشاركته مع أي عدد من الطالبات<br>
+                ✅ موقع يعمل 24/7 مجاناً<br>
+                ✅ يمكنك تحديثه في أي وقت<br><br>
+                <strong>رابط موقعك:</strong><br>
+                <code style="font-size: 1.1em; background: white; padding: 10px 20px; border-radius: 10px; display: inline-block; margin-top: 15px;">
+                    https://username.github.io/data-information-activities/
+                </code>
+            </p>
+        </div>
+
+        <!-- أزرار مفيدة -->
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="https://github.com" target="_blank" class="button-link">
+                اذهبي إلى GitHub →
+            </a>
+            <a href="https://pages.github.com" target="_blank" class="button-link">
+                معلومات GitHub Pages →
+            </a>
+        </div>
+
+        <!-- تحديث الملفات -->
+        <div class="step-card" style="margin-top: 40px; background: #e3f2fd;">
+            <h3 style="color: #1565c0; margin-bottom: 20px; font-size: 1.8em;">📝 كيفية تحديث الملفات لاحقاً</h3>
+            <div class="step-content">
+                <ol>
+                    <li>اذهبي إلى repository في GitHub</li>
+                    <li>اضغطي على الملف الذي تريدين تعديله</li>
+                    <li>اضغطي على أيقونة القلم (Edit) ✏️</li>
+                    <li>عدّلي المحتوى</li>
+                    <li>اضغطي <span class="highlight">Commit changes</span></li>
+                    <li>الموقع سيتحدث تلقائياً خلال دقائق!</li>
+                </ol>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 3px solid #f0f0f0; color: #666;">
+            <p style="font-size: 1.2em; line-height: 1.8;">
+                🎓 <strong>أي أسئلة؟</strong><br>
+                GitHub لديه دعم ممتاز ومجتمع كبير<br>
+                ابحثي في Google عن "GitHub Pages tutorial" لمزيد من المساعدة
+            </p>
+        </div>
+    </div>
+</body>
+</html>

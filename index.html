@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأنشطة التفاعلية - البيانات والمعلومات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 25px;
+            padding: 50px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            font-size: 1.2em;
+            color: #888;
+            line-height: 1.8;
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .info-banner h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .info-banner p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        .activities-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .section-title h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        }
+
+        .activity-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .activity-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .activity-tags {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .tag-goal1 {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .tag-goal2 {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .tag-individual {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .tag-pair {
+            background: #e0f2f1;
+            color: #00695c;
+        }
+
+        .tag-group {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .activity-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .activity-duration {
+            color: #999;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+        }
+
+        .activity-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .activity-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .resources-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .resources-section h2 {
+            color: #667eea;
+            font-size: 2.2em;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .resource-card {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .resource-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .resource-title {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .resource-desc {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .footer {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .footer p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .activities-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 الأنشطة التفاعلية 🎓</h1>
+            <p class="subtitle">درس البيانات والمعلومات</p>
+            <p class="description">مجموعة متكاملة من الأنشطة التفاعلية للحاسب الآلي - المرحلة الابتدائية</p>
+        </div>
+
+        <div class="info-banner">
+            <h2>✨ مرحباً بك! ✨</h2>
+            <p>
+                هذا الموقع يحتوي على 8 أنشطة تفاعلية مصممة خصيصاً لدرس البيانات والمعلومات<br>
+                جميع الأنشطة تعمل مباشرة في المتصفح بدون الحاجة لتحميل أي برامج!
+            </p>
+        </div>
+
+        <!-- الهدف الأول -->
+        <div class="activities-section">
+            <div class="section-title">
+                <h2>🎯 الهدف الأول</h2>
+                <p>المقارنة بين البيانات والمعلومات</p>
+            </div>
+
+            <div class="activities-grid">
+                <a href="activity1_word_cloud.html" class="activity-card">
+                    <div class="activity-icon">🌟</div>
+                    <h3 class="activity-title">سحابة الكلمات</h3>
+                    <div class="activity-tags">
+                        <span class="tag tag-goal1">الهدف 1</span>
+                        <span class="tag tag-group">جماعي</span>
+                    </div>
+                    <p class="activity-description">
+                        نشاط تمهيدي تفاعلي - الكلمات الأكثر تكراراً تظهر بحجم أكبر
+                    </p>
+                    <p class="activity-duration">⏱️ 4 دقائق</p>
+                    <span class="activity-button">ابدأ النشاط 🚀</span>
+                </a>
+
+                <a href="activity2_interactive_video.html" class="activity-card">
+                    <div class="activity-icon">🎬</div>
+                    <h3 class="activity-title">الفيديو التفاعلي</h3>
+                    <div class="activity-tags">
+                        <span class="tag tag-goal1">الهدف 1</span>
+                        <span class="tag tag-individual">فردي</span>
+                    </div>
+                    <p class="activity-description">
+                        محتوى تعليمي مع أسئلة تفاعلية أثناء المشاهدة
+                    </p>
+                    <p class="activity-duration">⏱️ 5 دقائق</p>
+                    <span class="activity-button">ابدأ النشاط 🚀</span>
+                </a>
+
+                <a href="activity3_collaborative_table.html" class="activity-card">
+                    <div class="activity-icon">📊</div>
+                    <h3 class="activity-title">الجدول التعاوني</h3>
+                    <div class="activity-tags">
+                        <span class="tag tag-goal1">الهدف 1</span>
+                        <span class="tag tag-group">جماعي</span>
+                    </div>
+                    <p class="activity-description">
+                        نشاط تعاوني لملء جدول مقارنة بين البيانات والمعلومات
+                    </p>
+                    <p class="activity-duration">⏱️ 7 دقائق</p>
+                    <span class="activity-button">ابدأ النشاط 🚀</span>
+                </a>
+
+                <a href="activity4_kahoot_quiz.html" class="activity-card">
+                    <div class="activity-icon">🎮</div>
+                    <h3 class="activity-title">اختبار كاهوت</h3>
+                    <div class="activity-tags">
+                        <span class="tag tag-goal1">الهدف 1</span>
+                        <span class="tag tag-individual">فردي</span>
+                    </div>
+                    <p class="activity-description">
+                        اختبار تفاعلي سريع مع لوحة متصدرين
+                    </p>
+                    <p class="activity-duration">⏱️ 4 دقائق</p>
+                    <span class="activity-button">ابدأ النشاط 🚀</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- الهدف الثاني -->
+        <div class="activities-section">
+            <div class="section-title">
+                <h2>🎯 الهدف الثاني</h2>
+                <p>تعداد أنواع البيانات</p>
+            </div>
+
+            <div class="activities-grid">
+                <a href="activity5_think_pair_share.html" class="activity-card">
+                    <div class="activity-icon">👥</div>
+                    <h3 class="activity-title">التفكير الزوجي</h3>
+                    <div class="activity-tags">
+                        <span class="tag tag-goal2">الهدف 2</span>
+                        <span class="tag tag-pair">زوجي</span>
+                    </div>
+                    <p class="activity-description">
+                        نشاط Think-Pair-Share مع إرسال الإجابات للمعلمة
+                    </p>
+                    <p class="activity-duration">⏱️ 3 دقائق</p>
+                    <span class="activity-button">ابدأ النشاط 🚀</span>
+                </a>
+
+                <a href="activity6_drag_drop.html" class="activity-card">
+                    <div class="activity-icon">📚</div>
+                    <h3 class="activity-title">اسحب وأفلت</h3>
+                    <div class="activity-tags">
+                        <span class="tag tag-goal2">الهدف 2</span>
+                        <span class="tag tag-individual">فردي</span>
+                    </div>
+                    <p class="activity-description">
+                        عرض تفاعلي لأنواع البيانات مع تصنيف بالسحب والإفلات
+                    </p>
+                    <p class="activity-duration">⏱️ 6 دقائق</p>
+                    <span class="activity-button">ابدأ النشاط 🚀</span>
+                </a>
+
+                <a href="activity7_team_game.html" class="activity-card">
+                    <div class="activity-icon">🏆</div>
+                    <h3 class="activity-title">اللعبة التنافسية</h3>
+                    <div class="activity-tags">
+                        <span class="tag tag-goal2">الهدف 2</span>
+                        <span class="tag tag-group">جماعي</span>
+                    </div>
+                    <p class="activity-description">
+                        لعبة تنافسية بين 4 فرق مع لوحة نقاط حية
+                    </p>
+                    <p class="activity-duration">⏱️ 7 دقائق</p>
+                    <span class="activity-button">ابدأ النشاط 🚀</span>
+                </a>
+
+                <a href="activity8_exit_ticket.html" class="activity-card">
+                    <div class="activity-icon">📋</div>
+                    <h3 class="activity-title">بطاقة الخروج</h3>
+                    <div class="activity-tags">
+                        <span class="tag tag-goal2">الهدف 2</span>
+                        <span class="tag tag-individual">فردي</span>
+                    </div>
+                    <p class="activity-description">
+                        نموذج تقييم نهائي لقياس مدى الفهم
+                    </p>
+                    <p class="activity-duration">⏱️ 4 دقائق</p>
+                    <span class="activity-button">ابدأ النشاط 🚀</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- الموارد الإضافية -->
+        <div class="resources-section">
+            <h2>📚 موارد إضافية</h2>
+            <div class="resources-grid">
+                <a href="teacher_dashboard.html" class="resource-card">
+                    <div class="resource-icon">👩‍🏫</div>
+                    <h3 class="resource-title">لوحة المعلمة</h3>
+                    <p class="resource-desc">عرض نموذجي لإجابات الطلاب</p>
+                </a>
+
+                <a href="sharing_methods_guide.html" class="resource-card">
+                    <div class="resource-icon">📤</div>
+                    <h3 class="resource-title">دليل المشاركة</h3>
+                    <p class="resource-desc">طرق مشاركة الأنشطة مع الطالبات</p>
+                </a>
+
+                <a href="firebase_guide.html" class="resource-card">
+                    <div class="resource-icon">🔥</div>
+                    <h3 class="resource-title">دليل Firebase</h3>
+                    <p class="resource-desc">شرح ربط الأنشطة بقاعدة البيانات</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>
+                ✨ تم إنشاء جميع الأنشطة بالكامل باستخدام <strong>Claude.ai</strong> ✨<br>
+                مثال عملي على قوة الذكاء الاصطناعي في التعليم<br><br>
+                <strong>المجموع الكلي:</strong> 8 أنشطة تفاعلية | 40 دقيقة | جاهزة للاستخدام الفوري
+            </p>
+        </div>
+    </div>
+</body>
+</html>

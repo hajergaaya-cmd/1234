@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المعلمة - Firebase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header-subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .firebase-status {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            color: #856404;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .firebase-status.connected {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .firebase-status.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .refresh-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .answers-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .answer-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .answer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .answer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .students-names {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .student-badge {
+            background: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 90%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .timestamp {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .answer-section {
+            margin-bottom: 20px;
+        }
+
+        .answer-label {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .answer-content {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            line-height: 1.6;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        .combined-answer {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border-right: 5px solid #667eea;
+        }
+
+        .loading-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .empty-state-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .empty-state-text {
+            font-size: 1.2em;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-print {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #f57c00;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+
+        @media (max-width: 768px) {
+            .students-names {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👩‍🏫 لوحة المعلمة - Firebase</h1>
+            <p class="header-subtitle">عرض مباشر لإجابات الطلاب من قاعدة البيانات</p>
+        </div>
+
+        <div class="firebase-status" id="firebaseStatus">
+            🔄 جاري الاتصال بقاعدة البيانات...
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📧</div>
+                <span class="stat-number" id="totalAnswers">0</span>
+                <div class="stat-label">إجابات مستلمة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <span class="stat-number" id="totalStudents">0</span>
+                <div class="stat-label">طالب مشارك</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏰</div>
+                <span class="stat-number" id="todayAnswers">0</span>
+                <div class="stat-label">إجابات اليوم</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔄</div>
+                <span class="stat-number" id="liveStatus">مباشر</span>
+                <div class="stat-label">حالة الاتصال</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 ابحث عن طالب معين..." onkeyup="filterAnswers()">
+            </div>
+            <button class="refresh-btn" onclick="loadAnswers()">🔄 تحديث</button>
+        </div>
+
+        <div id="loadingContainer" class="loading-container">
+            <div class="spinner"></div>
+            <p style="font-size: 1.3em; color: #666;">جاري تحميل الإجابات...</p>
+        </div>
+
+        <div class="answers-grid" id="answersGrid" style="display: none;"></div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-state-icon">📭</div>
+            <div class="empty-state-title">لا توجد إجابات بعد</div>
+            <div class="empty-state-text">
+                عندما يرسل الطلاب إجاباتهم، ستظهر هنا تلقائياً<br>
+                الصفحة تتحدث تلقائياً عند إضافة إجابات جديدة
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, query, orderBy, onSnapshot, doc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // =====================================================
+        // 🔥 ضعي معلومات Firebase هنا (نفس المعلومات من ملف النشاط)
+        // =====================================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // تهيئة Firebase
+        let app, db;
+        let allAnswers = [];
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            
+            const status = document.getElementById('firebaseStatus');
+            status.className = 'firebase-status connected';
+            status.innerHTML = '✅ متصل بقاعدة البيانات - البيانات محدثة تلقائياً';
+            
+            // بدء الاستماع للتحديثات
+            setupRealtimeListener();
+            
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            const status = document.getElementById('firebaseStatus');
+            status.className = 'firebase-status error';
+            status.innerHTML = '❌ خطأ في الاتصال: تأكدي من إعداد معلومات Firebase بشكل صحيح';
+            
+            document.getElementById('loadingContainer').innerHTML = `
+                <div style="font-size: 3em; margin-bottom: 20px;">⚠️</div>
+                <h2 style="color: #721c24; margin-bottom: 15px;">لم يتم إعداد Firebase</h2>
+                <p style="color: #666; font-size: 1.1em; line-height: 1.6;">
+                    الرجاء مراجعة ملف firebase_guide.html<br>
+                    واتباع الخطوات لإعداد قاعدة البيانات
+                </p>
+            `;
+        }
+
+        // الاستماع للتحديثات المباشرة
+        function setupRealtimeListener() {
+            const q = query(collection(db, 'pair-answers'), orderBy('timestamp', 'desc'));
+            
+            onSnapshot(q, (snapshot) => {
+                allAnswers = [];
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    allAnswers.push({
+                        id: doc.id,
+                        ...data,
+                        timestampDisplay: formatTimestamp(data.timestamp)
+                    });
+                });
+
+                updateStats();
+                displayAnswers(allAnswers);
+                
+                // إخفاء شاشة التحميل
+                document.getElementById('loadingContainer').style.display = 'none';
+            }, (error) => {
+                console.error('Error listening to answers:', error);
+                alert('حدث خطأ في تحميل البيانات. تأكدي من قواعد الأمان في Firestore.');
+            });
+        }
+
+        // تنسيق التاريخ والوقت
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return 'الآن';
+            
+            try {
+                const date = timestamp.toDate();
+                return date.toLocaleString('ar-EG', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return new Date().toLocaleString('ar-EG');
+            }
+        }
+
+        // تحديث الإحصائيات
+        function updateStats() {
+            document.getElementById('totalAnswers').textContent = allAnswers.length;
+            document.getElementById('totalStudents').textContent = allAnswers.length * 2;
+            
+            const today = new Date().toLocaleDateString('ar-EG');
+            const todayCount = allAnswers.filter(a => {
+                if (!a.timestamp) return false;
+                const answerDate = a.timestamp.toDate().toLocaleDateString('ar-EG');
+                return answerDate === today;
+            }).length;
+            document.getElementById('todayAnswers').textContent = todayCount;
+        }
+
+        // عرض الإجابات
+        function displayAnswers(answers) {
+            const grid = document.getElementById('answersGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (answers.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            grid.innerHTML = answers.map(answer => `
+                <div class="answer-card" data-id="${answer.id}">
+                    <div class="answer-header">
+                        <div class="students-names">
+                            <span class="student-badge">👤 ${answer.student1?.name || 'طالب 1'}</span>
+                            <span style="color: #999;">+</span>
+                            <span class="student-badge">👤 ${answer.student2?.name || 'طالب 2'}</span>
+                        </div>
+                        <div class="timestamp">⏰ ${answer.timestampDisplay}</div>
+                    </div>
+
+                    <div class="answer-section">
+                        <div class="answer-label">💬 إجابة ${answer.student1?.name || 'الطالب الأول'}:</div>
+                        <div class="answer-content">${answer.student1?.answer || ''}</div>
+                    </div>
+
+                    <div class="answer-section">
+                        <div class="answer-label">💬 إجابة ${answer.student2?.name || 'الطالب الثاني'}:</div>
+                        <div class="answer-content">${answer.student2?.answer || ''}</div>
+                    </div>
+
+                    <div class="answer-section">
+                        <div class="answer-label">🤝 الإجابة المشتركة:</div>
+                        <div class="answer-content combined-answer">${answer.combinedAnswer || ''}</div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn btn-print" onclick="window.printAnswer('${answer.id}')">🖨️ طباعة</button>
+                        <button class="action-btn btn-delete" onclick="window.deleteAnswer('${answer.id}')">🗑️ حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // تصفية الإجابات
+        window.filterAnswers = function() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allAnswers.filter(answer => 
+                answer.student1?.name.toLowerCase().includes(searchTerm) ||
+                answer.student2?.name.toLowerCase().includes(searchTerm) ||
+                answer.combinedAnswer?.toLowerCase().includes(searchTerm)
+            );
+            displayAnswers(filtered);
+        };
+
+        // إعادة تحميل (للزر)
+        window.loadAnswers = function() {
+            // البيانات تتحدث تلقائياً، هذا فقط للتأكيد البصري
+            const btn = event.target;
+            btn.innerHTML = '⏳ جاري التحديث...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = '✅ تم التحديث!';
+                setTimeout(() => {
+                    btn.innerHTML = '🔄 تحديث';
+                    btn.disabled = false;
+                }, 1000);
+            }, 500);
+        };
+
+        // طباعة الإجابة
+        window.printAnswer = function(id) {
+            const answer = allAnswers.find(a => a.id === id);
+            const printWindow = window.open('', '', 'width=800,height=600');
+            printWindow.document.write(`
+                <html dir="rtl">
+                <head>
+                    <title>إجابة ${answer.student1?.name} و ${answer.student2?.name}</title>
+                    <style>
+                        body { font-family: Arial; padding: 40px; }
+                        h2 { color: #667eea; }
+                        .section { margin: 20px 0; padding: 15px; background: #f8f9ff; border-radius: 10px; }
+                        .label { font-weight: bold; color: #667eea; margin-bottom: 10px; }
+                        pre { white-space: pre-wrap; }
+                    </style>
+                </head>
+                <body>
+                    <h2>نشاط التفكير الزوجي - أنواع البيانات</h2>
+                    <p><strong>الطالبان:</strong> ${answer.student1?.name} + ${answer.student2?.name}</p>
+                    <p><strong>التاريخ:</strong> ${answer.timestampDisplay}</p>
+                    <hr>
+                    <div class="section">
+                        <div class="label">إجابة ${answer.student1?.name}:</div>
+                        <pre>${answer.student1?.answer}</pre>
+                    </div>
+                    <div class="section">
+                        <div class="label">إجابة ${answer.student2?.name}:</div>
+                        <pre>${answer.student2?.answer}</pre>
+                    </div>
+                    <div class="section">
+                        <div class="label">الإجابة المشتركة:</div>
+                        <pre>${answer.combinedAnswer}</pre>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        };
+
+        // حذف الإجابة
+        window.deleteAnswer = async function(id) {
+            if (!confirm('هل أنتِ متأكدة من حذف هذه الإجابة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, 'pair-answers', id));
+                alert('✅ تم حذف الإجابة بنجاح');
+            } catch (error) {
+                console.error('Error deleting document:', error);
+                alert('❌ حدث خطأ أثناء الحذف: ' + error.message);
+            }
+        };
+    </script>
+</body>
+</html>
