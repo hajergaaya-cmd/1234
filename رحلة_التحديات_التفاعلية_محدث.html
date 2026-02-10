@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رحلة في عالم تحديات IoT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+            50% { text-shadow: 0 0 40px rgba(255, 255, 255, 0.8); }
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.8s ease;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+        }
+
+        .progress-text {
+            color: white;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .challenges-map {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .challenge-station {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: slideUp 0.6s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .challenge-station:nth-child(1) { animation-delay: 0.1s; }
+        .challenge-station:nth-child(2) { animation-delay: 0.3s; }
+        .challenge-station:nth-child(3) { animation-delay: 0.5s; }
+
+        .challenge-station.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .challenge-station:not(.locked):hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .station-header {
+            background: linear-gradient(135deg, #FF5252 0%, #F44336 100%);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .station-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .station-icon {
+            font-size: 5em;
+            margin-bottom: 10px;
+            display: block;
+            position: relative;
+            z-index: 1;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .station-number {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 2;
+        }
+
+        .station-title {
+            color: white;
+            font-size: 1.8em;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+
+        .station-content {
+            padding: 25px;
+        }
+
+        .station-description {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .explore-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        .explore-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.6);
+        }
+
+        .completed-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.4s ease-out;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #FF5252 0%, #F44336 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-icon {
+            font-size: 6em;
+            margin-bottom: 15px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .modal-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            padding: 40px;
+        }
+
+        .story-section {
+            background: #FFF3E0;
+            border-right: 5px solid #FF9800;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .story-title {
+            color: #E65100;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .story-text {
+            color: #666;
+            font-size: 1.15em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .scenario-card {
+            background: #E3F2FD;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-right: 4px solid #2196F3;
+        }
+
+        .scenario-title {
+            color: #1565C0;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .scenario-text {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .solutions-section {
+            background: #E8F5E9;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .solutions-title {
+            color: #2E7D32;
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .solution-item {
+            background: white;
+            border-right: 4px solid #4CAF50;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .solution-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .solution-text {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .quiz-section {
+            background: #F3E5F5;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .quiz-title {
+            color: #6A1B9A;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .quiz-question {
+            color: #4A148C;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quiz-option:hover {
+            border-color: #9C27B0;
+            transform: translateX(-5px);
+        }
+
+        .quiz-option.selected {
+            background: #CE93D8;
+            border-color: #9C27B0;
+            color: white;
+        }
+
+        .quiz-option.correct {
+            background: #4CAF50;
+            border-color: #2E7D32;
+            color: white;
+        }
+
+        .quiz-option.wrong {
+            background: #F44336;
+            border-color: #C62828;
+            color: white;
+        }
+
+        .option-letter {
+            background: #9C27B0;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .modal-footer {
+            padding: 25px 40px;
+            border-top: 2px solid #E0E0E0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #757575;
+        }
+
+        .completion-screen {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-top: 30px;
+            animation: zoomIn 0.6s ease-out;
+        }
+
+        .completion-screen.show {
+            display: block;
+        }
+
+        .trophy-icon {
+            font-size: 8em;
+            margin-bottom: 20px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .completion-title {
+            color: #2E7D32;
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .completion-message {
+            color: #666;
+            font-size: 1.4em;
+            line-height: 1.8;
+        }
+
+        .stars {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .challenges-map {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🗺️ رحلة في عالم تحديات IoT</h1>
+            <p>استكشف التحديات بطريقة تفاعلية ومشوقة!</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">التقدم: 0 من 3</div>
+
+        <div class="challenges-map">
+            <div class="challenge-station" onclick="openChallenge(1)">
+                <div class="station-header">
+                    <div class="station-number">1</div>
+                    <span class="station-icon">🔓</span>
+                    <div class="station-title">سهولة اختراق أجهزة إنترنت الأشياء</div>
+                </div>
+                <div class="station-content">
+                    <div class="station-description">
+                        اكتشف كيف يمكن للقراصنة اختراق منزلك الذكي وكيف تحمي نفسك!
+                    </div>
+                    <button class="explore-btn">استكشف التحدي →</button>
+                    <div id="badge1"></div>
+                </div>
+            </div>
+
+            <div class="challenge-station locked" id="station2">
+                <div class="station-header">
+                    <div class="station-number">2</div>
+                    <span class="station-icon">🔒</span>
+                    <div class="station-title">زيادة حجم البيانات</div>
+                </div>
+                <div class="station-content">
+                    <div class="station-description">
+                        تعرف على تحدي البيانات الضخمة وكيف تؤثر على الأجهزة والتخزين
+                    </div>
+                    <button class="explore-btn" disabled>🔒 مقفل - أكمل المحطة السابقة</button>
+                    <div id="badge2"></div>
+                </div>
+            </div>
+
+            <div class="challenge-station locked" id="station3">
+                <div class="station-header">
+                    <div class="station-number">3</div>
+                    <span class="station-icon">🔒</span>
+                    <div class="station-title">نقص تحديثات البرامج</div>
+                </div>
+                <div class="station-content">
+                    <div class="station-description">
+                        اكتشف لماذا تحتاج الأجهزة الذكية لتحديثات مستمرة وما المشاكل الناتجة
+                    </div>
+                    <button class="explore-btn" disabled>🔒 مقفل - أكمل المحطات السابقة</button>
+                    <div id="badge3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="completion-screen" id="completionScreen">
+            <div class="trophy-icon">🏆</div>
+            <div class="completion-title">مبروك!</div>
+            <div class="stars">⭐⭐⭐</div>
+            <div class="completion-message">
+                لقد أكملت جميع المحطات بنجاح!<br>
+                أصبحت الآن خبيراً في تحديات إنترنت الأشياء<br>
+                وتعرف كيف تتعامل معها بحكمة
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalHeader"></div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <script>
+        const challenges = {
+            1: {
+                icon: '🔓',
+                title: 'سهولة اختراق أجهزة إنترنت الأشياء',
+                color: '#FF5252',
+                story: {
+                    title: '🏠 قصة: اختراق منزل أحمد الذكي',
+                    text: `كان أحمد فخوراً جداً بمنزله الذكي الجديد. كل شيء متصل بالإنترنت: الكاميرات، الأبواب، الأنوار، حتى الثلاجة!
+
+في أحد الأيام، لاحظ أحمد أموراً غريبة:
+• الأضواء تفتح وتطفئ من تلقاء نفسها في منتصف الليل
+• الكاميرا الأمامية تتحرك دون أن يلمسها أحد
+• وصلته رسالة من شخص غريب: "أنا أراقب منزلك الآن!"
+
+اكتشف أحمد أن قرصاناً اخترق شبكة منزله لأنه استخدم كلمة مرور سهلة: "12345"`
+                },
+                scenarios: [
+                    {
+                        title: '😱 السيناريو 1: التجسس عبر الكاميرات',
+                        text: 'يمكن للقراصنة الوصول إلى كاميراتك ومراقبة منزلك، سماع محادثاتك، ومعرفة متى تكون خارج المنزل'
+                    },
+                    {
+                        title: '💳 السيناريو 2: سرقة البيانات الشخصية',
+                        text: 'معلوماتك الشخصية، بياناتك البنكية، وكلمات المرور يمكن أن تُسرق من أجهزتك الذكية'
+                    },
+                    {
+                        title: '🚪 السيناريو 3: التحكم في الأجهزة',
+                        text: 'يمكن للقرصان فتح أبواب منزلك، إطفاء أنظمة الإنذار، والتحكم في جميع أجهزتك'
+                    }
+                ],
+                solutions: [
+                    { icon: '🔐', text: 'استخدم كلمات مرور قوية ومختلفة لكل جهاز (مثال: M@h3d#2024!)' },
+                    { icon: '🔄', text: 'حدّث أجهزتك باستمرار لإصلاح الثغرات الأمنية' },
+                    { icon: '🛡️', text: 'فعّل المصادقة الثنائية (رمز + كلمة مرور)' },
+                    { icon: '📶', text: 'استخدم شبكة Wi-Fi آمنة ومشفرة (WPA3)' },
+                    { icon: '🚫', text: 'لا تشارك معلوماتك الشخصية مع تطبيقات غير موثوقة' }
+                ],
+                quiz: {
+                    question: 'ما أفضل طريقة لحماية أجهزتك الذكية من الاختراق؟',
+                    options: [
+                        { letter: 'أ', text: 'استخدام كلمة مرور: 123456', correct: false },
+                        { letter: 'ب', text: 'استخدام كلمة مرور قوية وتفعيل المصادقة الثنائية', correct: true },
+                        { letter: 'ج', text: 'عدم وضع كلمة مرور نهائياً', correct: false },
+                        { letter: 'د', text: 'مشاركة كلمة المرور مع الجميع', correct: false }
+                    ],
+                    feedback: {
+                        correct: '🎉 ممتاز! هذا هو الحل الصحيح لحماية أجهزتك من الاختراق',
+                        wrong: '❌ للأسف خاطئ. كلمات المرور القوية والمصادقة الثنائية ضرورية!'
+                    }
+                }
+            },
+            2: {
+                icon: '💾',
+                title: 'زيادة حجم البيانات',
+                color: '#FF9800',
+                story: {
+                    title: '📊 قصة: مزرعة خالد والبيانات الهائلة',
+                    text: `قرر خالد تحويل مزرعته إلى مزرعة ذكية. ركّب 100 مستشعر لقياس:
+• رطوبة التربة في كل حوض
+• درجة حرارة كل بيت زجاجي
+• مستوى الإضاءة
+• مستوى المياه
+• حركة الحيوانات
+
+بعد أسبوع واحد فقط:
+• وصلت رسالة: "مساحة التخزين ممتلئة 95%"
+• الأجهزة أصبحت بطيئة جداً
+• فاتورة خدمة التخزين السحابي: 5000 ريال شهرياً!
+
+كل مستشعر يرسل بيانات كل ثانية = 8,640,000 قياس يومياً من كل مستشعر!`
+                },
+                scenarios: [
+                    {
+                        title: '💽 السيناريو 1: امتلاء وسائط التخزين',
+                        text: 'البيانات الضخمة تملأ الأقراص الصلبة والسحابة بسرعة، مما يتطلب شراء مساحات تخزين إضافية باستمرار'
+                    },
+                    {
+                        title: '🐌 السيناريو 2: بطء الأجهزة',
+                        text: 'معالجة كميات هائلة من البيانات تجعل الأجهزة بطيئة جداً وقد تتوقف عن العمل'
+                    },
+                    {
+                        title: '💰 السيناريو 3: التكلفة المرتفعة',
+                        text: 'التخزين والمعالجة والنقل للبيانات الضخمة يكلف الكثير من المال شهرياً'
+                    }
+                ],
+                solutions: [
+                    { icon: '🗜️', text: 'ضغط البيانات قبل التخزين لتقليل المساحة المستخدمة' },
+                    { icon: '⏱️', text: 'تقليل معدل إرسال البيانات (مثلاً: كل 5 دقائق بدلاً من كل ثانية)' },
+                    { icon: '🗑️', text: 'حذف البيانات القديمة غير المهمة تلقائياً' },
+                    { icon: '📈', text: 'إرسال ملخصات فقط بدلاً من جميع التفاصيل' },
+                    { icon: '💻', text: 'استخدام أجهزة معالجة قوية وتخزين كبير' }
+                ],
+                quiz: {
+                    question: 'ما الحل الأمثل لمشكلة زيادة حجم البيانات؟',
+                    options: [
+                        { letter: 'أ', text: 'إرسال بيانات كل ثانية من جميع المستشعرات', correct: false },
+                        { letter: 'ب', text: 'تقليل معدل الإرسال وضغط البيانات', correct: true },
+                        { letter: 'ج', text: 'عدم استخدام أي مستشعرات', correct: false },
+                        { letter: 'د', text: 'شراء 1000 قرص صلب', correct: false }
+                    ],
+                    feedback: {
+                        correct: '🎉 صحيح! تقليل المعدل والضغط يوفران المساحة والتكلفة',
+                        wrong: '❌ حاول مرة أخرى. فكر في كيفية تقليل كمية البيانات'
+                    }
+                }
+            },
+            3: {
+                icon: '🔄',
+                title: 'نقص تحديثات البرامج',
+                color: '#9C27B0',
+                story: {
+                    title: '📱 قصة: كاميرا منزل سارة القديمة',
+                    text: `اشترت سارة كاميرا ذكية لمراقبة منزلها في 2020. عملت بشكل ممتاز لمدة سنتين.
+
+في عام 2022:
+• توقفت الشركة المصنعة عن دعم هذا الموديل
+• لم تعد هناك تحديثات جديدة
+• اكتُشفت ثغرة أمنية خطيرة في نظام الكاميرا
+
+بعد شهر:
+• تم اختراق الكاميرا
+• القراصنة استغلوا الثغرة غير المصلّحة
+• سُرقت مقاطع فيديو من منزل سارة
+
+المشكلة: الشركة لم تصدر تحديثاً لإصلاح الثغرة لأن الجهاز قديم!`
+                },
+                scenarios: [
+                    {
+                        title: '🐛 السيناريو 1: الثغرات الأمنية',
+                        text: 'الأجهزة بدون تحديثات تبقى بها ثغرات أمنية معروفة يستغلها القراصنة بسهولة'
+                    },
+                    {
+                        title: '🏭 السيناريو 2: توقف الشركات عن الدعم',
+                        text: 'الشركات تتوقف عن دعم الأجهزة القديمة، مما يجعلها غير آمنة وعديمة الفائدة'
+                    },
+                    {
+                        title: '🔢 السيناريو 3: كثرة الأجهزة المختلفة',
+                        text: 'مع وجود مئات الأجهزة الذكية من شركات مختلفة، يصعب متابعة وتحديث كل جهاز'
+                    }
+                ],
+                solutions: [
+                    { icon: '✅', text: 'حدّث أجهزتك فوراً عند توفر تحديث جديد' },
+                    { icon: '🔔', text: 'فعّل التحديثات التلقائية لجميع الأجهزة' },
+                    { icon: '🏪', text: 'اشترِ أجهزة من شركات موثوقة تدعم أجهزتها لسنوات' },
+                    { icon: '📅', text: 'راجع قائمة أجهزتك شهرياً وتحقق من التحديثات' },
+                    { icon: '🔄', text: 'استبدل الأجهزة القديمة التي توقف دعمها' }
+                ],
+                quiz: {
+                    question: 'لماذا تحديثات البرامج مهمة جداً للأجهزة الذكية؟',
+                    options: [
+                        { letter: 'أ', text: 'لتغيير لون الجهاز', correct: false },
+                        { letter: 'ب', text: 'لإصلاح الثغرات الأمنية وتحسين الأداء', correct: true },
+                        { letter: 'ج', text: 'لجعل الجهاز أبطأ', correct: false },
+                        { letter: 'د', text: 'غير مهمة على الإطلاق', correct: false }
+                    ],
+                    feedback: {
+                        correct: '🎉 ممتاز! التحديثات تحمي أجهزتك وتحسن أداءها',
+                        wrong: '❌ ليس صحيحاً. التحديثات ضرورية لسد الثغرات الأمنية!'
+                    }
+                }
+            }
+        };
+
+        let completedChallenges = new Set();
+        let currentChallenge = null;
+
+        function openChallenge(num) {
+            const station = document.getElementById(`station${num}`);
+            if (station && station.classList.contains('locked')) {
+                return;
+            }
+
+            currentChallenge = num;
+            const challenge = challenges[num];
+            
+            const modal = document.getElementById('modal');
+            const modalHeader = document.getElementById('modalHeader');
+            const modalBody = document.getElementById('modalBody');
+            const modalFooter = document.getElementById('modalFooter');
+
+            modalHeader.style.background = `linear-gradient(135deg, ${challenge.color} 0%, ${challenge.color}dd 100%)`;
+            modalHeader.innerHTML = `
+                <div class="modal-icon">${challenge.icon}</div>
+                <div class="modal-title">${challenge.title}</div>
+            `;
+
+            modalBody.innerHTML = `
+                <div class="story-section">
+                    <div class="story-title">
+                        <span>📖</span>
+                        <span>${challenge.story.title}</span>
+                    </div>
+                    <div class="story-text">${challenge.story.text.replace(/\n/g, '<br>')}</div>
+                </div>
+
+                ${challenge.scenarios.map(s => `
+                    <div class="scenario-card">
+                        <div class="scenario-title">${s.title}</div>
+                        <div class="scenario-text">${s.text}</div>
+                    </div>
+                `).join('')}
+
+                <div class="solutions-section">
+                    <div class="solutions-title">💡 كيف نحل هذه المشكلة؟</div>
+                    ${challenge.solutions.map(s => `
+                        <div class="solution-item">
+                            <div class="solution-icon">${s.icon}</div>
+                            <div class="solution-text">${s.text}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="quiz-section">
+                    <div class="quiz-title">🎯 اختبر معلوماتك!</div>
+                    <div class="quiz-question">${challenge.quiz.question}</div>
+                    <div class="quiz-options" id="quizOptions">
+                        ${challenge.quiz.options.map((opt, i) => `
+                            <div class="quiz-option" onclick="selectAnswer(${i}, ${opt.correct})">
+                                <div class="option-letter">${opt.letter}</div>
+                                <div>${opt.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="quiz-feedback" id="quizFeedback"></div>
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="btn btn-primary" id="completeBtn" onclick="completeChallenge()" disabled>
+                    ✅ أكمل التحدي
+                </button>
+                <button class="btn btn-secondary" onclick="closeModal()">
+                    إغلاق
+                </button>
+            `;
+
+            modal.classList.add('show');
+        }
+
+        function selectAnswer(index, isCorrect) {
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quizFeedback');
+            const challenge = challenges[currentChallenge];
+            const completeBtn = document.getElementById('completeBtn');
+
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+
+            options[index].classList.add('selected');
+
+            setTimeout(() => {
+                if (isCorrect) {
+                    options[index].classList.remove('selected');
+                    options[index].classList.add('correct');
+                    feedback.style.background = '#4CAF50';
+                    feedback.textContent = challenge.quiz.feedback.correct;
+                    completeBtn.disabled = false;
+                } else {
+                    options[index].classList.remove('selected');
+                    options[index].classList.add('wrong');
+                    feedback.style.background = '#F44336';
+                    feedback.textContent = challenge.quiz.feedback.wrong;
+                    
+                    setTimeout(() => {
+                        challenge.quiz.options.forEach((opt, i) => {
+                            if (opt.correct) {
+                                options[i].classList.add('correct');
+                            }
+                        });
+                        completeBtn.disabled = false;
+                    }, 1500);
+                }
+                feedback.classList.add('show');
+            }, 500);
+        }
+
+        function completeChallenge() {
+            completedChallenges.add(currentChallenge);
+            
+            document.getElementById(`badge${currentChallenge}`).innerHTML = 
+                '<div class="completed-badge">✅ مكتمل</div>';
+
+            if (currentChallenge < 3) {
+                const nextStation = document.getElementById(`station${currentChallenge + 1}`);
+                nextStation.classList.remove('locked');
+                nextStation.querySelector('.explore-btn').disabled = false;
+                nextStation.querySelector('.explore-btn').textContent = 'استكشف التحدي →';
+                nextStation.querySelector('.station-icon').textContent = challenges[currentChallenge + 1].icon;
+            }
+
+            updateProgress();
+            closeModal();
+
+            if (completedChallenges.size === 3) {
+                setTimeout(() => {
+                    document.getElementById('completionScreen').classList.add('show');
+                    document.getElementById('completionScreen').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }, 500);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        function updateProgress() {
+            const progress = (completedChallenges.size / 3) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `التقدم: ${completedChallenges.size} من 3`;
+        }
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
