@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشاط: اختر نوع البيانات الصحيح</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e8f4ea;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            position: relative;
+        }
+
+        .background-image {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .interactive-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .table-container {
+            width: 90%;
+            max-width: 1100px;
+            margin-top: 80px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .data-table thead th {
+            background: rgba(76, 111, 68, 0.85);
+            color: white;
+            padding: 18px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .data-table tbody td {
+            padding: 15px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .data-cell {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #5a7c4d;
+            padding: 20px !important;
+        }
+
+        .checkbox-cell {
+            position: relative;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+        }
+
+        .custom-checkbox {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid #a8c9a0;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .custom-checkbox:hover {
+            border-color: #6b9b5f;
+            transform: scale(1.1);
+        }
+
+        .custom-checkbox input[type="radio"] {
+            display: none;
+        }
+
+        .custom-checkbox.selected {
+            background: linear-gradient(135deg, #6b9b5f 0%, #8bc34a 100%);
+            border-color: #6b9b5f;
+        }
+
+        .custom-checkbox.selected::after {
+            content: '✓';
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            margin-top: 30px;
+            padding: 18px 60px;
+            background: linear-gradient(135deg, #6b9b5f 0%, #8bc34a 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(107, 155, 95, 0.4);
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(107, 155, 95, 0.6);
+        }
+
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .result-content {
+            background: white;
+            border-radius: 25px;
+            padding: 50px;
+            max-width: 600px;
+            text-align: center;
+            animation: slideUp 0.5s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .trophy {
+            font-size: 6em;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .score-text {
+            font-size: 2.5em;
+            color: #6b9b5f;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            padding: 15px 40px;
+            background: #6b9b5f;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .close-btn:hover {
+            background: #5a8450;
+        }
+
+        @media (max-width: 1200px) {
+            .table-container {
+                margin-top: 60px;
+            }
+
+            .data-table thead th,
+            .data-table tbody td {
+                padding: 12px 8px;
+                font-size: 0.95em;
+            }
+
+            .data-cell {
+                font-size: 1em;
+            }
+
+            .custom-checkbox {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .interactive-overlay {
+                padding: 20px;
+            }
+
+            .table-container {
+                margin-top: 40px;
+                width: 95%;
+            }
+
+            .data-table thead th {
+                font-size: 0.8em;
+                padding: 10px 5px;
+            }
+
+            .data-table tbody td {
+                padding: 8px 3px;
+                font-size: 0.75em;
+            }
+
+            .data-cell {
+                font-size: 0.85em;
+                padding: 10px 5px !important;
+            }
+
+            .custom-checkbox {
+                width: 28px;
+                height: 28px;
+            }
+
+            .custom-checkbox.selected::after {
+                font-size: 1.3em;
+            }
+
+            .submit-btn {
+                padding: 12px 30px;
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" 
+             alt="background" 
+             class="background-image"
+             id="bgImage">
+
+        <div class="interactive-overlay">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>البيانات</th>
+                            <th>البيانات العددية</th>
+                            <th>البيانات الأبجدية</th>
+                            <th>البيانات الأبجدية العددية</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- الصف 1: 30.25 -->
+                        <tr>
+                            <td class="data-cell">30.25</td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r1c1">
+                                        <input type="radio" name="row1" value="numeric" onchange="selectCheckbox('r1c1', 'row1')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r1c2">
+                                        <input type="radio" name="row1" value="alpha" onchange="selectCheckbox('r1c2', 'row1')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r1c3">
+                                        <input type="radio" name="row1" value="alphanumeric" onchange="selectCheckbox('r1c3', 'row1')">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- الصف 2: Qatar -->
+                        <tr>
+                            <td class="data-cell">Qatar</td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r2c1">
+                                        <input type="radio" name="row2" value="numeric" onchange="selectCheckbox('r2c1', 'row2')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r2c2">
+                                        <input type="radio" name="row2" value="alpha" onchange="selectCheckbox('r2c2', 'row2')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r2c3">
+                                        <input type="radio" name="row2" value="alphanumeric" onchange="selectCheckbox('r2c3', 'row2')">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- الصف 3: Airbus - A380 -->
+                        <tr>
+                            <td class="data-cell">Airbus - A380</td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r3c1">
+                                        <input type="radio" name="row3" value="numeric" onchange="selectCheckbox('r3c1', 'row3')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r3c2">
+                                        <input type="radio" name="row3" value="alpha" onchange="selectCheckbox('r3c2', 'row3')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r3c3">
+                                        <input type="radio" name="row3" value="alphanumeric" onchange="selectCheckbox('r3c3', 'row3')">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- الصف 4: Four Seasons -->
+                        <tr>
+                            <td class="data-cell">Four Seasons</td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r4c1">
+                                        <input type="radio" name="row4" value="numeric" onchange="selectCheckbox('r4c1', 'row4')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r4c2">
+                                        <input type="radio" name="row4" value="alpha" onchange="selectCheckbox('r4c2', 'row4')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r4c3">
+                                        <input type="radio" name="row4" value="alphanumeric" onchange="selectCheckbox('r4c3', 'row4')">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- الصف 5: سعد -->
+                        <tr>
+                            <td class="data-cell">سعد</td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r5c1">
+                                        <input type="radio" name="row5" value="numeric" onchange="selectCheckbox('r5c1', 'row5')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r5c2">
+                                        <input type="radio" name="row5" value="alpha" onchange="selectCheckbox('r5c2', 'row5')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r5c3">
+                                        <input type="radio" name="row5" value="alphanumeric" onchange="selectCheckbox('r5c3', 'row5')">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- الصف 6: mm 10:25 -->
+                        <tr>
+                            <td class="data-cell">mm 10:25</td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r6c1">
+                                        <input type="radio" name="row6" value="numeric" onchange="selectCheckbox('r6c1', 'row6')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r6c2">
+                                        <input type="radio" name="row6" value="alpha" onchange="selectCheckbox('r6c2', 'row6')">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="checkbox-cell">
+                                <div class="checkbox-wrapper">
+                                    <label class="custom-checkbox" id="r6c3">
+                                        <input type="radio" name="row6" value="alphanumeric" onchange="selectCheckbox('r6c3', 'row6')">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="text-align: center;">
+                    <button class="submit-btn" onclick="checkAnswers()">تحقق من الإجابات ✓</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة النتيجة -->
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <div class="trophy">🏆</div>
+            <h2 style="color: #6b9b5f; font-size: 2em; margin-bottom: 20px;">النتيجة</h2>
+            <div class="score-text" id="scoreText"></div>
+            <p id="resultMessage" style="font-size: 1.2em; color: #666; margin-bottom: 20px;"></p>
+            <button class="close-btn" onclick="closeModal()">إغلاق</button>
+        </div>
+    </div>
+
+    <script>
+        // تحميل الصورة الحقيقية
+        window.onload = function() {
+            const img = document.getElementById('bgImage');
+            img.src = 'background_data_types.png';
+        };
+
+        function selectCheckbox(id, row) {
+            // إلغاء التحديد من جميع الخيارات في نفس الصف
+            const allInRow = document.querySelectorAll(`input[name="${row}"]`).forEach(input => {
+                input.parentElement.classList.remove('selected');
+            });
+
+            // تحديد الخيار المختار
+            document.getElementById(id).classList.add('selected');
+        }
+
+        function checkAnswers() {
+            const correctAnswers = {
+                'row1': 'numeric',      // 30.25 → عددية
+                'row2': 'alpha',        // Qatar → أبجدية
+                'row3': 'alphanumeric', // Airbus - A380 → أبجدية عددية
+                'row4': 'alpha',        // Four Seasons → أبجدية
+                'row5': 'alpha',        // سعد → أبجدية
+                'row6': 'alphanumeric'  // mm 10:25 → أبجدية عددية
+            };
+
+            let score = 0;
+            let total = 6;
+
+            // التحقق من الإجابات
+            for (let row in correctAnswers) {
+                const selected = document.querySelector(`input[name="${row}"]:checked`);
+                if (selected && selected.value === correctAnswers[row]) {
+                    score++;
+                }
+            }
+
+            // عرض النتيجة
+            const percentage = Math.round((score / total) * 100);
+            document.getElementById('scoreText').textContent = `${score} من ${total}`;
+
+            let message = '';
+            if (percentage === 100) {
+                message = 'ممتاز! 🌟 جميع الإجابات صحيحة!';
+            } else if (percentage >= 80) {
+                message = 'جيد جداً! 👍 أداء رائع!';
+            } else if (percentage >= 60) {
+                message = 'جيد! 💪 واصل التحسن!';
+            } else {
+                message = 'راجع الدرس وحاول مرة أخرى! 📚';
+            }
+
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
