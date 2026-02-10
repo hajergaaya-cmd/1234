@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورقة عمل - تعريف إنترنت الأشياء</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0277BD 0%, #01579B 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .worksheet-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0277BD 0%, #0288D1 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .header::after {
+            content: '✏️';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 3em;
+            opacity: 0.3;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .grade {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 15px;
+        }
+
+        .header .info {
+            font-size: 1em;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .lesson-info {
+            background: #E3F2FD;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #0277BD;
+        }
+
+        .lesson-title {
+            color: #01579B;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #0277BD 0%, #0288D1 100%);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-left: 10px;
+        }
+
+        .question-text {
+            color: #D81B60;
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .definition-box {
+            background: #F5F5F5;
+            border: 3px dashed #0277BD;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            min-height: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .definition-box:focus-within {
+            border-style: solid;
+            background: #E3F2FD;
+            box-shadow: 0 5px 20px rgba(2, 119, 189, 0.2);
+        }
+
+        .definition-textarea {
+            width: 100%;
+            min-height: 150px;
+            border: none;
+            background: transparent;
+            font-size: 1.2em;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .definition-textarea::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .char-counter {
+            text-align: left;
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .hint-bubble {
+            background: linear-gradient(135deg, #FFF9C4 0%, #FFF59D 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-right: 5px solid #FBC02D;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            box-shadow: 0 3px 10px rgba(251, 192, 45, 0.2);
+        }
+
+        .hint-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .hint-content {
+            flex: 1;
+        }
+
+        .hint-title {
+            color: #F57F17;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .hint-text {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .keywords-section {
+            background: white;
+            border: 2px solid #0277BD;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .keywords-title {
+            color: #0277BD;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .keywords-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .keyword-chip {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            color: #01579B;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .keyword-chip:hover {
+            background: linear-gradient(135deg, #0277BD 0%, #0288D1 100%);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(2, 119, 189, 0.3);
+        }
+
+        .keyword-chip.used {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            border-color: #2E7D32;
+        }
+
+        .rating-section {
+            background: #F5F5F5;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .rating-title {
+            color: #0277BD;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .rating-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            background: white;
+            border: 3px solid #E0E0E0;
+            border-radius: 15px;
+            padding: 20px;
+            width: 150px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .rating-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .rating-option.selected {
+            border-color: #0277BD;
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            transform: scale(1.05);
+        }
+
+        .rating-emoji {
+            font-size: 4em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .rating-label {
+            color: #666;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #0277BD 0%, #0288D1 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 12px;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto;
+            box-shadow: 0 5px 20px rgba(2, 119, 189, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(2, 119, 189, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 25px;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            display: block;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .success-text {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .success-details {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin-top: 10px;
+        }
+
+        .decorative-elements {
+            position: fixed;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .pencil-icon {
+            position: absolute;
+            font-size: 3em;
+            opacity: 0.1;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .word-count-badge {
+            background: #0277BD;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 25px;
+            }
+
+            .question-text {
+                font-size: 1.3em;
+            }
+
+            .definition-textarea {
+                font-size: 1.05em;
+            }
+
+            .rating-options {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .rating-option {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="worksheet-container">
+        <div class="header">
+            <h1>ورقة عمل</h1>
+            <div class="grade">الصف السادس</div>
+            <div class="info">
+                الوحدة الثانية: النمذجة باستخدام الروبوت<br>
+                العام الأكاديمي 2025-2026
+            </div>
+        </div>
+
+        <div class="lesson-info">
+            <div class="lesson-title">الدرس الأول: إنترنت الأشياء</div>
+        </div>
+
+        <div class="content">
+            <div class="question-section">
+                <div class="question-text">
+                    <span class="question-number">1</span>
+                    <span>عرّف إنترنت الأشياء:</span>
+                </div>
+
+                <div class="hint-bubble">
+                    <span class="hint-icon">💡</span>
+                    <div class="hint-content">
+                        <div class="hint-title">تلميح لمساعدتك:</div>
+                        <div class="hint-text">
+                            فكر في كيفية اتصال الأجهزة الذكية ببعضها... ما الذي يميزها عن الأجهزة العادية؟
+                            <br>استخدم الكلمات المفتاحية أدناه لمساعدتك!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="keywords-section">
+                    <div class="keywords-title">📚 كلمات مفتاحية للمساعدة</div>
+                    <div class="keywords-grid">
+                        <span class="keyword-chip" onclick="useKeyword(this)">شبكة</span>
+                        <span class="keyword-chip" onclick="useKeyword(this)">أجهزة ذكية</span>
+                        <span class="keyword-chip" onclick="useKeyword(this)">الإنترنت</span>
+                        <span class="keyword-chip" onclick="useKeyword(this)">تبادل البيانات</span>
+                        <span class="keyword-chip" onclick="useKeyword(this)">التحكم عن بُعد</span>
+                        <span class="keyword-chip" onclick="useKeyword(this)">متصلة</span>
+                    </div>
+                </div>
+
+                <div class="definition-box">
+                    <textarea 
+                        class="definition-textarea" 
+                        id="definitionText"
+                        placeholder="اكتب تعريفك لإنترنت الأشياء هنا...
+
+مثال للبداية:
+إنترنت الأشياء هو..."
+                        maxlength="500"
+                        oninput="updateCharCount(); checkDefinition()"
+                    ></textarea>
+                    <div class="char-counter">
+                        <span id="charCount">0</span> / 500 حرف
+                        <span class="word-count-badge" id="wordCount">0 كلمة</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rating-section">
+                <div class="rating-title">تقييم الزميل</div>
+                <div class="rating-options">
+                    <div class="rating-option" onclick="selectRating(this, 'excellent')">
+                        <span class="rating-emoji">😊</span>
+                        <div class="rating-label">ممتاز</div>
+                    </div>
+                    <div class="rating-option" onclick="selectRating(this, 'good')">
+                        <span class="rating-emoji">😐</span>
+                        <div class="rating-label">جيد</div>
+                    </div>
+                    <div class="rating-option" onclick="selectRating(this, 'needs-work')">
+                        <span class="rating-emoji">☹️</span>
+                        <div class="rating-label">يحتاج تحسين</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="submit-btn" onclick="submitWorksheet()" id="submitBtn" disabled>
+                ✅ أنهي ورقة العمل
+            </button>
+
+            <div class="success-message" id="successMessage">
+                <span class="success-icon">🎉</span>
+                <div class="success-text">أحسنت! تم إكمال ورقة العمل</div>
+                <div class="success-details" id="successDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedRating = null;
+        let definitionQuality = 0;
+
+        function updateCharCount() {
+            const textarea = document.getElementById('definitionText');
+            const charCount = document.getElementById('charCount');
+            const wordCount = document.getElementById('wordCount');
+            
+            const text = textarea.value;
+            const chars = text.length;
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+            
+            charCount.textContent = chars;
+            wordCount.textContent = words + ' كلمة';
+            
+            // تغيير لون العداد حسب الطول
+            if (chars > 400) {
+                charCount.style.color = '#f44336';
+            } else if (chars > 300) {
+                charCount.style.color = '#ff9800';
+            } else {
+                charCount.style.color = '#999';
+            }
+        }
+
+        function useKeyword(chip) {
+            chip.classList.toggle('used');
+            const keyword = chip.textContent;
+            const textarea = document.getElementById('definitionText');
+            
+            if (chip.classList.contains('used')) {
+                // إضافة الكلمة إلى النص إذا لم تكن موجودة
+                if (!textarea.value.includes(keyword)) {
+                    if (textarea.value.length > 0 && !textarea.value.endsWith(' ')) {
+                        textarea.value += ' ';
+                    }
+                    textarea.value += keyword;
+                    updateCharCount();
+                    checkDefinition();
+                }
+            }
+        }
+
+        function checkDefinition() {
+            const text = document.getElementById('definitionText').value.toLowerCase();
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // فحص جودة التعريف
+            const keywords = ['شبكة', 'أجهزة', 'ذكية', 'إنترنت', 'بيانات', 'متصلة', 'تواصل'];
+            const foundKeywords = keywords.filter(keyword => text.includes(keyword));
+            
+            definitionQuality = foundKeywords.length;
+            
+            // تفعيل زر الإرسال إذا كان التعريف يحتوي على 20 حرف على الأقل
+            if (text.trim().length >= 20) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function selectRating(option, rating) {
+            // إزالة التحديد من جميع الخيارات
+            document.querySelectorAll('.rating-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // تحديد الخيار المختار
+            option.classList.add('selected');
+            selectedRating = rating;
+        }
+
+        function submitWorksheet() {
+            const definition = document.getElementById('definitionText').value.trim();
+            const successMessage = document.getElementById('successMessage');
+            const successDetails = document.getElementById('successDetails');
+            
+            if (definition.length < 20) {
+                alert('من فضلك، اكتب تعريفاً أطول (20 حرف على الأقل)');
+                return;
+            }
+            
+            // تقييم التعريف
+            let feedback = '';
+            
+            if (definitionQuality >= 5) {
+                feedback = '🌟 تعريفك شامل وممتاز! استخدمت معظم الكلمات المفتاحية.';
+            } else if (definitionQuality >= 3) {
+                feedback = '👍 تعريفك جيد! حاول إضافة المزيد من التفاصيل في المرة القادمة.';
+            } else {
+                feedback = '💪 بداية جيدة! راجع الكلمات المفتاحية لتحسين تعريفك.';
+            }
+            
+            if (selectedRating) {
+                const ratingText = {
+                    'excellent': 'ممتاز',
+                    'good': 'جيد',
+                    'needs-work': 'يحتاج تحسين'
+                };
+                feedback += `<br><br>تقييم الزميل: ${ratingText[selectedRating]}`;
+            }
+            
+            successDetails.innerHTML = feedback;
+            successMessage.classList.add('show');
+            
+            // حفظ في التخزين المحلي
+            const worksheetData = {
+                definition: definition,
+                rating: selectedRating,
+                timestamp: new Date().toLocaleString('ar-SA'),
+                quality: definitionQuality
+            };
+            localStorage.setItem('iotWorksheet', JSON.stringify(worksheetData));
+            
+            // تمرير للأسفل
+            setTimeout(() => {
+                successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        // استرجاع البيانات المحفوظة عند تحميل الصفحة
+        window.addEventListener('load', () => {
+            const savedData = localStorage.getItem('iotWorksheet');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                const loadPrevious = confirm('تم العثور على ورقة عمل سابقة. هل تريد استكمالها؟');
+                
+                if (loadPrevious) {
+                    document.getElementById('definitionText').value = data.definition;
+                    updateCharCount();
+                    checkDefinition();
+                    
+                    if (data.rating) {
+                        const ratingMap = {
+                            'excellent': 0,
+                            'good': 1,
+                            'needs-work': 2
+                        };
+                        const options = document.querySelectorAll('.rating-option');
+                        if (ratingMap[data.rating] !== undefined) {
+                            selectRating(options[ratingMap[data.rating]], data.rating);
+                        }
+                    }
+                }
+            }
+        });
+
+        // حفظ تلقائي أثناء الكتابة
+        setInterval(() => {
+            const text = document.getElementById('definitionText').value;
+            if (text.trim().length > 0) {
+                localStorage.setItem('iotWorksheetDraft', text);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
