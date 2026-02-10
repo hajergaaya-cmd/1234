@@ -212,9 +212,14 @@
             box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
         }
 
-        .explore-btn:hover {
+        .explore-btn:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(33, 150, 243, 0.6);
+        }
+
+        .explore-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .completed-badge {
@@ -460,6 +465,7 @@
             font-size: 1.2em;
             font-weight: bold;
             display: none;
+            color: white;
         }
 
         .quiz-feedback.show {
@@ -491,7 +497,7 @@
             box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
         }
@@ -565,6 +571,10 @@
             .modal-body {
                 padding: 20px;
             }
+            
+            .modal-title {
+                font-size: 1.8em;
+            }
         }
     </style>
 </head>
@@ -581,7 +591,7 @@
         <div class="progress-text" id="progressText">التقدم: 0 من 3</div>
 
         <div class="challenges-map">
-            <div class="challenge-station" onclick="openChallenge(1)">
+            <div class="challenge-station" id="station1">
                 <div class="station-header">
                     <div class="station-number">1</div>
                     <span class="station-icon">🔓</span>
@@ -591,7 +601,7 @@
                     <div class="station-description">
                         اكتشف كيف يمكن للقراصنة اختراق منزلك الذكي وكيف تحمي نفسك!
                     </div>
-                    <button class="explore-btn">استكشف التحدي →</button>
+                    <button class="explore-btn" onclick="openChallenge(1)">استكشف التحدي →</button>
                     <div id="badge1"></div>
                 </div>
             </div>
@@ -815,7 +825,7 @@
         let currentChallenge = null;
 
         function openChallenge(num) {
-            const station = document.getElementById(`station${num}`);
+            const station = document.getElementById('station' + num);
             if (station && station.classList.contains('locked')) {
                 return;
             }
@@ -828,61 +838,27 @@
             const modalBody = document.getElementById('modalBody');
             const modalFooter = document.getElementById('modalFooter');
 
-            modalHeader.style.background = `linear-gradient(135deg, ${challenge.color} 0%, ${challenge.color}dd 100%)`;
-            modalHeader.innerHTML = `
-                <div class="modal-icon">${challenge.icon}</div>
-                <div class="modal-title">${challenge.title}</div>
-            `;
+            modalHeader.style.background = 'linear-gradient(135deg, ' + challenge.color + ' 0%, ' + challenge.color + 'dd 100%)';
+            modalHeader.innerHTML = '<div class="modal-icon">' + challenge.icon + '</div><div class="modal-title">' + challenge.title + '</div>';
 
-            modalBody.innerHTML = `
-                <div class="story-section">
-                    <div class="story-title">
-                        <span>📖</span>
-                        <span>${challenge.story.title}</span>
-                    </div>
-                    <div class="story-text">${challenge.story.text.replace(/\n/g, '<br>')}</div>
-                </div>
+            let scenariosHTML = '';
+            challenge.scenarios.forEach(function(s) {
+                scenariosHTML += '<div class="scenario-card"><div class="scenario-title">' + s.title + '</div><div class="scenario-text">' + s.text + '</div></div>';
+            });
 
-                ${challenge.scenarios.map(s => `
-                    <div class="scenario-card">
-                        <div class="scenario-title">${s.title}</div>
-                        <div class="scenario-text">${s.text}</div>
-                    </div>
-                `).join('')}
+            let solutionsHTML = '';
+            challenge.solutions.forEach(function(s) {
+                solutionsHTML += '<div class="solution-item"><div class="solution-icon">' + s.icon + '</div><div class="solution-text">' + s.text + '</div></div>';
+            });
 
-                <div class="solutions-section">
-                    <div class="solutions-title">💡 كيف نحل هذه المشكلة؟</div>
-                    ${challenge.solutions.map(s => `
-                        <div class="solution-item">
-                            <div class="solution-icon">${s.icon}</div>
-                            <div class="solution-text">${s.text}</div>
-                        </div>
-                    `).join('')}
-                </div>
+            let optionsHTML = '';
+            challenge.quiz.options.forEach(function(opt, i) {
+                optionsHTML += '<div class="quiz-option" onclick="selectAnswer(' + i + ', ' + opt.correct + ')"><div class="option-letter">' + opt.letter + '</div><div>' + opt.text + '</div></div>';
+            });
 
-                <div class="quiz-section">
-                    <div class="quiz-title">🎯 اختبر معلوماتك!</div>
-                    <div class="quiz-question">${challenge.quiz.question}</div>
-                    <div class="quiz-options" id="quizOptions">
-                        ${challenge.quiz.options.map((opt, i) => `
-                            <div class="quiz-option" onclick="selectAnswer(${i}, ${opt.correct})">
-                                <div class="option-letter">${opt.letter}</div>
-                                <div>${opt.text}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="quiz-feedback" id="quizFeedback"></div>
-                </div>
-            `;
+            modalBody.innerHTML = '<div class="story-section"><div class="story-title"><span>📖</span><span>' + challenge.story.title + '</span></div><div class="story-text">' + challenge.story.text.replace(/\n/g, '<br>') + '</div></div>' + scenariosHTML + '<div class="solutions-section"><div class="solutions-title">💡 كيف نحل هذه المشكلة؟</div>' + solutionsHTML + '</div><div class="quiz-section"><div class="quiz-title">🎯 اختبر معلوماتك!</div><div class="quiz-question">' + challenge.quiz.question + '</div><div class="quiz-options" id="quizOptions">' + optionsHTML + '</div><div class="quiz-feedback" id="quizFeedback"></div></div>';
 
-            modalFooter.innerHTML = `
-                <button class="btn btn-primary" id="completeBtn" onclick="completeChallenge()" disabled>
-                    ✅ أكمل التحدي
-                </button>
-                <button class="btn btn-secondary" onclick="closeModal()">
-                    إغلاق
-                </button>
-            `;
+            modalFooter.innerHTML = '<button class="btn btn-primary" id="completeBtn" onclick="completeChallenge()" disabled>✅ أكمل التحدي</button><button class="btn btn-secondary" onclick="closeModal()">إغلاق</button>';
 
             modal.classList.add('show');
         }
@@ -893,13 +869,13 @@
             const challenge = challenges[currentChallenge];
             const completeBtn = document.getElementById('completeBtn');
 
-            options.forEach(opt => {
+            options.forEach(function(opt) {
                 opt.style.pointerEvents = 'none';
             });
 
             options[index].classList.add('selected');
 
-            setTimeout(() => {
+            setTimeout(function() {
                 if (isCorrect) {
                     options[index].classList.remove('selected');
                     options[index].classList.add('correct');
@@ -912,8 +888,8 @@
                     feedback.style.background = '#F44336';
                     feedback.textContent = challenge.quiz.feedback.wrong;
                     
-                    setTimeout(() => {
-                        challenge.quiz.options.forEach((opt, i) => {
+                    setTimeout(function() {
+                        challenge.quiz.options.forEach(function(opt, i) {
                             if (opt.correct) {
                                 options[i].classList.add('correct');
                             }
@@ -928,14 +904,15 @@
         function completeChallenge() {
             completedChallenges.add(currentChallenge);
             
-            document.getElementById(`badge${currentChallenge}`).innerHTML = 
-                '<div class="completed-badge">✅ مكتمل</div>';
+            document.getElementById('badge' + currentChallenge).innerHTML = '<div class="completed-badge">✅ مكتمل</div>';
 
             if (currentChallenge < 3) {
-                const nextStation = document.getElementById(`station${currentChallenge + 1}`);
+                const nextStation = document.getElementById('station' + (currentChallenge + 1));
                 nextStation.classList.remove('locked');
-                nextStation.querySelector('.explore-btn').disabled = false;
-                nextStation.querySelector('.explore-btn').textContent = 'استكشف التحدي →';
+                const nextBtn = nextStation.querySelector('.explore-btn');
+                nextBtn.disabled = false;
+                nextBtn.textContent = 'استكشف التحدي →';
+                nextBtn.setAttribute('onclick', 'openChallenge(' + (currentChallenge + 1) + ')');
                 nextStation.querySelector('.station-icon').textContent = challenges[currentChallenge + 1].icon;
             }
 
@@ -943,7 +920,7 @@
             closeModal();
 
             if (completedChallenges.size === 3) {
-                setTimeout(() => {
+                setTimeout(function() {
                     document.getElementById('completionScreen').classList.add('show');
                     document.getElementById('completionScreen').scrollIntoView({ 
                         behavior: 'smooth', 
@@ -960,11 +937,10 @@
         function updateProgress() {
             const progress = (completedChallenges.size / 3) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressText').textContent = 
-                `التقدم: ${completedChallenges.size} من 3`;
+            document.getElementById('progressText').textContent = 'التقدم: ' + completedChallenges.size + ' من 3';
         }
 
-        document.getElementById('modal').addEventListener('click', (e) => {
+        document.getElementById('modal').addEventListener('click', function(e) {
             if (e.target.id === 'modal') {
                 closeModal();
             }
