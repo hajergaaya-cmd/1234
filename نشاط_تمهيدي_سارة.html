@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشاط تمهيدي: الصباح الفوضوي لسارة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .story-icon {
+            font-size: 5em;
+            margin-bottom: 15px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .problem-box {
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid #FF9800;
+        }
+
+        .problem-title {
+            color: #E65100;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .problem-list {
+            list-style: none;
+        }
+
+        .problem-item {
+            background: white;
+            padding: 18px 25px;
+            margin: 12px 0;
+            border-radius: 12px;
+            border-right: 6px solid #FF6F00;
+            font-size: 1.25em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .problem-item:hover {
+            transform: translateX(-10px);
+            box-shadow: 0 5px 15px rgba(255, 111, 0, 0.3);
+            background: #FFF9E6;
+        }
+
+        .problem-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #00BFA5 0%, #00897B 100%);
+            border-radius: 15px;
+            padding: 35px;
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 191, 165, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .question-text {
+            font-size: 1.6em;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+            line-height: 1.5;
+        }
+
+        .question-mark {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .thinking-section {
+            background: #F5F5F5;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .thinking-title {
+            color: #667eea;
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .textarea-container {
+            position: relative;
+        }
+
+        .solution-input {
+            width: 100%;
+            min-height: 180px;
+            padding: 20px;
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: white;
+            color: #333;
+        }
+
+        .solution-input:focus {
+            outline: none;
+            border-style: solid;
+            border-color: #764ba2;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            background: #FAFAFA;
+        }
+
+        .solution-input::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .char-counter {
+            text-align: left;
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 8px;
+            padding: 0 5px;
+        }
+
+        .hint-box {
+            background: linear-gradient(135deg, #FFF9C4 0%, #FFF59D 100%);
+            border-right: 5px solid #FBC02D;
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            box-shadow: 0 3px 10px rgba(251, 192, 45, 0.2);
+        }
+
+        .hint-icon {
+            font-size: 1.8em;
+            flex-shrink: 0;
+        }
+
+        .hint-text {
+            flex: 1;
+        }
+
+        .hint-label {
+            font-weight: bold;
+            color: #F57F17;
+            margin-bottom: 5px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 12px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 25px auto;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+            text-align: center;
+            font-size: 1.3em;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .ideas-display {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .ideas-display.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .idea-item {
+            background: #F5F5F5;
+            padding: 12px 18px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-right: 4px solid #667eea;
+            font-size: 1.05em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .story-icon {
+                font-size: 3.5em;
+            }
+
+            .problem-item {
+                font-size: 1.05em;
+                padding: 15px 20px;
+            }
+
+            .question-text {
+                font-size: 1.3em;
+            }
+
+            .solution-input {
+                font-size: 1.05em;
+            }
+
+            .btn-submit {
+                padding: 15px 35px;
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="story-icon">😰</div>
+            <h1>قصة: الصباح الفوضوي لسارة</h1>
+            <p class="subtitle">نشاط تمهيدي - درس إنترنت الأشياء</p>
+        </div>
+
+        <div class="problem-box">
+            <div class="problem-title">
+                <span>⚠️</span>
+                <span>المشكلة:</span>
+            </div>
+            <ul class="problem-list">
+                <li class="problem-item">
+                    <span class="problem-icon">❄️</span>
+                    <span>نسيت سارة إطفاء التكييف</span>
+                </li>
+                <li class="problem-item">
+                    <span class="problem-icon">🔥</span>
+                    <span>احترق قدر القهوة على النار</span>
+                </li>
+                <li class="problem-item">
+                    <span class="problem-icon">💡</span>
+                    <span>تركت جميع الأنوار مشتعلة</span>
+                </li>
+                <li class="problem-item">
+                    <span class="problem-icon">💰</span>
+                    <span>فاتورة الكهرباء مرتفعة جداً</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="question-box">
+            <span class="question-mark">❓</span>
+            <div class="question-text">
+                كيف يمكن للأجهزة أن تعمل بذكاء دون تدخل يدوي مستمر؟
+            </div>
+        </div>
+
+        <div class="thinking-section">
+            <div class="thinking-title">
+                <span>💭</span>
+                <span>شارك أفكارك وحلولك الإبداعية</span>
+            </div>
+
+            <div class="hint-box">
+                <span class="hint-icon">💡</span>
+                <div class="hint-text">
+                    <div class="hint-label">فكّر:</div>
+                    <div>ماذا لو كانت الأجهزة "ذكية"؟ كيف ستتصرف؟ ما الذي تحتاجه لتعمل بمفردها؟</div>
+                </div>
+            </div>
+
+            <div class="textarea-container">
+                <textarea 
+                    class="solution-input" 
+                    id="studentIdeas"
+                    placeholder="اكتب حلولك وأفكارك هنا... 
+
+مثال:
+• يمكن للمكيف أن يطفئ نفسه عندما...
+• القدر يمكنه أن ينبه سارة عن طريق...
+• الأنوار تستطيع أن تعرف أن...
+
+كن مبدعاً! لا توجد إجابة خاطئة 🚀"
+                    maxlength="1000"
+                    oninput="updateCharCount()"
+                ></textarea>
+                <div class="char-counter" id="charCounter">0 / 1000 حرف</div>
+            </div>
+
+            <button class="btn-submit" onclick="submitIdeas()">
+                ✨ شارك أفكاري مع الصف
+            </button>
+
+            <div class="success-message" id="successMessage">
+                <span class="success-icon">🎉</span>
+                <div>رائع! أفكارك مميزة ومبدعة!</div>
+                <div style="font-size: 0.9em; margin-top: 10px; opacity: 0.9;">
+                    الآن دعونا نكتشف معاً كيف تعمل هذه الأجهزة الذكية...
+                </div>
+            </div>
+        </div>
+
+        <div class="ideas-display" id="ideasDisplay">
+            <h3 style="color: #667eea; margin-bottom: 15px; text-align: center;">
+                💡 أفكارك المميزة:
+            </h3>
+            <div id="ideasList"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateCharCount() {
+            const textarea = document.getElementById('studentIdeas');
+            const counter = document.getElementById('charCounter');
+            const length = textarea.value.length;
+            counter.textContent = `${length} / 1000 حرف`;
+            
+            if (length > 900) {
+                counter.style.color = '#f44336';
+            } else if (length > 700) {
+                counter.style.color = '#ff9800';
+            } else {
+                counter.style.color = '#999';
+            }
+        }
+
+        function submitIdeas() {
+            const ideas = document.getElementById('studentIdeas').value.trim();
+            const successMessage = document.getElementById('successMessage');
+            const ideasDisplay = document.getElementById('ideasDisplay');
+            const ideasList = document.getElementById('ideasList');
+
+            if (ideas.length < 20) {
+                alert('من فضلك، شارك المزيد من الأفكار! (20 حرف على الأقل)');
+                document.getElementById('studentIdeas').focus();
+                return;
+            }
+
+            // عرض رسالة النجاح
+            successMessage.classList.add('show');
+            
+            // معالجة الأفكار وعرضها
+            const ideaLines = ideas.split('\n').filter(line => line.trim().length > 0);
+            ideasList.innerHTML = '';
+            
+            ideaLines.forEach((idea, index) => {
+                setTimeout(() => {
+                    const ideaItem = document.createElement('div');
+                    ideaItem.className = 'idea-item';
+                    ideaItem.textContent = idea;
+                    ideaItem.style.animation = 'slideIn 0.3s ease-out';
+                    ideasList.appendChild(ideaItem);
+                }, index * 100);
+            });
+
+            ideasDisplay.classList.add('show');
+
+            // تمرير للأسفل بسلاسة
+            setTimeout(() => {
+                successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        // إضافة تأثير على المشكلات عند النقر
+        document.querySelectorAll('.problem-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 10);
+            });
+        });
+
+        // حفظ تلقائي في التخزين المحلي
+        const textarea = document.getElementById('studentIdeas');
+        
+        // استرجاع الأفكار المحفوظة عند تحميل الصفحة
+        window.addEventListener('load', () => {
+            const savedIdeas = localStorage.getItem('saraStoryIdeas');
+            if (savedIdeas) {
+                textarea.value = savedIdeas;
+                updateCharCount();
+            }
+        });
+
+        // حفظ الأفكار أثناء الكتابة
+        textarea.addEventListener('input', () => {
+            localStorage.setItem('saraStoryIdeas', textarea.value);
+        });
+    </script>
+</body>
+</html>

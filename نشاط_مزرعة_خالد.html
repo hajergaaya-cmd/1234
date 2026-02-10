@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قصة: مزرعة خالد الذكية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .farm-icon {
+            font-size: 5em;
+            margin-bottom: 15px;
+            animation: swing 3s ease-in-out infinite;
+        }
+
+        @keyframes swing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .header h1 {
+            color: #2E7D32;
+            font-size: 2.3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .story-section {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 3px solid #4CAF50;
+        }
+
+        .section-title {
+            color: #1B5E20;
+            font-size: 1.7em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .challenges-list {
+            list-style: none;
+        }
+
+        .challenge-item {
+            background: white;
+            padding: 18px 25px;
+            margin: 12px 0;
+            border-radius: 12px;
+            border-right: 6px solid #FF6F00;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .challenge-item:hover {
+            transform: translateX(-10px);
+            box-shadow: 0 5px 15px rgba(255, 111, 0, 0.3);
+            background: #FFF9E6;
+        }
+
+        .challenge-icon {
+            font-size: 1.8em;
+            flex-shrink: 0;
+        }
+
+        .interactive-question {
+            background: linear-gradient(135deg, #1565C0 0%, #1976D2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+            margin: 25px 0;
+            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-question::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .question-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+            line-height: 1.5;
+        }
+
+        .thinking-emoji {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 15px;
+            animation: think 2s ease-in-out infinite;
+        }
+
+        @keyframes think {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .discovery-section {
+            margin-bottom: 25px;
+        }
+
+        .discovery-card {
+            background: white;
+            border: 3px dashed #999;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+            transition: all 0.5s ease;
+            opacity: 0.5;
+        }
+
+        .discovery-card.active {
+            border-color: #4CAF50;
+            border-style: solid;
+            opacity: 1;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+            animation: reveal 0.5s ease-out;
+        }
+
+        @keyframes reveal {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .discovery-title {
+            color: #2E7D32;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .discovery-number {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .discovery-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .discovery-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+        }
+
+        .hint-box {
+            background: linear-gradient(135deg, #FFF9C4 0%, #FFF59D 100%);
+            border-right: 5px solid #FBC02D;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 1.05em;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .hint-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-family: inherit;
+        }
+
+        .option-btn:hover {
+            border-color: #4CAF50;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            border-color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            color: white;
+            border-color: #2E7D32;
+            animation: success 0.5s ease;
+        }
+
+        .option-btn.wrong {
+            background: #FFEBEE;
+            border-color: #F44336;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes success {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+            box-shadow: 0 5px 15px rgba(25, 118, 210, 0.4);
+        }
+
+        .btn-check:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.6);
+        }
+
+        .btn-check:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 1.15em;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.error {
+            background: #FF9800;
+        }
+
+        .final-summary {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            border: 3px solid #4CAF50;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 25px;
+            display: none;
+        }
+
+        .final-summary.show {
+            display: block;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .summary-title {
+            color: #1B5E20;
+            font-size: 1.8em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .element-card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            border-right: 5px solid #4CAF50;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .element-icon {
+            font-size: 3em;
+            flex-shrink: 0;
+        }
+
+        .element-content h3 {
+            color: #2E7D32;
+            font-size: 1.3em;
+            margin-bottom: 8px;
+        }
+
+        .element-content p {
+            color: #666;
+            font-size: 1.05em;
+            line-height: 1.5;
+        }
+
+        .progress-tracker {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .progress-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #E0E0E0;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.completed {
+            background: #4CAF50;
+            transform: scale(1.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.7em;
+            }
+
+            .farm-icon {
+                font-size: 3.5em;
+            }
+
+            .challenge-item {
+                font-size: 1.05em;
+            }
+
+            .question-text {
+                font-size: 1.2em;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="farm-icon">🌾</div>
+            <h1>قصة: مزرعة خالد الذكية</h1>
+            <p class="subtitle">نشاط تفاعلي لاستكشاف عناصر إنترنت الأشياء</p>
+        </div>
+
+        <div class="progress-tracker">
+            <div class="progress-dot" id="dot1"></div>
+            <div class="progress-dot" id="dot2"></div>
+            <div class="progress-dot" id="dot3"></div>
+        </div>
+
+        <div class="story-section">
+            <div class="section-title">
+                <span>🚜</span>
+                <span>التحديات التي واجهها خالد:</span>
+            </div>
+            <ul class="challenges-list">
+                <li class="challenge-item">
+                    <span class="challenge-icon">🌱</span>
+                    <span>ينسى سقايتها - النباتات تذبل</span>
+                </li>
+                <li class="challenge-item">
+                    <span class="challenge-icon">💧</span>
+                    <span>لا يعرف متى تحتاج للماء فعلاً</span>
+                </li>
+                <li class="challenge-item">
+                    <span class="challenge-icon">🌡️</span>
+                    <span>درجة الحرارة غير منتظمة</span>
+                </li>
+                <li class="challenge-item">
+                    <span class="challenge-icon">🚜</span>
+                    <span>يزور المزرعة عدة مرات يومياً</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="interactive-question">
+            <span class="thinking-emoji">🤔</span>
+            <div class="question-text">
+                ما العناصر التي يحتاجها خالد لبناء مزرعة ذكية؟
+            </div>
+        </div>
+
+        <!-- العنصر الأول: ماذا يقيس؟ -->
+        <div class="discovery-section">
+            <div class="discovery-card active" id="card1">
+                <div class="discovery-title">
+                    <div class="discovery-number">1</div>
+                    <span>ماذا يحتاج خالد أن يقيس في مزرعته؟</span>
+                </div>
+
+                <div class="hint-box">
+                    <span class="hint-icon">💡</span>
+                    <div>فكر: ما الذي يجب أن يعرفه خالد عن التربة والنباتات؟</div>
+                </div>
+
+                <div class="options-grid" id="measurement-options">
+                    <button class="option-btn" onclick="selectOption(this, 'moisture', 1)">
+                        💧 رطوبة التربة
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'temperature', 1)">
+                        🌡️ درجة الحرارة
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'light', 1)">
+                        ☀️ الإضاءة
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'manual', 1)">
+                        ✋ القياس اليدوي
+                    </button>
+                </div>
+
+                <button class="btn-check" onclick="checkStep1()">تحقق من إجابتي</button>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+        </div>
+
+        <!-- العنصر الثاني: كيف يراها؟ -->
+        <div class="discovery-section">
+            <div class="discovery-card" id="card2">
+                <div class="discovery-title">
+                    <div class="discovery-number">2</div>
+                    <span>كيف سيرى خالد هذه البيانات وهو في بيته؟</span>
+                </div>
+
+                <div class="hint-box">
+                    <span class="hint-icon">💡</span>
+                    <div>فكر: ما الجهاز الذي يستخدمه خالد يومياً ويمكنه عرض المعلومات؟</div>
+                </div>
+
+                <div class="options-grid" id="device-options">
+                    <button class="option-btn" onclick="selectOption(this, 'phone', 2)">
+                        📱 الهاتف الذكي
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'computer', 2)">
+                        💻 الحاسوب
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'tablet', 2)">
+                        📲 الجهاز اللوحي
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'paper', 2)">
+                        📝 دفتر ورقي
+                    </button>
+                </div>
+
+                <button class="btn-check" onclick="checkStep2()" disabled id="btn2">تحقق من إجابتي</button>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+        </div>
+
+        <!-- العنصر الثالث: كيف تتواصل؟ -->
+        <div class="discovery-section">
+            <div class="discovery-card" id="card3">
+                <div class="discovery-title">
+                    <div class="discovery-number">3</div>
+                    <span>كيف ستصل البيانات من المزرعة إلى هاتف خالد؟</span>
+                </div>
+
+                <div class="hint-box">
+                    <span class="hint-icon">💡</span>
+                    <div>فكر: كيف يتصل هاتفك بالعالم لإرسال واستقبال المعلومات؟</div>
+                </div>
+
+                <div class="options-grid" id="connection-options">
+                    <button class="option-btn" onclick="selectOption(this, 'wifi', 3)">
+                        📶 Wi-Fi
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'bluetooth', 3)">
+                        🔵 Bluetooth
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'internet', 3)">
+                        🌐 الإنترنت
+                    </button>
+                    <button class="option-btn" onclick="selectOption(this, 'walking', 3)">
+                        🚶 المشي والتسليم اليدوي
+                    </button>
+                </div>
+
+                <button class="btn-check" onclick="checkStep3()" disabled id="btn3">تحقق من إجابتي</button>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+        </div>
+
+        <!-- الملخص النهائي -->
+        <div class="final-summary" id="finalSummary">
+            <div class="summary-title">
+                🎉 ممتاز! لقد اكتشفت العناصر الثلاثة!
+            </div>
+
+            <div class="element-card">
+                <div class="element-icon">📡</div>
+                <div class="element-content">
+                    <h3>1️⃣ المستشعرات (Sensors)</h3>
+                    <p>تقيس رطوبة التربة، درجة الحرارة، الإضاءة وغيرها من البيانات المهمة</p>
+                </div>
+            </div>
+
+            <div class="element-card">
+                <div class="element-icon">📱</div>
+                <div class="element-content">
+                    <h3>2️⃣ الأجهزة الذكية (Smart Devices)</h3>
+                    <p>الهاتف، الحاسوب، الجهاز اللوحي - تعرض البيانات وتتيح التحكم</p>
+                </div>
+            </div>
+
+            <div class="element-card">
+                <div class="element-icon">🌐</div>
+                <div class="element-content">
+                    <h3>3️⃣ طرق الاتصال (Communication)</h3>
+                    <p>Wi-Fi، Bluetooth، الإنترنت - تنقل البيانات بين الأجهزة والمستشعرات</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px; padding: 25px; background: white; border-radius: 12px;">
+                <div style="font-size: 4em; margin-bottom: 15px;">🌟</div>
+                <p style="font-size: 1.3em; color: #2E7D32; font-weight: bold; line-height: 1.6;">
+                    هذه هي العناصر الثلاثة الأساسية<br>
+                    لأي نظام إنترنت أشياء!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedAnswers = {
+            step1: new Set(),
+            step2: null,
+            step3: new Set()
+        };
+
+        let completedSteps = 0;
+
+        function selectOption(button, value, step) {
+            const container = button.parentElement;
+            const buttons = container.querySelectorAll('.option-btn');
+            
+            if (step === 1 || step === 3) {
+                // خيارات متعددة
+                button.classList.toggle('selected');
+                if (button.classList.contains('selected')) {
+                    selectedAnswers[`step${step}`].add(value);
+                } else {
+                    selectedAnswers[`step${step}`].delete(value);
+                }
+            } else {
+                // خيار واحد فقط
+                buttons.forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                selectedAnswers[`step${step}`] = value;
+            }
+        }
+
+        function checkStep1() {
+            const feedback = document.getElementById('feedback1');
+            const correctAnswers = ['moisture', 'temperature', 'light'];
+            const selected = selectedAnswers.step1;
+
+            if (selected.size === 0) {
+                feedback.textContent = '⚠️ من فضلك اختر إجابة واحدة على الأقل';
+                feedback.className = 'feedback error show';
+                return;
+            }
+
+            const hasManual = selected.has('manual');
+            const hasCorrect = correctAnswers.some(ans => selected.has(ans));
+
+            if (hasManual && !hasCorrect) {
+                feedback.textContent = '🤔 القياس اليدوي هو المشكلة الأصلية! نحتاج قياس تلقائي. فكر في أجهزة تقيس بنفسها...';
+                feedback.className = 'feedback error show';
+                return;
+            }
+
+            if (!hasCorrect) {
+                feedback.textContent = '💭 فكر في المعلومات التي تحتاجها النباتات: هل التربة رطبة؟ هل الجو حار؟';
+                feedback.className = 'feedback error show';
+                return;
+            }
+
+            // إجابة صحيحة
+            feedback.textContent = '🎉 ممتاز! هذه هي المستشعرات (Sensors) - أجهزة تقيس البيانات تلقائياً!';
+            feedback.className = 'feedback show';
+            
+            if (completedSteps < 1) {
+                completedSteps = 1;
+                updateProgress();
+                setTimeout(() => {
+                    activateCard('card2');
+                    document.getElementById('btn2').disabled = false;
+                }, 1500);
+            }
+        }
+
+        function checkStep2() {
+            const feedback = document.getElementById('feedback2');
+            const selected = selectedAnswers.step2;
+
+            if (!selected) {
+                feedback.textContent = '⚠️ من فضلك اختر إجابة';
+                feedback.className = 'feedback error show';
+                return;
+            }
+
+            if (selected === 'paper') {
+                feedback.textContent = '📝 الدفتر الورقي لا يستقبل البيانات تلقائياً! نحتاج جهاز ذكي متصل بالإنترنت';
+                feedback.className = 'feedback error show';
+                return;
+            }
+
+            if (['phone', 'computer', 'tablet'].includes(selected)) {
+                feedback.textContent = '🎉 صحيح! هذه أجهزة ذكية (Smart Devices) - تعرض البيانات وتتيح التحكم!';
+                feedback.className = 'feedback show';
+                
+                if (completedSteps < 2) {
+                    completedSteps = 2;
+                    updateProgress();
+                    setTimeout(() => {
+                        activateCard('card3');
+                        document.getElementById('btn3').disabled = false;
+                    }, 1500);
+                }
+            } else {
+                feedback.textContent = '💭 حاول مرة أخرى!';
+                feedback.className = 'feedback error show';
+            }
+        }
+
+        function checkStep3() {
+            const feedback = document.getElementById('feedback3');
+            const selected = selectedAnswers.step3;
+
+            if (selected.size === 0) {
+                feedback.textContent = '⚠️ من فضلك اختر إجابة واحدة على الأقل';
+                feedback.className = 'feedback error show';
+                return;
+            }
+
+            const hasWalking = selected.has('walking');
+            const hasCorrect = ['wifi', 'bluetooth', 'internet'].some(ans => selected.has(ans));
+
+            if (hasWalking && !hasCorrect) {
+                feedback.textContent = '🚶 المشي بطيء جداً! نحتاج اتصال لاسلكي سريع';
+                feedback.className = 'feedback error show';
+                return;
+            }
+
+            if (!hasCorrect) {
+                feedback.textContent = '💭 فكر: كيف يتصل هاتفك بالعالم؟';
+                feedback.className = 'feedback error show';
+                return;
+            }
+
+            // إجابة صحيحة
+            feedback.textContent = '🎉 ممتاز! هذه طرق الاتصال (Communication) - تنقل البيانات بسرعة!';
+            feedback.className = 'feedback show';
+            
+            if (completedSteps < 3) {
+                completedSteps = 3;
+                updateProgress();
+                setTimeout(() => {
+                    document.getElementById('finalSummary').classList.add('show');
+                    document.getElementById('finalSummary').scrollIntoView({ behavior: 'smooth' });
+                }, 1500);
+            }
+        }
+
+        function activateCard(cardId) {
+            document.getElementById(cardId).classList.add('active');
+            document.getElementById(cardId).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function updateProgress() {
+            for (let i = 1; i <= completedSteps; i++) {
+                document.getElementById(`dot${i}`).classList.add('completed');
+            }
+        }
+
+        // تأثيرات على التحديات
+        document.querySelectorAll('.challenge-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 10);
+            });
+        });
+    </script>
+</body>
+</html>
