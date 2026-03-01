@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط العلم | Forever في سكراتش</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: #0d1b2a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 35px 35px;
+    pointer-events: none;
+  }
+  h1 {
+    color: #fff;
+    font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: #ccc;
+    font-size: 0.95rem;
+    margin-bottom: 35px;
+    text-align: center;
+    background: rgba(139,28,63,0.2);
+    border: 1px solid rgba(139,28,63,0.5);
+    padding: 6px 22px;
+    border-radius: 20px;
+  }
+  .arena {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .flag-station {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 22px 18px;
+  }
+  /* Scratch blocks */
+  .scratch-stack { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; width: 100%; }
+  .sb {
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    color: #fff;
+    font-weight: 700;
+    position: relative;
+    min-width: 155px;
+  }
+  .sb::before {
+    content:'';
+    position:absolute;
+    top:-7px; left:12px;
+    width:12px; height:7px;
+    background:inherit;
+    border-radius:3px 3px 0 0;
+  }
+  .sb-yellow { background:#F1C40F; color:#333; box-shadow:0 3px 0 #c9a100; }
+  .sb-orange { background:#FF6B00; box-shadow:0 3px 0 #c04e00; }
+  .sb-gold   { background:#FFAB19; color:#333; box-shadow:0 3px 0 #d48a00; }
+  .sb-purple { background:#9B59B6; box-shadow:0 3px 0 #7d3c98; }
+  .sb-indent { margin-right: 18px; }
+  /* Flag area */
+  .flag-area {
+    position: relative;
+    width: 200px;
+    height: 155px;
+  }
+  .pole {
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 7px; height: 150px;
+    background: linear-gradient(to right, #9a6820, #f0d060, #9a6820);
+    border-radius: 4px;
+    z-index: 2;
+  }
+  .pole-ball {
+    position: absolute;
+    left: -3px; top: -6px;
+    width: 13px; height: 13px;
+    background: radial-gradient(circle at 35% 35%, #ffd700, #a07020);
+    border-radius: 50%;
+    z-index: 3;
+  }
+  .pole-base {
+    position: absolute;
+    left: -9px; bottom: 0;
+    width: 25px; height: 8px;
+    background: linear-gradient(to right, #666, #bbb, #666);
+    border-radius: 4px;
+    z-index: 2;
+  }
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 7px;
+    border-radius: 0 3px 3px 0;
+  }
+  /* Counter */
+  .counter {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 7px 18px;
+    color: #fff;
+    font-size: 0.88rem;
+    min-width: 160px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .counter.done { border-color: #2ecc71; color: #2ecc71; background: rgba(46,204,113,0.08); }
+  .counter.running { border-color: #F1C40F; color: #F1C40F; background: rgba(241,196,15,0.08); }
+  .lbl { color: #fff; font-size: 1rem; font-weight: 700; text-align: center; }
+  .lbl small { display: block; font-size: 0.73rem; color: #aaa; font-weight: 400; margin-top: 3px; }
+  .btn {
+    padding: 10px 22px;
+    border-radius: 25px;
+    border: none;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-orange { background: linear-gradient(135deg,#FF6B00,#ff9a00); color:#fff; box-shadow:0 4px 14px rgba(255,107,0,0.4); }
+  .btn-maroon { background: linear-gradient(135deg,#7a1535,#b0204f); color:#fff; box-shadow:0 4px 14px rgba(139,28,63,0.5); }
+  .btn-stop   { background: #2c2c2c; color: #eee; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .divider {
+    width: 1px; height: 360px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15), transparent);
+    align-self: center;
+  }
+  .inf { font-size: 2.4rem; color: #F1C40F; animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.4; transform:scale(1.2); }
+  }
+  .question-box {
+    margin-top: 32px;
+    background: rgba(255,255,255,0.04);
+    border: 2px dashed rgba(139,28,63,0.55);
+    border-radius: 16px;
+    padding: 16px 28px;
+    color: #eee;
+    font-size: 1rem;
+    text-align: center;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+  .question-box strong { color: #F1C40F; }
+</style>
+</head>
+<body>
+
+<h1>🇶🇦 نشاط العلم | درس Forever في سكراتش</h1>
+<p class="subtitle">ما الفرق بين التكرار المحدود واللانهائي؟</p>
+
+<div class="arena">
+
+  <!-- ===== 3 TIMES ===== -->
+  <div class="flag-station">
+    <div class="scratch-stack">
+      <div class="sb sb-yellow">🚩 عند النقر على العلم</div>
+      <div class="sb-indent">
+        <div class="sb sb-orange">كرّر <strong>3</strong> مرات</div>
+        <div class="sb-indent">
+          <div class="sb sb-purple">ارفرف بالعلم</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flag-area">
+      <div class="pole">
+        <div class="pole-ball"></div>
+      </div>
+      <div class="pole-base"></div>
+      <canvas id="canvas3" width="185" height="115"></canvas>
+    </div>
+
+    <div class="counter" id="counter3">جاهز للتشغيل</div>
+    <div class="lbl">repeat (3) <small>يتوقف بعد ٣ مرات</small></div>
+    <button class="btn btn-orange" id="btn3" onclick="runThree()">▶ ابدأ (3 مرات)</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ===== FOREVER ===== -->
+  <div class="flag-station">
+    <div class="scratch-stack">
+      <div class="sb sb-yellow">🚩 عند النقر على العلم</div>
+      <div class="sb-indent">
+        <div class="sb sb-gold">🔄 للأبد (forever)</div>
+        <div class="sb-indent">
+          <div class="sb sb-purple">ارفرف بالعلم</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flag-area">
+      <div class="pole">
+        <div class="pole-ball"></div>
+      </div>
+      <div class="pole-base"></div>
+      <canvas id="canvasF" width="185" height="115"></canvas>
+    </div>
+
+    <div class="counter" id="counterF">جاهز للتشغيل</div>
+    <div class="inf" id="infBadge" style="display:none;">∞</div>
+    <div class="lbl">forever <small>لا يتوقف أبداً!</small></div>
+    <div class="btn-row">
+      <button class="btn btn-maroon" id="btnF" onclick="runForever()">▶ ابدأ (forever)</button>
+      <button class="btn btn-stop" id="btnStop" onclick="stopForever()" disabled>⏹ إيقاف</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="question-box">
+  💬 <strong>سؤال للنقاش:</strong> لماذا علم قطر يرفرف دائماً دون توقف؟<br>
+  وأي كتلة في سكراتش تعبّر عن هذا؟
+</div>
+
+<script>
+// =========================================================
+//  Draw proper Qatar flag with wave using Canvas 2D
+//  W=185, H=115
+//  White: left ~30px  |  Serrated edge  |  Maroon: rest
+//  Serrations: 9 teeth pointing right
+// =========================================================
+
+function drawQatarFlag(ctx, W, H, waveOffset, amp) {
+  ctx.clearRect(0, 0, W, H);
+
+  const TEETH = 9;
+  const SERR_X = 38;   // x where teeth tips reach
+
+  // Helper: apply wave deformation
+  // Wave magnitude increases from left to right
+  function wy(x, baseY) {
+    const progress = x / W;
+    return baseY + Math.sin(progress * Math.PI * 2.5 - waveOffset) * amp * progress;
+  }
+
+  const STEPS = 80;
+
+  // ---- 1. FILL WHITE background (whole flag shape) ----
+  ctx.beginPath();
+  for (let i = 0; i <= STEPS; i++) {
+    const x = (i / STEPS) * W;
+    const y = wy(x, 0);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  for (let i = STEPS; i >= 0; i--) {
+    const x = (i / STEPS) * W;
+    ctx.lineTo(x, wy(x, H));
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+
+  // ---- 2. FILL MAROON region (from serrated line rightward) ----
+  const toothH = H / TEETH;
+
+  ctx.beginPath();
+  // Start at top-left of white area, walk down serrated edge
+  ctx.moveTo(0, wy(0, 0));
+
+  for (let i = 0; i < TEETH; i++) {
+    const yBase = i * toothH;
+    const yMid  = (i + 0.5) * toothH;
+    const yEnd  = (i + 1) * toothH;
+    // Tip of tooth (pointing right into maroon)
+    ctx.lineTo(SERR_X, wy(SERR_X, yMid));
+    // Back to left edge at bottom of tooth
+    ctx.lineTo(0, wy(0, yEnd));
+  }
+
+  // Walk along bottom from left to right
+  for (let i = 0; i <= STEPS; i++) {
+    const x = (i / STEPS) * W;
+    ctx.lineTo(x, wy(x, H));
+  }
+  // Walk along top from right to left (stopping at serrated region)
+  for (let i = STEPS; i >= 0; i--) {
+    const x = (i / STEPS) * W;
+    if (x < SERR_X) break;
+    ctx.lineTo(x, wy(x, 0));
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#8D1B3D';
+  ctx.fill();
+
+  // ---- 3. Shadow on pole side ----
+  const grad = ctx.createLinearGradient(0, 0, 10, 0);
+  grad.addColorStop(0, 'rgba(0,0,0,0.18)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 10, H);
+}
+
+const C3 = document.getElementById('canvas3').getContext('2d');
+const CF = document.getElementById('canvasF').getContext('2d');
+const W = 185, H = 115;
+
+// Initial static
+drawQatarFlag(C3, W, H, 0, 0);
+drawQatarFlag(CF, W, H, 0, 0);
+
+// ===== 3 TIMES =====
+let threeRunning = false;
+
+function runThree() {
+  if (threeRunning) return;
+  threeRunning = true;
+  document.getElementById('btn3').disabled = true;
+  const counter = document.getElementById('counter3');
+
+  let waveCount = 0;
+  const TOTAL = 3;
+  const WAVE_DURATION = 1100;
+
+  function doWave() {
+    if (waveCount >= TOTAL) {
+      drawQatarFlag(C3, W, H, 0, 0);
+      counter.textContent = '✅ انتهى بعد 3 مرات!';
+      counter.className = 'counter done';
+      document.getElementById('btn3').disabled = false;
+      threeRunning = false;
+      return;
+    }
+    waveCount++;
+    counter.textContent = `🔄 رفرفة ${waveCount} من ${TOTAL}`;
+    counter.className = 'counter running';
+
+    const start = performance.now();
+    (function frame(now) {
+      const t = Math.min((now - start) / WAVE_DURATION, 1);
+      const offset = t * Math.PI * 5;
+      const amplitude = 13 * Math.sin(t * Math.PI); // fade in/out
+      drawQatarFlag(C3, W, H, offset, amplitude);
+      if (t < 1) requestAnimationFrame(frame);
+      else setTimeout(doWave, 250);
+    })(start);
+  }
+  doWave();
+}
+
+// ===== FOREVER =====
+let fRAF = null, fCount = 0, fOffset = 0, fLastT = null, fWaveTimer = 0;
+
+function runForever() {
+  if (fRAF) return;
+  document.getElementById('btnF').disabled = true;
+  document.getElementById('btnStop').disabled = false;
+  document.getElementById('infBadge').style.display = 'block';
+  const counter = document.getElementById('counterF');
+  counter.className = 'counter running';
+  fCount = 0; fOffset = 0; fLastT = null; fWaveTimer = 0;
+
+  (function frame(now) {
+    if (!fLastT) fLastT = now;
+    const dt = now - fLastT;
+    fLastT = now;
+    fOffset += dt * 0.005;
+    fWaveTimer += dt;
+    if (fWaveTimer >= 1000) {
+      fWaveTimer -= 1000;
+      fCount++;
+      counter.textContent = `🔄 رفرفة رقم ${fCount}...`;
+    }
+    drawQatarFlag(CF, W, H, fOffset, 13);
+    fRAF = requestAnimationFrame(frame);
+  })(performance.now());
+}
+
+function stopForever() {
+  if (fRAF) { cancelAnimationFrame(fRAF); fRAF = null; }
+  drawQatarFlag(CF, W, H, 0, 0);
+  document.getElementById('btnF').disabled = false;
+  document.getElementById('btnStop').disabled = true;
+  document.getElementById('infBadge').style.display = 'none';
+  const counter = document.getElementById('counterF');
+  counter.textContent = `⏹ توقف عند رفرفة ${fCount}`;
+  counter.className = 'counter done';
+}
+</script>
+</body>
+</html>
