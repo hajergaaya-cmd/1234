@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مهمة المبرمج المسلم 🌙</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #F0D080;
+  --dark-green: #1B4332;
+  --mid-green: #2D6A4F;
+  --light-green: #52B788;
+  --cream: #FFF8EE;
+  --bg: #0D1F15;
+  --card: #162B1E;
+  --card2: #1E3828;
+  --text: #F5EDD8;
+  --error-red: #E63946;
+  --correct: #52B788;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Geometric Islamic pattern background */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(201,168,76,0.03) 0px, rgba(201,168,76,0.03) 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(-45deg, rgba(201,168,76,0.03) 0px, rgba(201,168,76,0.03) 1px, transparent 1px, transparent 20px);
+  pointer-events:none; z-index:0;
+}
+
+/* Stars */
+.stars-bg {
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  overflow:hidden;
+}
+.star-dot {
+  position:absolute;
+  width:2px; height:2px;
+  background:rgba(240,208,128,0.6);
+  border-radius:50%;
+  animation: twinkle var(--d, 3s) ease-in-out infinite var(--delay, 0s);
+}
+@keyframes twinkle { 0%,100%{opacity:0.2} 50%{opacity:1} }
+
+/* ====== HEADER ====== */
+header {
+  position:relative; z-index:10;
+  text-align:center;
+  padding:30px 20px 16px;
+  border-bottom:1px solid rgba(201,168,76,0.2);
+}
+.arabic-ornament {
+  font-size:1.6rem;
+  color:var(--gold);
+  letter-spacing:8px;
+  margin-bottom:4px;
+  display:block;
+}
+.main-title {
+  font-family:'Amiri', serif;
+  font-size:2.4rem;
+  color:var(--gold-light);
+  text-shadow:0 0 30px rgba(201,168,76,0.4);
+  margin-bottom:4px;
+  line-height:1.2;
+}
+.main-subtitle { color:var(--light-green); font-size:1rem; font-weight:700; }
+
+/* Name bar */
+.name-bar {
+  position:relative; z-index:10;
+  background:rgba(201,168,76,0.07);
+  border-bottom:1px solid rgba(201,168,76,0.15);
+  padding:10px 20px;
+  display:flex; align-items:center; gap:12px;
+  justify-content:center; flex-wrap:wrap;
+}
+.name-bar label { font-weight:700; color:var(--gold); font-size:0.95rem; }
+.name-input {
+  padding:7px 14px; border-radius:10px;
+  border:1.5px solid rgba(201,168,76,0.3);
+  background:rgba(201,168,76,0.07);
+  color:var(--text); font-family:'Tajawal',sans-serif;
+  font-size:1rem; outline:none; min-width:180px;
+  transition:border-color 0.2s;
+}
+.name-input:focus { border-color:var(--gold); }
+
+/* ====== PROGRESS BAR ====== */
+.progress-container {
+  position:relative; z-index:10;
+  max-width:860px; margin:16px auto 0;
+  padding:0 20px;
+}
+.progress-dots {
+  display:flex; justify-content:center;
+  align-items:center; gap:6px; flex-wrap:wrap;
+}
+.pdot {
+  width:32px; height:32px; border-radius:50%;
+  background:var(--card2); border:2px solid #2a4a35;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.8rem; font-weight:800; color:#555;
+  transition:all 0.4s; cursor:pointer;
+}
+.pdot.active { background:var(--gold); border-color:var(--gold-light); color:#1B2A10; box-shadow:0 0 14px rgba(201,168,76,0.5); }
+.pdot.done { background:var(--correct); border-color:#3a8a6a; color:#fff; }
+.pdot-line { flex:1; max-width:30px; height:2px; background:#2a4a35; border-radius:2px; }
+.pdot-line.done { background:var(--correct); }
+
+/* ====== MAIN ====== */
+main { max-width:860px; margin:0 auto; padding:20px 20px 60px; position:relative; z-index:10; }
+
+.scene { display:none; animation:fadeUp 0.5s ease; }
+.scene.visible { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+
+/* ====== STORY CARD ====== */
+.story-card {
+  background:linear-gradient(135deg, var(--card), var(--card2));
+  border-radius:20px; padding:20px 24px;
+  border:1px solid rgba(201,168,76,0.25);
+  margin-bottom:20px;
+  position:relative; overflow:hidden;
+}
+.story-card::before {
+  content:'';
+  position:absolute; top:-30px; left:-30px;
+  width:120px; height:120px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(201,168,76,0.1), transparent 70%);
+}
+.story-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(201,168,76,0.15);
+  border:1px solid rgba(201,168,76,0.3);
+  border-radius:20px; padding:4px 14px;
+  font-size:0.85rem; color:var(--gold);
+  margin-bottom:12px; font-weight:700;
+}
+.story-text {
+  font-family:'Amiri', serif;
+  font-size:1.2rem; line-height:2;
+  color:var(--cream);
+}
+.story-highlight {
+  color:var(--gold-light); font-weight:700;
+}
+.quran-ref {
+  margin-top:12px;
+  padding:10px 14px;
+  background:rgba(201,168,76,0.08);
+  border-right:3px solid var(--gold);
+  border-radius:0 10px 10px 0;
+  font-family:'Amiri', serif;
+  font-size:1rem; color:var(--gold-light);
+  font-style:italic;
+}
+
+/* ====== MISSION BOX ====== */
+.mission-box {
+  background:rgba(82,183,136,0.1);
+  border:1.5px solid rgba(82,183,136,0.3);
+  border-radius:14px; padding:14px 18px;
+  margin-bottom:20px;
+  display:flex; align-items:flex-start; gap:12px;
+}
+.mission-icon { font-size:1.8rem; flex-shrink:0; }
+.mission-text h3 { color:var(--light-green); font-size:1rem; margin-bottom:4px; }
+.mission-text p { color:#bbb; font-size:0.9rem; line-height:1.6; }
+
+/* ====== CODE AREA ====== */
+.code-section {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:16px; margin-bottom:20px;
+}
+@media(max-width:600px){.code-section{grid-template-columns:1fr;}}
+
+.code-panel {
+  background:var(--card);
+  border-radius:16px; padding:16px;
+  border:1.5px solid #2a4a35;
+}
+.code-panel-title {
+  font-size:0.85rem; font-weight:800;
+  color:var(--gold); text-transform:uppercase;
+  letter-spacing:1px; margin-bottom:12px;
+  display:flex; align-items:center; gap:6px;
+}
+
+/* Scratch blocks */
+.s-block {
+  display:flex; align-items:center; gap:6px;
+  padding:9px 14px; border-radius:7px;
+  font-family:'Tajawal',sans-serif;
+  font-size:0.92rem; font-weight:700;
+  margin:4px 0; position:relative;
+  border-bottom:3px solid rgba(0,0,0,0.25);
+  cursor:default; user-select:none;
+  transition:all 0.25s;
+}
+.s-block.hat { border-radius:20px 20px 7px 7px; }
+.s-block.hat::before {
+  content:'';
+  position:absolute; top:0; right:14px;
+  width:22px; height:9px;
+  background:inherit; filter:brightness(1.15);
+  border-radius:50% 50% 0 0;
+}
+.s-block.indent { margin-right:22px; }
+.s-block.indent2 { margin-right:44px; }
+
+/* colors */
+.b-events { background:#FFAB19; color:#fff; }
+.b-control { background:#FFAB19; color:#fff; }
+.b-motion { background:#4C97FF; color:#fff; }
+.b-wait { background:#FFAB19; color:#fff; }
+.b-looks { background:#9966FF; color:#fff; }
+
+/* bug state */
+.s-block.bug-block {
+  cursor:pointer;
+  animation: bugPulse 1.8s ease-in-out infinite;
+}
+.s-block.bug-block:hover {
+  transform:scale(1.04);
+  box-shadow:0 0 18px rgba(230,57,70,0.5);
+  border:2px solid var(--error-red);
+}
+@keyframes bugPulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(230,57,70,0)}
+  50%{box-shadow:0 0 12px 3px rgba(230,57,70,0.35)}
+}
+.s-block.found-bug {
+  background:var(--error-red) !important;
+  animation:none;
+  border:2px solid #ff8888;
+}
+.s-block.fixed-block {
+  background:#52B788 !important;
+  animation:none;
+  border:2px solid #a8e6cf;
+}
+
+/* bracket for loops */
+.loop-bracket {
+  border-right:4px solid rgba(255,171,25,0.4);
+  margin-right:10px;
+  padding:2px 0 2px 0;
+}
+
+/* number badge inside block */
+.num-badge {
+  background:rgba(255,255,255,0.25);
+  border-radius:10px; padding:1px 8px;
+  font-size:0.85rem; font-weight:900;
+}
+.num-badge.wrong { background:var(--error-red); animation:badgePulse 1s ease-in-out infinite; }
+.num-badge.right { background:#2d6a4f; }
+@keyframes badgePulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+/* ====== FIX PANEL ====== */
+.fix-panel {
+  background:var(--card2);
+  border-radius:14px; padding:16px;
+  border:1.5px solid rgba(201,168,76,0.2);
+  margin-bottom:20px;
+  display:none;
+  animation:fadeUp 0.4s ease;
+}
+.fix-panel.show { display:block; }
+.fix-title { color:var(--gold); font-weight:800; font-size:1rem; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.fix-options { display:flex; gap:10px; flex-wrap:wrap; }
+.fix-btn {
+  padding:10px 18px; border-radius:10px;
+  border:1.5px solid #444; background:var(--card);
+  color:var(--text); font-family:'Tajawal',sans-serif;
+  font-size:0.95rem; font-weight:700; cursor:pointer;
+  transition:all 0.2s; display:flex; align-items:center; gap:8px;
+}
+.fix-btn:hover { border-color:var(--gold); background:rgba(201,168,76,0.1); transform:translateY(-1px); }
+.fix-btn.correct-fix { border-color:var(--correct); background:rgba(82,183,136,0.15); }
+.fix-btn.wrong-fix { border-color:var(--error-red); background:rgba(230,57,70,0.1); }
+
+/* ====== FEEDBACK ====== */
+.feedback-box {
+  border-radius:14px; padding:16px 20px;
+  margin-bottom:20px; display:none;
+  animation:fadeUp 0.3s ease;
+  font-size:1rem; font-weight:700;
+  line-height:1.7;
+}
+.feedback-box.show { display:block; }
+.feedback-box.correct {
+  background:rgba(82,183,136,0.15);
+  border:1.5px solid rgba(82,183,136,0.4);
+  color:var(--correct);
+}
+.feedback-box.wrong {
+  background:rgba(230,57,70,0.1);
+  border:1.5px solid rgba(230,57,70,0.3);
+  color:#ff8888;
+}
+
+/* ====== BUTTONS ====== */
+.btn {
+  padding:11px 22px; border-radius:50px; border:none;
+  cursor:pointer; font-family:'Tajawal',sans-serif;
+  font-weight:800; font-size:1rem;
+  transition:all 0.2s; display:inline-flex; align-items:center; gap:7px;
+}
+.btn-gold {
+  background:linear-gradient(135deg, var(--gold), #a07830);
+  color:#1B2A10; box-shadow:0 4px 16px rgba(201,168,76,0.35);
+}
+.btn-gold:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(201,168,76,0.5); }
+.btn-ghost { background:var(--card2); color:#aaa; border:1.5px solid #2a4a35; }
+.btn-green {
+  background:linear-gradient(135deg, var(--light-green), var(--dark-green));
+  color:#fff; box-shadow:0 4px 16px rgba(82,183,136,0.3);
+}
+
+.nav-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:20px; }
+
+/* ====== SCORE / COMPLETE ====== */
+.complete-card {
+  text-align:center;
+  background:linear-gradient(135deg, var(--card), var(--dark-green));
+  border-radius:24px; padding:32px 24px;
+  border:2px solid rgba(201,168,76,0.4);
+  box-shadow:0 0 60px rgba(201,168,76,0.1);
+}
+.trophy { font-size:4rem; display:block; margin-bottom:12px; animation:bounce 1.5s ease-in-out infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.complete-name { color:var(--gold-light); font-size:1.6rem; font-weight:900; margin-bottom:8px; }
+.complete-msg { color:var(--light-green); font-size:1.1rem; margin-bottom:20px; }
+.score-row { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:16px 0; }
+.score-item {
+  background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3);
+  border-radius:14px; padding:12px 20px; text-align:center;
+}
+.score-num { font-size:2rem; font-weight:900; color:var(--gold); display:block; }
+.score-lbl { font-size:0.8rem; color:#aaa; }
+
+/* ====== TOAST ====== */
+.toast {
+  position:fixed; bottom:28px; right:28px;
+  background:var(--mid-green); color:#fff;
+  padding:12px 20px; border-radius:12px;
+  font-weight:700; font-size:0.95rem;
+  box-shadow:0 6px 20px rgba(0,0,0,0.4);
+  transform:translateY(80px); opacity:0;
+  transition:all 0.4s; z-index:1000;
+  border:1px solid rgba(201,168,76,0.3);
+}
+.toast.show { transform:translateY(0); opacity:1; }
+
+/* ====== CONFETTI ====== */
+.cp {
+  position:fixed; width:9px; height:9px; border-radius:2px;
+  pointer-events:none; z-index:999;
+  animation:cf var(--d,2s) ease forwards var(--dl,0s);
+}
+@keyframes cf { 0%{transform:translateY(-10px) rotate(0);opacity:1} 100%{transform:translateY(105vh) rotate(600deg);opacity:0} }
+
+/* hint button */
+.hint-btn {
+  background:none; border:1px dashed rgba(201,168,76,0.4);
+  color:var(--gold); border-radius:8px;
+  padding:5px 12px; font-size:0.85rem;
+  cursor:pointer; font-family:'Tajawal',sans-serif;
+  transition:all 0.2s; margin-top:8px; display:inline-flex; align-items:center; gap:5px;
+}
+.hint-btn:hover { background:rgba(201,168,76,0.1); }
+.hint-text {
+  background:rgba(201,168,76,0.08);
+  border-right:3px solid var(--gold);
+  border-radius:0 8px 8px 0;
+  padding:8px 12px; margin-top:8px;
+  font-size:0.9rem; color:var(--gold-light);
+  display:none;
+}
+.hint-text.show { display:block; animation:fadeUp 0.3s; }
+</style>
+</head>
+<body>
+
+<!-- Stars background -->
+<div class="stars-bg" id="starsContainer"></div>
+
+<header>
+  <span class="arabic-ornament">❧ ✦ ❧</span>
+  <div class="main-title">مهمة المبرمج المسلم 🌙</div>
+  <div class="main-subtitle">اكتشف الأخطاء البرمجية وصوّبها — الصف الرابع</div>
+</header>
+
+<div class="name-bar">
+  <label>👩‍🎓 اسمك:</label>
+  <input class="name-input" id="studentName" type="text" placeholder="اكتبي اسمك هنا..." maxlength="40">
+</div>
+
+<div class="progress-container">
+  <div class="progress-dots" id="progressDots"></div>
+</div>
+
+<main>
+
+<!-- ======= SCENE 1 ======= -->
+<div class="scene visible" id="scene1">
+  <div class="story-card">
+    <div class="story-badge">📖 القصة — الجزء الأول</div>
+    <div class="story-text">
+      بعد صلاة الفجر، جلس <span class="story-highlight">عبدالله</span> يمسك مسبحته
+      ويقول: "سبحان الله" <span class="story-highlight">10 مرات</span> كما علّمه أبوه.<br>
+      ففكّر: "هل أستطيع برمجة عدّاد تسبيح في سكراتش؟" 🌙<br>
+      كتب الكود، لكنه لاحظ أن الشخصية تتوقف عن التسبيح قبل أن تكمل العدد!<br>
+      قال: <em>"إِنَّ اللَّهَ يُحِبُّ إِذَا عَمِلَ أَحَدُكُمْ عَمَلًا أَنْ يُتْقِنَهُ"</em>
+      — فقرر إصلاح الكود بدقة وإتقان.
+    </div>
+    <div class="quran-ref">💬 "إن الله يحب إذا عمل أحدكم عملاً أن يتقنه" — حديث شريف</div>
+  </div>
+
+  <div class="mission-box">
+    <div class="mission-icon">📿</div>
+    <div class="mission-text">
+      <h3>مهمتك — التحدي الأول</h3>
+      <p>التسبيح يجب أن يتكرر <strong>10 مرات</strong>، لكن الكود كُتب فيه عدد خاطئ!<br>
+      اضغطي على اللبنة التي فيها <strong>الخطأ</strong> لتحديدها.</p>
+      <button class="hint-btn" onclick="toggleHint('h1')">💡 تلميح</button>
+      <div class="hint-text" id="h1">تفحصي لبنة repeat — كم مرة يجب أن تقول الشخصية "سبحان الله"؟</div>
+    </div>
+  </div>
+
+  <div class="code-section">
+    <div class="code-panel">
+      <div class="code-panel-title">🐛 الكود فيه خطأ — اضغطي على اللبنة الخاطئة</div>
+      <div class="s-block b-events hat">🚩 when clicked</div>
+      <div class="loop-bracket">
+        <div class="s-block b-control bug-block" id="s1-bug" onclick="foundBug(1)" title="اضغطي هنا!">
+          🔁 repeat <span class="num-badge wrong" id="s1-num">3</span>
+        </div>
+        <div>
+          <div class="s-block b-looks indent">💬 say سبحان الله</div>
+          <div class="s-block b-wait indent">⏳ wait 1 secs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-panel">
+      <div class="code-panel-title">📋 الخوارزمية الصحيحة</div>
+      <div style="direction:rtl">
+        <div style="display:flex;align-items:center;gap:8px;margin:6px 0;color:#ccc;font-size:0.9rem">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--mid-green);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0">1</div>
+          ابدأ البرنامج
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:6px 0;color:var(--gold-light);font-size:0.9rem;font-weight:700">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;color:#1B2A10">2</div>
+          كرر <strong>10 مرات</strong> 📿
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:6px 0;color:#ccc;font-size:0.9rem;padding-right:16px">
+          <div style="width:24px;height:24px;border-radius:50%;background:#2a4a35;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0">3</div>
+          قل "سبحان الله"
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:6px 0;color:#ccc;font-size:0.9rem;padding-right:16px">
+          <div style="width:24px;height:24px;border-radius:50%;background:#2a4a35;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0">4</div>
+          انتظر ثانية واحدة
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:6px 0;color:#ccc;font-size:0.9rem">
+          <div style="width:24px;height:24px;border-radius:50%;background:#2a4a35;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0">5</div>
+          نهاية الكود
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fix panel -->
+  <div class="fix-panel" id="fix1">
+    <div class="fix-title">✅ وجدتِ الخطأ! الآن اختاري الرقم الصحيح لـ repeat:</div>
+    <div class="fix-options">
+      <button class="fix-btn" onclick="applyFix(1,false,'1')">🔢 repeat 1</button>
+      <button class="fix-btn" onclick="applyFix(1,false,'5')">🔢 repeat 5</button>
+      <button class="fix-btn" onclick="applyFix(1,false,'7')">🔢 repeat 7</button>
+      <button class="fix-btn correct-fix" onclick="applyFix(1,true,'10')">🔢 repeat 10 ✦</button>
+    </div>
+  </div>
+
+  <div class="feedback-box" id="fb1"></div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="">— في انتظارك —</button>
+    <button class="btn btn-gold" id="next1" onclick="showComplete()" style="display:none">🏆 عرض نتيجتي</button>
+  </div>
+</div>
+
+<!-- ======= COMPLETE SCENE ======= -->
+<div class="scene" id="sceneComplete">
+  <div class="complete-card">
+    <span class="trophy">🏆</span>
+    <div class="complete-name" id="completeName">أحسنتِ!</div>
+    <div class="complete-msg">أكملتِ تحدي "مهمة المبرمج المسلم" بنجاح! 🌙✨</div>
+    <div class="score-row">
+      <div class="score-item">
+        <span class="score-num" id="scoreCorrect">⭐</span>
+        <span class="score-lbl">أتقنتِ اكتشاف الخطأ وتصويبه</span>
+      </div>
+    </div>
+    <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:14px;padding:14px 18px;margin:16px 0;font-family:'Amiri',serif;font-size:1.1rem;color:var(--gold-light);line-height:2">
+      "إِنَّ اللَّهَ يُحِبُّ إِذَا عَمِلَ أَحَدُكُمْ عَمَلًا أَنْ يُتْقِنَهُ"<br>
+      <span style="font-size:0.85rem;color:#aaa">— تعلمتِ اليوم أن الإتقان في البرمجة عبادة 💚</span>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-gold" onclick="takeScreenshot()">📸 أرسلي نتيجتك للمعلمة</button>
+      <button class="btn btn-ghost" onclick="restart()">🔄 إعادة المحاولة</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<!-- Screenshot modal -->
+<div id="modalOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s">
+  <div style="background:#162B1E;border-radius:20px;padding:24px;max-width:500px;width:100%;border:2px solid rgba(201,168,76,0.4);text-align:center;transform:scale(0.9);transition:transform 0.3s" id="modalBox">
+    <div style="font-size:1.2rem;font-weight:800;color:var(--gold-light);margin-bottom:6px">📸 نتيجتك جاهزة!</div>
+    <div style="color:#aaa;font-size:0.85rem;margin-bottom:14px" id="modalMsg">حمّلي الصورة وأرسليها للمعلمة</div>
+    <img id="previewImg" style="width:100%;border-radius:10px;border:2px solid #2a4a35;margin-bottom:14px" src="" alt="preview">
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-gold" onclick="downloadImg()">⬇️ تحميل الصورة</button>
+      <button class="btn btn-ghost" onclick="closeModal()">✕ إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// ====== STARS ======
+(function(){
+  const c = document.getElementById('starsContainer');
+  for(let i=0;i<60;i++){
+    const s = document.createElement('div');
+    s.className='star-dot';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+})();
+
+// ====== STATE ======
+let bugFound = false;
+let fixApplied = false;
+let wrongAttempts = 0;
+
+// ====== PROGRESS — single step ======
+function renderProgress() {
+  const container = document.getElementById('progressDots');
+  container.innerHTML = '';
+  const d = document.createElement('div');
+  d.className = 'pdot' + (fixApplied ? ' done' : ' active');
+  d.textContent = '1';
+  container.appendChild(d);
+}
+renderProgress();
+
+// ====== HINT ======
+function toggleHint(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+
+// ====== BUG FOUND ======
+function foundBug(scene) {
+  if(bugFound) return;
+  bugFound = true;
+  const bugEl = document.getElementById('s1-bug');
+  bugEl.classList.remove('bug-block');
+  bugEl.classList.add('found-bug');
+  bugEl.onclick = null;
+  document.getElementById('fix1').classList.add('show');
+  showToast('🎯 وجدتِ الخطأ! الآن صوّبيه 👇');
+  confetti(8);
+}
+
+// ====== APPLY FIX ======
+function applyFix(scene, correct, val) {
+  const fb = document.getElementById('fb1');
+  document.querySelectorAll('#fix1 .fix-btn').forEach(b=>b.onclick=null);
+
+  if(correct) {
+    const bugEl = document.getElementById('s1-bug');
+    bugEl.classList.remove('found-bug');
+    bugEl.classList.add('fixed-block');
+    const numEl = document.getElementById('s1-num');
+    if(numEl){ numEl.className='num-badge right'; numEl.textContent=val; }
+
+    fixApplied = true;
+    fb.innerHTML = `✅ <strong>إتقان يا بطلة!</strong> — الكود أصبح صحيحاً، التسبيح سيتكرر 10 مرات 📿<br>
+      <span style="font-size:0.85rem;color:#aaa">تذكري: "إن الله يحب إذا عمل أحدكم عملاً أن يتقنه" ﷺ</span>`;
+    fb.className = 'feedback-box show correct';
+    document.getElementById('next1').style.display='inline-flex';
+    renderProgress();
+    confetti(25);
+    showToast('🌟 أحسنتِ! الكود الآن صحيح');
+  } else {
+    wrongAttempts++;
+    fb.textContent = `❌ ليست الإجابة الصحيحة، حاولي مرة أخرى! (محاولة ${wrongAttempts})`;
+    fb.className = 'feedback-box show wrong';
+  }
+}
+
+// ====== SHOW COMPLETE ======
+function showComplete(){
+  const name = document.getElementById('studentName').value.trim() || 'الطالبة';
+  document.getElementById('completeName').textContent = `أحسنتِ يا ${name}! 🌙`;
+  document.querySelectorAll('.scene').forEach(s=>s.classList.remove('visible'));
+  document.getElementById('sceneComplete').classList.add('visible');
+  confetti(40);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ====== RESTART ======
+function restart(){
+  bugFound = false;
+  fixApplied = false;
+  wrongAttempts = 0;
+
+  const el = document.getElementById('s1-bug');
+  el.classList.remove('found-bug','fixed-block');
+  el.classList.add('bug-block');
+  el.onclick = ()=>foundBug(1);
+
+  const nb = document.getElementById('s1-num');
+  if(nb){ nb.className='num-badge wrong'; nb.textContent='3'; }
+
+  document.getElementById('fix1').classList.remove('show');
+  document.getElementById('fb1').className='feedback-box';
+  document.getElementById('next1').style.display='none';
+  document.getElementById('h1').classList.remove('show');
+
+  document.querySelectorAll('.scene').forEach(s=>s.classList.remove('visible'));
+  document.getElementById('scene1').classList.add('visible');
+  renderProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ====== SCREENSHOT ======
+let capturedURL='';
+function takeScreenshot(){
+  const name=document.getElementById('studentName').value.trim();
+  if(!name){ showToast('❗ اكتبي اسمك أولاً!'); return; }
+  showToast('⏳ جاري التقاط الصورة...');
+  setTimeout(()=>{
+    html2canvas(document.getElementById('sceneComplete'),{backgroundColor:'#0D1F15',scale:2,useCORS:true}).then(canvas=>{
+      capturedURL=canvas.toDataURL('image/png');
+      document.getElementById('previewImg').src=capturedURL;
+      document.getElementById('modalMsg').textContent=`يا ${name}! حمّلي الصورة وأرسليها للمعلمة في Teams`;
+      const overlay=document.getElementById('modalOverlay');
+      overlay.style.opacity='1'; overlay.style.pointerEvents='all';
+      document.getElementById('modalBox').style.transform='scale(1)';
+    });
+  },200);
+}
+function downloadImg(){
+  const name=document.getElementById('studentName').value.trim()||'طالبة';
+  const a=document.createElement('a');
+  a.href=capturedURL; a.download=`نتيجة-${name}-debug.png`; a.click();
+  showToast('✅ تم تحميل الصورة!');
+}
+function closeModal(){
+  document.getElementById('modalOverlay').style.opacity='0';
+  document.getElementById('modalOverlay').style.pointerEvents='none';
+  document.getElementById('modalBox').style.transform='scale(0.9)';
+}
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ====== CONFETTI ======
+function confetti(count){
+  const colors=['#C9A84C','#F0D080','#52B788','#FFAB19','#fff'];
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='cp';
+      c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};--d:${1.5+Math.random()*2}s;--dl:${Math.random()*0.5}s`;
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),3000);
+    },i*60);
+  }
+}
+
+// ====== TOAST ======
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
