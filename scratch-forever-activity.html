@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط لبنة Forever - سكراتش</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --scratch-orange: #FF8C1A;
+    --scratch-yellow: #FFAB19;
+    --scratch-blue: #4C97FF;
+    --scratch-purple: #9966FF;
+    --scratch-green: #59C059;
+    --bg: #1e1e2e;
+    --card: #2a2a3e;
+    --card2: #32324a;
+    --text: #f0f0ff;
+    --accent: #FFD700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated bg */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 20% 20%, rgba(76,151,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255,140,26,0.08) 0%, transparent 50%);
+    animation: bgPulse 8s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes bgPulse { from { transform: rotate(0deg); } to { transform: rotate(5deg); } }
+
+  header {
+    text-align: center;
+    padding: 30px 20px 10px;
+    position: relative;
+  }
+  .title-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--scratch-orange), var(--scratch-yellow));
+    color: #fff;
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    padding: 10px 30px;
+    border-radius: 50px;
+    margin-bottom: 8px;
+    box-shadow: 0 8px 30px rgba(255,140,26,0.4);
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .subtitle { color: #aaa; font-size: 1rem; margin-bottom: 20px; }
+
+  /* Steps indicator */
+  .steps-bar {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+  }
+  .step-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--card2);
+    border: 2px solid #444;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #888;
+  }
+  .step-dot.active { background: var(--scratch-orange); border-color: var(--scratch-yellow); color: #fff; box-shadow: 0 0 15px rgba(255,140,26,0.5); }
+  .step-dot.done { background: var(--scratch-green); border-color: #3a3; color: #fff; }
+
+  /* Main area */
+  main { max-width: 900px; margin: 0 auto; padding: 0 20px 40px; }
+
+  .activity-section { display: none; animation: fadeIn 0.5s ease; }
+  .activity-section.visible { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ======= SECTION 1: TOOLBOX ======= */
+  .section-title {
+    font-size: 1.4rem; font-weight: 800;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-desc { color: #bbb; font-size: 0.95rem; margin-bottom: 20px; }
+
+  .activity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 600px) { .activity-grid { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    border: 2px solid #3a3a5a;
+  }
+  .panel-title {
+    font-size: 0.9rem; font-weight: 700; color: #aaa;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* SCRATCH BLOCKS */
+  .block {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    cursor: grab;
+    user-select: none;
+    margin: 4px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-bottom: 3px solid rgba(0,0,0,0.3);
+    position: relative;
+  }
+  .block:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+  .block:active { cursor: grabbing; transform: scale(0.98); }
+
+  /* Block shapes via pseudo */
+  .block.hat { border-radius: 20px 20px 6px 6px; padding-top: 12px; }
+  .block.hat::before {
+    content: '';
+    position: absolute; top: 0; left: 12px;
+    width: 24px; height: 10px;
+    background: inherit; filter: brightness(1.1);
+    border-radius: 50% 50% 0 0;
+  }
+  .block.loop {
+    border-radius: 6px;
+    padding-bottom: 18px;
+  }
+
+  .block-events { background: #FFAB19; color: #fff; }
+  .block-control { background: #FFAB19; color: #fff; }
+  .block-motion { background: #4C97FF; color: #fff; }
+  .block-looks { background: #9966FF; color: #fff; }
+  .block-sound { background: #CF63CF; color: #fff; }
+
+  /* green flag icon */
+  .flag-icon { display: inline-block; width: 16px; height: 16px; background: #4CAF50; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+
+  /* DROPZONE */
+  .dropzone {
+    min-height: 200px;
+    background: #1a1a2e;
+    border-radius: 12px;
+    border: 2px dashed #444;
+    padding: 12px;
+    transition: border-color 0.3s, background 0.3s;
+    position: relative;
+  }
+  .dropzone.drag-over {
+    border-color: var(--scratch-yellow);
+    background: rgba(255,171,25,0.08);
+  }
+  .dropzone-hint {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: #555; font-size: 0.9rem; text-align: center;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .dropzone.has-blocks .dropzone-hint { opacity: 0; }
+
+  .dropped-block {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    margin: 3px 0;
+    cursor: pointer;
+    position: relative;
+    animation: dropIn 0.3s ease;
+    border-bottom: 3px solid rgba(0,0,0,0.25);
+  }
+  @keyframes dropIn { from { transform: translateY(-10px) scale(0.9); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .dropped-block .remove-btn {
+    position: absolute; left: -8px; top: -8px;
+    width: 20px; height: 20px;
+    background: #e74c3c; color: #fff;
+    border-radius: 50%; border: none;
+    font-size: 0.7rem; cursor: pointer;
+    display: none; align-items: center; justify-content: center;
+    font-weight: 800;
+  }
+  .dropped-block:hover .remove-btn { display: flex; }
+
+  /* Indented block inside loop */
+  .loop-wrapper {
+    border-right: 4px solid rgba(255,171,25,0.5);
+    margin-right: 8px;
+    padding-right: 4px;
+  }
+  .loop-inner {
+    margin-right: 20px;
+    padding: 4px 0;
+  }
+
+  /* Run button area */
+  .run-area {
+    margin-top: 16px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: none; cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 800; font-size: 1rem;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-run { background: linear-gradient(135deg, #4CAF50, #2e7d32); color: #fff; box-shadow: 0 4px 15px rgba(76,175,80,0.4); }
+  .btn-run:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76,175,80,0.5); }
+  .btn-stop { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; }
+  .btn-clear { background: var(--card2); color: #bbb; border: 1px solid #444; }
+
+  /* ======= STAGE / RESULT ======= */
+  .stage-container {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    border: 2px solid #3a3a5a;
+  }
+  .stage {
+    background: #fff;
+    border-radius: 10px;
+    width: 100%;
+    aspect-ratio: 4/3;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #scratch-cat {
+    position: absolute;
+    width: 70px;
+    transition: left 0.05s, top 0.05s;
+    transform-origin: center;
+  }
+  .stage-msg {
+    position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.6); color: #fff;
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.75rem; white-space: nowrap;
+  }
+  .green-flag-btn {
+    width: 44px; height: 44px;
+    background: #4CAF50; border-radius: 50%; border: none;
+    cursor: pointer; font-size: 1.3rem;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(76,175,80,0.4);
+    transition: transform 0.2s;
+  }
+  .green-flag-btn:hover { transform: scale(1.1); }
+  .red-stop-btn {
+    width: 44px; height: 44px;
+    background: #e74c3c; border-radius: 8px; border: none;
+    cursor: pointer; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(231,76,60,0.4);
+  }
+  .stage-controls { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+  .stage-label { font-size: 0.85rem; color: #aaa; flex: 1; }
+
+  /* Degree input */
+  .degree-control {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card2); border-radius: 10px; padding: 8px 14px;
+    margin-top: 10px;
+  }
+  .degree-control label { font-size: 0.9rem; color: #ccc; white-space: nowrap; }
+  .degree-control input[type=range] {
+    flex: 1;
+    accent-color: var(--scratch-blue);
+  }
+  .degree-val {
+    background: #fff; color: #333; font-weight: 800;
+    padding: 2px 10px; border-radius: 20px; font-size: 0.9rem;
+    min-width: 45px; text-align: center;
+  }
+
+  /* ======= SECTION 2: QUIZ ======= */
+  .quiz-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 20px;
+    border: 2px solid #3a3a5a;
+    margin-bottom: 16px;
+  }
+  .quiz-q { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--card2);
+    border: 2px solid #444;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .quiz-opt:hover { border-color: var(--scratch-blue); background: rgba(76,151,255,0.1); }
+  .quiz-opt.correct { border-color: var(--scratch-green); background: rgba(89,192,89,0.2); }
+  .quiz-opt.wrong { border-color: #e74c3c; background: rgba(231,76,60,0.2); }
+  .quiz-opt .opt-letter {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #444; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.8rem; flex-shrink: 0;
+  }
+  .quiz-opt.correct .opt-letter { background: var(--scratch-green); }
+  .quiz-opt.wrong .opt-letter { background: #e74c3c; }
+  .quiz-feedback {
+    margin-top: 10px; padding: 10px 14px;
+    border-radius: 10px; font-weight: 700;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; animation: fadeIn 0.3s; }
+  .quiz-feedback.ok { background: rgba(89,192,89,0.2); color: #59C059; }
+  .quiz-feedback.no { background: rgba(231,76,60,0.2); color: #e74c3c; }
+
+  /* ======= SECTION 3: CHALLENGE ======= */
+  .challenge-box {
+    background: linear-gradient(135deg, var(--card), #2a2a4a);
+    border-radius: 16px; padding: 20px;
+    border: 2px solid var(--scratch-purple);
+    margin-bottom: 16px;
+  }
+  .challenge-box h3 { font-size: 1.1rem; color: var(--scratch-yellow); margin-bottom: 8px; }
+  .challenge-box p { color: #ccc; font-size: 0.9rem; line-height: 1.6; }
+
+  /* Stars */
+  .stars { display: flex; gap: 6px; margin: 16px 0; }
+  .star {
+    font-size: 2rem; cursor: pointer;
+    filter: grayscale(1); transition: all 0.2s;
+  }
+  .star.lit { filter: none; transform: scale(1.2); }
+
+  /* Nav buttons */
+  .nav-row { display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+
+  /* speech bubble on cat */
+  .speech-bubble {
+    position: absolute;
+    background: #fff;
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    color: #333;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    display: none;
+    top: -40px; left: 50%; transform: translateX(-50%);
+    z-index: 10;
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute; bottom: -8px; left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #fff;
+  }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    pointer-events: none;
+    animation: confettiFall 2.5s ease forwards;
+    z-index: 999;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .emoji-big { font-size: 1.5rem; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 30px; right: 30px;
+    background: var(--scratch-green); color: #fff;
+    padding: 12px 20px; border-radius: 12px;
+    font-weight: 700; font-size: 1rem;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.4s;
+    z-index: 1000;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  /* ======= STUDENT NAME BAR ======= */
+  .name-bar {
+    background: var(--card);
+    border-bottom: 2px solid #3a3a5a;
+    padding: 10px 20px;
+    display: flex; align-items: center; gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .name-bar label { font-weight: 700; font-size: 0.95rem; color: #ccc; white-space: nowrap; }
+  .name-input {
+    padding: 8px 14px; border-radius: 10px;
+    border: 2px solid #444; background: var(--card2);
+    color: var(--text); font-family: 'Tajawal', sans-serif;
+    font-size: 1rem; outline: none; min-width: 180px;
+    transition: border-color 0.2s;
+  }
+  .name-input:focus { border-color: var(--scratch-yellow); }
+
+  /* ======= SCREENSHOT BUTTON ======= */
+  .btn-screenshot {
+    background: linear-gradient(135deg, #FF8C1A, #e67e00);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(255,140,26,0.4);
+    font-size: 1rem;
+  }
+  .btn-screenshot:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,140,26,0.6); }
+
+  /* ======= MODAL ======= */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2000; padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 520px; width: 100%;
+    border: 2px solid var(--scratch-yellow);
+    transform: scale(0.9);
+    transition: transform 0.3s;
+    text-align: center;
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal h2 { font-size: 1.3rem; margin-bottom: 6px; color: var(--scratch-yellow); }
+  .modal p { color: #bbb; font-size: 0.9rem; margin-bottom: 16px; }
+  .modal-preview {
+    width: 100%; border-radius: 12px;
+    border: 2px solid #444; margin-bottom: 16px;
+    display: block;
+  }
+  .modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn-download {
+    background: linear-gradient(135deg, #4C97FF, #1a6fd4);
+    color: #fff; box-shadow: 0 4px 15px rgba(76,151,255,0.4);
+  }
+  .btn-close-modal { background: var(--card2); color: #bbb; border: 1px solid #444; }
+
+  /* ======= RESULT CARD (captured area) ======= */
+  #captureArea {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    border: 2px solid #3a3a5a;
+    margin-top: 20px;
+  }
+  .result-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+  }
+  .result-student-name {
+    font-size: 1rem; font-weight: 800;
+    color: var(--scratch-yellow);
+    background: rgba(255,171,25,0.1);
+    padding: 4px 14px; border-radius: 20px;
+    border: 1px solid rgba(255,171,25,0.3);
+  }
+  .result-timestamp { font-size: 0.8rem; color: #666; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-badge">🐱 لبنة Forever في سكراتش</div>
+  <p class="subtitle">الصف الرابع — نشاط تفاعلي</p>
+</header>
+
+<!-- Student name bar -->
+<div class="name-bar">
+  <label>👩‍🎓 اسم الطالبة:</label>
+  <input class="name-input" type="text" id="studentName" placeholder="اكتبي اسمك هنا..." maxlength="40">
+</div>
+
+<!-- Steps bar -->
+<div class="steps-bar">
+  <div class="step-dot active" id="dot1" onclick="gotoSection(1)">1</div>
+  <div style="align-self:center;color:#555;font-size:1.2rem">›</div>
+  <div class="step-dot" id="dot2" onclick="gotoSection(2)">2</div>
+  <div style="align-self:center;color:#555;font-size:1.2rem">›</div>
+  <div class="step-dot" id="dot3" onclick="gotoSection(3)">3</div>
+</div>
+
+<main>
+
+  <!-- ===== SECTION 1: BUILD ===== -->
+  <div class="activity-section visible" id="sec1">
+    <div class="section-title"><span>🧱</span> ركّب اللبنات وشاهد النتيجة!</div>
+    <p class="section-desc">اسحب اللبنات من الصندوق وضعها في منطقة البرمجة بالترتيب الصحيح، ثم اضغط العلَم الأخضر!</p>
+
+    <div class="activity-grid">
+      <!-- Toolbox -->
+      <div>
+        <div class="panel">
+          <div class="panel-title">📦 صندوق اللبنات</div>
+          <div id="toolbox">
+            <div class="block block-events hat" draggable="true" data-block="flag">
+              <span class="flag-icon"></span> when clicked
+            </div>
+            <div class="block block-control loop" draggable="true" data-block="forever">
+              forever
+            </div>
+            <div class="block block-motion" draggable="true" data-block="turn">
+              🔄 turn 15 degrees
+            </div>
+          </div>
+        </div>
+
+        <div class="degree-control" id="degreeCtrl" style="display:none">
+          <label>🎚 درجة الدوران:</label>
+          <input type="range" min="1" max="90" value="15" id="degreeSlider" oninput="updateDegree(this.value)">
+          <div class="degree-val" id="degreeDisplay">15</div>
+        </div>
+      </div>
+
+      <!-- Drop zone + stage -->
+      <div>
+        <div class="panel">
+          <div class="panel-title">✍️ منطقة البرمجة</div>
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone-hint">اسحب اللبنات هنا 👆</div>
+            <div id="codeArea"></div>
+          </div>
+          <div class="run-area">
+            <button class="btn btn-clear" onclick="clearCode()">🗑 مسح</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage -->
+    <div id="captureArea">
+      <div class="result-header">
+        <span class="result-student-name" id="captureNameLabel">👩‍🎓 —</span>
+        <span class="result-timestamp" id="captureTime"></span>
+      </div>
+    <div class="stage-container">
+      <div class="stage-controls">
+        <span class="stage-label">🖥️ المسرح — شاهد النتيجة:</span>
+        <button class="green-flag-btn" onclick="runCode()" title="تشغيل">🚩</button>
+        <button class="red-stop-btn" onclick="stopCode()" title="إيقاف">⏹</button>
+      </div>
+      <div class="stage" id="stage">
+        <img id="scratch-cat" src="https://scratch.mit.edu/static/assets/2c90c16d8a3b47f5e391/7e24c99d1a.svg"
+             onerror="this.outerHTML='<div id=\'scratch-cat\' style=\'position:absolute;font-size:3rem\'>🐱</div>'"
+             alt="scratch cat" style="left:50%;top:50%;transform:translate(-50%,-50%)">
+        <div class="stage-msg" id="stageMsg">اضغط العلَم الأخضر للتشغيل 🚩</div>
+      </div>
+    </div>
+    </div><!-- end captureArea -->
+
+    <!-- Screenshot button -->
+    <div style="margin-top:14px;display:flex;justify-content:center">
+      <button class="btn btn-screenshot" onclick="takeScreenshot()">📸 أرسلي نتيجتك للمعلمة</button>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-run" onclick="gotoSection(2)">التالي: اختبر فهمك ›</button>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2: QUIZ ===== -->
+  <div class="activity-section" id="sec2">
+    <div class="section-title"><span>🧠</span> اختبر فهمك!</div>
+    <p class="section-desc">أجب على الأسئلة وتحقق من إجاباتك 👇</p>
+
+    <!-- Q1 -->
+    <div class="quiz-card">
+      <div class="quiz-q">1️⃣ ماذا تفعل لبنة <b style="color:var(--scratch-yellow)">forever</b> في سكراتش؟</div>
+      <div class="quiz-options" id="q1">
+        <div class="quiz-opt" onclick="answer(this,'q1',false)"><div class="opt-letter">أ</div> تشغّل الكود مرة واحدة فقط</div>
+        <div class="quiz-opt" onclick="answer(this,'q1',true)"><div class="opt-letter">ب</div> تكرر الكود بداخلها إلى الأبد ♾️</div>
+        <div class="quiz-opt" onclick="answer(this,'q1',false)"><div class="opt-letter">ج</div> توقف البرنامج</div>
+        <div class="quiz-opt" onclick="answer(this,'q1',false)"><div class="opt-letter">د</div> تغير لون الشخصية</div>
+      </div>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-card">
+      <div class="quiz-q">2️⃣ في أي تبويب تجد لبنة <b style="color:var(--scratch-yellow)">forever</b>؟</div>
+      <div class="quiz-options" id="q2">
+        <div class="quiz-opt" onclick="answer(this,'q2',false)"><div class="opt-letter">أ</div> 🎨 المظهر (Looks)</div>
+        <div class="quiz-opt" onclick="answer(this,'q2',false)"><div class="opt-letter">ب</div> 🎵 الصوت (Sound)</div>
+        <div class="quiz-opt" onclick="answer(this,'q2',true)"><div class="opt-letter">ج</div> 🟡 التحكم (Control)</div>
+        <div class="quiz-opt" onclick="answer(this,'q2',false)"><div class="opt-letter">د</div> 🔵 الحركة (Motion)</div>
+      </div>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-card">
+      <div class="quiz-q">3️⃣ في الكود أدناه، كم مرة ستدور القطة؟<br><small style="background:#2a2a3e;padding:4px 10px;border-radius:6px;font-family:monospace;margin-top:6px;display:inline-block">when 🚩 clicked → forever { turn 15 degrees }</small></div>
+      <div class="quiz-options" id="q3">
+        <div class="quiz-opt" onclick="answer(this,'q3',false)"><div class="opt-letter">أ</div> مرة واحدة</div>
+        <div class="quiz-opt" onclick="answer(this,'q3',false)"><div class="opt-letter">ب</div> 15 مرة</div>
+        <div class="quiz-opt" onclick="answer(this,'q3',true)"><div class="opt-letter">ج</div> إلى الأبد ♾️ ما دام البرنامج يعمل</div>
+        <div class="quiz-opt" onclick="answer(this,'q3',false)"><div class="opt-letter">د</div> 3 مرات</div>
+      </div>
+      <div class="quiz-feedback" id="q3-fb"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-clear" onclick="gotoSection(1)">‹ رجوع</button>
+      <button class="btn btn-run" onclick="gotoSection(3)">التالي: التحدي ›</button>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 3: CHALLENGE ===== -->
+  <div class="activity-section" id="sec3">
+    <div class="section-title"><span>🏆</span> تحدي الإبداع!</div>
+    <p class="section-desc">طبّق ما تعلمته وأجب على التحديات التالية</p>
+
+    <div class="challenge-box">
+      <h3>🎯 التحدي الأول</h3>
+      <p>في نشاط تركيب اللبنات، جرّب تغيير درجة الدوران إلى <b>90 درجة</b> بدلاً من 15. ماذا لاحظت في حركة القطة؟ اكتب إجابتك في الشات!</p>
+    </div>
+
+    <div class="challenge-box">
+      <h3>🎯 التحدي الثاني</h3>
+      <p>ماذا يحدث لو أزلنا لبنة <b>forever</b> وتركنا فقط: <b>when 🚩 clicked → turn 15 degrees</b> ؟<br>جرّب في نشاط البناء وشاهد الفرق!</p>
+    </div>
+
+    <div class="challenge-box" style="border-color:var(--scratch-yellow)">
+      <h3>⭐ سؤال المعلمة</h3>
+      <p>فكّر: في أي لعبة أو مشروع سكراتش يمكن أن نستخدم لبنة <b>forever</b>؟ شارك فكرتك في Teams!</p>
+    </div>
+
+    <div class="panel" style="margin-top:20px;text-align:center">
+      <div class="panel-title" style="justify-content:center">⭐ كيف كان النشاط؟ قيّمه!</div>
+      <div class="stars">
+        <span class="star" onclick="rateStar(1)">⭐</span>
+        <span class="star" onclick="rateStar(2)">⭐</span>
+        <span class="star" onclick="rateStar(3)">⭐</span>
+        <span class="star" onclick="rateStar(4)">⭐</span>
+        <span class="star" onclick="rateStar(5)">⭐</span>
+      </div>
+      <div id="ratingMsg" style="color:#aaa;font-size:0.9rem;margin-top:6px"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-clear" onclick="gotoSection(2)">‹ رجوع</button>
+      <button class="btn btn-run" onclick="gotoSection(1)">🔄 ابدأ من جديد</button>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<!-- Screenshot Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>📸 نتيجتك جاهزة!</h2>
+    <p id="modalStudentMsg">اضغطي "تحميل" ثم أرسلي الصورة للمعلمة في ClassPoint أو Teams</p>
+    <img id="previewImg" class="modal-preview" src="" alt="preview">
+    <div class="modal-actions">
+      <button class="btn btn-download" onclick="downloadImage()">⬇️ تحميل الصورة</button>
+      <button class="btn btn-close-modal" onclick="closeModal()">✕ إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ======= NAVIGATION =======
+function gotoSection(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('sec'+i).classList.remove('visible');
+    const dot = document.getElementById('dot'+i);
+    dot.classList.remove('active');
+    if(i < n) dot.classList.add('done'); else dot.classList.remove('done');
+  });
+  document.getElementById('sec'+n).classList.add('visible');
+  document.getElementById('dot'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ======= DRAG & DROP =======
+let blocks = [];
+const toolboxBlocks = document.querySelectorAll('#toolbox .block');
+const dropzone = document.getElementById('dropzone');
+const codeArea = document.getElementById('codeArea');
+
+toolboxBlocks.forEach(b => {
+  b.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('block', b.dataset.block);
+    b.style.opacity = '0.5';
+  });
+  b.addEventListener('dragend', e => { b.style.opacity = '1'; });
+});
+
+dropzone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropzone.classList.add('drag-over');
+});
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag-over');
+  const b = e.dataTransfer.getData('block');
+  if(b) addBlock(b);
+});
+
+const blockDefs = {
+  flag:    { label: '🚩 when clicked',      color: '#FFAB19', type:'hat' },
+  forever: { label: '♾️ forever',           color: '#FFAB19', type:'loop' },
+  turn:    { label: '🔄 turn 15 degrees',   color: '#4C97FF', type:'normal', id:'turnBlock' },
+
+};
+
+function addBlock(key) {
+  blocks.push(key);
+  renderCode();
+  dropzone.classList.add('has-blocks');
+  if(key === 'turn') {
+    document.getElementById('degreeCtrl').style.display = 'flex';
+  }
+  showToast('تم إضافة اللبنة! 🧱');
+}
+
+function removeBlock(idx) {
+  blocks.splice(idx,1);
+  renderCode();
+  if(!blocks.includes('turn')) document.getElementById('degreeCtrl').style.display='none';
+  if(blocks.length===0) dropzone.classList.remove('has-blocks');
+}
+
+function renderCode() {
+  codeArea.innerHTML = '';
+  // Find structure
+  let hasFlag = blocks.includes('flag');
+  let hasForever = blocks.includes('forever');
+  let innerBlocks = blocks.filter(b => b !== 'flag' && b !== 'forever');
+
+  blocks.forEach((b, i) => {
+    const def = blockDefs[b];
+    const div = document.createElement('div');
+    div.className = 'dropped-block';
+    div.style.background = def.color;
+    div.style.color = '#fff';
+    div.style.paddingRight = b === 'forever' ? '30px' : '14px';
+    div.style.borderBottom = '3px solid rgba(0,0,0,0.25)';
+
+    const lbl = b === 'turn'
+      ? `🔄 turn ${document.getElementById('degreeDisplay').textContent} degrees`
+      : def.label;
+    div.innerHTML = `<button class="remove-btn" onclick="removeBlock(${i})">✕</button>${lbl}`;
+
+    if(b !== 'flag' && b !== 'forever' && hasForever) {
+      // indent under forever
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'padding-right:20px;border-right:4px solid rgba(255,171,25,0.5);margin-right:10px';
+      wrapper.appendChild(div);
+      codeArea.appendChild(wrapper);
+    } else {
+      codeArea.appendChild(div);
+    }
+  });
+}
+
+function clearCode() {
+  blocks = [];
+  codeArea.innerHTML = '';
+  dropzone.classList.remove('has-blocks');
+  document.getElementById('degreeCtrl').style.display = 'none';
+  stopCode();
+  document.getElementById('stageMsg').textContent = 'اضغط العلَم الأخضر للتشغيل 🚩';
+}
+
+function updateDegree(v) {
+  document.getElementById('degreeDisplay').textContent = v;
+  rotationSpeed = parseInt(v);
+  renderCode();
+}
+
+// ======= STAGE / ANIMATION =======
+let animFrame = null;
+let catAngle = 0;
+let rotationSpeed = 15;
+
+function runCode() {
+  if(!blocks.includes('flag')) {
+    showToast('❗ أضف لبنة "when clicked" أولاً!');
+    return;
+  }
+  if(!blocks.includes('turn')) {
+    showToast('❗ أضف لبنة turn داخل البرنامج!');
+    return;
+  }
+  stopCode();
+
+  const hasForever = blocks.includes('forever');
+
+  document.getElementById('stageMsg').textContent = hasForever ? '♾️ يعمل forever...' : '▶ تم التشغيل مرة واحدة';
+
+  rotationSpeed = parseInt(document.getElementById('degreeDisplay').textContent) || 15;
+
+  const cat = document.getElementById('scratch-cat');
+
+  if(hasForever) {
+    function rotateCat() {
+      catAngle += rotationSpeed * 0.5;
+      cat.style.transform = `translate(-50%,-50%) rotate(${catAngle}deg)`;
+      animFrame = requestAnimationFrame(rotateCat);
+    }
+    rotateCat();
+  } else {
+    catAngle += rotationSpeed;
+    cat.style.transform = `translate(-50%,-50%) rotate(${catAngle}deg)`;
+  }
+
+  launchConfetti(6);
+}
+
+function stopCode() {
+  if(animFrame) { cancelAnimationFrame(animFrame); animFrame=null; }
+  document.getElementById('stageMsg').textContent = '⏹ متوقف';
+}
+
+// ======= QUIZ =======
+function answer(el, qid, correct) {
+  const opts = document.querySelectorAll(`#${qid} .quiz-opt`);
+  opts.forEach(o => o.onclick=null);
+  el.classList.add(correct ? 'correct' : 'wrong');
+  if(correct) {
+    // find correct and mark it
+    const fb = document.getElementById(qid+'-fb');
+    fb.textContent = '✅ إجابة صحيحة! ممتاز 🎉';
+    fb.className = 'quiz-feedback show ok';
+    launchConfetti(12);
+  } else {
+    // reveal correct
+    opts.forEach(o => { if(o.onclick === null && !o.classList.contains('wrong')) {} });
+    const fb = document.getElementById(qid+'-fb');
+    fb.textContent = '❌ ليست الإجابة الصحيحة. حاول مرة أخرى أو راجع الدرس!';
+    fb.className = 'quiz-feedback show no';
+    // reveal correct answer
+    opts.forEach(o => {
+      const wasCorrect = o.getAttribute('onclick') || '';
+      if(o.classList.contains('wrong')) return;
+      // we can't re-check onclick easily, but let's mark the non-wrong options
+    });
+  }
+}
+
+// ======= RATING =======
+const ratingMsgs = ['','يحتاج تحسين 😕','مقبول 😊','جيد 👍','ممتاز 🌟','رائع جداً! 🏆🎉'];
+function rateStar(n) {
+  document.querySelectorAll('.star').forEach((s,i) => {
+    s.classList.toggle('lit', i<n);
+  });
+  document.getElementById('ratingMsg').textContent = ratingMsgs[n];
+  if(n>=4) launchConfetti(20);
+}
+
+// ======= CONFETTI =======
+function launchConfetti(count) {
+  const colors=['#FF8C1A','#4C97FF','#59C059','#9966FF','#FFD700','#FF6B6B'];
+  for(let i=0;i<count;i++) {
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='confetti-piece';
+      c.style.left=Math.random()*100+'vw';
+      c.style.top='-10px';
+      c.style.background=colors[Math.floor(Math.random()*colors.length)];
+      c.style.animationDuration=(1.5+Math.random()*1.5)+'s';
+      c.style.animationDelay=(Math.random()*0.5)+'s';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),3000);
+    },i*80);
+  }
+}
+
+// ======= SCREENSHOT =======
+let capturedDataURL = '';
+
+function takeScreenshot() {
+  const name = document.getElementById('studentName').value.trim();
+  if(!name) {
+    showToast('❗ اكتبي اسمك أولاً!');
+    document.getElementById('studentName').focus();
+    return;
+  }
+
+  // Stop animation temporarily for clean capture
+  const wasRunning = animFrame !== null;
+  if(wasRunning) { cancelAnimationFrame(animFrame); animFrame = null; }
+
+  // Update capture area labels
+  document.getElementById('captureNameLabel').textContent = '👩‍🎓 ' + name;
+  const now = new Date();
+  document.getElementById('captureTime').textContent =
+    now.toLocaleDateString('ar-SA') + ' — ' + now.toLocaleTimeString('ar-SA', {hour:'2-digit',minute:'2-digit'});
+
+  showToast('⏳ جاري التقاط الصورة...');
+
+  setTimeout(() => {
+    html2canvas(document.getElementById('captureArea'), {
+      backgroundColor: '#2a2a3e',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true
+    }).then(canvas => {
+      capturedDataURL = canvas.toDataURL('image/png');
+      document.getElementById('previewImg').src = capturedDataURL;
+      document.getElementById('modalStudentMsg').textContent =
+        `✨ أحسنتِ يا ${name}! حمّلي الصورة وأرسليها للمعلمة في ClassPoint أو Teams`;
+      document.getElementById('modalOverlay').classList.add('open');
+
+      // Resume animation if was running
+      if(wasRunning) runCode();
+    }).catch(() => {
+      showToast('❌ حدث خطأ، جربي مجدداً');
+      if(wasRunning) runCode();
+    });
+  }, 200);
+}
+
+function downloadImage() {
+  const name = document.getElementById('studentName').value.trim() || 'طالبة';
+  const a = document.createElement('a');
+  a.href = capturedDataURL;
+  a.download = `نتيجة-${name}-forever.png`;
+  a.click();
+  showToast('✅ تم تحميل الصورة!');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if(e.target === this) closeModal();
+});
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
