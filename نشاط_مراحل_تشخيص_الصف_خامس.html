@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط: مراحل تشخيص الأخطاء — الصف الخامس</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g1:#1a6b3c; --g2:#2a9d5c; --g3:#52c97e;
+  --gold:#d4a017; --gold-l:#f5c842;
+  --red:#e04040; --bg:#f2f7f4; --white:#fff;
+  --text:#1a2e22; --muted:#5a7a65;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* TOP BAR */
+.topbar{background:var(--g1);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar .ttl{color:white;font-size:16px;font-weight:800;}
+.dots-row{display:flex;gap:8px;align-items:center;}
+.dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .4s;}
+.dot.done{background:var(--gold-l);}
+.dot.now{background:white;transform:scale(1.3);}
+
+/* SCREENS */
+.scr{display:none;padding:16px;max-width:780px;margin:0 auto;}
+.scr.on{display:block;}
+
+/* STORY CARD */
+.story{background:white;border-radius:20px;padding:24px;margin-bottom:16px;box-shadow:0 4px 18px rgba(26,107,60,0.1);text-align:center;}
+.story .char{font-size:72px;margin-bottom:8px;animation:bob 2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.story h2{font-size:clamp(20px,4vw,28px);font-weight:900;color:var(--g1);margin-bottom:8px;}
+.story p{font-size:16px;color:var(--muted);line-height:1.8;}
+
+/* PROBLEM VISUAL */
+.prob-box{background:linear-gradient(135deg,#fff8e7,#fff3cc);border:2px solid var(--gold);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;}
+.prob-box h3{font-size:17px;font-weight:800;color:#7a4f00;margin-bottom:12px;}
+.screen-mock{background:#1e2d24;border-radius:14px;padding:18px;display:inline-block;min-width:240px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,0.25);}
+.screen-mock .app-title{color:#52c97e;font-size:14px;font-weight:700;margin-bottom:10px;}
+.calc-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;}
+.calc-val{background:#0d3b22;color:#f0c040;font-size:22px;font-weight:900;padding:8px 20px;border-radius:10px;letter-spacing:1px;}
+.calc-op{color:white;font-size:20px;font-weight:700;}
+.calc-result{background:#0d3b22;border:2px solid var(--red);color:var(--red);font-size:24px;font-weight:900;padding:8px 24px;border-radius:10px;position:relative;}
+.calc-result::after{content:'⚠️ خطأ!';position:absolute;top:-14px;right:50%;transform:translateX(50%);font-size:11px;background:var(--red);color:white;padding:1px 8px;border-radius:20px;white-space:nowrap;font-family:'Tajawal',sans-serif;}
+
+/* QUESTION AREA */
+.q-card{background:white;border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 18px rgba(26,107,60,0.1);}
+.q-num{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--g1),var(--g2));color:white;padding:6px 18px;border-radius:50px;font-size:14px;font-weight:800;margin-bottom:14px;}
+.q-text{font-size:clamp(17px,3vw,22px);font-weight:800;color:var(--text);margin-bottom:18px;line-height:1.6;}
+.choices{display:flex;flex-direction:column;gap:12px;}
+.ch{background:var(--bg);border:2.5px solid #c8e0d2;border-radius:14px;padding:16px 20px;font-size:clamp(15px,2.5vw,18px);font-weight:700;color:var(--text);cursor:pointer;transition:all .25s;text-align:right;font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:14px;}
+.ch:hover{border-color:var(--g2);background:#e8f7ef;transform:translateX(-4px);}
+.ch .cl{min-width:34px;height:34px;border-radius:50%;background:white;border:2.5px solid #c8e0d2;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0;transition:all .25s;}
+.ch.ok{border-color:var(--g2);background:linear-gradient(135deg,#e0f5ea,#c8f0d8);}
+.ch.ok .cl{background:var(--g2);border-color:var(--g2);color:white;}
+.ch.no{border-color:var(--red);background:#fdf0f0;}
+.ch.no .cl{background:var(--red);border-color:var(--red);color:white;}
+.ch.off{pointer-events:none;}
+
+/* FEEDBACK */
+.fb{display:none;border-radius:14px;padding:16px 20px;margin-top:14px;font-size:16px;font-weight:700;line-height:1.8;}
+.fb.ok{background:#e0f5ea;border:2px solid var(--g3);color:var(--g1);}
+.fb.no{background:#fdf0f0;border:2px solid var(--red);color:var(--red);}
+
+/* REVEAL STAGE */
+.reveal{display:none;margin-top:16px;background:linear-gradient(135deg,var(--g1),var(--g2));border-radius:16px;padding:20px;text-align:center;color:white;}
+.reveal .r-icon{font-size:50px;margin-bottom:8px;animation:pop .5s ease;}
+@keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.2);}100%{transform:scale(1);}}
+.reveal h3{font-size:clamp(18px,3.5vw,24px);font-weight:900;margin-bottom:6px;}
+.reveal p{font-size:14px;opacity:.85;line-height:1.7;}
+
+/* NEXT BTN */
+.btn-nx{display:none;background:linear-gradient(135deg,var(--g1),var(--g2));color:white;border:none;padding:14px 44px;border-radius:50px;font-size:17px;font-weight:900;font-family:'Tajawal',sans-serif;cursor:pointer;margin-top:16px;box-shadow:0 4px 18px rgba(26,107,60,0.3);transition:all .3s;}
+.btn-nx:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(26,107,60,0.4);}
+.btn-start{background:linear-gradient(135deg,var(--gold),var(--gold-l));color:#1a2e22;border:none;padding:16px 52px;border-radius:50px;font-size:19px;font-weight:900;font-family:'Tajawal',sans-serif;cursor:pointer;box-shadow:0 4px 18px rgba(212,160,23,0.4);transition:all .3s;margin-top:14px;}
+.btn-start:hover{transform:translateY(-2px);}
+
+/* PIPELINE (INTRO + TRACKER) */
+.pipe{display:flex;flex-direction:column;align-items:center;gap:4px;margin:16px 0;}
+.ps{display:flex;align-items:center;gap:12px;border:2.5px dashed #c8e0d2;border-radius:14px;padding:12px 18px;width:100%;max-width:460px;transition:all .4s;background:#f8fdf9;}
+.ps.lit{border-style:solid;border-color:var(--g3);background:linear-gradient(135deg,#f0fbf5,#e0f5ea);}
+.ps .pi{min-width:38px;height:38px;background:#e0ede6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .4s;}
+.ps.lit .pi{background:linear-gradient(135deg,var(--g1),var(--g2));}
+.ps-info h4{font-size:15px;font-weight:800;color:#8aab95;}
+.ps.lit .ps-info h4{color:var(--g1);}
+.ps .pck{margin-right:auto;font-size:20px;opacity:.3;}
+.ps.lit .pck{opacity:1;}
+.parr{color:#b0ccb8;font-size:20px;}
+
+/* FINAL */
+.final-hero{background:linear-gradient(135deg,var(--g1),var(--g2));border-radius:20px;padding:32px;text-align:center;color:white;margin-bottom:16px;}
+.final-hero .trophy{font-size:80px;animation:bob 2s ease-in-out infinite;}
+.final-hero h2{font-size:clamp(22px,4vw,32px);font-weight:900;margin:12px 0 8px;}
+.final-hero p{font-size:16px;opacity:.9;line-height:1.8;}
+.score-box{display:inline-block;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);padding:14px 36px;border-radius:16px;margin:16px 0;}
+.score-box .big{font-size:52px;font-weight:900;color:var(--gold-l);display:block;}
+.score-box .lbl{font-size:14px;opacity:.75;}
+.stars{font-size:36px;margin:8px 0;}
+
+.reflect{background:white;border-radius:16px;padding:22px;margin-bottom:16px;border-right:5px solid var(--gold);box-shadow:0 4px 18px rgba(26,107,60,0.1);}
+.reflect h3{font-size:17px;font-weight:800;color:var(--g1);margin-bottom:10px;}
+.reflect ol{margin-right:20px;}
+.reflect li{font-size:16px;line-height:2;color:var(--muted);}
+
+/* progress fill */
+.prog-bar-wrap{background:rgba(255,255,255,.2);height:4px;border-radius:2px;overflow:hidden;width:100px;}
+.prog-fill{height:100%;background:var(--gold-l);transition:width .5s;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="ttl">🔍 اكتشف مراحل تشخيص الأخطاء</span>
+  <div class="dots-row">
+    <div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot" id="d3"></div>
+    <div class="dot" id="d4"></div>
+    <div class="dot" id="d5"></div>
+  </div>
+</div>
+
+<!-- ═══ شاشة البداية ═══ -->
+<div class="scr on" id="s0">
+  <div class="story">
+    <div class="char">🧒💻</div>
+    <h2>أحمد يحتاج مساعدتك!</h2>
+    <p>أحمد صنع <strong>تطبيقًا على Scratch</strong> لحساب مجموع رقمين.<br>لكن التطبيق أعطى إجابة <strong>خاطئة</strong> تمامًا!<br>ساعده في اكتشاف المشكلة وحلّها 🚀</p>
+  </div>
+
+  <div class="prob-box">
+    <h3>⚠️ المشكلة التي واجهها أحمد</h3>
+    <div class="screen-mock">
+      <div class="app-title">🧮 تطبيق الجمع</div>
+      <div class="calc-row">
+        <div class="calc-val">5</div>
+        <div class="calc-op">+</div>
+        <div class="calc-val">3</div>
+        <div class="calc-op">=</div>
+        <div class="calc-result">53</div>
+      </div>
+      <div style="color:#4a7a5a;font-size:12px;margin-top:8px;">الإجابة الصحيحة يجب أن تكون 8 !</div>
+    </div>
+  </div>
+
+  <div class="story" style="background:linear-gradient(135deg,#f0fbf5,#e0f5ea);">
+    <p style="font-size:17px;"><strong>مهمتك:</strong> في كل خطوة ستواجه سؤالاً.<br>اختر الإجابة الصحيحة واكتشف اسم كل مرحلة بنفسك! 🎯</p>
+    <div class="pipe" style="margin-bottom:0;">
+      <div class="ps" id="ps1"><div class="pi">❓</div><div class="ps-info"><h4>المرحلة 1 — ؟</h4></div><span class="pck">🔒</span></div>
+      <div class="parr">↓</div>
+      <div class="ps" id="ps2"><div class="pi">❓</div><div class="ps-info"><h4>المرحلة 2 — ؟</h4></div><span class="pck">🔒</span></div>
+      <div class="parr">↓</div>
+      <div class="ps" id="ps3"><div class="pi">❓</div><div class="ps-info"><h4>المرحلة 3 — ؟</h4></div><span class="pck">🔒</span></div>
+      <div class="parr">↓</div>
+      <div class="ps" id="ps4"><div class="pi">❓</div><div class="ps-info"><h4>المرحلة 4 — ؟</h4></div><span class="pck">🔒</span></div>
+      <div class="parr">↓</div>
+      <div class="ps" id="ps5"><div class="pi">❓</div><div class="ps-info"><h4>المرحلة 5 — ؟</h4></div><span class="pck">🔒</span></div>
+    </div>
+    <button class="btn-start" onclick="go(1)" style="margin-top:20px;">🚀 ابدأ!</button>
+  </div>
+</div>
+
+<!-- ═══ المرحلة 1 ═══ -->
+<div class="scr" id="s1">
+  <div class="prob-box">
+    <h3>⚠️ تذكّر: التطبيق أعطى 53 بدلاً من 8</h3>
+    <div class="screen-mock" style="transform:scale(.9);">
+      <div class="app-title">🧮 تطبيق الجمع</div>
+      <div class="calc-row">
+        <div class="calc-val">5</div><div class="calc-op">+</div><div class="calc-val">3</div><div class="calc-op">=</div>
+        <div class="calc-result">53</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">🔍 السؤال الأول</div>
+    <div class="q-text">رأى أحمد النتيجة الخاطئة 53. ماذا يجب أن يفعل أولاً؟</div>
+    <div class="choices" id="c1">
+      <button class="ch" onclick="ans(1,this,false)"><span class="cl">أ</span>يحذف التطبيق ويصنع واحدًا جديدًا</button>
+      <button class="ch" onclick="ans(1,this,true)"><span class="cl">ب</span>يفتح البرنامج ويبحث في الأكواد عن مكان الخطأ</button>
+      <button class="ch" onclick="ans(1,this,false)"><span class="cl">ج</span>يترك الأمر ويقول "لا بأس"</button>
+    </div>
+    <div class="fb" id="fb1"></div>
+    <div class="reveal" id="rv1">
+      <div class="r-icon">🔍</div>
+      <h3>اكتشفت المرحلة الأولى!</h3>
+      <h3 style="color:var(--gold-l);font-size:clamp(20px,4vw,28px);">حدِّد موقع الخطأ</h3>
+      <p>الخطوة الأولى دائماً هي البحث عن المكان الذي حدث فيه الخطأ بالضبط.</p>
+    </div>
+    <button class="btn-nx" id="n1" onclick="go(2)">التالي ←</button>
+  </div>
+</div>
+
+<!-- ═══ المرحلة 2 ═══ -->
+<div class="scr" id="s2">
+  <div class="prob-box">
+    <h3>💡 وجد أحمد الخطأ!</h3>
+    <div style="background:#0d1a12;border-radius:12px;padding:16px;display:inline-block;margin-top:8px;">
+      <div style="color:#52c97e;font-size:14px;margin-bottom:10px;font-family:monospace;">📦 كود Scratch:</div>
+      <div style="background:#1e3a28;border-radius:10px;padding:12px 18px;color:white;font-size:15px;font-weight:700;line-height:2;text-align:right;">
+        عندما تُضغط الراية الخضراء<br>
+        <span style="color:#f0c040;">قل ← </span>
+        <span style="color:#52c97e;">الرقم 1</span>
+        <span style="color:#aaa;"> + </span>
+        <span style="color:#ff6b6b;background:rgba(220,50,50,0.2);padding:2px 8px;border-radius:6px;">الرقم 1</span>
+        <span style="color:#ff6b6b;font-size:12px;"> ← هنا الخطأ! كتب الرقم 1 مرتين</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">💡 السؤال الثاني</div>
+    <div class="q-text">وجد أحمد أنه كتب "الرقم 1" مرتين بدلاً من كتابة "الرقم 1" و"الرقم 2". ماذا يجب أن يفعل الآن؟</div>
+    <div class="choices" id="c2">
+      <button class="ch" onclick="ans(2,this,false)"><span class="cl">أ</span>يصلح الخطأ فوراً بدون تفكير</button>
+      <button class="ch" onclick="ans(2,this,true)"><span class="cl">ب</span>يفكر: لماذا حدث هذا الخطأ؟ وكيف يصلحه بالطريقة الصحيحة؟</button>
+      <button class="ch" onclick="ans(2,this,false)"><span class="cl">ج</span>يطلب من صديقه أن يحل المشكلة بدلاً منه</button>
+    </div>
+    <div class="fb" id="fb2"></div>
+    <div class="reveal" id="rv2">
+      <div class="r-icon">💡</div>
+      <h3>اكتشفت المرحلة الثانية!</h3>
+      <h3 style="color:var(--gold-l);font-size:clamp(20px,4vw,28px);">فكِّر في الحل</h3>
+      <p>بعد تحديد الخطأ، فكّر جيداً في سببه وفي أفضل طريقة لإصلاحه.</p>
+    </div>
+    <button class="btn-nx" id="n2" onclick="go(3)">التالي ←</button>
+  </div>
+</div>
+
+<!-- ═══ المرحلة 3 ═══ -->
+<div class="scr" id="s3">
+  <div class="prob-box">
+    <h3>🔧 حان وقت الإصلاح!</h3>
+    <p style="font-size:15px;color:#7a4f00;margin-top:8px;">المشكلة: كتب "الرقم 1" مرتين بدلاً من "الرقم 1" + "الرقم 2"</p>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">🔧 السؤال الثالث</div>
+    <div class="q-text">فكّر أحمد في الحل. الآن ماذا يجب أن يفعل؟</div>
+    <div class="choices" id="c3">
+      <button class="ch" onclick="ans(3,this,false)"><span class="cl">أ</span>يغير الأرقام في السؤال ليجعل الإجابة صحيحة بالصدفة</button>
+      <button class="ch" onclick="ans(3,this,false)"><span class="cl">ب</span>يترك الخطأ كما هو لأن التغيير صعب</button>
+      <button class="ch" onclick="ans(3,this,true)"><span class="cl">ج</span>يصلح الكود ويكتب "الرقم 2" في المكان الصحيح</button>
+    </div>
+    <div class="fb" id="fb3"></div>
+
+    <!-- Fixed code visual -->
+    <div id="fixShow" style="display:none;background:#0d1a12;border-radius:12px;padding:16px;margin-top:14px;text-align:center;">
+      <div style="color:#52c97e;font-size:14px;margin-bottom:10px;font-family:monospace;">✅ الكود بعد الإصلاح:</div>
+      <div style="background:#1e3a28;border-radius:10px;padding:12px 18px;color:white;font-size:15px;font-weight:700;line-height:2;display:inline-block;text-align:right;">
+        <span style="color:#f0c040;">قل ← </span>
+        <span style="color:#52c97e;">الرقم 1</span>
+        <span style="color:#aaa;"> + </span>
+        <span style="color:#52c97e;background:rgba(82,201,126,0.2);padding:2px 8px;border-radius:6px;">الرقم 2 ✅</span>
+      </div>
+    </div>
+
+    <div class="reveal" id="rv3">
+      <div class="r-icon">⚙️</div>
+      <h3>اكتشفت المرحلة الثالثة!</h3>
+      <h3 style="color:var(--gold-l);font-size:clamp(20px,4vw,28px);">قم بإصلاح الخطأ</h3>
+      <p>بعد التفكير في الحل، طبّقه على البرنامج وأجر التغيير اللازم.</p>
+    </div>
+    <button class="btn-nx" id="n3" onclick="go(4)">التالي ←</button>
+  </div>
+</div>
+
+<!-- ═══ المرحلة 4 ═══ -->
+<div class="scr" id="s4">
+  <div class="prob-box">
+    <h3>✅ أصلح أحمد الكود!</h3>
+    <p style="font-size:15px;color:#7a4f00;margin-top:8px;">غيّر "الرقم 1" إلى "الرقم 2" في المكان الصحيح.</p>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">🔁 السؤال الرابع</div>
+    <div class="q-text">أصلح أحمد الكود. ماذا يجب أن يفعل الآن؟</div>
+    <div class="choices" id="c4">
+      <button class="ch" onclick="ans(4,this,false)"><span class="cl">أ</span>يحفظ البرنامج ويذهب يلعب — الأمر انتهى!</button>
+      <button class="ch" onclick="ans(4,this,true)"><span class="cl">ب</span>يشغّل البرنامج مرة أخرى ليرى هل أصبحت الإجابة صحيحة</button>
+      <button class="ch" onclick="ans(4,this,false)"><span class="cl">ج</span>يصنع برنامجاً جديداً من البداية للتأكد</button>
+    </div>
+    <div class="fb" id="fb4"></div>
+
+    <!-- Run result -->
+    <div id="runShow" style="display:none;margin-top:14px;">
+      <div style="background:#0d1a12;border-radius:12px;padding:16px;text-align:center;">
+        <div style="color:#52c97e;font-size:13px;margin-bottom:10px;font-family:monospace;">⚡ نتيجة التشغيل الآن:</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+          <div style="background:#0d3b22;color:#f0c040;font-size:22px;font-weight:900;padding:8px 18px;border-radius:10px;">5</div>
+          <div style="color:white;font-size:20px;">+</div>
+          <div style="background:#0d3b22;color:#f0c040;font-size:22px;font-weight:900;padding:8px 18px;border-radius:10px;">3</div>
+          <div style="color:white;font-size:20px;">=</div>
+          <div style="background:#0d3b22;border:2px solid #52c97e;color:#52c97e;font-size:22px;font-weight:900;padding:8px 18px;border-radius:10px;">8 ✅</div>
+        </div>
+        <div style="color:#52c97e;font-size:14px;margin-top:8px;font-weight:700;">🎉 الإجابة صحيحة الآن!</div>
+      </div>
+    </div>
+
+    <div class="reveal" id="rv4">
+      <div class="r-icon">🔁</div>
+      <h3>اكتشفت المرحلة الرابعة!</h3>
+      <h3 style="color:var(--gold-l);font-size:clamp(20px,4vw,28px);">إعادة اختبار البرنامج</h3>
+      <p>بعد كل إصلاح، يجب تشغيل البرنامج مجدداً للتأكد أن كل شيء يعمل بشكل صحيح.</p>
+    </div>
+    <button class="btn-nx" id="n4" onclick="go(5)">التالي ←</button>
+  </div>
+</div>
+
+<!-- ═══ المرحلة 5 ═══ -->
+<div class="scr" id="s5">
+  <div class="prob-box" style="border-color:var(--g2);background:linear-gradient(135deg,#e8f7ef,#d0f0e0);">
+    <h3 style="color:var(--g1);">🎉 البرنامج يعمل بشكل صحيح الآن!</h3>
+    <p style="color:var(--g2);font-size:15px;margin-top:8px;">5 + 3 = 8 ✅ الإجابة صحيحة تماماً!</p>
+  </div>
+
+  <div class="q-card">
+    <div class="q-num">🏁 السؤال الأخير</div>
+    <div class="q-text">البرنامج يعمل بشكل صحيح الآن. ماذا يعني هذا؟</div>
+    <div class="choices" id="c5">
+      <button class="ch" onclick="ans(5,this,false)"><span class="cl">أ</span>يجب أن يبحث أحمد عن أخطاء أخرى حتى لو كل شيء صحيح</button>
+      <button class="ch" onclick="ans(5,this,false)"><span class="cl">ب</span>يجب أن يعيد كل الخطوات من البداية للتأكد</button>
+      <button class="ch" onclick="ans(5,this,true)"><span class="cl">ج</span>وصل أحمد إلى الحل! تم تصحيح الخطأ بنجاح 🎉</span></button>
+    </div>
+    <div class="fb" id="fb5"></div>
+    <div class="reveal" id="rv5">
+      <div class="r-icon">🏁</div>
+      <h3>اكتشفت المرحلة الأخيرة!</h3>
+      <h3 style="color:var(--gold-l);font-size:clamp(20px,4vw,28px);">النهاية — تم الحل! 🎉</h3>
+      <p>عندما يعمل البرنامج بشكل صحيح، يعني أنك نجحت في تشخيص الخطأ وإصلاحه!</p>
+    </div>
+    <button class="btn-nx" id="n5" onclick="showFinal()">🏆 شاهد نتيجتك!</button>
+  </div>
+</div>
+
+<!-- ═══ شاشة النتيجة ═══ -->
+<div class="scr" id="sFin">
+  <div class="final-hero">
+    <div class="trophy">🏆</div>
+    <h2>أحسنت! اكتشفت المراحل الخمس!</h2>
+    <p>الآن أنت تعرف كيف يشخّص المبرمج الأخطاء ويصلحها مثل المحترفين!</p>
+    <div class="score-box">
+      <span class="big" id="scNum">0</span>
+      <span class="lbl">إجابة صحيحة من 5</span>
+    </div>
+    <div class="stars" id="starRow">⭐⭐⭐⭐⭐</div>
+  </div>
+
+  <!-- FULL PIPELINE -->
+  <div style="background:white;border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 18px rgba(26,107,60,0.1);text-align:center;">
+    <h3 style="font-size:18px;font-weight:900;color:var(--g1);margin-bottom:16px;">🗺️ المراحل الخمس التي اكتشفتها</h3>
+    <div class="pipe">
+      <div class="ps lit"><div class="pi">🔍</div><div class="ps-info"><h4>1 — حدِّد موقع الخطأ</h4></div><span class="pck">✅</span></div>
+      <div class="parr">↓</div>
+      <div class="ps lit"><div class="pi">💡</div><div class="ps-info"><h4>2 — فكِّر في الحل</h4></div><span class="pck">✅</span></div>
+      <div class="parr">↓</div>
+      <div class="ps lit"><div class="pi">⚙️</div><div class="ps-info"><h4>3 — قم بإصلاح الخطأ</h4></div><span class="pck">✅</span></div>
+      <div class="parr">↓</div>
+      <div class="ps lit"><div class="pi">🔁</div><div class="ps-info"><h4>4 — إعادة اختبار البرنامج</h4></div><span class="pck">✅</span></div>
+      <div class="parr">↓</div>
+      <div class="ps lit"><div class="pi">🏁</div><div class="ps-info"><h4>5 — النهاية — تم الحل!</h4></div><span class="pck">✅</span></div>
+    </div>
+  </div>
+
+  <div class="reflect">
+    <h3>✏️ فكّر وأجب في دفترك</h3>
+    <ol>
+      <li>اذكر المراحل الخمس لتشخيص الأخطاء من حفظك.</li>
+      <li>لماذا من المهم إعادة تشغيل البرنامج بعد الإصلاح؟</li>
+      <li>هل سبق أن واجهت مشكلة في حياتك اليومية وحللتها؟ ما الخطوات التي اتبعتها؟</li>
+    </ol>
+  </div>
+
+  <div style="text-align:center;padding-bottom:28px;">
+    <button class="btn-start" onclick="location.reload()">🔄 العب مرة أخرى</button>
+  </div>
+</div>
+
+<script>
+let score = 0;
+
+const stages = [
+  null,
+  { icon:'🔍', name:'حدِّد موقع الخطأ', desc:'البحث عن مكان الخطأ في البرنامج' },
+  { icon:'💡', name:'فكِّر في الحل', desc:'فهم سبب الخطأ والتفكير في الحل الأفضل' },
+  { icon:'⚙️', name:'قم بإصلاح الخطأ', desc:'تطبيق الإصلاح على الكود' },
+  { icon:'🔁', name:'إعادة اختبار البرنامج', desc:'تشغيل البرنامج للتأكد من الإصلاح' },
+  { icon:'🏁', name:'النهاية — تم الحل!', desc:'نجحت في إصلاح جميع الأخطاء' },
+];
+
+const feedbacks = {
+  1: { ok:'✅ صح! أول شيء نفعله هو فتح البرنامج والبحث عن مكان الخطأ بالضبط.', no:'❌ ليس هذا الصحيح. الجواب هو ب — نفتح البرنامج ونبحث عن مكان الخطأ أولاً.' },
+  2: { ok:'✅ ممتاز! التفكير في سبب الخطأ يساعدنا على إيجاد أفضل حل ممكن.', no:'❌ الجواب الصحيح هو ب — يجب أن نفكر جيداً قبل الإصلاح.' },
+  3: { ok:'✅ رائع! نصلح الكود ونكتب الشيء الصحيح في مكانه.', no:'❌ الجواب الصحيح هو ج — نصلح الكود ونكتب الرقم 2 في المكان الصحيح.' },
+  4: { ok:'✅ صحيح تماماً! يجب دائماً تشغيل البرنامج بعد الإصلاح للتأكد.', no:'❌ الجواب الصحيح هو ب — نشغّل البرنامج مرة أخرى للتأكد أن كل شيء صحيح.' },
+  5: { ok:'✅ أحسنت! عندما يعمل البرنامج بشكل صحيح، معناها أنجزنا المهمة!', no:'❌ الجواب الصحيح هو ج — إذا كانت النتيجة صحيحة فقد انتهت المهمة بنجاح.' },
+};
+
+function go(n) {
+  document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
+  document.getElementById('s'+n).classList.add('on');
+  window.scrollTo(0,0);
+  // update dots
+  for(let i=1;i<=5;i++){
+    const d=document.getElementById('d'+i);
+    d.className='dot';
+    if(i<n) d.classList.add('done');
+    if(i===n) d.classList.add('now');
+  }
+}
+
+function ans(st, btn, ok) {
+  const btns = document.querySelectorAll('#c'+st+' .ch');
+  btns.forEach(b=>{ b.classList.add('off'); });
+  const fb = document.getElementById('fb'+st);
+  const rv = document.getElementById('rv'+st);
+  const nx = document.getElementById('n'+st);
+  if(ok){
+    btn.classList.add('ok');
+    btn.querySelector('.cl').textContent='✓';
+    score++;
+    fb.className='fb ok'; fb.textContent=feedbacks[st].ok; fb.style.display='block';
+  } else {
+    btn.classList.add('no');
+    btn.querySelector('.cl').textContent='✗';
+    btns.forEach(b=>{ if(b.getAttribute('onclick').includes('true')){ b.classList.add('ok'); b.querySelector('.cl').textContent='✓'; }});
+    fb.className='fb no'; fb.textContent=feedbacks[st].no; fb.style.display='block';
+  }
+  // extras
+  if(st===3) setTimeout(()=>{ document.getElementById('fixShow').style.display='block'; }, 700);
+  if(st===4) setTimeout(()=>{ document.getElementById('runShow').style.display='block'; }, 700);
+
+  setTimeout(()=>{
+    rv.style.display='block';
+    unlockPipe(st);
+  }, 700);
+  setTimeout(()=>{ nx.style.display='inline-block'; }, 900);
+}
+
+function unlockPipe(n) {
+  const el = document.getElementById('ps'+n);
+  if(!el) return;
+  const d = stages[n];
+  el.classList.add('lit');
+  el.innerHTML = `<div class="pi">${d.icon}</div><div class="ps-info"><h4>${n} — ${d.name}</h4></div><span class="pck">✅</span>`;
+}
+
+function showFinal() {
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sFin').classList.add('on');
+  window.scrollTo(0,0);
+  document.getElementById('scNum').textContent = score;
+  const stars = ['','⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'];
+  document.getElementById('starRow').textContent = stars[score] || '⭐';
+  // all dots done
+  for(let i=1;i<=5;i++){const d=document.getElementById('d'+i);d.className='dot done';}
+  // confetti
+  const em=['🎉','⭐','💡','✅','🔍'];
+  for(let i=0;i<14;i++){
+    const el=document.createElement('div');
+    el.textContent=em[i%em.length];
+    const r=Math.random()*720;
+    const dur=1.4+Math.random()*1.2;
+    el.style.cssText=`position:fixed;font-size:24px;pointer-events:none;z-index:9999;left:${Math.random()*100}vw;top:-40px;`;
+    const s=document.createElement('style');
+    s.textContent=`@keyframes f${i}{to{top:110vh;transform:rotate(${r}deg);opacity:0;}}`;
+    document.head.appendChild(s);
+    el.style.animation=`f${i} ${dur}s ease forwards`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),dur*1000+200);
+  }
+}
+</script>
+</body>
+</html>
