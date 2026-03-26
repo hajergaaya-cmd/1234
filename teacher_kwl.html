@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جدارية KWL — شاشة المعلمة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--card:#0e1422;--border:#1a2a44;
+  --k:#0e7a6a;--k-l:#12b89a;--k-bg:#071a16;
+  --w:#7c4dff;--w-l:#b49aff;--w-bg:#0e0a22;
+  --l:#c07a00;--l-l:#f0c030;--l-bg:#1a1000;
+  --white:#eef4ff;--red:#e74c3c;--green:#27ae60
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#06080f,#0e7a6a12,#7c4dff10);border-bottom:2px solid #1a2a44;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.h-logo{font-size:2rem}
+.h-title{font-size:1.35rem;font-weight:800;background:linear-gradient(90deg,var(--k-l),var(--w-l),var(--l-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.h-sub{font-size:.8rem;color:#4a6a8a;margin-top:2px}
+.controls{margin-right:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.live-badge{display:flex;align-items:center;gap:6px;background:#060e10;border:1px solid var(--k);border-radius:20px;padding:5px 12px;font-size:.8rem;color:var(--k-l);font-weight:700}
+.dot{width:7px;height:7px;border-radius:50%;animation:blink 1.3s infinite}
+.dot-k{background:var(--k-l)}.dot-w{background:var(--w-l)}.dot-l{background:var(--l-l)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.clear-btn{background:transparent;border:1px solid #1a2a44;color:#4a5a6a;padding:6px 14px;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s}
+.clear-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* STATS */
+.stats{display:flex;gap:10px;padding:12px 20px;flex-wrap:wrap;max-width:1400px;margin:0 auto}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.stat .val{font-size:1.5rem;font-weight:800}
+.stat .lbl{font-size:.78rem;color:#4a6a8a}
+.sk .val{color:var(--k-l)}.sw .val{color:var(--w-l)}.sl .val{color:var(--l-l)}.st .val{color:#8ab4cc}
+
+/* KWL HEADER ROW */
+.kwl-header{display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:0;max-width:1400px;margin:10px 20px 0;background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;overflow:hidden}
+.kwl-hcell{padding:13px 16px;font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px;border-left:1px solid var(--border)}
+.kwl-hcell:first-child{border-left:none;color:#5a7a9a;font-size:.88rem}
+.hk{background:var(--k-bg);color:var(--k-l)}
+.hw{background:var(--w-bg);color:var(--w-l)}
+.hl{background:var(--l-bg);color:var(--l-l)}
+.col-letter-sm{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:800;flex-shrink:0}
+.lk{background:var(--k)}.lw{background:var(--w)}.ll{background:var(--l)}
+
+/* TABLE BODY */
+.kwl-body{max-width:1400px;margin:0 20px 40px;border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;overflow:hidden}
+.kwl-row{display:grid;grid-template-columns:160px 1fr 1fr 1fr;border-top:1px solid #0e1a28;transition:background .2s;animation:rowIn .4s ease}
+@keyframes rowIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+.kwl-row:hover{background:#0a1020}
+.kwl-cell{padding:14px 16px;font-size:.92rem;line-height:1.75;border-left:1px solid #0e1a28;vertical-align:top;word-break:break-word}
+.kwl-cell:first-child{border-left:none}
+
+/* NAME CELL */
+.name-cell{display:flex;flex-direction:column;justify-content:flex-start;gap:4px}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.95rem;background:linear-gradient(135deg,var(--k),var(--w));flex-shrink:0;margin-bottom:4px}
+.student-name{font-weight:700;font-size:.92rem;color:var(--white)}
+.student-time{font-size:.72rem;color:#3a5a7a}
+.complete-badge{font-size:.68rem;background:#0a2a10;color:#4fd37a;border:1px solid var(--green);border-radius:6px;padding:2px 7px;width:fit-content;margin-top:3px}
+.pending-badge{font-size:.68rem;background:#1a1000;color:#8a7030;border:1px solid #4a3a00;border-radius:6px;padding:2px 7px;width:fit-content;margin-top:3px}
+
+/* CELL COLORS */
+.cell-k{color:#9ad8c8;background:#040e0b}
+.cell-w{color:#c4b0ff;background:#07050e}
+.cell-l{color:#e0c060;background:#0a0800}
+.cell-l-empty{color:#2a2a2a;font-style:italic;font-size:.85rem;display:flex;align-items:center;justify-content:center;background:#050505;min-height:50px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:70px 20px;color:#2a3a4a;max-width:500px;margin:0 auto}
+.empty-state .ei{font-size:4rem;margin-bottom:12px;opacity:.4}
+.empty-state p{font-size:.97rem;line-height:1.8;color:#3a5a7a}
+</style>
+</head>
+<body>
+<header>
+  <div class="h-logo">📊</div>
+  <div>
+    <div class="h-title">جدارية KWL — البرمجيات الخبيثة</div>
+    <div class="h-sub">شاشة المعلمة | إجابات الطالبات تظهر هنا لحظة بلحظة</div>
+  </div>
+  <div class="controls">
+    <div class="live-badge"><span class="dot dot-k"></span>مباشر</div>
+    <button class="clear-btn" onclick="clearAll()">🗑️ مسح الجدارية</button>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat st"><div class="val" id="totalC">0</div><div class="lbl">👥 إجمالي الطالبات</div></div>
+  <div class="stat sk"><div class="val" id="kC">0</div><div class="lbl">K أرسلن</div></div>
+  <div class="stat sw"><div class="val" id="wC">0</div><div class="lbl">W أرسلن</div></div>
+  <div class="stat sl"><div class="val" id="lC">0</div><div class="lbl">L أكملن</div></div>
+</div>
+
+<!-- KWL HEADER -->
+<div class="kwl-header">
+  <div class="kwl-hcell">اسم الطالبة</div>
+  <div class="kwl-hcell hk"><div class="col-letter-sm lk">K</div>ماذا أعرف؟</div>
+  <div class="kwl-hcell hw"><div class="col-letter-sm lw">W</div>ماذا أريد أن أعرف؟</div>
+  <div class="kwl-hcell hl"><div class="col-letter-sm ll">L</div>ماذا تعلمت؟</div>
+</div>
+
+<!-- KWL BODY -->
+<div class="kwl-body" id="kwlBody">
+  <div style="padding:20px">
+    <div class="empty-state">
+      <div class="ei">📝</div>
+      <p>في انتظار إجابات الطالبات...<br>ستظهر هنا فور إرسال K و W</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+
+async function fetchKWL(){
+  try{
+    const res=await fetch(`${DB}/kwl_activity.json`);
+    if(!res.ok)return;
+    const data=await res.json();
+    if(!data){renderEmpty();return;}
+    const entries=Object.entries(data).sort((a,b)=>a[1].time?.localeCompare(b[1].time)||0);
+    renderTable(entries);
+    updateStats(entries);
+  }catch(e){}
+}
+
+function renderEmpty(){
+  document.getElementById('kwlBody').innerHTML=`<div style="padding:20px"><div class="empty-state"><div class="ei">📝</div><p>في انتظار إجابات الطالبات...<br>ستظهر هنا فور إرسال K و W</p></div></div>`;
+  ['totalC','kC','wC','lC'].forEach(id=>document.getElementById(id).textContent='0');
+}
+
+function renderTable(entries){
+  if(!entries.length){renderEmpty();return;}
+  document.getElementById('kwlBody').innerHTML=entries.map(([key,e])=>{
+    const initial=e.name?e.name.charAt(0):'؟';
+    const hasL=e.l&&e.l.trim().length>0;
+    const lCell=hasL
+      ?`<div class="kwl-cell cell-l">${e.l}</div>`
+      :`<div class="kwl-cell cell-l-empty">⏳ تُملأ في نهاية الحصة</div>`;
+    return `<div class="kwl-row">
+      <div class="kwl-cell">
+        <div class="name-cell">
+          <div class="avatar">${initial}</div>
+          <div class="student-name">${e.name||'طالبة'}</div>
+          <div class="student-time">⏰ ${e.time||''}</div>
+          ${hasL?'<div class="complete-badge">✅ مكتمل</div>':'<div class="pending-badge">⏳ L فارغة</div>'}
+        </div>
+      </div>
+      <div class="kwl-cell cell-k">${e.k||'—'}</div>
+      <div class="kwl-cell cell-w">${e.w||'—'}</div>
+      ${lCell}
+    </div>`;
+  }).join('');
+}
+
+function updateStats(entries){
+  const total=entries.length;
+  const withL=entries.filter(([,e])=>e.l&&e.l.trim()).length;
+  document.getElementById('totalC').textContent=total;
+  document.getElementById('kC').textContent=total;
+  document.getElementById('wC').textContent=total;
+  document.getElementById('lC').textContent=withL;
+}
+
+async function clearAll(){
+  if(!confirm('هل أنتِ متأكدة من مسح جدارية KWL كاملة؟'))return;
+  await fetch(`${DB}/kwl_activity.json`,{method:'DELETE'});
+  renderEmpty();
+}
+
+fetchKWL();
+setInterval(fetchKWL,4000);
+</script>
+</body>
+</html>

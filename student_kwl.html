@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط KWL — البرمجيات الخبيثة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--card:#0e1422;--border:#1a2a44;
+  --k:#0e7a6a;--k-l:#12b89a;--k-bg:#071a16;
+  --w:#7c4dff;--w-l:#b49aff;--w-bg:#0e0a22;
+  --l:#c07a00;--l-l:#f0c030;--l-bg:#1a1000;
+  --white:#eef4ff;--red:#e74c3c;--green:#27ae60
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.screen{width:100%;max-width:600px;display:none;animation:pop .45s ease}
+.screen.active{display:block}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAME SCREEN */
+.name-card{background:var(--card);border:2px solid #1a3a5a;border-radius:22px;padding:36px 28px;text-align:center}
+.logo{font-size:3.2rem;margin-bottom:8px}
+.main-title{font-size:1.55rem;font-weight:800;background:linear-gradient(90deg,var(--k-l),var(--w-l),var(--l-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.sub{font-size:.92rem;color:#5a7a9a;margin-bottom:10px;line-height:1.7}
+.kwl-preview{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:24px}
+.kp{border-radius:10px;padding:10px 8px;text-align:center;font-size:.85rem;font-weight:700}
+.kp-k{background:var(--k-bg);border:1px solid var(--k);color:var(--k-l)}
+.kp-w{background:var(--w-bg);border:1px solid var(--w);color:var(--w-l)}
+.kp-l{background:#0e0e0e;border:1px dashed #2a2a2a;color:#3a3a3a}
+.kp .letter{font-size:1.4rem;font-weight:800;display:block;margin-bottom:3px}
+.name-inp{width:100%;background:#06080f;border:2px solid var(--border);border-radius:12px;color:var(--white);font-family:'Tajawal',sans-serif;font-size:1.05rem;padding:13px 16px;direction:rtl;text-align:center;transition:border-color .2s;margin-bottom:14px}
+.name-inp:focus{outline:none;border-color:var(--k-l)}
+.name-inp.err{border-color:var(--red)}
+.start-btn{width:100%;background:linear-gradient(135deg,var(--k),#0a5a4a);color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+
+/* KW SCREEN */
+.kw-screen{max-width:640px}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.student-tag{background:#0e1422;border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:.88rem;color:var(--k-l);font-weight:700}
+.phase-tag{font-size:.82rem;color:#5a7a9a;background:#0e1422;border:1px solid var(--border);border-radius:20px;padding:5px 14px}
+
+.col-card{border-radius:16px;padding:20px;margin-bottom:14px}
+.col-k{background:var(--k-bg);border:1.5px solid var(--k)}
+.col-w{background:var(--w-bg);border:1.5px solid var(--w)}
+.col-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.col-letter{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;flex-shrink:0}
+.letter-k{background:var(--k);color:#fff}
+.letter-w{background:var(--w);color:#fff}
+.col-title{font-size:1rem;font-weight:700}
+.col-sub{font-size:.8rem;margin-top:2px;opacity:.7}
+.col-k .col-title{color:var(--k-l)}
+.col-w .col-title{color:var(--w-l)}
+.ans-area{width:100%;background:#03050a;border:1.5px solid rgba(255,255,255,.08);border-radius:10px;color:var(--white);font-family:'Tajawal',sans-serif;font-size:.97rem;padding:12px 14px;direction:rtl;resize:vertical;min-height:100px;line-height:1.85;transition:border-color .2s}
+.ans-area:focus{outline:none}
+.ans-area-k:focus{border-color:var(--k)}
+.ans-area-w:focus{border-color:var(--w)}
+.ans-area.err{border-color:var(--red)!important}
+.char-hint{font-size:.75rem;color:#3a4a5a;text-align:left;margin-top:4px}
+
+.send-kw-btn{width:100%;background:linear-gradient(135deg,var(--k),var(--w));color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s;margin-top:4px}
+.send-kw-btn:hover{opacity:.9}
+.send-kw-btn:disabled{background:#1a2a2a;color:#3a5a5a;cursor:default}
+
+/* L SCREEN */
+.l-screen{max-width:640px}
+.kw-summary{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.sum-title{font-size:.82rem;font-weight:700;color:#5a7a9a;margin-bottom:10px}
+.sum-row{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
+.sum-badge{font-size:.72rem;font-weight:800;padding:2px 9px;border-radius:8px;flex-shrink:0;margin-top:2px}
+.badge-k{background:var(--k-bg);color:var(--k-l);border:1px solid var(--k)}
+.badge-w{background:var(--w-bg);color:var(--w-l);border:1px solid var(--w)}
+.sum-text{font-size:.88rem;color:#8a9ab0;line-height:1.7}
+
+.col-l{background:var(--l-bg);border:1.5px solid var(--l)}
+.letter-l{background:var(--l);color:#fff}
+.col-l .col-title{color:var(--l-l)}
+.ans-area-l:focus{border-color:var(--l)}
+.send-l-btn{width:100%;background:linear-gradient(135deg,var(--l),#a06000);color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s;margin-top:4px}
+.send-l-btn:hover{opacity:.9}
+.send-l-btn:disabled{background:#1a1200;color:#4a3a00;cursor:default}
+
+/* SUCCESS */
+.success-card{background:var(--card);border:2px solid var(--green);border-radius:22px;padding:36px 26px;text-align:center}
+.suc-icon{font-size:3.8rem;margin-bottom:10px}
+.suc-title{font-size:1.4rem;font-weight:800;color:#4fd37a;margin-bottom:8px}
+.suc-sub{font-size:.95rem;color:#4a7a5a;line-height:1.8}
+.suc-kwl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:20px}
+.suc-col{border-radius:10px;padding:12px 10px;text-align:center}
+.suc-k{background:var(--k-bg);border:1px solid var(--k)}
+.suc-w{background:var(--w-bg);border:1px solid var(--w)}
+.suc-l{background:var(--l-bg);border:1px solid var(--l)}
+.suc-letter{font-size:1.6rem;font-weight:800;display:block;margin-bottom:4px}
+.sk-l{color:var(--k-l)}.sw-l{color:var(--w-l)}.sl-l{color:var(--l-l)}
+.suc-check{font-size:1.2rem}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: NAME -->
+<div class="screen active" id="nameScreen">
+  <div class="name-card">
+    <div class="logo">📊</div>
+    <div class="main-title">جدول KWL</div>
+    <div class="sub">البرمجيات الخبيثة — ماذا تعرفين؟ وماذا تريدين أن تعرفي؟</div>
+    <div class="kwl-preview">
+      <div class="kp kp-k"><span class="letter">K</span>ماذا أعرف؟</div>
+      <div class="kp kp-w"><span class="letter">W</span>ماذا أريد أن أعرف؟</div>
+      <div class="kp kp-l"><span class="letter" style="color:#2a2a2a">L</span>ماذا تعلمت؟</div>
+    </div>
+    <input type="text" class="name-inp" id="nameInp" placeholder="اكتبي اسمكِ الكامل..." maxlength="40">
+    <button class="start-btn" onclick="startKW()">✏️ ابدئي الجدول</button>
+  </div>
+</div>
+
+<!-- SCREEN 2: K + W -->
+<div class="screen kw-screen" id="kwScreen">
+  <div class="top-bar">
+    <span class="student-tag" id="studentTag">👤</span>
+    <span class="phase-tag">📌 بداية الحصة</span>
+  </div>
+
+  <div class="col-card col-k">
+    <div class="col-header">
+      <div class="col-letter letter-k">K</div>
+      <div><div class="col-title">ماذا أعرف؟</div><div class="col-sub">ما الذي تعرفينه مسبقًا عن البرمجيات الخبيثة؟</div></div>
+    </div>
+    <textarea class="ans-area ans-area-k" id="kAnswer" placeholder="اكتبي ما تعرفينه هنا..." maxlength="400" oninput="this.classList.remove('err')"></textarea>
+    <div class="char-hint" id="kCount">0 / 400</div>
+  </div>
+
+  <div class="col-card col-w">
+    <div class="col-header">
+      <div class="col-letter letter-w">W</div>
+      <div><div class="col-title">ماذا أريد أن أعرف؟</div><div class="col-sub">ما الأسئلة أو المعلومات التي تودّين معرفتها؟</div></div>
+    </div>
+    <textarea class="ans-area ans-area-w" id="wAnswer" placeholder="اكتبي أسئلتكِ هنا..." maxlength="400" oninput="this.classList.remove('err')"></textarea>
+    <div class="char-hint" id="wCount">0 / 400</div>
+  </div>
+
+  <button class="send-kw-btn" id="sendKWBtn" onclick="sendKW()">📤 أرسلي K و W للمعلمة</button>
+</div>
+
+<!-- SCREEN 3: L (end of class) -->
+<div class="screen l-screen" id="lScreen">
+  <div class="top-bar">
+    <span class="student-tag" id="studentTag2">👤</span>
+    <span class="phase-tag" style="color:var(--l-l);border-color:var(--l)">🎓 نهاية الحصة</span>
+  </div>
+
+  <div class="kw-summary" id="kwSummary">
+    <div class="sum-title">إجاباتكِ السابقة:</div>
+    <div class="sum-row"><span class="sum-badge badge-k">K</span><div class="sum-text" id="kPreview">—</div></div>
+    <div class="sum-row"><span class="sum-badge badge-w">W</span><div class="sum-text" id="wPreview">—</div></div>
+  </div>
+
+  <div class="col-card col-l">
+    <div class="col-header">
+      <div class="col-letter letter-l">L</div>
+      <div><div class="col-title">ماذا تعلمت؟</div><div class="col-sub">ما أهم المعلومات التي تعلمتِها من الدرس؟</div></div>
+    </div>
+    <textarea class="ans-area ans-area-l" id="lAnswer" placeholder="اكتبي ما تعلمتِه اليوم..." maxlength="400" oninput="this.classList.remove('err')"></textarea>
+    <div class="char-hint" id="lCount">0 / 400</div>
+  </div>
+
+  <button class="send-l-btn" id="sendLBtn" onclick="sendL()">✅ أرسلي L لإكمال الجدول</button>
+</div>
+
+<!-- SCREEN 4: FULL SUCCESS -->
+<div class="screen" id="successScreen">
+  <div class="success-card">
+    <div class="suc-icon">🏆</div>
+    <div class="suc-title">اكتمل جدول KWL!</div>
+    <div class="suc-sub">أحسنتِ! جدولكِ الكامل يظهر الآن على شاشة المعلمة</div>
+    <div class="suc-kwl">
+      <div class="suc-col suc-k"><span class="suc-letter sk-l">K</span><div class="suc-check">✅</div></div>
+      <div class="suc-col suc-w"><span class="suc-letter sw-l">W</span><div class="suc-check">✅</div></div>
+      <div class="suc-col suc-l"><span class="suc-letter sl-l">L</span><div class="suc-check">✅</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+let studentName='', fireKey='';
+let kVal='', wVal='';
+
+document.getElementById('kAnswer').addEventListener('input',function(){
+  document.getElementById('kCount').textContent=`${this.value.length} / 400`;
+});
+document.getElementById('wAnswer').addEventListener('input',function(){
+  document.getElementById('wCount').textContent=`${this.value.length} / 400`;
+});
+document.getElementById('lAnswer').addEventListener('input',function(){
+  document.getElementById('lCount').textContent=`${this.value.length} / 400`;
+});
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startKW(){
+  const n=document.getElementById('nameInp').value.trim();
+  if(!n){document.getElementById('nameInp').classList.add('err');return;}
+  studentName=n;
+  document.getElementById('studentTag').textContent='👤 '+n;
+  document.getElementById('studentTag2').textContent='👤 '+n;
+  showScreen('kwScreen');
+}
+
+async function sendKW(){
+  const k=document.getElementById('kAnswer').value.trim();
+  const w=document.getElementById('wAnswer').value.trim();
+  if(!k){document.getElementById('kAnswer').classList.add('err');}
+  if(!w){document.getElementById('wAnswer').classList.add('err');}
+  if(!k||!w){alert('من فضلكِ أجيبي على الخانتين K و W');return;}
+  const btn=document.getElementById('sendKWBtn');
+  btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';
+  kVal=k;wVal=w;
+  try{
+    const res=await fetch(`${DB}/kwl_activity.json`,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:studentName,k,w,l:'',time:new Date().toLocaleTimeString('ar-QA'),complete:false})});
+    const data=await res.json();
+    fireKey=data.name; // Firebase returns {name: "-key"}
+    // Actually get the key
+    fireKey=data.name;
+    // Store key in localStorage for recovery
+    localStorage.setItem('kwl_key_'+studentName, data.name);
+    localStorage.setItem('kwl_name', studentName);
+    kVal=k;wVal=w;
+    document.getElementById('kPreview').textContent=k;
+    document.getElementById('wPreview').textContent=w;
+    showScreen('lScreen');
+  }catch(e){
+    btn.disabled=false;btn.textContent='📤 أرسلي K و W للمعلمة';
+    alert('حدث خطأ، حاولي مرة أخرى');
+  }
+}
+
+async function sendL(){
+  const l=document.getElementById('lAnswer').value.trim();
+  if(!l){document.getElementById('lAnswer').classList.add('err');alert('من فضلكِ اكتبي ما تعلمتِه');return;}
+  const btn=document.getElementById('sendLBtn');
+  btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';
+  try{
+    // Find the student's record and update L
+    const res=await fetch(`${DB}/kwl_activity.json`);
+    const data=await res.json();
+    const key=Object.keys(data).find(k=>data[k].name===studentName&&data[k].k===kVal);
+    if(key){
+      await fetch(`${DB}/kwl_activity/${key}.json`,{method:'PATCH',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({l,complete:true})});
+    }
+    showScreen('successScreen');
+  }catch(e){
+    btn.disabled=false;btn.textContent='✅ أرسلي L لإكمال الجدول';
+    alert('حدث خطأ، حاولي مرة أخرى');
+  }
+}
+
+// Check if student already submitted KW (page refresh recovery)
+window.onload=()=>{
+  const savedName=localStorage.getItem('kwl_name');
+  if(savedName){
+    // Pre-fill name
+    document.getElementById('nameInp').value=savedName;
+  }
+};
+</script>
+</body>
+</html>
