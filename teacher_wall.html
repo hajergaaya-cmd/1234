@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جدارية الصف — البرمجيات الخبيثة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08060f;--card:#110e20;--border:#2a1a50;--pu:#7c4dff;--pu-l:#b49aff;--gold:#f0c030;--red:#e74c3c;--green:#27ae60;--white:#f0eeff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#0e0818,#7c4dff18);border-bottom:2px solid #2a1a50;padding:16px 28px;display:flex;align-items:center;gap:14px}
+.h-logo{font-size:2rem}
+.h-title{font-size:1.4rem;font-weight:800;color:var(--pu-l)}
+.h-sub{font-size:.82rem;color:#6a5a8a;margin-top:2px}
+.live-badge{margin-right:auto;display:flex;align-items:center;gap:6px;background:#0a0e1a;border:1px solid var(--pu);border-radius:20px;padding:5px 14px;font-size:.82rem;color:var(--pu-l);font-weight:700}
+.live-dot{width:8px;height:8px;background:var(--pu-l);border-radius:50%;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* STATS */
+.stats{display:flex;gap:12px;padding:16px 24px;max-width:1200px;margin:0 auto;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:10px}
+.stat .val{font-size:1.6rem;font-weight:800;color:var(--pu-l)}
+.stat .lbl{font-size:.82rem;color:#6a5a8a}
+.clear-btn{margin-right:auto;background:transparent;border:1px solid #2a1a50;color:#5a4a7a;padding:8px 18px;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+.clear-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* WALL */
+.wall{max-width:1300px;margin:0 auto;padding:10px 20px 50px;columns:3 300px;column-gap:16px}
+
+/* CARD */
+.post-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;break-inside:avoid;position:relative;transition:border-color .3s;animation:appear .5s ease}
+@keyframes appear{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.post-card.reacted-heart{border-color:#e74c3c;box-shadow:0 0 14px #e74c3c30}
+.post-card.reacted-flower{border-color:#ff80ab;box-shadow:0 0 14px #ff80ab30}
+
+/* CARD HEADER */
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #2a1a40}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pu),#5a2acc);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0;color:#fff}
+.card-name{font-weight:800;font-size:1rem;color:var(--pu-l)}
+.card-time{font-size:.75rem;color:#4a3a6a;margin-top:2px}
+
+/* ANSWERS */
+.answer-block{margin-bottom:12px}
+.answer-block:last-of-type{margin-bottom:14px}
+.q-label{font-size:.72rem;font-weight:700;color:#5a4a8a;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.q-label span{background:#1a1030;border:1px solid var(--border);border-radius:6px;padding:2px 8px}
+.ans-text{font-size:.92rem;line-height:1.75;color:#c8c0e8;background:#06040e;border-right:3px solid var(--pu);border-radius:0 8px 8px 0;padding:8px 12px}
+
+/* REACTION */
+.reaction-bar{display:flex;align-items:center;justify-content:space-between}
+.react-btns{display:flex;gap:8px}
+.react-btn{background:transparent;border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:1rem;cursor:pointer;transition:all .2s;font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:5px;color:#7a6aaa;font-size:.9rem}
+.react-btn:hover{transform:scale(1.08)}
+.react-btn.heart-btn:hover{border-color:#e74c3c;background:#1a0808;color:#e74c3c}
+.react-btn.flower-btn:hover{border-color:#ff80ab;background:#1a0812;color:#ff80ab}
+.react-btn.active-heart{border-color:#e74c3c;background:#1a0808;color:#e74c3c;font-weight:700}
+.react-btn.active-flower{border-color:#ff80ab;background:#1a0812;color:#ff80ab;font-weight:700}
+.reaction-display{font-size:1.4rem;min-width:30px;text-align:center}
+
+/* EMPTY */
+.empty{text-align:center;padding:80px 20px;color:#3a2a5a;max-width:400px;margin:0 auto}
+.empty .ei{font-size:4rem;margin-bottom:14px;opacity:.5}
+.empty p{font-size:1rem;line-height:1.8}
+</style>
+</head>
+<body>
+<header>
+  <div class="h-logo">🦠</div>
+  <div>
+    <div class="h-title">جدارية الصف — البرمجيات الخبيثة</div>
+    <div class="h-sub">إجابات الطالبات تظهر هنا | ضعي قلبًا أو زهرة للتعليق</div>
+  </div>
+  <div class="live-badge"><span class="live-dot"></span>مباشر</div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="val" id="totalCount">0</div><div class="lbl">👥 إجمالي المشاركات</div></div>
+  <div class="stat"><div class="val" id="heartCount">0</div><div class="lbl">❤️ قلوب</div></div>
+  <div class="stat"><div class="val" id="flowerCount">0</div><div class="lbl">🌸 زهور</div></div>
+  <button class="clear-btn" onclick="clearAll()">🗑️ مسح الجدارية</button>
+</div>
+
+<div id="wallContainer">
+  <div class="empty" id="emptyState">
+    <div class="ei">📝</div>
+    <p>في انتظار إجابات الطالبات...<br>ستظهر هنا فور إرسالها</p>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+let allEntries={};
+
+async function fetchWall(){
+  try{
+    const res=await fetch(`${DB}/malware_activity.json`);
+    if(!res.ok)return;
+    const data=await res.json();
+    if(!data){renderEmpty();return;}
+    allEntries=data;
+    renderWall(data);
+  }catch(e){}
+}
+
+function renderEmpty(){
+  document.getElementById('wallContainer').innerHTML=`
+    <div class="empty" id="emptyState">
+      <div class="ei">📝</div>
+      <p>في انتظار إجابات الطالبات...<br>ستظهر هنا فور إرسالها</p>
+    </div>`;
+  document.getElementById('totalCount').textContent='0';
+  document.getElementById('heartCount').textContent='0';
+  document.getElementById('flowerCount').textContent='0';
+}
+
+function renderWall(data){
+  const entries=Object.entries(data);
+  if(!entries.length){renderEmpty();return;}
+
+  document.getElementById('totalCount').textContent=entries.length;
+  document.getElementById('heartCount').textContent=entries.filter(([,v])=>v.reaction==='heart').length;
+  document.getElementById('flowerCount').textContent=entries.filter(([,v])=>v.reaction==='flower').length;
+
+  const wall=document.createElement('div');
+  wall.className='wall';
+
+  entries.forEach(([key,e])=>{
+    const initial=e.name?e.name.charAt(0):'؟';
+    const reactionClass=e.reaction==='heart'?'reacted-heart':e.reaction==='flower'?'reacted-flower':'';
+    const heartActive=e.reaction==='heart'?'active-heart':'';
+    const flowerActive=e.reaction==='flower'?'active-flower':'';
+    const reactionDisplay=e.reaction==='heart'?'❤️':e.reaction==='flower'?'🌸':'';
+
+    const card=document.createElement('div');
+    card.className=`post-card ${reactionClass}`;
+    card.id=`card-${key}`;
+    card.innerHTML=`
+      <div class="card-head">
+        <div class="avatar">${initial}</div>
+        <div>
+          <div class="card-name">${e.name||'طالبة'}</div>
+          <div class="card-time">⏰ ${e.time||''}</div>
+        </div>
+      </div>
+      <div class="answer-block">
+        <div class="q-label"><span>مفهوم البرمجيات الخبيثة</span></div>
+        <div class="ans-text">${e.a1||'—'}</div>
+      </div>
+      <div class="answer-block">
+        <div class="q-label"><span>من يصنعها؟</span></div>
+        <div class="ans-text">${e.a2||'—'}</div>
+      </div>
+      <div class="answer-block">
+        <div class="q-label"><span>أمثلة</span></div>
+        <div class="ans-text">${e.a3||'—'}</div>
+      </div>
+      <div class="reaction-bar">
+        <div class="react-btns">
+          <button class="react-btn heart-btn ${heartActive}" onclick="react('${key}','heart')">❤️ قلب</button>
+          <button class="react-btn flower-btn ${flowerActive}" onclick="react('${key}','flower')">🌸 زهرة</button>
+        </div>
+        <div class="reaction-display" id="rd-${key}">${reactionDisplay}</div>
+      </div>
+    `;
+    wall.appendChild(card);
+  });
+
+  document.getElementById('wallContainer').innerHTML='';
+  document.getElementById('wallContainer').appendChild(wall);
+}
+
+async function react(key,type){
+  const entry=allEntries[key];
+  if(!entry)return;
+  // Toggle: if already same reaction, remove it
+  const newReaction=entry.reaction===type?'':type;
+
+  // Find the actual Firebase key
+  try{
+    const res=await fetch(`${DB}/malware_activity.json`);
+    const data=await res.json();
+    const fireKey=Object.keys(data).find(k=>
+      data[k].name===entry.name && data[k].time===entry.time
+    );
+    if(!fireKey)return;
+    await fetch(`${DB}/malware_activity/${fireKey}/reaction.json`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(newReaction)
+    });
+    allEntries[key].reaction=newReaction;
+
+    // Update UI immediately
+    const card=document.getElementById(`card-${key}`);
+    if(card){
+      card.className=`post-card ${newReaction==='heart'?'reacted-heart':newReaction==='flower'?'reacted-flower':''}`;
+      document.getElementById(`rd-${key}`).textContent=newReaction==='heart'?'❤️':newReaction==='flower'?'🌸':'';
+      card.querySelectorAll('.react-btn').forEach(b=>{
+        b.classList.remove('active-heart','active-flower');
+      });
+      if(newReaction){
+        const activeBtn=card.querySelector(newReaction==='heart'?'.heart-btn':'.flower-btn');
+        if(activeBtn)activeBtn.classList.add(newReaction==='heart'?'active-heart':'active-flower');
+      }
+      document.getElementById('heartCount').textContent=Object.values(allEntries).filter(v=>v.reaction==='heart').length;
+      document.getElementById('flowerCount').textContent=Object.values(allEntries).filter(v=>v.reaction==='flower').length;
+    }
+  }catch(e){console.log(e);}
+}
+
+async function clearAll(){
+  if(!confirm('هل أنتِ متأكدة من مسح جميع إجابات الطالبات؟'))return;
+  await fetch(`${DB}/malware_activity.json`,{method:'DELETE'});
+  allEntries={};
+  renderEmpty();
+}
+
+fetchWall();
+setInterval(fetchWall,5000);
+</script>
+</body>
+</html>
