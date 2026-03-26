@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المحقق والشاهد — البرمجيات الخبيثة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff;--surface:#f7f8fc;--border:#dde6f0;
+  --text:#1a1a2e;--text2:#5a6a8a;
+  --teal:#0e7a6a;--teal-l:#13a88a;
+  --gold:#c07a00;--gold-l:#e8b800;
+  --red:#e74c3c;--green:#27ae60;
+  --shadow:0 2px 12px rgba(0,0,0,.08)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+
+/* LANDING */
+.landing-header{background:#fff;border-bottom:3px solid var(--teal);padding:18px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10;box-shadow:var(--shadow)}
+.lh-logo{font-size:2rem}
+.lh-title{font-size:1.3rem;font-weight:800;color:var(--teal)}
+.lh-sub{font-size:.8rem;color:var(--text2)}
+.timer-chip{margin-right:auto;background:var(--text);color:#fff;border-radius:20px;padding:6px 16px;font-size:1rem;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px}
+.timer-chip.urgent{background:var(--red);animation:pulse .6s infinite}
+.timer-chip.done{background:#555}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.landing-body{max-width:980px;margin:0 auto;padding:24px 18px}
+.landing-intro{background:linear-gradient(135deg,#eef8f5,#fafbff);border:1.5px solid #c8e8e0;border-radius:14px;padding:18px 20px;margin-bottom:24px;font-size:.95rem;line-height:1.8;color:var(--text2)}
+.landing-intro strong{color:var(--teal);font-weight:700}
+.pairs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+
+/* PAIR CARD */
+.pair-card{border-radius:14px;padding:18px 16px;cursor:pointer;border:2px solid;transition:all .2s;position:relative;overflow:hidden}
+.pair-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.pair-card::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:currentColor;opacity:.6}
+.pc-num{font-size:.72rem;font-weight:700;opacity:.6;margin-bottom:5px}
+.pc-names{font-size:.92rem;font-weight:700;line-height:1.7;margin-bottom:6px}
+.pc-status{font-size:.72rem;padding:2px 8px;border-radius:8px;display:inline-block;font-weight:600}
+.pc-idle{background:rgba(0,0,0,.06);color:var(--text2)}
+.pc-active{background:#e8f8ee;color:var(--green)}
+.pc-done{background:#e8eef8;color:#3a5a9a}
+
+/* PAIR ROOM (full overlay) */
+.pair-room{position:fixed;inset:0;background:#fff;z-index:100;display:none;flex-direction:column;overflow-y:auto}
+.pr-header{background:#fff;border-bottom:2px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+.pr-back{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-family:'Tajawal',sans-serif;font-size:.85rem;cursor:pointer;color:var(--text2);transition:all .2s}
+.pr-back:hover{border-color:var(--red);color:var(--red)}
+.pr-title{font-size:1.1rem;font-weight:800;color:var(--teal)}
+.pr-timer{margin-right:auto;font-size:.9rem;font-weight:800;color:var(--text)}
+.pr-body{max-width:560px;margin:0 auto;padding:28px 18px 40px;width:100%}
+
+/* NAME SELECTION */
+.who-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:24px;text-align:center;margin-bottom:14px}
+.who-title{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:6px}
+.who-sub{font-size:.88rem;color:var(--text2);margin-bottom:20px}
+.name-btns{display:flex;flex-direction:column;gap:10px}
+.name-btn{background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 18px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:right;color:var(--text);display:flex;align-items:center;gap:10px}
+.name-btn:hover{border-color:var(--teal);background:#eef8f5}
+.name-btn .nb-icon{width:36px;height:36px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.name-btn.taken{opacity:.4;cursor:not-allowed;background:#f5f5f5}
+
+/* WAITING */
+.waiting-card{text-align:center;padding:40px 20px;color:var(--text2)}
+.wc-icon{font-size:3rem;margin-bottom:12px;animation:spin 3s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.wc-msg{font-size:1rem;font-weight:600;margin-bottom:6px;color:var(--text)}
+.wc-sub{font-size:.85rem}
+
+/* ROLE BADGE */
+.role-badge{border-radius:12px;padding:14px 18px;text-align:center;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.rb-inv{background:#eef8f5;border:2px solid var(--teal)}
+.rb-wit{background:#fdf8ee;border:2px solid var(--gold)}
+.rb-icon{font-size:1.8rem}
+.rb-title{font-size:1rem;font-weight:800}
+.rb-sub{font-size:.82rem;color:var(--text2);margin-top:2px}
+.rb-inv .rb-title{color:var(--teal)}
+.rb-wit .rb-title{color:var(--gold)}
+
+/* QUESTION BANK */
+.qbank-title{font-size:.9rem;font-weight:700;color:var(--text2);margin-bottom:12px}
+.q-list{display:flex;flex-direction:column;gap:8px}
+.q-pick-btn{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:13px 16px;font-family:'Tajawal',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;text-align:right;color:var(--text);transition:all .2s;line-height:1.6}
+.q-pick-btn:hover{border-color:var(--teal);background:#eef8f5;color:var(--teal)}
+.q-pick-btn.selected{border-color:var(--teal);background:#eef8f5;color:var(--teal);font-weight:800}
+
+/* QUESTION DISPLAY */
+.q-display{background:var(--surface);border:2px solid var(--teal);border-radius:14px;padding:20px;margin-bottom:18px}
+.qd-label{font-size:.75rem;font-weight:700;color:var(--teal);margin-bottom:8px}
+.qd-text{font-size:1.05rem;font-weight:700;color:var(--text);line-height:1.7}
+
+/* ANSWER OPTIONS */
+.ans-list{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
+.ans-btn{background:#fff;border:2px solid var(--border);border-radius:10px;padding:13px 16px;font-family:'Tajawal',sans-serif;font-size:.93rem;font-weight:600;cursor:pointer;text-align:right;color:var(--text);transition:all .2s;line-height:1.6;display:flex;align-items:center;gap:10px}
+.ans-btn:hover{border-color:var(--gold);background:#fdf8ee}
+.ans-btn.sel{border-color:var(--gold);background:#fdf8ee;font-weight:800}
+.ans-btn.correct-ans{border-color:var(--green)!important;background:#e8f8ee!important;color:var(--green)!important}
+.ans-btn.wrong-ans{border-color:var(--red)!important;background:#fee8e8!important;color:var(--red)!important}
+.ans-letter{width:28px;height:28px;border-radius:50%;background:var(--surface);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;flex-shrink:0;transition:all .2s}
+.ans-btn.sel .ans-letter{background:var(--gold);border-color:var(--gold);color:#fff}
+.ans-btn.correct-ans .ans-letter{background:var(--green);border-color:var(--green);color:#fff}
+.ans-btn.wrong-ans .ans-letter{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ACTION BUTTON */
+.action-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s;color:#fff}
+.ab-teal{background:var(--teal)}
+.ab-gold{background:var(--gold)}
+.ab-green{background:var(--green)}
+.action-btn:hover{opacity:.9}
+.action-btn:disabled{background:#ccc;cursor:default}
+
+/* RESULT CARD */
+.result-card{border-radius:14px;padding:22px;text-align:center;margin-bottom:16px}
+.rc-correct{background:#e8f8ee;border:2px solid var(--green)}
+.rc-wrong{background:#fee8e8;border:2px solid var(--red)}
+.rc-icon{font-size:2.8rem;margin-bottom:8px}
+.rc-title{font-size:1.15rem;font-weight:800;margin-bottom:4px}
+.rc-correct .rc-title{color:var(--green)}
+.rc-wrong .rc-title{color:var(--red)}
+.rc-detail{font-size:.88rem;color:var(--text2);line-height:1.7}
+
+/* FINAL */
+.final-card{background:var(--surface);border:2px solid var(--teal);border-radius:16px;padding:26px 22px;text-align:center}
+.fc-icon{font-size:3rem;margin-bottom:10px}
+.fc-title{font-size:1.3rem;font-weight:800;color:var(--teal);margin-bottom:14px}
+.fc-scores{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.fc-score{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center}
+.fcs-role{font-size:.72rem;color:var(--text2);margin-bottom:3px}
+.fcs-name{font-size:.88rem;font-weight:700;margin-bottom:6px}
+.fcs-val{font-size:1.5rem;font-weight:800}
+.fcs-val.ok{color:var(--green)}.fcs-val.no{color:var(--red)}
+.sent-badge{margin-top:14px;background:#e8f8ee;border:1px solid var(--green);border-radius:8px;padding:9px;color:var(--green);font-size:.88rem;font-weight:700}
+
+/* DIVIDER */
+.round-divider{text-align:center;margin:16px 0;color:var(--text2);font-size:.85rem;display:flex;align-items:center;gap:10px}
+.round-divider::before,.round-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landingScreen">
+  <div class="landing-header">
+    <div class="lh-logo">🔍</div>
+    <div>
+      <div class="lh-title">المحقق والشاهد — البرمجيات الخبيثة</div>
+      <div class="lh-sub">ابحثي عن اسمكِ واضغطي على ثنائيكِ</div>
+    </div>
+    <div class="timer-chip" id="globalTimer">05:00</div>
+  </div>
+  <div class="landing-body">
+    <div class="landing-intro">
+      🎯 <strong>كيف يعمل النشاط؟</strong> كل ثنائي يدخل غرفته معاً — <strong>المحقق</strong> يختار سؤالاً من البنك، <strong>الشاهد</strong> يجيب من مقترحات — ثم يتبادلان الدور! الوقت الكلي <strong>5 دقائق</strong>.
+    </div>
+    <div class="pairs-grid" id="pairsGrid"></div>
+  </div>
+</div>
+
+<!-- PAIR ROOM -->
+<div class="pair-room" id="pairRoom">
+  <div class="pr-header">
+    <button class="pr-back" onclick="leavePair()">← العودة</button>
+    <div class="pr-title" id="prTitle">الثنائي</div>
+    <div class="pr-timer" id="prTimer">⏱️ 05:00</div>
+  </div>
+  <div class="pr-body" id="prBody"></div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+
+const PAIRS=[
+  {id:'p1',n:1,s1:'أسيل صبري',s2:'الجوري رشدى'},
+  {id:'p2',n:2,s1:'ايه محمد',s2:'جنا وليد'},
+  {id:'p3',n:3,s1:'حبيبه عبدالسلام',s2:'حبيبه محمد صابر'},
+  {id:'p4',n:4,s1:'حليمه حسام',s2:'خديجه احمد'},
+  {id:'p5',n:5,s1:'راما ذياب',s2:'رتاج عمر'},
+  {id:'p6',n:6,s1:'رغد هياب',s2:'رفيدة احمد'},
+  {id:'p7',n:7,s1:'ريحانة بكالي',s2:'شهد سيف'},
+  {id:'p8',n:8,s1:'فاتحه علي',s2:'فاطمة اليوسف'},
+  {id:'p9',n:9,s1:'فاطمه احمد',s2:'فاطمه عبدالله'},
+  {id:'p10',n:10,s1:'فايزه عمر',s2:'فجر حميد'},
+  {id:'p11',n:11,s1:'لطيفه يحيى',s2:'لمى كمال'},
+  {id:'p12',n:12,s1:'لمى نجم',s2:'مريم محمد',s3:'نور اسماعيل'},
+];
+
+const QS=[
+  {q:'ما تعريف البرمجيات الخبيثة؟',opts:['برامج تهدف لإتلاف البيانات أو الإضرار بالأجهزة','برامج لتسريع الجهاز وتحسينه','برامج لتحديث نظام التشغيل','برامج لتشفير الملفات وحمايتها'],c:0},
+  {q:'من يُنشئ البرمجيات الخبيثة؟',opts:['شركات البرمجيات الكبرى فقط','أشخاص خبراء في البرمجة وشبكات الحاسوب','الحكومات الإلكترونية فقط','لا أحد — تُنشأ تلقائياً'],c:1},
+  {q:'ما وظيفة الدودة Worm؟',opts:['تعرض إعلانات مزعجة','تتنكر كبرنامج مفيد','تنسخ نفسها وتنتشر عبر الشبكة وتدمر الملفات','تجمع معلومات المستخدم سراً'],c:2},
+  {q:'لماذا يُسمى Trojan بحصان طروادة؟',opts:['لأنه ينتشر بسرعة كبيرة جداً','لأنه يتنكر كبرنامج مفيد ثم يسرق البيانات','لأنه يُدمر جميع الملفات فوراً','لأنه يعمل في الخفاء دون أي ضرر'],c:1},
+  {q:'ماذا تفعل برامج Spyware؟',opts:['تبطئ الحاسوب وتستهلك الذاكرة','تعرض إعلانات مزعجة في نوافذ','تجمع معلومات المستخدم ونشاطه سراً','تدمر ملفات الحاسوب وتمحوها'],c:2},
+  {q:'ما مميزة Adware عن غيرها من البرمجيات؟',opts:['تشفر الملفات وتطلب فدية مالية','تعرض إعلانات مزعجة في نوافذ منبثقة دون إذن','تسرق كلمات المرور والبيانات البنكية','تنسخ نفسها وتنتشر بين الحواسيب'],c:1},
+  {q:'كيف تنتشر الدودة Worm بشكل رئيسي؟',opts:['عن طريق لمس الشاشة أو الطباعة','عبر البريد الإلكتروني والروابط المشبوهة والشبكات','عن طريق الكاميرا والميكروفون','لا تنتشر — تبقى في جهاز واحد فقط'],c:1},
+  {q:'ما أفضل طريقة للحماية من البرمجيات الخبيثة؟',opts:['إيقاف الجهاز عند عدم الاستخدام','حذف جميع البرامج من الحاسوب','تحديث مكافحة الفيروسات وعدم فتح الروابط المشبوهة','عدم الاتصال بالإنترنت نهائياً'],c:2},
+];
+
+const PAIR_COLORS=[
+  '#0e7a6a','#c07a00','#7c4dff','#0e5a8f',
+  '#8f3a0e','#2a8f0e','#7a0e5a','#0e8a8f',
+  '#5a3a0e','#3a0e8f','#0e3a7a','#7a5a0e',
+];
+
+// STATE
+let currentPair=null, myName='', myRole='', syncInterval=null, timerInterval=null;
+let globalStartTime=null;
+const DURATION=300000; // 5 min
+
+// ===== TIMER =====
+async function initTimer(){
+  const res=await fetch(`${DB}/detective_pairs/global.json`);
+  const g=await res.json();
+  if(g?.startTime){
+    globalStartTime=g.startTime;
+  } else {
+    globalStartTime=Date.now();
+    await fetch(`${DB}/detective_pairs/global.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({startTime:globalStartTime})});
+  }
+  startTimerDisplay();
+}
+
+function startTimerDisplay(){
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    const rem=Math.max(0,DURATION-(Date.now()-globalStartTime));
+    const m=Math.floor(rem/60000);
+    const s=Math.floor((rem%60000)/1000);
+    const txt=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const gt=document.getElementById('globalTimer');
+    const pt=document.getElementById('prTimer');
+    if(gt){gt.textContent=txt;gt.className='timer-chip'+(rem<60000?' urgent':rem===0?' done':'');}
+    if(pt)pt.textContent='⏱️ '+txt;
+    if(rem===0){
+      // Auto-submit if in pair room
+      if(currentPair&&myName)autoSubmit();
+    }
+  },500);
+}
+
+// ===== LANDING =====
+async function renderLanding(){
+  const grid=document.getElementById('pairsGrid');
+  // Fetch all pair states
+  const res=await fetch(`${DB}/detective_pairs.json`);
+  const allData=await res.json()||{};
+  grid.innerHTML=PAIRS.map((p,i)=>{
+    const d=allData[p.id]||{};
+    const col=PAIR_COLORS[i];
+    const status=d.status==='done'?'pc-done':d.status&&d.status!=='idle'?'pc-active':'pc-idle';
+    const statusTxt=d.status==='done'?'✅ اكتمل':d.status&&d.status!=='idle'?'🔴 جارٍ الآن':'⚪ في الانتظار';
+    const names=[p.s1,p.s2,p.s3].filter(Boolean).join(' + ');
+    return `<div class="pair-card" style="border-color:${col};color:${col};background:#fff"
+      onclick="enterPair('${p.id}')">
+      <div class="pc-num" style="color:${col}">الثنائي ${p.n}</div>
+      <div class="pc-names" style="color:#1a1a2e">${names}</div>
+      <span class="pc-status ${status}">${statusTxt}</span>
+    </div>`;
+  }).join('');
+}
+
+// ===== ENTER PAIR =====
+async function enterPair(pairId){
+  currentPair=PAIRS.find(p=>p.id===pairId);
+  document.getElementById('prTitle').textContent='الثنائي '+currentPair.n+' — '+[currentPair.s1,currentPair.s2,currentPair.s3].filter(Boolean).join(' + ');
+  document.getElementById('pairRoom').style.display='flex';
+  renderNameSelection();
+  clearInterval(syncInterval);
+  syncInterval=setInterval(()=>{if(myName)syncAndRender();},2000);
+}
+
+function leavePair(){
+  currentPair=null;myName='';myRole='';
+  clearInterval(syncInterval);
+  document.getElementById('pairRoom').style.display='none';
+  renderLanding();
+}
+
+// ===== NAME SELECTION =====
+function renderNameSelection(){
+  const p=currentPair;
+  const names=[{n:p.s1,key:'s1'},{n:p.s2,key:'s2'}];
+  if(p.s3)names.push({n:p.s3,key:'s3'});
+  document.getElementById('prBody').innerHTML=`
+    <div class="who-card">
+      <div class="who-title">👋 من أنتِ؟</div>
+      <div class="who-sub">اضغطي على اسمكِ للدخول</div>
+      <div class="name-btns">
+        ${names.map(({n})=>`
+          <button class="name-btn" onclick="selectName('${n}')">
+            <div class="nb-icon">${n.charAt(0)}</div>
+            <span>${n}</span>
+          </button>`).join('')}
+      </div>
+    </div>`;
+}
+
+async function selectName(name){
+  myName=name;
+  // Fetch pair state and determine role
+  const res=await fetch(`${DB}/detective_pairs/${currentPair.id}.json`);
+  let d=await res.json()||{};
+  if(!d.status||d.status==='idle'){
+    // First to enter = investigator in round 1
+    myRole='inv';
+    d={status:'r1_q',inv1:name,wit1:'',qIdx1:-1,ans1:-1,inv2:'',wit2:'',qIdx2:-1,ans2:-1};
+    await fetch(`${DB}/detective_pairs/${currentPair.id}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+  } else if(d.status==='r1_q'||d.status==='r1_a'){
+    if(d.inv1===name){myRole='inv';}
+    else{myRole='wit';await fetch(`${DB}/detective_pairs/${currentPair.id}/wit1.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(name)});}
+  } else if(d.status==='r2_q'||d.status==='r2_a'){
+    if(d.inv2===name)myRole='inv'; else myRole='wit';
+  } else {myRole='inv';}
+  await syncAndRender();
+}
+
+// ===== SYNC & RENDER =====
+async function syncAndRender(){
+  if(!currentPair||!myName)return;
+  const res=await fetch(`${DB}/detective_pairs/${currentPair.id}.json`);
+  const d=await res.json();
+  if(!d)return;
+  renderPairRoom(d);
+}
+
+function renderPairRoom(d){
+  const body=document.getElementById('prBody');
+  if(d.status==='r1_q'){
+    // Round 1: investigator chooses question
+    if(myName===d.inv1||(!d.inv1&&myRole==='inv')){
+      renderInvestigator(d,1);
+    } else {
+      body.innerHTML=`
+        <div class="role-badge rb-wit"><div class="rb-icon">👁️</div><div><div class="rb-title">أنتِ الشاهدة</div><div class="rb-sub">انتظري المحقق لاختيار السؤال...</div></div></div>
+        <div class="waiting-card"><div class="wc-icon">⏳</div><div class="wc-msg">المحقق يختار السؤال الآن</div><div class="wc-sub">ستظهر لكِ الخيارات فور اختياره</div></div>`;
+    }
+  } else if(d.status==='r1_a'){
+    if(myName===d.wit1||(d.inv1!==myName&&d.wit1==='')){
+      renderWitness(d,1);
+    } else {
+      const q=QS[d.qIdx1];
+      body.innerHTML=`
+        <div class="role-badge rb-inv"><div class="rb-icon">🔍</div><div><div class="rb-title">أنتِ المحقق — الجولة 1</div><div class="rb-sub">انتظري إجابة الشاهدة</div></div></div>
+        <div class="q-display"><div class="qd-label">السؤال الذي اخترتِه:</div><div class="qd-text">${q.q}</div></div>
+        <div class="waiting-card"><div class="wc-icon">💭</div><div class="wc-msg">الشاهدة تجيب الآن...</div></div>`;
+    }
+  } else if(d.status==='r1_done'){
+    renderRoundResult(d,1);
+  } else if(d.status==='r2_q'){
+    if(myName===d.inv2){
+      renderInvestigator(d,2);
+    } else {
+      body.innerHTML=`
+        <div class="round-divider">الجولة الثانية — تبادل الأدوار</div>
+        <div class="role-badge rb-wit"><div class="rb-icon">👁️</div><div><div class="rb-title">أنتِ الشاهدة — الجولة 2</div><div class="rb-sub">انتظري المحقق لاختيار السؤال...</div></div></div>
+        <div class="waiting-card"><div class="wc-icon">⏳</div><div class="wc-msg">المحقق الجديد يختار السؤال</div></div>`;
+    }
+  } else if(d.status==='r2_a'){
+    if(myName===d.wit2){
+      renderWitness(d,2);
+    } else {
+      const q=QS[d.qIdx2];
+      body.innerHTML=`
+        <div class="round-divider">الجولة الثانية</div>
+        <div class="role-badge rb-inv"><div class="rb-icon">🔍</div><div><div class="rb-title">أنتِ المحقق — الجولة 2</div><div class="rb-sub">انتظري إجابة الشاهدة</div></div></div>
+        <div class="q-display"><div class="qd-label">السؤال الذي اخترتِه:</div><div class="qd-text">${q.q}</div></div>
+        <div class="waiting-card"><div class="wc-icon">💭</div><div class="wc-msg">الشاهدة تجيب الآن...</div></div>`;
+    }
+  } else if(d.status==='r2_done'||d.status==='done'){
+    renderFinal(d);
+  }
+}
+
+function renderInvestigator(d,round){
+  const body=document.getElementById('prBody');
+  const usedQ=round===2?d.qIdx1:-1;
+  const available=QS.map((q,i)=>({q,i})).filter(({i})=>i!==usedQ);
+  body.innerHTML=`
+    ${round===2?'<div class="round-divider">الجولة الثانية — أنتِ الآن المحقق!</div>':'' }
+    <div class="role-badge rb-inv"><div class="rb-icon">🔍</div><div><div class="rb-title">أنتِ المحقق — الجولة ${round}</div><div class="rb-sub">اختاري سؤالاً لتسأل به شريكتكِ</div></div></div>
+    <div class="qbank-title">📚 بنك الأسئلة — اختاري سؤالاً واحداً:</div>
+    <div class="q-list" id="qList">
+      ${available.map(({q,i})=>`
+        <button class="q-pick-btn" onclick="pickQuestion(${i},${round})">${q.q}</button>
+      `).join('')}
+    </div>`;
+}
+
+async function pickQuestion(qIdx,round){
+  document.querySelectorAll('.q-pick-btn').forEach(b=>b.classList.remove('selected'));
+  event.target.classList.add('selected');
+  const newStatus=round===1?'r1_a':'r2_a';
+  const updates=round===1
+    ?{status:newStatus,qIdx1:qIdx}
+    :{status:newStatus,qIdx2:qIdx};
+  await fetch(`${DB}/detective_pairs/${currentPair.id}.json`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(updates)});
+  await syncAndRender();
+}
+
+function renderWitness(d,round){
+  const qIdx=round===1?d.qIdx1:d.qIdx2;
+  const q=QS[qIdx];
+  const letters=['أ','ب','ج','د'];
+  let selAns=-1;
+  const body=document.getElementById('prBody');
+  body.innerHTML=`
+    ${round===2?'<div class="round-divider">الجولة الثانية — أنتِ الآن الشاهدة!</div>':'' }
+    <div class="role-badge rb-wit"><div class="rb-icon">👁️</div><div><div class="rb-title">أنتِ الشاهدة — الجولة ${round}</div><div class="rb-sub">اختاري الإجابة الصحيحة</div></div></div>
+    <div class="q-display"><div class="qd-label">🔍 سؤال المحقق:</div><div class="qd-text">${q.q}</div></div>
+    <div class="ans-list" id="ansList">
+      ${q.opts.map((opt,i)=>`
+        <button class="ans-btn" id="ans${i}" onclick="selectAnswer(${i},${round})">
+          <div class="ans-letter">${letters[i]}</div>
+          <span>${opt}</span>
+        </button>`).join('')}
+    </div>
+    <button class="action-btn ab-gold" id="submitAns" onclick="submitAnswer(${round})" disabled>✅ أرسلي إجابتكِ</button>`;
+}
+
+let selectedAnswer=-1;
+function selectAnswer(idx,round){
+  selectedAnswer=idx;
+  document.querySelectorAll('.ans-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('ans'+idx).classList.add('sel');
+  document.getElementById('submitAns').disabled=false;
+}
+
+async function submitAnswer(round){
+  if(selectedAnswer===-1)return;
+  const updates=round===1?{ans1:selectedAnswer,status:'r1_done'}:{ans2:selectedAnswer,status:'r2_done'};
+  await fetch(`${DB}/detective_pairs/${currentPair.id}.json`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(updates)});
+  selectedAnswer=-1;
+  await syncAndRender();
+}
+
+function renderRoundResult(d,round){
+  const qIdx=round===1?d.qIdx1:d.qIdx2;
+  const ans=round===1?d.ans1:d.ans2;
+  const witName=round===1?d.wit1:d.wit2;
+  const q=QS[qIdx];
+  const ok=ans===q.c;
+  const body=document.getElementById('prBody');
+  body.innerHTML=`
+    <div class="result-card ${ok?'rc-correct':'rc-wrong'}">
+      <div class="rc-icon">${ok?'🎉':'💪'}</div>
+      <div class="rc-title">${ok?'إجابة صحيحة!':'إجابة خاطئة'}</div>
+      <div class="rc-detail">
+        <strong>السؤال:</strong> ${q.q}<br>
+        <strong>إجابة ${witName||'الشاهدة'}:</strong> ${q.opts[ans]||'—'}<br>
+        ${!ok?`<strong style="color:var(--green)">الإجابة الصحيحة:</strong> ${q.opts[q.c]}`:''}
+      </div>
+    </div>
+    <button class="action-btn ab-teal" onclick="startRound2()">🔄 الجولة الثانية — تبادل الأدوار</button>`;
+}
+
+async function startRound2(){
+  // Swap roles
+  const res=await fetch(`${DB}/detective_pairs/${currentPair.id}.json`);
+  const d=await res.json();
+  const newInv=d.wit1;
+  const newWit=d.inv1;
+  if(myName===newInv)myRole='inv'; else myRole='wit';
+  await fetch(`${DB}/detective_pairs/${currentPair.id}.json`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'r2_q',inv2:newInv,wit2:newWit})});
+  await syncAndRender();
+}
+
+async function renderFinal(d){
+  // Send to teacher if not done yet
+  if(d.status!=='done'){
+    await fetch(`${DB}/detective_pairs/${currentPair.id}/status.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify('done')});
+    // Save to results
+    const r={
+      pair:'الثنائي '+currentPair.n,
+      s1:currentPair.s1,s2:currentPair.s2,
+      r1_inv:d.inv1,r1_wit:d.wit1||'—',r1_q:QS[d.qIdx1]?.q||'—',
+      r1_correct:d.ans1===QS[d.qIdx1]?.c,
+      r2_inv:d.inv2||'—',r2_wit:d.wit2||'—',r2_q:QS[d.qIdx2>=0?d.qIdx2:0]?.q||'—',
+      r2_correct:d.ans2===QS[d.qIdx2>=0?d.qIdx2:0]?.c,
+      time:new Date().toLocaleTimeString('ar-QA')
+    };
+    await fetch(`${DB}/detective_results/${currentPair.id}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(r)});
+  }
+  const q1=QS[d.qIdx1>=0?d.qIdx1:0];
+  const q2=QS[d.qIdx2>=0?d.qIdx2:0];
+  const ok1=d.ans1===q1?.c;
+  const ok2=d.ans2===q2?.c;
+  document.getElementById('prBody').innerHTML=`
+    <div class="final-card">
+      <div class="fc-icon">🏁</div>
+      <div class="fc-title">انتهى النشاط — أحسنتما! 🌟</div>
+      <div class="fc-scores">
+        <div class="fc-score">
+          <div class="fcs-role">🔍 الجولة 1</div>
+          <div class="fcs-name">${d.wit1||'—'} (الشاهدة)</div>
+          <div class="fcs-val ${ok1?'ok':'no'}">${ok1?'✅ صح':'❌ خطأ'}</div>
+        </div>
+        <div class="fc-score">
+          <div class="fcs-role">🔍 الجولة 2</div>
+          <div class="fcs-name">${d.wit2||'—'} (الشاهدة)</div>
+          <div class="fcs-val ${ok2?'ok':'no'}">${ok2?'✅ صح':'❌ خطأ'}</div>
+        </div>
+      </div>
+      <div class="sent-badge">✅ نتيجة ثنائيكما ظهرت على شاشة المعلمة!</div>
+    </div>`;
+  clearInterval(syncInterval);
+}
+
+async function autoSubmit(){
+  if(!currentPair||!myName)return;
+  const res=await fetch(`${DB}/detective_pairs/${currentPair.id}.json`);
+  const d=await res.json();
+  if(d&&d.status!=='done'){
+    await fetch(`${DB}/detective_pairs/${currentPair.id}/status.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify('done')});
+  }
+}
+
+// INIT
+window.onload=async()=>{
+  await initTimer();
+  await renderLanding();
+  setInterval(renderLanding,8000);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — المحقق والشاهد</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--surface:#f7f8fc;--border:#dde6f0;--text:#1a1a2e;--text2:#5a6a8a;--teal:#0e7a6a;--gold:#c07a00;--red:#e74c3c;--green:#27ae60;--shadow:0 2px 12px rgba(0,0,0,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+
+header{background:#fff;border-bottom:3px solid var(--teal);padding:14px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10;box-shadow:var(--shadow)}
+.h-logo{font-size:1.9rem}.h-title{font-size:1.3rem;font-weight:800;color:var(--teal)}.h-sub{font-size:.78rem;color:var(--text2);margin-top:1px}
+.hctrl{margin-right:auto;display:flex;gap:10px;align-items:center}
+.timer-big{font-size:1.2rem;font-weight:800;background:var(--text);color:#fff;border-radius:20px;padding:6px 18px;font-variant-numeric:tabular-nums}
+.timer-big.urgent{background:var(--red);animation:pulse .6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.start-btn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+.cbtn{background:transparent;border:1.5px solid var(--border);color:var(--text2);border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s}
+.cbtn:hover{border-color:var(--red);color:var(--red)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 22px;max-width:1200px;margin:0 auto}
+.stat{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+.stat .v{font-size:1.8rem;font-weight:800;line-height:1}
+.stat .l{font-size:.75rem;color:var(--text2);margin-top:4px}
+.sv0{color:var(--teal)}.sv1{color:var(--green)}.sv2{color:var(--gold)}.sv3{color:var(--red)}
+
+/* GRID */
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:0 22px 40px;max-width:1200px;margin:0 auto}
+
+/* PAIR RESULT CARD */
+.pr-card{background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden;transition:box-shadow .2s;box-shadow:var(--shadow)}
+.pr-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.prc-header{padding:12px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:10px}
+.prc-num{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0}
+.prc-title{font-size:.92rem;font-weight:700;flex:1}
+.prc-badge{font-size:.7rem;padding:2px 9px;border-radius:8px;font-weight:700}
+.prc-done{background:#e8f8ee;color:var(--green)}
+.prc-active{background:#fff8e8;color:var(--gold)}
+.prc-idle{background:var(--surface);color:var(--text2)}
+
+.prc-body{padding:14px 16px}
+.round-row{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.round-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.rr-label{font-size:.72rem;font-weight:700;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.rr-q{font-size:.85rem;color:var(--text);line-height:1.6;margin-bottom:5px;font-weight:600}
+.rr-result{display:flex;align-items:center;gap:6px;font-size:.82rem}
+.rr-name{font-weight:700}
+.rr-ok{color:var(--green)}.rr-no{color:var(--red)}
+
+/* WAITING CARD */
+.wait-card{background:var(--surface);border:2px dashed var(--border);border-radius:14px;padding:24px;text-align:center;color:var(--text2)}
+.wait-card .wi{font-size:2rem;margin-bottom:8px;opacity:.4}
+
+/* LIVE DOT */
+.live{display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--teal);font-weight:700}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:blink 1.3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.new-card{animation:slideIn .4s ease}
+</style>
+</head>
+<body>
+<header>
+  <div class="h-logo">📋</div>
+  <div><div class="h-title">شاشة المعلمة — المحقق والشاهد</div><div class="h-sub">البرمجيات الخبيثة | نتائج الثنائيات حية</div></div>
+  <div class="hctrl">
+    <div class="live"><span class="ldot"></span>مباشر</div>
+    <div class="timer-big" id="timerDisplay">05:00</div>
+    <button class="start-btn" onclick="resetTimer()">🔄 إعادة الوقت</button>
+    <button class="cbtn" onclick="clearAll()">🗑️ مسح الكل</button>
+  </div>
+</header>
+
+<div class="stats" id="statsRow">
+  <div class="stat"><div class="v sv0" id="sTotal">0</div><div class="l">👥 الثنائيات</div></div>
+  <div class="stat"><div class="v sv1" id="sDone">0</div><div class="l">✅ أكملت</div></div>
+  <div class="stat"><div class="v sv2" id="sActive">0</div><div class="l">🔴 جارية</div></div>
+  <div class="stat"><div class="v sv3" id="sCorrect">0%</div><div class="l">🏆 نسبة الإجابات الصحيحة</div></div>
+</div>
+
+<div class="results-grid" id="resultsGrid">
+  <div class="wait-card" style="grid-column:1/-1"><div class="wi">⏳</div><p>في انتظار بدء الثنائيات...</p></div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PAIR_COLORS=['#0e7a6a','#c07a00','#7c4dff','#0e5a8f','#8f3a0e','#2a8f0e','#7a0e5a','#0e8a8f','#5a3a0e','#3a0e8f','#0e3a7a','#7a5a0e'];
+const PAIRS_NUM=12;
+
+let globalStartTime=null;
+const DURATION=300000;
+
+async function initTimer(){
+  const res=await fetch(`${DB}/detective_pairs/global.json`);
+  const g=await res.json();
+  if(g?.startTime)globalStartTime=g.startTime;
+  runTimerDisplay();
+}
+
+function runTimerDisplay(){
+  setInterval(()=>{
+    if(!globalStartTime){document.getElementById('timerDisplay').textContent='--:--';return;}
+    const rem=Math.max(0,DURATION-(Date.now()-globalStartTime));
+    const m=Math.floor(rem/60000),s=Math.floor((rem%60000)/1000);
+    const txt=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const el=document.getElementById('timerDisplay');
+    el.textContent=txt;
+    el.className='timer-big'+(rem<60000&&rem>0?' urgent':'');
+  },500);
+}
+
+async function resetTimer(){
+  if(!confirm('إعادة ضبط الوقت إلى 5 دقائق؟'))return;
+  globalStartTime=Date.now();
+  await fetch(`${DB}/detective_pairs/global.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({startTime:globalStartTime})});
+}
+
+async function fetchAll(){
+  try{
+    const [pairsRes,resultsRes]=await Promise.all([
+      fetch(`${DB}/detective_pairs.json`),
+      fetch(`${DB}/detective_results.json`)
+    ]);
+    const pairs=await pairsRes.json()||{};
+    const results=await resultsRes.json()||{};
+    renderGrid(pairs,results);
+    renderStats(pairs,results);
+    // Update local timer
+    if(pairs.global?.startTime)globalStartTime=pairs.global.startTime;
+  }catch(e){}
+}
+
+function renderGrid(pairs,results){
+  const grid=document.getElementById('resultsGrid');
+  let html='';
+  for(let i=1;i<=PAIRS_NUM;i++){
+    const pid='p'+i;
+    const p=pairs[pid]||{};
+    const r=results[pid]||{};
+    const col=PAIR_COLORS[i-1];
+    const status=p.status==='done'?'prc-done':p.status&&p.status!=='idle'?'prc-active':'prc-idle';
+    const statusTxt=p.status==='done'?'✅ مكتمل':p.status&&p.status!=='idle'?'🔴 جارٍ':'⚪ لم يبدأ';
+    const pairName=r.pair||('الثنائي '+i);
+    const names=[r.s1,r.s2].filter(Boolean).join(' + ')||'—';
+    let bodyHtml='';
+    if(r.r1_q){
+      const ok1=r.r1_correct;const ok2=r.r2_correct;
+      bodyHtml=`
+        <div class="round-row">
+          <div class="rr-label">🔍 الجولة 1 — المحقق: ${r.r1_inv||'—'}</div>
+          <div class="rr-q">${r.r1_q}</div>
+          <div class="rr-result">
+            <span class="rr-name">${r.r1_wit||'—'}:</span>
+            <span class="${ok1?'rr-ok':'rr-no'}">${ok1?'✅ صحيحة':'❌ خاطئة'}</span>
+          </div>
+        </div>
+        <div class="round-row">
+          <div class="rr-label">🔍 الجولة 2 — المحقق: ${r.r2_inv||'—'}</div>
+          <div class="rr-q">${r.r2_q||'لم تكتمل'}</div>
+          <div class="rr-result">
+            <span class="rr-name">${r.r2_wit||'—'}:</span>
+            <span class="${ok2?'rr-ok':'rr-no'}">${r.r2_q?ok2?'✅ صحيحة':'❌ خاطئة':'—'}</span>
+          </div>
+        </div>`;
+    } else if(p.status&&p.status!=='idle'){
+      const step=p.status==='r1_q'?'المحقق يختار السؤال...':p.status==='r1_a'?'الشاهدة تجيب...':p.status==='r2_q'?'الجولة 2 — المحقق يختار...':'الجولة 2 — الشاهدة تجيب...';
+      bodyHtml=`<div style="text-align:center;padding:14px;color:var(--text2);font-size:.88rem">🔄 ${step}</div>`;
+    } else {
+      bodyHtml=`<div style="text-align:center;padding:14px;color:#ccc;font-size:.88rem">في الانتظار...</div>`;
+    }
+    html+=`
+      <div class="pr-card">
+        <div class="prc-header">
+          <div class="prc-num" style="background:${col}">${i}</div>
+          <div>
+            <div class="prc-title">${names}</div>
+            <div style="font-size:.72rem;color:var(--text2);margin-top:1px">${r.time||''}</div>
+          </div>
+          <span class="prc-badge ${status}">${statusTxt}</span>
+        </div>
+        <div class="prc-body">${bodyHtml}</div>
+      </div>`;
+  }
+  grid.innerHTML=html;
+}
+
+function renderStats(pairs,results){
+  const done=Object.values(pairs).filter(p=>p?.status==='done').length;
+  const active=Object.values(pairs).filter(p=>p?.status&&p.status!=='idle'&&p.status!=='done').length;
+  let total=0,correct=0;
+  Object.values(results).forEach(r=>{
+    if(r?.r1_q){total++;if(r.r1_correct)correct++;}
+    if(r?.r2_q){total++;if(r.r2_correct)correct++;}
+  });
+  document.getElementById('sTotal').textContent=done+active;
+  document.getElementById('sDone').textContent=done;
+  document.getElementById('sActive').textContent=active;
+  document.getElementById('sCorrect').textContent=total?Math.round(correct/total*100)+'%':'—';
+}
+
+async function clearAll(){
+  if(!confirm('مسح جميع النتائج والبدء من جديد؟'))return;
+  await Promise.all([
+    fetch(`${DB}/detective_pairs.json`,{method:'DELETE'}),
+    fetch(`${DB}/detective_results.json`,{method:'DELETE'})
+  ]);
+  globalStartTime=null;
+  fetchAll();
+}
+
+window.onload=()=>{initTimer();fetchAll();setInterval(fetchAll,4000);};
+</script>
+</body>
+</html>
