@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط البرمجيات الخبيثة — المستويات الثلاثة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--card:#0e1422;--border:#1a2a44;--white:#eef4ff;
+  --l1:#0e8f5a;--l1l:#13d48a;--l1bg:#061410;
+  --l2c1:#0e8f8f;--l2c1l:#13b8b8;--l2c1bg:#061414;
+  --l2c2:#c07a00;--l2c2l:#f0c030;--l2c2bg:#1a1000;
+  --l3:#9b1fa8;--l3l:#e040fb;--l3bg:#160820;
+  --red:#e74c3c;--green:#27ae60
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px}
+.screen{width:100%;max-width:600px;display:none;animation:pop .4s ease}
+.screen.active{display:block}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== NAME SCREEN ===== */
+.name-card{background:var(--card);border:2px solid #1e3a5a;border-radius:20px;padding:30px 24px;text-align:center;margin-top:20px}
+.nc-logo{font-size:3rem;margin-bottom:8px}
+.nc-title{font-size:1.5rem;font-weight:800;color:#13b8b8;margin-bottom:5px}
+.nc-sub{font-size:.9rem;color:#4a7a9a;line-height:1.7;margin-bottom:20px}
+.journey{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:6px;margin-bottom:18px;padding:14px;background:#04060c;border-radius:12px}
+.jstep{text-align:center}
+.js-icon{font-size:1.5rem;margin-bottom:4px}
+.js-name{font-size:.78rem;font-weight:700}
+.js-time{font-size:.7rem;margin-top:2px}
+.jc1{color:var(--l1l)}.jc2{color:var(--l2c2l)}.jc3{color:var(--l3l)}
+.jarrow{font-size:1.2rem;color:#2a4a6a}
+.total-time{font-size:.82rem;color:#4a7a9a;margin-bottom:18px}
+.total-time span{color:#13b8b8;font-weight:700}
+.name-inp{width:100%;background:#04060c;border:2px solid var(--border);border-radius:12px;color:var(--white);font-family:'Tajawal',sans-serif;font-size:1.05rem;padding:13px;direction:rtl;text-align:center;margin-bottom:14px;transition:border-color .2s}
+.name-inp:focus{outline:none;border-color:#13b8b8}
+.name-inp.err{border-color:var(--red)}
+.start-btn{width:100%;background:linear-gradient(135deg,#0e8f8f,#0a5a5a);color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+
+/* ===== LEVEL SCREEN ===== */
+.level-screen{margin-top:10px}
+.lv-topbar{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.lv-badge{border-radius:10px;padding:6px 14px;font-weight:800;font-size:.88rem;flex-shrink:0}
+.lvb1{background:var(--l1bg);color:var(--l1l);border:1px solid var(--l1)}
+.lvb2{background:var(--l2c2bg);color:var(--l2c2l);border:1px solid var(--l2c2)}
+.lvb3{background:var(--l3bg);color:var(--l3l);border:1px solid var(--l3)}
+.lv-name-tag{font-size:.85rem;color:#5a8aaa;font-weight:600}
+.timer-wrap{margin-right:auto;display:flex;align-items:center;gap:8px}
+.timer-circle{width:48px;height:48px;position:relative;flex-shrink:0}
+.timer-svg{transform:rotate(-90deg);width:48px;height:48px}
+.timer-bg{fill:none;stroke:#1a2a44;stroke-width:4}
+.timer-fg{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s}
+.timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.85rem;font-weight:800}
+.steps{display:flex;align-items:center;gap:0;margin-bottom:14px;background:var(--card);border-radius:12px;overflow:hidden}
+.step{flex:1;padding:8px;text-align:center;font-size:.72rem;font-weight:700;transition:background .3s}
+.step.done{background:#0a2010;color:var(--l1l)}
+.step.active-1{background:var(--l1bg);color:var(--l1l);border-bottom:2px solid var(--l1)}
+.step.active-2{background:var(--l2c2bg);color:var(--l2c2l);border-bottom:2px solid var(--l2c2)}
+.step.active-3{background:var(--l3bg);color:var(--l3l);border-bottom:2px solid var(--l3)}
+.step.pending{color:#2a3a4a}
+.q-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px}
+.q-type-label{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:8px;margin-bottom:10px}
+.qtl1{background:var(--l1bg);color:var(--l1l);border:1px solid var(--l1)}
+.qtl2{background:var(--l2c2bg);color:var(--l2c2l);border:1px solid var(--l2c2)}
+.qtl3{background:var(--l3bg);color:var(--l3l);border:1px solid var(--l3)}
+.q-title{font-size:1rem;font-weight:700;color:#f0c030;margin-bottom:14px;line-height:1.65}
+
+/* SORT */
+.sort-list{display:flex;flex-direction:column;gap:8px}
+.s-item{background:#04060c;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:grab;user-select:none;transition:all .2s;font-size:.9rem}
+.s-item:active{cursor:grabbing}
+.s-item.dragging{opacity:.4;border-color:var(--l1l)}
+.s-item.over{border-color:var(--l1l);background:var(--l1bg)}
+.s-num{width:26px;height:26px;border-radius:50%;background:var(--l1bg);border:1px solid var(--l1);color:var(--l1l);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;flex-shrink:0}
+.drag-icon{color:#2a3a2a;flex-shrink:0;font-size:1rem}
+
+/* MATCH with COLORS */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.match-col-lbl{font-size:.75rem;font-weight:700;text-align:center;margin-bottom:7px}
+.m-item{border:2px solid var(--border);border-radius:10px;padding:11px 12px;cursor:pointer;font-size:.88rem;line-height:1.6;user-select:none;text-align:center;margin-bottom:8px;transition:all .2s;background:#04060c}
+.m-item:last-child{margin-bottom:0}
+.m-left{font-weight:700;border-right-width:4px}
+/* all items start neutral */
+.m-item-neutral{border-color:#2a3a5a;color:#8ab4cc}
+.m-item.sel{box-shadow:0 0 14px #f0c03060;border-color:#f0c030!important;color:#f0c030!important;transform:scale(1.03)}
+.m-item.ok{cursor:default;font-weight:700}
+.m-item.no-match{animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.match-hint{font-size:.78rem;color:#3a5a3a;text-align:center;margin-top:6px}
+
+/* FILL BLANK L3 */
+.blank-line-3{font-size:.95rem;line-height:2.4;color:#c0d8f0;margin-bottom:12px}
+.blank-3{display:inline-block;min-width:110px;border-bottom:2px solid var(--l3);color:var(--l3l);font-weight:700;text-align:center;padding:0 8px;cursor:pointer;background:transparent;transition:all .2s;border-radius:4px 4px 0 0}
+.blank-3:hover{background:var(--l3bg)}
+.blank-3.active-blank{outline:2px solid var(--l3l);background:var(--l3bg)}
+.blank-3.correct{border-bottom-color:var(--green);color:var(--green);background:#04100a}
+.blank-3.wrong{border-bottom-color:var(--red);color:var(--red);background:#100404}
+.word-bank-3{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;padding:10px 12px;background:#04060c;border-radius:10px}
+.wb3{background:var(--l3bg);border:1px solid var(--l3);color:var(--l3l);padding:5px 14px;border-radius:20px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;user-select:none}
+.wb3:hover{background:var(--l3);color:#fff;transform:scale(1.04)}
+.wb3.used{opacity:.25;pointer-events:none}
+.wb3.sel-chip{background:var(--l3);color:#fff;box-shadow:0 0 10px #e040fb50}
+
+/* NEXT BUTTON */
+.next-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:all .2s;color:#fff;margin-top:4px}
+.nb1{background:linear-gradient(135deg,var(--l1),#0a5a3a)}
+.nb2{background:linear-gradient(135deg,var(--l2c2),#8a5a00)}
+.nb3{background:linear-gradient(135deg,var(--l3),#6a0a7a)}
+.next-btn:hover{opacity:.9}
+
+/* TRANSITION */
+.transition-card{background:var(--card);border-radius:18px;padding:28px 22px;text-align:center;margin-top:20px}
+.tr-next-bar{margin-top:18px;background:#04060c;border-radius:10px;overflow:hidden;height:8px}
+.tr-next-fill{height:100%;background:linear-gradient(90deg,#13b8b8,#0e8f5a);transition:width .1s linear;width:0%}
+
+/* FINAL */
+.final-card{background:var(--card);border-radius:20px;padding:28px 22px;text-align:center;margin-top:16px}
+.fn-icon{font-size:3.5rem;margin-bottom:10px;animation:bounce .8s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.fn-total{font-size:2.6rem;font-weight:800;margin:12px 0;background:linear-gradient(90deg,var(--l1l),var(--l2c2l),var(--l3l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.fn-breakdown{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.fn-box{border-radius:12px;padding:12px 8px;text-align:center}
+.fb1{background:var(--l1bg);border:1px solid var(--l1)}.fb2{background:var(--l2c2bg);border:1px solid var(--l2c2)}.fb3{background:var(--l3bg);border:1px solid var(--l3)}
+.fn-box .bs{font-size:1.5rem;font-weight:800}
+.fs1{color:var(--l1l)}.fs2{color:var(--l2c2l)}.fs3{color:var(--l3l)}
+.sent-ok{margin-top:16px;background:#041008;border:1px solid var(--green);border-radius:10px;padding:10px;color:#4fd37a;font-size:.88rem;font-weight:700}
+.corr-section{text-align:right;margin-top:18px}
+.corr-hdr{font-size:.82rem;font-weight:800;padding:2px 10px;border-radius:8px;display:inline-block;margin-bottom:8px}
+.corr-item{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;background:#04060c;border-radius:8px;margin-bottom:6px;font-size:.86rem;line-height:1.7}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: NAME -->
+<div class="screen active" id="nameScreen">
+  <div class="name-card">
+    <div class="nc-logo">🦠</div>
+    <div class="nc-title">البرمجيات الخبيثة</div>
+    <div class="nc-sub">ثلاثة مستويات متتالية — اجيبي بسرعة قبل انتهاء الوقت!</div>
+    <div class="journey">
+      <div class="jstep"><div class="js-icon">🌱</div><div class="js-name jc1">سهل</div><div class="js-time jc1">1:00</div></div>
+      <div class="jarrow">←</div>
+      <div class="jstep"><div class="js-icon">⭐</div><div class="js-name jc2">متوسط</div><div class="js-time jc2">1:00</div></div>
+      <div class="jarrow">←</div>
+      <div class="jstep"><div class="js-icon">🚀</div><div class="js-name jc3">صعب</div><div class="js-time jc3">1:00</div></div>
+    </div>
+    <div class="total-time">⏱️ المدة الكاملة: <span>3 دقائق</span></div>
+    <input type="text" class="name-inp" id="nameInp" placeholder="✏️ اكتبي اسمكِ الكامل..." maxlength="40">
+    <button class="start-btn" onclick="startActivity()">🚀 ابدئي النشاط</button>
+  </div>
+</div>
+
+<!-- SCREEN 2: LEVEL -->
+<div class="screen level-screen" id="levelScreen">
+  <div class="lv-topbar">
+    <div class="lv-badge" id="lvBadge">🌱 المستوى الأول</div>
+    <div class="lv-name-tag" id="lvNameTag">👤</div>
+    <div class="timer-wrap">
+      <div class="timer-circle">
+        <svg class="timer-svg" viewBox="0 0 48 48">
+          <circle class="timer-bg" cx="24" cy="24" r="20"/>
+          <circle class="timer-fg" id="timerCircle" cx="24" cy="24" r="20" stroke-dasharray="125.6" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-num" id="timerNum">--</div>
+      </div>
+    </div>
+  </div>
+  <div class="steps">
+    <div class="step pending" id="step1">🌱 سهل</div>
+    <div class="step pending" id="step2">⭐ متوسط</div>
+    <div class="step pending" id="step3">🚀 صعب</div>
+  </div>
+  <div id="questionArea"></div>
+  <button class="next-btn" id="nextBtn" onclick="submitLevel()">التالي ←</button>
+</div>
+
+<!-- SCREEN 3: TRANSITION -->
+<div class="screen" id="transScreen">
+  <div class="transition-card" id="transCard"></div>
+</div>
+
+<!-- SCREEN 4: FINAL -->
+<div class="screen" id="finalScreen">
+  <div class="final-card" id="finalCard"></div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const TIMES=[60,60,60];
+let studentName='',currentLevel=0,timer=null,timeLeft=0,transTimer=null;
+let scores=[0,0,0],totals=[5,4,4],details=['','',''];
+
+// ===== DATA =====
+// L1 — SORT definition parts
+const L1_PARTS=[
+  {id:'p1',txt:'هي برامج'},
+  {id:'p2',txt:'يتم تصميمها'},
+  {id:'p3',txt:'بغرض إتلاف البيانات'},
+  {id:'p4',txt:'أو الإضرار بالأجهزة'},
+  {id:'p5',txt:'ومنعها من العمل بشكل صحيح'},
+];
+const L1_CORRECT=['p1','p2','p3','p4','p5'];
+
+// L2 — MATCH with pair colors
+const L2_PAIRS=[
+  {leftId:'w',leftTxt:'Worms الديدان',rightId:'r2',rightTxt:'تنسخ نفسها وتنتشر عبر الشبكة.',pairNum:1},
+  {leftId:'t',leftTxt:'Trojans طروادة',rightId:'r4',rightTxt:'تتنكر كبرنامج عادي وتسرق البيانات.',pairNum:2},
+  {leftId:'s',leftTxt:'Spyware التجسس',rightId:'r1',rightTxt:'تجمع معلومات المستخدم سراً دون علمه.',pairNum:3},
+  {leftId:'a',leftTxt:'Adware الدعائية',rightId:'r3',rightTxt:'تعرض إعلانات مزعجة في نوافذ منبثقة.',pairNum:4},
+];
+
+// L3 — FILL BLANKS
+const L3_BLANKS=[
+  {before:'البرمجيات الخبيثة هي برامج تهدف إلى',blank:'b1',after:'البيانات أو الإضرار بالأجهزة.',answer:'إتلاف'},
+  {before:'يُنشئ البرمجيات الخبيثة أشخاص يمتلكون خبرة في',blank:'b2',after:'وشبكات الحاسوب.',answer:'البرمجة'},
+  {before:'الدودة',blank:'b3',after:'تنسخ نفسها وتنتشر في الحواسيب الأخرى عبر الشبكة.',answer:'Worm'},
+  {before:'برنامج',blank:'b4',after:'يتنكر كبرنامج عادي لكنه يسرق بيانات المستخدم.',answer:'Trojan'},
+];
+const L3_BANK=['إتلاف','البرمجة','Worm','Trojan','التشفير','الإعلانات'];
+
+// ===== STATE =====
+let dragEl=null,sortOrder=[];
+let matchSel=null,matchDone={};
+let blankSel=null,blankVals={b1:'',b2:'',b3:'',b4:''};
+
+// ===== HELPERS =====
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function startActivity(){
+  const n=document.getElementById('nameInp').value.trim();
+  if(!n){document.getElementById('nameInp').classList.add('err');return;}
+  studentName=n;
+  showScreen('levelScreen');
+  loadLevel(0);
+}
+function loadLevel(lv){
+  currentLevel=lv;
+  dragEl=null;sortOrder=[];matchSel=null;matchDone={};pairColorIdx=0;blankSel=null;blankVals={b1:'',b2:'',b3:'',b4:''};
+  const BADGES=['🌱 المستوى الأول — سهل','⭐ المستوى الثاني — متوسط','🚀 المستوى الثالث — صعب'];
+  const CLASSES=['lvb1','lvb2','lvb3'];
+  const badge=document.getElementById('lvBadge');
+  badge.textContent=BADGES[lv];badge.className='lv-badge '+CLASSES[lv];
+  document.getElementById('lvNameTag').textContent='👤 '+studentName;
+  ['step1','step2','step3'].forEach((id,i)=>{
+    const el=document.getElementById(id);el.className='step';
+    if(i<lv)el.classList.add('done');
+    else if(i===lv)el.classList.add('active-'+(lv+1));
+    else el.classList.add('pending');
+  });
+  const nb=document.getElementById('nextBtn');
+  nb.className='next-btn nb'+(lv+1);
+  nb.textContent=lv<2?'التالي ←':'🏁 أنهي النشاط';
+  nb.disabled=false;
+  if(lv===0)renderL1();
+  else if(lv===1)renderL2();
+  else renderL3();
+  startTimer(TIMES[lv]);
+}
+
+// ===== TIMER =====
+function startTimer(sec){
+  clearInterval(timer);timeLeft=sec;updateTimerUI();
+  timer=setInterval(()=>{timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timer);submitLevel(true);}},1000);
+}
+function updateTimerUI(){
+  const sec=TIMES[currentLevel],pct=timeLeft/sec;
+  const offset=125.6*(1-pct);
+  const el=document.getElementById('timerCircle');
+  const colors=['var(--l1l)','var(--l2c2l)','var(--l3l)'];
+  el.style.strokeDashoffset=offset;
+  el.style.stroke=pct>0.5?colors[currentLevel]:pct>0.25?'#f0a500':'var(--red)';
+  document.getElementById('timerNum').textContent=timeLeft;
+  document.getElementById('timerNum').style.color=pct>0.5?'var(--white)':pct>0.25?'#f0a500':'var(--red)';
+}
+
+// ===== L1: SORT =====
+function renderL1(){
+  // Shuffle until not in correct order
+  let shuffled;
+  do { shuffled=[...L1_PARTS].sort(()=>Math.random()-.5); }
+  while(shuffled.every((p,i)=>p.id===L1_CORRECT[i]));
+  document.getElementById('questionArea').innerHTML=`
+    <div class="q-card">
+      <span class="q-type-label qtl1">🔀 رتّبي المفهوم</span>
+      <div class="q-title">رتّبي أجزاء تعريف البرمجيات الخبيثة بالترتيب الصحيح:</div>
+      <div class="sort-list" id="sortList">
+        ${shuffled.map(p=>`
+          <div class="s-item" draggable="true" data-id="${p.id}"
+            ondragstart="dStart(event)" ondragover="dOver(event)" ondrop="dDrop(event)" ondragleave="dLeave(event)">
+            <span class="drag-icon">⠿</span><span class="s-num">?</span><span>${p.txt}</span>
+          </div>`).join('')}
+      </div>
+      <div style="font-size:.74rem;color:#2a4a3a;text-align:center;margin-top:6px">⠿ اسحبي لإعادة الترتيب</div>
+    </div>`;
+  updateSortNums();
+}
+function dStart(e){dragEl=e.currentTarget;setTimeout(()=>dragEl.classList.add('dragging'),0);}
+function dOver(e){e.preventDefault();if(e.currentTarget!==dragEl)e.currentTarget.classList.add('over');}
+function dLeave(e){e.currentTarget.classList.remove('over');}
+function dDrop(e){
+  e.preventDefault();const target=e.currentTarget;
+  target.classList.remove('over');dragEl.classList.remove('dragging');
+  if(target!==dragEl){
+    const items=[...document.getElementById('sortList').children];
+    const di=items.indexOf(dragEl),ti=items.indexOf(target);
+    if(di<ti)target.after(dragEl);else target.before(dragEl);
+  }
+  updateSortNums();dragEl=null;
+}
+function updateSortNums(){
+  document.querySelectorAll('#sortList .s-num').forEach((el,i)=>el.textContent=i+1);
+}
+
+// ===== L2: MATCH with COLORS =====
+function renderL2(){
+  // Shuffle right column
+  const rights=[...L2_PAIRS].sort(()=>Math.random()-.5);
+  document.getElementById('questionArea').innerHTML=`
+    <div class="q-card">
+      <span class="q-type-label qtl2">🔗 اربطي بالألوان</span>
+      <div class="q-title">اضغطي على اسم البرنامج ثم على الوصف المناسب — عند الربط الصحيح يتلوّنان بنفس اللون!</div>
+      <div class="match-grid">
+        <div>
+          <div class="match-col-lbl" style="color:#6a8aaa">🦠 البرنامج</div>
+          ${L2_PAIRS.map(p=>`
+            <div class="m-item m-left m-item-neutral" id="ml_${p.leftId}" onclick="selLeft('${p.leftId}')">${p.leftTxt}</div>
+          `).join('')}
+        </div>
+        <div>
+          <div class="match-col-lbl" style="color:#6a8aaa">📝 الوصف</div>
+          ${rights.map(p=>`
+            <div class="m-item m-item-neutral" id="mr_${p.rightId}" onclick="selRight('${p.rightId}','${p.leftId}')">${p.rightTxt}</div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="match-hint">اضغطي على الاسم أولاً ← مكتمل: <span id="mCount" style="color:var(--l2c2l);font-weight:700">0/4</span></div>
+    </div>`;
+}
+// dynamic pair colors assigned on correct match
+const PAIR_COLORS=[
+  {border:'#0e8f8f',text:'#13b8b8',bg:'#04100e'},
+  {border:'#c07a00',text:'#f0c030',bg:'#120d00'},
+  {border:'#9b1fa8',text:'#e040fb',bg:'#0e0414'},
+  {border:'#0e5a8f',text:'#4da8f0',bg:'#04080e'},
+];
+let pairColorIdx=0;
+function selLeft(id){
+  // If already matched, allow re-matching (undo previous)
+  if(matchDone[id]){
+    const prevRid=matchDone[id];
+    const lEl=document.getElementById('ml_'+id);
+    const rEl=document.getElementById('mr_'+prevRid);
+    // reset both visually
+    [lEl,rEl].forEach(el=>{
+      el.classList.remove('ok','sel');
+      el.style.borderColor='';el.style.color='';el.style.background='';el.style.borderRightWidth='';
+      el.classList.add('m-item-neutral');
+    });
+    delete matchDone[id];
+    pairColorIdx=Math.max(0,pairColorIdx-1);
+    document.getElementById('mCount').textContent=Object.keys(matchDone).length+'/4';
+  }
+  document.querySelectorAll('.m-left').forEach(el=>{if(!el.classList.contains('ok'))el.classList.remove('sel');});
+  matchSel=id;
+  document.getElementById('ml_'+id).classList.add('sel');
+}
+function selRight(rid,correctLeft){
+  if(!matchSel)return;
+  // If this right item already matched to someone else, undo that
+  const prevLeft=Object.keys(matchDone).find(k=>matchDone[k]===rid);
+  if(prevLeft){
+    const oldL=document.getElementById('ml_'+prevLeft);
+    const oldR=document.getElementById('mr_'+rid);
+    [oldL,oldR].forEach(el=>{
+      el.classList.remove('ok','sel');
+      el.style.borderColor='';el.style.color='';el.style.background='';el.style.borderRightWidth='';
+      el.classList.add('m-item-neutral');
+    });
+    delete matchDone[prevLeft];
+    pairColorIdx=Math.max(0,pairColorIdx-1);
+  }
+  const lEl=document.getElementById('ml_'+matchSel);
+  const rEl=document.getElementById('mr_'+rid);
+  lEl.classList.remove('sel');
+  // Assign color to this pair
+  const col=PAIR_COLORS[pairColorIdx%PAIR_COLORS.length];
+  pairColorIdx++;
+  [lEl,rEl].forEach(el=>{
+    el.classList.remove('m-item-neutral');
+    el.classList.add('ok');
+    el.style.borderColor=col.border;
+    el.style.color=col.text;
+    el.style.background=col.bg;
+    el.style.borderRightWidth='4px';
+  });
+  matchDone[matchSel]=rid;
+  document.getElementById('mCount').textContent=Object.keys(matchDone).length+'/4';
+  matchSel=null;
+}
+
+// ===== L3: FILL BLANKS =====
+function renderL3(){
+  document.getElementById('questionArea').innerHTML=`
+    <div class="q-card">
+      <span class="q-type-label qtl3">✏️ ضعي الكلمة في مكانها</span>
+      <div class="q-title">اضغطي على الفراغ ثم اختاري الكلمة الصحيحة من البنك:</div>
+      <div id="blanksArea">
+        ${L3_BLANKS.map(b=>`
+          <div class="blank-line-3">
+            ${b.before}
+            <span class="blank-3" id="${b.blank}" onclick="selBlank('${b.blank}')">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            ${b.after}
+          </div>`).join('')}
+      </div>
+      <div class="word-bank-3" id="wbank3">
+        ${[...L3_BANK].sort(()=>Math.random()-.5).map(w=>`
+          <div class="wb3" id="wc_${w.replace(/ /g,'_')}" onclick="pickWord('${w}')">${w}</div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+function selBlank(id){
+  blankSel=id;
+  document.querySelectorAll('.blank-3').forEach(b=>b.classList.remove('active-blank'));
+  document.getElementById(id)?.classList.add('active-blank');
+}
+function pickWord(w){
+  if(!blankSel)return;
+  const old=blankVals[blankSel];
+  if(old){const c=document.getElementById('wc_'+old.replace(/ /g,'_'));if(c)c.classList.remove('used');}
+  Object.keys(blankVals).forEach(k=>{
+    if(blankVals[k]===w&&k!==blankSel){
+      const el=document.getElementById(k);
+      if(el){el.innerHTML='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';el.classList.remove('active-blank');}
+      blankVals[k]='';
+    }
+  });
+  blankVals[blankSel]=w;
+  const el=document.getElementById(blankSel);
+  if(el){el.textContent=w;el.classList.remove('active-blank');}
+  const chip=document.getElementById('wc_'+w.replace(/ /g,'_'));
+  if(chip)chip.classList.add('used');
+  blankSel=null;
+}
+
+// ===== SUBMIT =====
+function submitLevel(auto=false){
+  clearInterval(timer);
+  let sc=0,det='',tot=0;
+  if(currentLevel===0){
+    sortOrder=[...document.querySelectorAll('#sortList .s-item')].map(el=>el.dataset.id);
+    sortOrder.forEach((id,i)=>{if(id===L1_CORRECT[i])sc++;});
+    det=`ترتيب: ${sortOrder.join('→')}`;tot=5;
+  } else if(currentLevel===1){
+    L2_PAIRS.forEach(p=>{if(matchDone[p.leftId]===p.rightId)sc++;det+=`${p.leftTxt}:${matchDone[p.leftId]===p.rightId?'✅':'❌'} `;});
+    tot=4;
+  } else {
+    L3_BLANKS.forEach(b=>{if(blankVals[b.blank]===b.answer)sc++;det+=`${b.blank}:${blankVals[b.blank]===b.answer?'✅':'❌'} `;});
+    tot=4;
+  }
+  scores[currentLevel]=sc;totals[currentLevel]=tot;details[currentLevel]=det.trim();
+  showTransition(auto);
+}
+
+function showTransition(auto){
+  const lv=currentLevel;
+  const ICONS=['🌱','⭐','🚀'];
+  const NAMES=['المستوى السهل','المستوى المتوسط','المستوى الصعب'];
+  const NEXT=['المستوى المتوسط ⭐','المستوى الصعب 🚀','النتائج النهائية'];
+  const COLS=['var(--l1l)','var(--l2c2l)','var(--l3l)'];
+  document.getElementById('transCard').innerHTML=`
+    <div style="font-size:2.8rem;margin-bottom:10px">${ICONS[lv]}</div>
+    <div style="font-size:1.2rem;font-weight:800;color:${COLS[lv]};margin-bottom:8px">${NAMES[lv]} — انتهى!</div>
+    <div style="font-size:.9rem;color:#4a7a9a;margin-bottom:${auto?'8px':'16px'}">إجاباتكِ محفوظة — التصحيح يظهر في النهاية</div>
+    ${auto?`<div style="background:#1a1000;border:1px solid #4a3a00;border-radius:8px;padding:8px 12px;font-size:.82rem;color:#c0a030;margin-bottom:12px">⏱️ انتهى الوقت — انتقلتِ تلقائياً</div>`:''}
+    <div style="font-size:.95rem;font-weight:700;color:${lv<2?COLS[lv+1]:'#13b8b8'};margin-bottom:12px">
+      ${lv<2?'التالي: '+NEXT[lv]:'سيظهر التصحيح الآن...'}
+    </div>
+    <div class="tr-next-bar"><div class="tr-next-fill" id="transBar"></div></div>`;
+  showScreen('transScreen');
+  let p=0;
+  transTimer=setInterval(()=>{
+    p+=100/30;
+    const el=document.getElementById('transBar');
+    if(el)el.style.width=Math.min(p,100)+'%';
+    if(p>=100){clearInterval(transTimer);if(currentLevel<2){showScreen('levelScreen');loadLevel(currentLevel+1);}else showFinal();}
+  },100);
+}
+
+// ===== FINAL =====
+async function showFinal(){
+  const total=scores.reduce((a,b)=>a+b,0);
+  const maxTotal=totals.reduce((a,b)=>a+b,0);
+  const pct=Math.round(total/maxTotal*100);
+  const emoji=pct>=80?'🏆':pct>=60?'⭐':'💪';
+  const msg=pct>=80?'ممتاز! 🌟':pct>=60?'جيد جداً ⭐':'استمري في المراجعة 💪';
+
+  // L1 corrections
+  const l1Corr=L1_CORRECT.map((cid,i)=>{
+    const ok=sortOrder[i]===cid;
+    const part=L1_PARTS.find(p=>p.id===cid);
+    return `<div class="corr-item" style="border-right:3px solid ${ok?'var(--green)':'var(--red)'};background:${ok?'#041008':'#100404'};">
+      <span>${ok?'✅':'❌'}</span>
+      <span><strong style="color:var(--l1l)">${i+1}.</strong> ${part?.txt}</span>
+    </div>`;
+  }).join('');
+
+  // L2 corrections
+  const l2Corr=L2_PAIRS.map((p,i)=>{
+    const ok=matchDone[p.leftId]===p.rightId;
+    const PCOLS=['#13b8b8','#f0c030','#e040fb','#4da8f0'];
+    return `<div class="corr-item" style="border-right:3px solid ${ok?'var(--green)':'var(--red)'};background:${ok?'#041008':'#100404'};">
+      <span>${ok?'✅':'❌'}</span>
+      <span><strong style="color:${PCOLS[i]}">${p.leftTxt}</strong> ← ${p.rightTxt}</span>
+    </div>`;
+  }).join('');
+
+  // L3 corrections
+  const l3Corr=L3_BLANKS.map(b=>{
+    const ok=blankVals[b.blank]===b.answer;
+    return `<div class="corr-item" style="border-right:3px solid ${ok?'var(--green)':'var(--red)'};background:${ok?'#041008':'#100404'};">
+      <span>${ok?'✅':'❌'}</span>
+      <span>${b.before} <strong style="color:${ok?'#4fd37a':'#f07070'}">[ ${ok?'✅ '+b.answer:'❌ '+b.answer} ]</strong> ${b.after}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('finalCard').innerHTML=`
+    <div class="fn-icon">${emoji}</div>
+    <div style="font-size:1.3rem;font-weight:800;margin-bottom:4px">${studentName}</div>
+    <div style="font-size:.88rem;color:#4a7a9a;margin-bottom:4px">اكتملت المستويات الثلاثة!</div>
+    <div class="fn-total">${total}/${maxTotal}</div>
+    <div style="font-size:.9rem;color:#5a7a9a;margin-bottom:14px">${pct}% — ${msg}</div>
+    <div class="fn-breakdown">
+      <div class="fn-box fb1"><div class="bs fs1">${scores[0]}/${totals[0]}</div><div style="font-size:.72rem;color:var(--l1l);margin-top:3px">🌱 سهل</div></div>
+      <div class="fn-box fb2"><div class="bs fs2">${scores[1]}/${totals[1]}</div><div style="font-size:.72rem;color:var(--l2c2l);margin-top:3px">⭐ متوسط</div></div>
+      <div class="fn-box fb3"><div class="bs fs3">${scores[2]}/${totals[2]}</div><div style="font-size:.72rem;color:var(--l3l);margin-top:3px">🚀 صعب</div></div>
+    </div>
+    <div class="corr-section">
+      <div class="corr-hdr" style="background:var(--l1bg);color:var(--l1l);border:1px solid var(--l1)">🌱 المستوى الأول — ترتيب المفهوم</div>
+      ${l1Corr}
+      <div style="font-size:.78rem;color:#2a4a2a;padding:6px 10px;background:#04100a;border-radius:6px;margin-bottom:10px;line-height:1.7">
+        ✅ التعريف الصحيح: البرمجيات الخبيثة — هي برامج — يتم تصميمها — بغرض إتلاف البيانات — أو الإضرار بالأجهزة — ومنعها من العمل بشكل صحيح
+      </div>
+      <div class="corr-hdr" style="background:var(--l2c2bg);color:var(--l2c2l);border:1px solid var(--l2c2);margin-top:4px">⭐ المستوى الثاني — الربط بالألوان</div>
+      ${l2Corr}
+      <div class="corr-hdr" style="background:var(--l3bg);color:var(--l3l);border:1px solid var(--l3);margin-top:10px">🚀 المستوى الثالث — الكلمة في مكانها</div>
+      ${l3Corr}
+    </div>
+    <div class="sent-ok" id="sentStatus">⏳ جاري إرسال نتيجتكِ...</div>`;
+  showScreen('finalScreen');
+  try{
+    await fetch(`${DB}/timed_activity.json`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:studentName,l1:scores[0],l2:scores[1],l3:scores[2],
+        t1:totals[0],t2:totals[1],t3:totals[2],
+        total,maxTotal,pct,emoji,
+        d1:details[0],d2:details[1],d3:details[2],
+        time:new Date().toLocaleTimeString('ar-QA')})});
+    const el=document.getElementById('sentStatus');
+    if(el)el.textContent='✅ تم إرسال نتيجتكِ لشاشة المعلمة!';
+  }catch(e){
+    const el=document.getElementById('sentStatus');
+    if(el)el.textContent='⚠️ تعذّر الإرسال — أظهري هذه الشاشة للمعلمة';
+  }
+}
+</script>
+</body>
+</html>

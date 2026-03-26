@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — النشاط الزمني</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--card:#0e1422;--border:#1a2a44;--white:#eef4ff;
+  --l1:#0e8f5a;--l1l:#13d48a;--l1bg:#061410;
+  --l2:#c07a00;--l2l:#f0c030;--l2bg:#1a1000;
+  --l3:#9b1fa8;--l3l:#e040fb;--l3bg:#160820;
+  --red:#e74c3c;--green:#27ae60;--teal:#13b8b8
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
+
+/* HEADER */
+header{
+  background:linear-gradient(135deg,#06080f,#0e8f5a0a,#9b1fa808);
+  border-bottom:2px solid #1a2a44;
+  padding:14px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap
+}
+.h-logo{font-size:1.9rem}
+.h-title{font-size:1.3rem;font-weight:800;color:var(--teal)}
+.h-sub{font-size:.78rem;color:#4a6a8a;margin-top:1px}
+.hctrl{margin-right:auto;display:flex;gap:8px;align-items:center}
+.live{display:flex;align-items:center;gap:5px;background:#04060c;border:1px solid var(--l1);border-radius:18px;padding:4px 12px;font-size:.78rem;color:var(--l1l);font-weight:700}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--l1l);animation:blink 1.3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.cbtn{background:transparent;border:1px solid #1a2a44;color:#4a5a6a;padding:5px 12px;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s}
+.cbtn:hover{border-color:var(--red);color:var(--red)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:14px 20px;max-width:1400px;margin:0 auto}
+@media(max-width:900px){.stats{grid-template-columns:repeat(3,1fr)}}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px;text-align:center}
+.stat .v{font-size:1.6rem;font-weight:800;line-height:1}
+.stat .l{font-size:.7rem;color:#4a6a8a;margin-top:3px}
+.s0 .v{color:var(--teal)}
+.s1 .v{color:var(--l1l)}
+.s2 .v{color:var(--l2l)}
+.s3 .v{color:var(--l3l)}
+.s4 .v{color:#4fd37a}
+.s5 .v{color:#f07070}
+
+/* WINNER */
+.winner{
+  max-width:1400px;margin:0 20px 14px;
+  padding:14px 18px;
+  background:linear-gradient(135deg,#1a1000,#2a1a00);
+  border:2px solid var(--l2l);border-radius:13px;
+  display:none;align-items:center;gap:14px;flex-wrap:wrap
+}
+.winner.show{display:flex;animation:pop .5s ease}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.wcrown{font-size:1.8rem;animation:bounce .8s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.wname{font-size:1.15rem;font-weight:800;color:var(--l2l)}
+.wscore{font-size:.82rem;color:#a08020;margin-top:2px}
+.wstars{margin-right:auto;font-size:1.2rem;letter-spacing:3px}
+
+/* TABLE */
+.table-wrap{
+  max-width:1400px;margin:0 20px 40px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden
+}
+.tw-header{
+  padding:12px 16px;background:#04060c;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between
+}
+.tw-title{font-size:.92rem;font-weight:800;color:var(--teal)}
+table{width:100%;border-collapse:collapse}
+th{
+  background:#04060c;padding:10px 13px;text-align:right;
+  font-size:.78rem;color:#4a6a8a;font-weight:700;
+  border-bottom:1px solid #0a1624;white-space:nowrap
+}
+td{padding:11px 13px;font-size:.88rem;border-bottom:1px solid #080e1a;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#0a1020}
+
+/* RANK */
+.rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;margin:0 auto}
+.r1{background:var(--l2l);color:#0a0a0a}
+.r2{background:#c0c0c0;color:#0a0a0a}
+.r3{background:#cd7f32;color:#fff}
+.rn{background:#1a2a44;color:#5a7a9a}
+
+/* SCORE BAR */
+.bar-cell{display:flex;align-items:center;gap:7px}
+.bar{height:7px;background:#0a1020;border-radius:4px;width:90px;overflow:hidden;flex-shrink:0}
+.bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--l1l),var(--l2l),var(--l3l));transition:width .5s ease}
+.score-txt{font-size:.82rem;font-weight:800;color:var(--teal);min-width:36px}
+.pct-txt{font-size:.75rem;color:#4a7a9a}
+
+/* LEVEL MINI SCORES */
+.lv-scores{display:flex;gap:5px;flex-wrap:wrap}
+.lm{font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:7px;white-space:nowrap}
+.lm1{background:var(--l1bg);color:var(--l1l)}
+.lm2{background:var(--l2bg);color:var(--l2l)}
+.lm3{background:var(--l3bg);color:var(--l3l)}
+.lm.ok{opacity:1}.lm.weak{opacity:.5}
+
+/* NAME CELL */
+.name-cell{display:flex;align-items:center;gap:8px}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--l1),var(--l3));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0}
+.name-txt{font-weight:700;font-size:.92rem}
+.time-txt{font-size:.72rem;color:#3a5a7a}
+
+/* EMPTY */
+.empty{text-align:center;padding:50px;color:#2a3a4a}
+.ei{font-size:3rem;opacity:.3;margin-bottom:10px}
+
+/* PROGRESS BARS SECTION */
+.averages{max-width:1400px;margin:0 20px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.avg-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.avg-title{font-size:.82rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.avg-bar{height:10px;background:#0a1020;border-radius:5px;overflow:hidden;margin-top:6px}
+.avg-fill{height:100%;border-radius:5px;transition:width .6s ease}
+.af1{background:linear-gradient(90deg,var(--l1),var(--l1l))}
+.af2{background:linear-gradient(90deg,var(--l2),var(--l2l))}
+.af3{background:linear-gradient(90deg,var(--l3),var(--l3l))}
+.avg-pct{font-size:1.1rem;font-weight:800;margin-top:4px}
+
+/* ENTRY ANIMATION */
+@keyframes rowIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.new-row{animation:rowIn .4s ease}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-logo">📊</div>
+  <div>
+    <div class="h-title">شاشة المعلمة — النشاط الزمني</div>
+    <div class="h-sub">البرمجيات الخبيثة | 🌱 ترتيب المفهوم ← ⭐ الربط بالألوان ← 🚀 الكلمة في مكانها | 3 دقائق</div>
+  </div>
+  <div class="hctrl">
+    <div class="live"><span class="dot"></span>مباشر — تحديث كل 4 ثوانٍ</div>
+    <button class="cbtn" onclick="clearAll()">🗑️ مسح النتائج</button>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat s0"><div class="v" id="tot">0</div><div class="l">👥 إجمالي</div></div>
+  <div class="stat s1"><div class="v" id="av1">—</div><div class="l">🌱 متوسط سهل</div></div>
+  <div class="stat s2"><div class="v" id="av2">—</div><div class="l">⭐ متوسط متوسط</div></div>
+  <div class="stat s3"><div class="v" id="av3">—</div><div class="l">🚀 متوسط صعب</div></div>
+  <div class="stat s4"><div class="v" id="highC">0</div><div class="l">🏆 ≥ 80%</div></div>
+  <div class="stat s5"><div class="v" id="lowC">0</div><div class="l">💪 &lt; 60%</div></div>
+</div>
+
+<!-- WINNER BANNER -->
+<div class="winner" id="winnerBanner">
+  <div class="wcrown">👑</div>
+  <div>
+    <div class="wname" id="wName">—</div>
+    <div class="wscore" id="wScore"></div>
+  </div>
+  <div class="wstars">🌟🌟🌟</div>
+</div>
+
+<!-- AVERAGES PER LEVEL -->
+<div class="averages" id="avgSection" style="display:none">
+  <div class="avg-card">
+    <div class="avg-title" style="color:var(--l1l)">🌱 المستوى الأول — ترتيب المفهوم</div>
+    <div class="avg-bar"><div class="avg-fill af1" id="avgBar1" style="width:0%"></div></div>
+    <div class="avg-pct" style="color:var(--l1l)" id="avgPct1">0%</div>
+  </div>
+  <div class="avg-card">
+    <div class="avg-title" style="color:var(--l2l)">⭐ المستوى الثاني — الربط بالألوان</div>
+    <div class="avg-bar"><div class="avg-fill af2" id="avgBar2" style="width:0%"></div></div>
+    <div class="avg-pct" style="color:var(--l2l)" id="avgPct2">0%</div>
+  </div>
+  <div class="avg-card">
+    <div class="avg-title" style="color:var(--l3l)">🚀 المستوى الثالث — الكلمة في مكانها</div>
+    <div class="avg-bar"><div class="avg-fill af3" id="avgBar3" style="width:0%"></div></div>
+    <div class="avg-pct" style="color:var(--l3l)" id="avgPct3">0%</div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrap">
+  <div class="tw-header">
+    <div class="tw-title">📋 نتائج الطالبات — مرتبة من الأعلى</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:46px">#</th>
+        <th>الاسم</th>
+        <th>النتيجة الكاملة</th>
+        <th>🌱 ترتيب</th>
+        <th>⭐ ربط</th>
+        <th>🚀 فراغات</th>
+        <th>الوقت</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="7">
+        <div class="empty"><div class="ei">⏳</div><p>في انتظار إجابات الطالبات...</p></div>
+      </td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+
+async function fetchResults(){
+  try{
+    const res=await fetch(`${DB}/timed_activity.json`);
+    if(!res.ok)return;
+    const data=await res.json();
+    if(!data){clearDisplay();return;}
+    const all=Object.values(data).sort((a,b)=>b.pct-a.pct);
+    renderTable(all);
+    renderStats(all);
+    renderAverages(all);
+    renderWinner(all);
+  }catch(e){}
+}
+
+function renderTable(entries){
+  if(!entries.length){clearDisplay();return;}
+  document.getElementById('tbody').innerHTML=entries.map((e,i)=>{
+    const pct=e.pct||0;
+    const barW=pct;
+    const rankCls=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+    const rankSym=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+    const initial=e.name?e.name.charAt(0):'؟';
+    // per-level score badges
+    const l1pct=e.t1?Math.round((e.l1||0)/e.t1*100):0;
+    const l2pct=e.t2?Math.round((e.l2||0)/e.t2*100):0;
+    const l3pct=e.t3?Math.round((e.l3||0)/e.t3*100):0;
+    return `<tr class="${i===0?'new-row':''}">
+      <td><div class="rank ${rankCls}">${rankSym}</div></td>
+      <td>
+        <div class="name-cell">
+          <div class="avatar">${initial}</div>
+          <div>
+            <div class="name-txt">${e.name||'—'}</div>
+            <div class="time-txt">⏰ ${e.time||''}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="bar-cell">
+          <div class="bar"><div class="bar-fill" style="width:${barW}%"></div></div>
+          <span class="score-txt">${e.total||0}/${e.maxTotal||13}</span>
+          <span class="pct-txt">${pct}%</span>
+        </div>
+      </td>
+      <td><div class="lm lm1 ${l1pct>=60?'ok':'weak'}">${e.l1||0}/${e.t1||5} — ${l1pct}%</div></td>
+      <td><div class="lm lm2 ${l2pct>=60?'ok':'weak'}">${e.l2||0}/${e.t2||4} — ${l2pct}%</div></td>
+      <td><div class="lm lm3 ${l3pct>=60?'ok':'weak'}">${e.l3||0}/${e.t3||4} — ${l3pct}%</div></td>
+      <td class="time-txt">${e.time||''}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStats(entries){
+  const n=entries.length;
+  document.getElementById('tot').textContent=n;
+  document.getElementById('highC').textContent=entries.filter(e=>e.pct>=80).length;
+  document.getElementById('lowC').textContent=entries.filter(e=>e.pct<60).length;
+  const avg=(key,tot)=>n?Math.round(entries.reduce((s,e)=>s+(e[key]||0),0)/n/tot*100)+'%':'—';
+  document.getElementById('av1').textContent=avg('l1',5);
+  document.getElementById('av2').textContent=avg('l2',4);
+  document.getElementById('av3').textContent=avg('l3',4);
+}
+
+function renderAverages(entries){
+  if(!entries.length){document.getElementById('avgSection').style.display='none';return;}
+  document.getElementById('avgSection').style.display='grid';
+  const n=entries.length;
+  const a1=Math.round(entries.reduce((s,e)=>s+(e.l1||0),0)/n/5*100);
+  const a2=Math.round(entries.reduce((s,e)=>s+(e.l2||0),0)/n/4*100);
+  const a3=Math.round(entries.reduce((s,e)=>s+(e.l3||0),0)/n/4*100);
+  document.getElementById('avgBar1').style.width=a1+'%';
+  document.getElementById('avgBar2').style.width=a2+'%';
+  document.getElementById('avgBar3').style.width=a3+'%';
+  document.getElementById('avgPct1').textContent='متوسط الصف: '+a1+'%';
+  document.getElementById('avgPct2').textContent='متوسط الصف: '+a2+'%';
+  document.getElementById('avgPct3').textContent='متوسط الصف: '+a3+'%';
+}
+
+function renderWinner(entries){
+  if(!entries.length){document.getElementById('winnerBanner').classList.remove('show');return;}
+  const top=entries[0];
+  document.getElementById('winnerBanner').classList.add('show');
+  document.getElementById('wName').textContent=top.name||'—';
+  document.getElementById('wScore').textContent=
+    `${top.total}/${top.maxTotal} — ${top.pct}%  |  🌱${top.l1}/${top.t1}  ⭐${top.l2}/${top.t2}  🚀${top.l3}/${top.t3}`;
+}
+
+function clearDisplay(){
+  document.getElementById('tbody').innerHTML=`<tr><td colspan="7"><div class="empty"><div class="ei">⏳</div><p>في انتظار إجابات الطالبات...</p></div></td></tr>`;
+  ['tot','highC','lowC'].forEach(id=>document.getElementById(id).textContent='0');
+  ['av1','av2','av3'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('winnerBanner').classList.remove('show');
+  document.getElementById('avgSection').style.display='none';
+}
+
+async function clearAll(){
+  if(!confirm('هل أنتِ متأكدة من مسح جميع النتائج؟'))return;
+  await fetch(`${DB}/timed_activity.json`,{method:'DELETE'});
+  clearDisplay();
+}
+
+fetchResults();
+setInterval(fetchResults,4000);
+</script>
+</body>
+</html>
