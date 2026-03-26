@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الإنجازات — البرمجيات الخبيثة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff;--surface:#f7f8fc;--border:#e0e8f0;
+  --text:#1a1a2e;--text2:#5a6a8a;
+  --teal:#0e7a6a;--teal-l:#13a88a;
+  --gold:#d4a000;--silver:#8a9aaa;--bronze:#b06a2a;
+  --red:#e74c3c;--green:#27ae60;
+  --shadow:0 2px 14px rgba(0,0,0,.08)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#0a4a3a,#0e7a6a);padding:18px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.h-logo{font-size:2.2rem}
+.h-title{font-size:1.35rem;font-weight:800;color:#fff}
+.h-sub{font-size:.8rem;color:#a0d8cc;margin-top:2px}
+.hctrl{margin-right:auto;display:flex;gap:8px;flex-wrap:wrap}
+.hbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:7px 15px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:background .2s}
+.hbtn:hover{background:rgba(255,255,255,.25)}
+.hbtn.danger{background:rgba(231,76,60,.3);border-color:rgba(231,76,60,.5)}
+.hbtn.danger:hover{background:rgba(231,76,60,.5)}
+.live{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:.78rem;color:#a0d8cc;font-weight:700}
+.ldot{width:6px;height:6px;border-radius:50%;background:#4fd37a;animation:blink 1.3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* TABS */
+.tabs{display:flex;gap:0;background:var(--surface);border-bottom:2px solid var(--border);padding:0 22px}
+.tab{padding:12px 20px;font-size:.9rem;font-weight:700;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;margin-bottom:-2px}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:16px 22px;max-width:1200px;margin:0 auto}
+@media(max-width:700px){.stats-bar{grid-template-columns:repeat(3,1fr)}}
+.stat{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:13px;text-align:center;box-shadow:var(--shadow)}
+.stat .v{font-size:1.6rem;font-weight:800;line-height:1}
+.stat .l{font-size:.72rem;color:var(--text2);margin-top:3px}
+.sv0{color:var(--teal)}.sv1{color:var(--gold)}.sv2{color:#7c4dff}.sv3{color:var(--green)}.sv4{color:var(--red)}
+
+/* PODIUM */
+.podium-section{max-width:1200px;margin:0 auto;padding:20px 22px 0}
+.podium-title{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.podium-slot{text-align:center;flex:1;min-width:150px;max-width:200px}
+.pod-card{border-radius:16px;padding:20px 12px;position:relative;cursor:default}
+.pod-1{background:linear-gradient(135deg,#fff8e0,#fff3b0);border:2px solid var(--gold);order:2}
+.pod-2{background:linear-gradient(135deg,#f4f6f8,#e8eef4);border:2px solid var(--silver);order:1}
+.pod-3{background:linear-gradient(135deg,#fdf0e8,#f5e0cc);border:2px solid var(--bronze);order:3}
+.pod-rank{font-size:2.2rem;margin-bottom:6px;display:block}
+.pod-name{font-size:.95rem;font-weight:800;margin-bottom:8px;line-height:1.4}
+.pod-score{font-size:1.8rem;font-weight:900;line-height:1}
+.pod-pct{font-size:.75rem;font-weight:600;margin-top:2px;opacity:.8}
+.pod-acts{display:flex;justify-content:center;gap:4px;margin-top:8px;flex-wrap:wrap}
+.pod-act{font-size:.68rem;padding:2px 7px;border-radius:8px;font-weight:700;background:rgba(255,255,255,.7)}
+.pod-1 .pod-score{color:var(--gold)}.pod-1 .pod-pct{color:#a07000}
+.pod-2 .pod-score{color:var(--silver)}.pod-2 .pod-pct{color:#5a7a8a}
+.pod-3 .pod-score{color:var(--bronze)}.pod-3 .pod-pct{color:#7a4a1a}
+.pod-bar-wrap{height:80px;display:flex;align-items:flex-end;justify-content:center;margin-top:10px}
+.pod-bar{width:100%;border-radius:8px 8px 0 0;transition:height .6s ease}
+.pbar-1{background:linear-gradient(180deg,#ffd700,#c8a000);height:80px}
+.pbar-2{background:linear-gradient(180deg,#c0c8d0,#8a9aaa);height:56px}
+.pbar-3{background:linear-gradient(180deg,#d4904a,#b06a2a);height:40px}
+
+/* CONFETTI */
+.confetti-overlay{position:fixed;inset:0;pointer-events:none;z-index:1000;display:none}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* LEADERBOARD TABLE */
+.lb-section{max-width:1200px;margin:0 auto;padding:0 22px 40px}
+.lb-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.lb-table th{background:var(--surface);padding:11px 14px;text-align:right;font-size:.78rem;color:var(--text2);font-weight:700;border-bottom:1.5px solid var(--border);white-space:nowrap}
+.lb-table td{padding:12px 14px;font-size:.88rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.lb-table tr:last-child td{border-bottom:none}
+.lb-table tr:hover td{background:#f9fbfc}
+.rank-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;margin:0 auto}
+.rb-1{background:var(--gold);color:#fff}
+.rb-2{background:var(--silver);color:#fff}
+.rb-3{background:var(--bronze);color:#fff}
+.rb-n{background:var(--surface);color:var(--text2);border:1px solid var(--border)}
+.student-name{font-weight:700;font-size:.92rem}
+.total-bar{display:flex;align-items:center;gap:8px}
+.tbar{height:8px;background:#f0f0f0;border-radius:4px;width:80px;overflow:hidden;flex-shrink:0}
+.tbar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal-l),var(--teal))}
+.total-pct{font-size:.88rem;font-weight:800;color:var(--teal);min-width:38px}
+.act-score{font-size:.75rem;padding:3px 8px;border-radius:7px;font-weight:700;text-align:center}
+.as-quiz{background:#e8f8ee;color:#1a7a3a}
+.as-timed{background:#e8f0fe;color:#3a3aaa}
+.as-diff{background:#fff0e8;color:#8a4a1a}
+.as-pair{background:#fdf8e8;color:#8a7000}
+.as-none{background:var(--surface);color:var(--text2)}
+.medal{font-size:1.2rem}
+
+/* ACTIVITY BREAKDOWN */
+.act-breakdown{display:flex;gap:6px;flex-wrap:wrap}
+
+/* MERGE PANEL */
+.merge-section{max-width:1200px;margin:0 auto;padding:16px 22px 40px}
+.merge-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.raw-names{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+.rn-title{font-size:.82rem;font-weight:700;color:var(--text2);margin-bottom:10px}
+.rn-grid{display:flex;flex-wrap:wrap;gap:6px}
+.rn-chip{font-size:.8rem;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:4px 11px;display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .2s}
+.rn-chip:hover{border-color:var(--teal);background:#eef8f5}
+.rn-chip.sel{border-color:var(--teal);background:#eef8f5;font-weight:700}
+.rn-chip .src{font-size:.68rem;padding:1px 5px;border-radius:5px;background:var(--surface)}
+.merge-action{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:16px}
+.ma-label{font-size:.82rem;font-weight:700;color:var(--text2);margin-bottom:8px}
+.ma-input{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-family:'Tajawal',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:10px;background:#fff}
+.ma-input:focus{outline:none;border-color:var(--teal)}
+.ma-btn{padding:10px 22px;border:none;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;background:var(--teal);color:#fff;transition:opacity .2s}
+.ma-btn:hover{opacity:.9}
+.merges-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.merge-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 13px;display:flex;align-items:center;gap:10px;font-size:.85rem}
+.mi-unified{font-weight:700;color:var(--teal)}
+.mi-names{color:var(--text2);flex:1}
+.mi-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;padding:0 4px}
+
+/* INFO CARDS */
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1200px;margin:0 auto;padding:16px 22px 0}
+@media(max-width:800px){.info-grid{grid-template-columns:1fr 1fr}}
+.info-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px}
+.ic-title{font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ic-bar{height:8px;background:#e8e8e8;border-radius:4px;overflow:hidden;margin-bottom:4px}
+.ic-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.ic-pct{font-size:.9rem;font-weight:800;margin-top:2px}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.row-anim{animation:slideUp .4s ease}
+</style>
+</head>
+<body>
+
+<div class="confetti-overlay" id="confettiOverlay"></div>
+
+<header>
+  <div class="h-logo">🏆</div>
+  <div><div class="h-title">لوحة الإنجازات — البرمجيات الخبيثة</div><div class="h-sub">مجموع النقاط الخام من جميع الأنشطة | الحد الأقصى: 20 نقطة</div></div>
+  <div class="hctrl">
+    <div class="live"><span class="ldot"></span>تحديث كل 8 ثوانٍ</div>
+    <button class="hbtn" onclick="loadAll()">🔄 تحديث الآن</button>
+    <button class="hbtn" onclick="showTab('merge')">🔗 مطابقة الأسماء</button>
+    <button class="hbtn" onclick="celebrate()">🎉 احتفال</button>
+    <button class="hbtn danger" onclick="showResetModal()">🗑️ إعادة ضبط الكل</button>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tab-lb" onclick="showTab('lb')">🏆 لوحة النتائج</div>
+  <div class="tab" id="tab-acts" onclick="showTab('acts')">📊 تفاصيل الأنشطة</div>
+  <div class="tab" id="tab-merge" onclick="showTab('merge')">🔗 مطابقة الأسماء</div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><div class="v sv0" id="sTotal">0</div><div class="l">👥 طالبات</div></div>
+  <div class="stat"><div class="v sv1" id="sAvg">—</div><div class="l">📈 متوسط الصف (نقاط)</div></div>
+  <div class="stat"><div class="v sv2" id="sActs">0</div><div class="l">✅ أنشطة مكتملة</div></div>
+  <div class="stat"><div class="v sv3" id="sHigh">0</div><div class="l">🌟 ≥ 80%</div></div>
+  <div class="stat"><div class="v sv4" id="sLow">0</div><div class="l">💪 < 60%</div></div>
+</div>
+
+<!-- TAB: LEADERBOARD -->
+<div class="tab-panel active" id="panel-lb">
+  <!-- PODIUM -->
+  <div class="podium-section">
+    <div class="podium-title">🥇 المتصدرات</div>
+    <div class="podium" id="podiumArea">
+      <div style="text-align:center;color:var(--text2);padding:30px;width:100%">⏳ جاري تحميل البيانات...</div>
+    </div>
+  </div>
+  <!-- TABLE -->
+  <div class="lb-section">
+    <table class="lb-table">
+      <thead>
+        <tr>
+          <th style="width:42px">#</th>
+          <th>الاسم</th>
+          <th>مجموع النقاط</th>
+          <th>📝 MCQ</th>
+          <th>⏱️ زمني</th>
+          <th>🎯 تفاضلي</th>
+          <th>🔍 ثنائيات</th>
+          <th>الأنشطة</th>
+        </tr>
+      </thead>
+      <tbody id="lbBody">
+        <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text2)">⏳ جاري التحميل...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB: ACTIVITIES BREAKDOWN -->
+<div class="tab-panel" id="panel-acts">
+  <div class="info-grid" id="actsInfo">
+    <div class="info-card"><div class="ic-title">📝 الغلق الختامي MCQ</div><div class="ic-bar"><div class="ic-fill" id="af1" style="width:0%;background:#27ae60"></div></div><div class="ic-pct" id="ap1">—</div></div>
+    <div class="info-card"><div class="ic-title">⏱️ النشاط الزمني</div><div class="ic-bar"><div class="ic-fill" id="af2" style="width:0%;background:#7c4dff"></div></div><div class="ic-pct" id="ap2">—</div></div>
+    <div class="info-card"><div class="ic-title">🎯 النشاط التفاضلي</div><div class="ic-bar"><div class="ic-fill" id="af3" style="width:0%;background:#c07a00"></div></div><div class="ic-pct" id="ap3">—</div></div>
+    <div class="info-card"><div class="ic-title">🔍 نشاط الثنائيات</div><div class="ic-bar"><div class="ic-fill" id="af4" style="width:0%;background:#0e7a6a"></div></div><div class="ic-pct" id="ap4">—</div></div>
+  </div>
+  <div class="lb-section" style="margin-top:16px">
+    <table class="lb-table">
+      <thead>
+        <tr>
+          <th>#</th><th>الاسم</th>
+          <th>📝 MCQ<br><span style="font-weight:400;font-size:.7rem">من 3</span></th>
+          <th>⏱️ زمني<br><span style="font-weight:400;font-size:.7rem">من 13</span></th>
+          <th>🎯 تفاضلي<br><span style="font-weight:400;font-size:.7rem">متفاوت</span></th>
+          <th>🔍 ثنائيات<br><span style="font-weight:400;font-size:.7rem">من 2</span></th>
+          <th>المجموع</th>
+        </tr>
+      </thead>
+      <tbody id="actsBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB: MERGE -->
+<div class="tab-panel" id="panel-merge">
+  <div class="merge-section">
+    <div class="merge-title">🔗 مطابقة الأسماء — ربط نفس الطالبة عبر الأنشطة</div>
+    <div class="raw-names">
+      <div class="rn-title">جميع الأسماء المسجّلة — اضغطي على الأسماء التي تريدين دمجها:</div>
+      <div class="rn-grid" id="rawNamesGrid">⏳ جاري التحميل...</div>
+    </div>
+    <div class="merge-action">
+      <div class="ma-label">الاسم الموحّد (الاسم الصحيح الذي سيظهر في لوحة النتائج):</div>
+      <input type="text" class="ma-input" id="unifiedName" placeholder="اكتبي الاسم الموحّد...">
+      <button class="ma-btn" onclick="addMerge()">✅ ربط الأسماء المحددة</button>
+    </div>
+    <div id="mergesList" class="merges-list"></div>
+  </div>
+</div>
+
+<!-- RESET MODAL -->
+<div id="resetModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:20px;padding:32px 28px;max-width:480px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.2);direction:rtl;font-family:'Tajawal',sans-serif">
+    <div style="font-size:2.5rem;text-align:center;margin-bottom:12px">⚠️</div>
+    <div style="font-size:1.2rem;font-weight:800;color:#1a1a2e;text-align:center;margin-bottom:8px">إعادة ضبط جميع الأنشطة</div>
+    <div style="font-size:.9rem;color:#5a6a8a;text-align:center;margin-bottom:22px;line-height:1.7">هذا الإجراء سيمسح <strong style="color:#e74c3c">جميع بيانات الطالبات</strong> من كل الأنشطة ولا يمكن التراجع عنه.</div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fc;border:1.5px solid #e0e8f0;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600">
+        <input type="checkbox" id="r_quiz" checked style="accent-color:#27ae60;width:16px;height:16px"> 📝 الغلق الختامي MCQ
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fc;border:1.5px solid #e0e8f0;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600">
+        <input type="checkbox" id="r_timed" checked style="accent-color:#7c4dff;width:16px;height:16px"> ⏱️ النشاط الزمني
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fc;border:1.5px solid #e0e8f0;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600">
+        <input type="checkbox" id="r_diff" checked style="accent-color:#c07a00;width:16px;height:16px"> 🎯 النشاط التفاضلي
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fc;border:1.5px solid #e0e8f0;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600">
+        <input type="checkbox" id="r_pair" checked style="accent-color:#0e7a6a;width:16px;height:16px"> 🔍 نشاط الثنائيات
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fc;border:1.5px solid #e0e8f0;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600">
+        <input type="checkbox" id="r_kwl" checked style="accent-color:#3a8f8f;width:16px;height:16px"> 📊 جدول KWL
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fc;border:1.5px solid #e0e8f0;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600">
+        <input type="checkbox" id="r_malware" checked style="accent-color:#9b1fa8;width:16px;height:16px"> 🦠 جدارية البرمجيات الخبيثة
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f8fc;border:1.5px solid #e0e8f0;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600">
+        <input type="checkbox" id="r_detective" checked style="accent-color:#0e5a8f;width:16px;height:16px"> 🔍 بيانات المحقق والشاهد
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff0e8;border:1.5px solid #f0c030;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600">
+        <input type="checkbox" id="r_merges" style="accent-color:#d4a000;width:16px;height:16px"> 🔗 مطابقة الأسماء
+      </label>
+    </div>
+
+    <div id="resetStatus" style="display:none;text-align:center;padding:10px;font-size:.9rem;font-weight:700;margin-bottom:12px;border-radius:8px"></div>
+
+    <div style="display:flex;gap:10px">
+      <button onclick="hideResetModal()" style="flex:1;padding:12px;border:1.5px solid #dde6f0;border-radius:10px;background:#fff;font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;color:#5a6a8a">إلغاء</button>
+      <button onclick="doReset()" id="confirmResetBtn" style="flex:2;padding:12px;border:none;border-radius:10px;background:#e74c3c;font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;color:#fff;transition:opacity .2s">🗑️ تأكيد الحذف</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+
+// Storage for merges (saved in Firebase)
+let MERGES={}; // {canonical: [alias1, alias2, ...]}
+let allStudents=[]; // computed
+
+// ===== DB HELPERS =====
+async function dbGet(p){try{const r=await fetch(`${DB}/${p}.json`);return await r.json();}catch(e){return null;}}
+async function dbSet(p,v){try{await fetch(`${DB}/${p}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});}catch(e){}}
+
+// ===== NAME NORMALIZATION =====
+function normName(n){
+  if(!n)return '';
+  return n.trim()
+    .replace(/\s+/g,' ')
+    .replace(/[أإآ]/g,'ا')
+    .replace(/ة/g,'ه')
+    .replace(/ى/g,'ي')
+    .toLowerCase();
+}
+
+function canonicalName(raw){
+  const norm=normName(raw);
+  for(const [canon,aliases] of Object.entries(MERGES)){
+    if(normName(canon)===norm)return canon;
+    if(aliases.some(a=>normName(a)===norm))return canon;
+  }
+  return raw.trim();
+}
+
+// ===== LOAD ALL DATA =====
+async function loadAll(){
+  // Load merges first
+  const savedMerges=await dbGet('leaderboard_merges');
+  MERGES=savedMerges||{};
+
+  // Fetch all activity data in parallel
+  const [quiz,timed,diff,detective]=await Promise.all([
+    dbGet('quiz_results'),
+    dbGet('timed_activity'),
+    dbGet('closing_activity'),
+    dbGet('detective_results'),
+  ]);
+
+  // Build student map
+  const students={}; // canonical name → {quiz,timed,diff,pair}
+
+  function ensureStudent(name){
+    const c=canonicalName(name);
+    if(!students[c])students[c]={name:c,quiz:null,timed:null,diff:null,pair:null};
+    return c;
+  }
+
+  // Quiz results
+  if(quiz){
+    Object.values(quiz).forEach(e=>{
+      if(!e?.name)return;
+      const c=ensureStudent(e.name);
+      const pct=e.pct??Math.round((e.score||0)/(e.total||3)*100);
+      if(students[c].quiz===null||pct>students[c].quiz.pct)
+        students[c].quiz={pct,score:e.score||0,total:e.total||3};
+    });
+  }
+
+  // Timed activity
+  if(timed){
+    Object.values(timed).forEach(e=>{
+      if(!e?.name)return;
+      const c=ensureStudent(e.name);
+      const pct=e.pct??Math.round((e.total||0)/(e.maxTotal||13)*100);
+      if(students[c].timed===null||pct>students[c].timed.pct)
+        students[c].timed={pct,score:e.total||0,total:e.maxTotal||13};
+    });
+  }
+
+  // Differentiated closing
+  if(diff){
+    Object.values(diff).forEach(e=>{
+      if(!e?.name)return;
+      const c=ensureStudent(e.name);
+      const pct=e.pct??0;
+      if(students[c].diff===null||pct>students[c].diff.pct)
+        students[c].diff={pct,score:e.score||0,total:e.total||11};
+    });
+  }
+
+  // Detective pairs
+  if(detective){
+    Object.values(detective).forEach(e=>{
+      // e has r1_correct, r2_correct, s1, s2
+      [e.s1,e.s2,e.s3].filter(Boolean).forEach(name=>{
+        const c=ensureStudent(name);
+        // Each witness gets a score for their round
+        let witScore=0;
+        if(e.r1_wit&&normName(e.r1_wit)===normName(name)&&e.r1_correct)witScore++;
+        if(e.r2_wit&&normName(e.r2_wit)===normName(name)&&e.r2_correct)witScore++;
+        const pct=witScore/2*100;
+        if(students[c].pair===null||pct>students[c].pair.pct)
+          students[c].pair={pct,score:witScore,total:2};
+      });
+    });
+  }
+
+  // Compute TOTAL RAW SCORE
+  // Max: quiz=3, timed=13, diff=13(max), pair=2 => up to ~31 raw
+  // We show raw total and rank by it
+  allStudents=Object.values(students).map(s=>{
+    const acts=[s.quiz,s.timed,s.diff,s.pair].filter(a=>a!==null);
+    const totalScore=(s.quiz?.score||0)+(s.timed?.score||0)+(s.diff?.score||0)+(s.pair?.score||0);
+    const totalMax=(s.quiz?.total||0)+(s.timed?.total||0)+(s.diff?.total||0)+(s.pair?.total||0);
+    const pct=totalMax?Math.round(totalScore/totalMax*100):0;
+    return {...s,avg:totalScore,pct,totalMax,actsCount:acts.length};
+  }).filter(s=>s.actsCount>0).sort((a,b)=>b.avg-a.avg||b.pct-a.pct);
+
+  renderLeaderboard(allStudents);
+  renderActsTable(allStudents);
+  renderStats(allStudents);
+  renderPodium(allStudents);
+  renderRawNames(quiz,timed,diff,detective);
+  renderMergesList();
+  renderActsInfo(allStudents);
+}
+
+// ===== RENDER LEADERBOARD =====
+function renderLeaderboard(students){
+  if(!students.length){
+    document.getElementById('lbBody').innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text2)">⏳ لا توجد نتائج بعد</td></tr>`;
+    return;
+  }
+  const LETTERS=['أ','ب','ج'];
+  document.getElementById('lbBody').innerHTML=students.map((s,i)=>{
+    const rankCls=i===0?'rb-1':i===1?'rb-2':i===2?'rb-3':'rb-n';
+    const rankSym=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+    const barW=s.avg;
+    const scoreCell=(a,cls)=>a?`<td><div class="act-score ${cls}">${a.score}/${a.total}<br><span style="font-size:.68rem">${a.pct}%</span></div></td>`:`<td><div class="act-score as-none">—</div></td>`;
+    const stars=s.pct>=80?'⭐':s.pct>=60?'✓':'';
+    return `<tr class="${i<3?'row-anim':''}">
+      <td><div class="rank-badge ${rankCls}">${rankSym}</div></td>
+      <td><div class="student-name">${s.name} ${stars}</div></td>
+      <td>
+        <div class="total-bar">
+          <div class="tbar"><div class="tbar-fill" style="width:${s.pct}%"></div></div>
+          <span class="total-pct" style="min-width:50px">${s.avg}<span style="font-size:.72rem;color:var(--text2)">/${s.totalMax}</span></span>
+        </div>
+      </td>
+      ${scoreCell(s.quiz,'as-quiz')}
+      ${scoreCell(s.timed,'as-timed')}
+      ${scoreCell(s.diff,'as-diff')}
+      ${scoreCell(s.pair,'as-pair')}
+      <td><span style="font-size:.82rem;color:var(--text2)">${s.actsCount}/4 نشاط</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== RENDER PODIUM =====
+function renderPodium(students){
+  const top=students.slice(0,3);
+  if(!top.length){document.getElementById('podiumArea').innerHTML=`<div style="text-align:center;color:var(--text2);padding:30px;width:100%">⏳ لا توجد نتائج بعد</div>`;return;}
+  const slots=[
+    {cls:'pod-2',rank:'🥈',barCls:'pbar-2',order:1},
+    {cls:'pod-1',rank:'🥇',barCls:'pbar-1',order:2},
+    {cls:'pod-3',rank:'🥉',barCls:'pbar-3',order:3},
+  ];
+  // Reorder: 2nd, 1st, 3rd
+  const display=[top[1],top[0],top[2]].map((s,i)=>({s,slot:slots[i]})).filter(x=>x.s);
+  document.getElementById('podiumArea').innerHTML=display.map(({s,slot})=>`
+    <div class="podium-slot" style="order:${slot.order}">
+      <div class="pod-card ${slot.cls}">
+        <span class="pod-rank">${slot.rank}</span>
+        <div class="pod-name">${s.name}</div>
+        <div class="pod-score">${s.avg}<span style="font-size:.9rem;font-weight:600;opacity:.7">/${s.totalMax}</span></div>
+        <div class="pod-pct">${s.pct}% | ${s.actsCount} أنشطة</div>
+        <div class="pod-acts">
+          ${s.quiz?`<span class="pod-act" style="background:#e8f8ee;color:#1a7a3a">📝${s.quiz.pct}%</span>`:''}
+          ${s.timed?`<span class="pod-act" style="background:#e8f0fe;color:#3a3aaa">⏱️${s.timed.pct}%</span>`:''}
+          ${s.diff?`<span class="pod-act" style="background:#fff0e8;color:#8a4a1a">🎯${s.diff.pct}%</span>`:''}
+          ${s.pair?`<span class="pod-act" style="background:#fdf8e8;color:#8a7000">🔍${s.pair.pct}%</span>`:''}
+        </div>
+      </div>
+      <div class="pod-bar-wrap"><div class="${slot.barCls}" style="width:80%"></div></div>
+    </div>`).join('');
+}
+
+// ===== RENDER ACTS TABLE =====
+function renderActsTable(students){
+  if(!students.length){document.getElementById('actsBody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text2)">⏳ لا توجد نتائج</td></tr>`;return;}
+  document.getElementById('actsBody').innerHTML=students.map((s,i)=>`
+    <tr>
+      <td><div class="rank-badge ${i===0?'rb-1':i===1?'rb-2':i===2?'rb-3':'rb-n'}">${i+1}</div></td>
+      <td class="student-name">${s.name}</td>
+      <td>${s.quiz?`<b>${s.quiz.score}/${s.quiz.total}</b> <span style="color:var(--green);font-size:.8rem">${s.quiz.pct}%</span>`:'<span style="color:#ccc">—</span>'}</td>
+      <td>${s.timed?`<b>${s.timed.score}/${s.timed.total}</b> <span style="color:#7c4dff;font-size:.8rem">${s.timed.pct}%</span>`:'<span style="color:#ccc">—</span>'}</td>
+      <td>${s.diff?`<b>${s.diff.score}/${s.diff.total}</b> <span style="color:var(--gold);font-size:.8rem">${s.diff.pct}%</span>`:'<span style="color:#ccc">—</span>'}</td>
+      <td>${s.pair?`<b>${s.pair.score}/${s.pair.total}</b> <span style="color:var(--teal);font-size:.8rem">${s.pair.pct}%</span>`:'<span style="color:#ccc">—</span>'}</td>
+      <td><b style="color:var(--teal)">${s.avg}/${s.totalMax}</b><br><span style="font-size:.75rem;color:var(--text2)">${s.pct}%</span></td>
+    </tr>`).join('');
+}
+
+// ===== STATS =====
+function renderStats(students){
+  const n=students.length;
+  document.getElementById('sTotal').textContent=n;
+  document.getElementById('sActs').textContent=students.filter(s=>s.actsCount>=3).length;
+  document.getElementById('sHigh').textContent=students.filter(s=>s.pct>=80).length;
+  document.getElementById('sLow').textContent=students.filter(s=>s.pct<60).length;
+  const avgRaw=n?Math.round(students.reduce((s,st)=>s+st.avg,0)/n):0;
+  const avgMax=n?Math.round(students.reduce((s,st)=>s+st.totalMax,0)/n):0;
+  document.getElementById('sAvg').textContent=n?avgRaw+'/'+avgMax:'—';
+}
+
+function renderActsInfo(students){
+  const avg=(key)=>{
+    const with_act=students.filter(s=>s[key]);
+    return with_act.length?Math.round(with_act.reduce((s,st)=>s+st[key].pct,0)/with_act.length):0;
+  };
+  ['quiz','timed','diff','pair'].forEach((k,i)=>{
+    const n=i+1;
+    const v=avg(k);
+    document.getElementById('af'+n).style.width=v+'%';
+    document.getElementById('ap'+n).textContent='متوسط الصف: '+v+'%';
+  });
+}
+
+// ===== RAW NAMES =====
+let selectedRawNames=[];
+function renderRawNames(quiz,timed,diff,detective){
+  const allNames=new Set();
+  const nameSource={};
+  const addName=(name,src)=>{
+    if(!name||name.trim().length<2)return;
+    const t=name.trim();
+    allNames.add(t);
+    if(!nameSource[t])nameSource[t]=[];
+    if(!nameSource[t].includes(src))nameSource[t].push(src);
+  };
+  if(quiz)Object.values(quiz).forEach(e=>e?.name&&addName(e.name,'MCQ'));
+  if(timed)Object.values(timed).forEach(e=>e?.name&&addName(e.name,'زمني'));
+  if(diff)Object.values(diff).forEach(e=>e?.name&&addName(e.name,'تفاضلي'));
+  if(detective)Object.values(detective).forEach(e=>{[e?.s1,e?.s2,e?.s3].filter(Boolean).forEach(n=>addName(n,'ثنائيات'));});
+  const srcColors={'MCQ':'#e8f8ee','زمني':'#e8f0fe','تفاضلي':'#fff0e8','ثنائيات':'#fdf8e8'};
+  document.getElementById('rawNamesGrid').innerHTML=[...allNames].sort().map(n=>`
+    <div class="rn-chip" id="rn_${encodeURIComponent(n)}" onclick="toggleRawName('${n.replace(/'/g,"\\'")}')">
+      ${n}
+      ${(nameSource[n]||[]).map(s=>`<span class="src" style="background:${srcColors[s]||'#f0f0f0'}">${s}</span>`).join('')}
+    </div>`).join('');
+  selectedRawNames=[];
+}
+
+function toggleRawName(name){
+  const idx=selectedRawNames.indexOf(name);
+  if(idx>=0)selectedRawNames.splice(idx,1);
+  else selectedRawNames.push(name);
+  const chip=document.getElementById('rn_'+encodeURIComponent(name));
+  if(chip)chip.classList.toggle('sel',selectedRawNames.includes(name));
+  // Pre-fill unified name with first selected
+  if(selectedRawNames.length===1)document.getElementById('unifiedName').value=selectedRawNames[0];
+}
+
+async function addMerge(){
+  const unified=document.getElementById('unifiedName').value.trim();
+  if(!unified||!selectedRawNames.length){alert('اختاري الأسماء وحددي الاسم الموحّد');return;}
+  MERGES[unified]=selectedRawNames.filter(n=>n!==unified);
+  await dbSet('leaderboard_merges',MERGES);
+  selectedRawNames=[];
+  document.getElementById('unifiedName').value='';
+  document.querySelectorAll('.rn-chip').forEach(c=>c.classList.remove('sel'));
+  renderMergesList();
+  loadAll();
+}
+
+function renderMergesList(){
+  const list=document.getElementById('mergesList');
+  const entries=Object.entries(MERGES);
+  if(!entries.length){list.innerHTML='<div style="color:var(--text2);font-size:.85rem;text-align:center;padding:12px">لا توجد مطابقات بعد</div>';return;}
+  list.innerHTML=entries.map(([canon,aliases])=>`
+    <div class="merge-item">
+      <span class="mi-unified">✅ ${canon}</span>
+      <span class="mi-names">← ${aliases.join('، ')}</span>
+      <button class="mi-del" onclick="deleteMerge('${canon.replace(/'/g,"\\'")}')">🗑️</button>
+    </div>`).join('');
+}
+
+async function deleteMerge(canon){
+  delete MERGES[canon];
+  await dbSet('leaderboard_merges',MERGES);
+  renderMergesList();
+  loadAll();
+}
+
+// ===== TABS =====
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+}
+
+// ===== CONFETTI CELEBRATION =====
+function celebrate(){
+  const overlay=document.getElementById('confettiOverlay');
+  overlay.style.display='block';
+  overlay.innerHTML='';
+  const colors=['#ffd700','#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ff9ff3','#54a0ff'];
+  for(let i=0;i<80;i++){
+    const piece=document.createElement('div');
+    piece.className='confetti-piece';
+    piece.style.cssText=`left:${Math.random()*100}%;top:-20px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>0.5?'50%':'2px'};animation:fall ${1.5+Math.random()*2}s linear ${Math.random()*1.5}s forwards`;
+    overlay.appendChild(piece);
+  }
+  setTimeout(()=>{overlay.style.display='none';overlay.innerHTML='';},5000);
+}
+
+// ===== RESET =====
+function showResetModal(){
+  document.getElementById('resetModal').style.display='flex';
+  document.getElementById('resetStatus').style.display='none';
+  document.getElementById('confirmResetBtn').disabled=false;
+  document.getElementById('confirmResetBtn').textContent='🗑️ تأكيد الحذف';
+}
+function hideResetModal(){
+  document.getElementById('resetModal').style.display='none';
+}
+
+async function doReset(){
+  const btn=document.getElementById('confirmResetBtn');
+  btn.disabled=true;
+  btn.textContent='⏳ جاري الحذف...';
+  const status=document.getElementById('resetStatus');
+
+  const NODES={
+    r_quiz:'quiz_results',
+    r_timed:'timed_activity',
+    r_diff:'closing_activity',
+    r_pair:'detective_results',
+    r_kwl:'kwl_activity',
+    r_malware:'malware_activity',
+    r_detective:'detective_pairs',
+    r_merges:'leaderboard_merges',
+  };
+
+  const tasks=[];
+  let deleted=[];
+  for(const [id,node] of Object.entries(NODES)){
+    const cb=document.getElementById(id);
+    if(cb&&cb.checked){
+      tasks.push(fetch(`${DB}/${node}.json`,{method:'DELETE'}).then(()=>deleted.push(id)));
+    }
+  }
+
+  try{
+    await Promise.all(tasks);
+    if(document.getElementById('r_merges').checked) MERGES={};
+    status.style.cssText='display:block;background:#e8f8ee;border:1px solid #27ae60;color:#27ae60;border-radius:8px;padding:10px;text-align:center;font-size:.9rem;font-weight:700;margin-bottom:12px';
+    status.textContent='✅ تم الحذف بنجاح! ('+deleted.length+' مصادر)';
+    btn.textContent='✅ تم';
+    setTimeout(()=>{hideResetModal();loadAll();},1500);
+  }catch(e){
+    status.style.cssText='display:block;background:#fee8e8;border:1px solid #e74c3c;color:#e74c3c;border-radius:8px;padding:10px;text-align:center;font-size:.9rem;font-weight:700;margin-bottom:12px';
+    status.textContent='⚠️ حدث خطأ أثناء الحذف';
+    btn.disabled=false;btn.textContent='🗑️ تأكيد الحذف';
+  }
+}
+
+// ===== INIT =====
+window.onload=()=>{loadAll();setInterval(loadAll,8000);};
+</script>
+</body>
+</html>
