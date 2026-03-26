@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 2 – جدار الحماية (جماعي)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#0a0f1e;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 30%,#0a2015,transparent 60%),#0a0f1e;z-index:0}
+.wrap{position:relative;z-index:1;max-width:800px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:25px;transition:all .3s}
+.back:hover{color:#fff}
+.header{text-align:center;margin-bottom:28px}
+.badge{display:inline-block;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:4px 16px;border-radius:20px;font-size:0.8rem;font-weight:700;margin-bottom:12px}
+h1{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px}
+.sub{color:#8a9bb5;font-size:0.95rem}
+.step{display:none}.step.active{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(0,255,136,0.2);border-radius:20px;padding:26px;margin-bottom:16px}
+label{display:block;color:#00ff88;font-size:0.88rem;font-weight:700;margin-bottom:8px}
+select{width:100%;background:rgba(255,255,255,0.06);border:2px solid rgba(0,255,136,0.2);border-radius:12px;padding:12px 16px;color:#fff;font-size:0.95rem;font-family:'Tajawal',sans-serif;outline:none;margin-bottom:16px}
+select:focus{border-color:rgba(0,255,136,0.4)}
+select option{background:#1a2035}
+.btn{background:linear-gradient(135deg,#00c864,#007a3d);border:none;border-radius:14px;padding:13px 28px;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,200,100,0.3)}
+.btn-full{width:100%;margin-top:14px}
+
+/* Category grid */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.cat-card{border-radius:16px;padding:20px;cursor:pointer;transition:all .3s;border:2px solid;text-align:center}
+.cat-card:hover{transform:translateY(-3px)}
+.cc1{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.06)}.cc1:hover,.cc1.sel{border-color:#00d4ff;background:rgba(0,212,255,0.12)}
+.cc2{border-color:rgba(255,165,0,0.4);background:rgba(255,165,0,0.06)}.cc2:hover,.cc2.sel{border-color:#ffa500;background:rgba(255,165,0,0.12)}
+.cc3{border-color:rgba(0,255,136,0.4);background:rgba(0,200,100,0.06)}.cc3:hover,.cc3.sel{border-color:#00ff88;background:rgba(0,255,136,0.12)}
+.cc4{border-color:rgba(255,80,80,0.4);background:rgba(255,80,80,0.06)}.cc4:hover,.cc4.sel{border-color:#ff5050;background:rgba(255,80,80,0.12)}
+.cat-icon{font-size:2.2rem;margin-bottom:8px}
+.cat-name{font-size:0.95rem;font-weight:700}
+.cc1 .cat-name{color:#00d4ff}.cc2 .cat-name{color:#ffa500}.cc3 .cat-name{color:#00ff88}.cc4 .cat-name{color:#ff5050}
+.cat-desc{font-size:0.75rem;color:#8a9bb5;margin-top:4px}
+
+/* Wall display */
+.wall{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.wall-col{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;min-height:200px}
+.wcol-title{font-size:0.82rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.tip-card{border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:0.88rem;line-height:1.5;animation:tipIn .3s ease}
+@keyframes tipIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.t1{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);color:#cce8ff}
+.t2{background:rgba(255,165,0,0.1);border:1px solid rgba(255,165,0,0.2);color:#ffe4b0}
+.t3{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.2);color:#b0ffe0}
+.t4{background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.2);color:#ffccc0}
+.tip-author{font-size:0.72rem;opacity:.7;margin-top:4px}
+.input-tip{width:100%;background:rgba(255,255,255,0.05);border:2px solid rgba(0,255,136,0.2);border-radius:12px;padding:12px;color:#fff;font-size:0.9rem;font-family:'Tajawal',sans-serif;outline:none;resize:none;min-height:70px}
+.input-tip:focus{border-color:rgba(0,255,136,0.4)}
+.count-badge{display:inline-block;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.25);color:#00ff88;padding:3px 12px;border-radius:20px;font-size:0.78rem;margin-right:8px}
+.refresh-info{text-align:center;color:#4a5568;font-size:0.8rem;margin-top:10px}
+.done-card{text-align:center;padding:20px 0}
+.done-icon{font-size:4rem;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  <div class="header">
+    <span class="badge">🧱 نشاط جماعي</span>
+    <h1>جدار الحماية الجماعي</h1>
+    <p class="sub">كل مجموعة تُضيف نصائح حمايتها – يبنى الجدار أمام الجميع!</p>
+  </div>
+
+  <!-- step1: name + category -->
+  <div class="step active" id="step1">
+    <div class="card">
+      <label>👤 اختاري اسمك</label>
+      <select id="nameSelect"><option value="">— اختاري اسمك —</option>
+        <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+        <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+        <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+        <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+        <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+        <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+        <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+        <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option>
+        <option>فاطمه احمد</option><option>فاطمه عبدالله الدرويش</option>
+        <option>فايزه عمر فتحى محمد حسين</option><option>فجر حميد فرحان اجديع اشبيح</option>
+        <option>لطيفه يحيى الاحمد العبدالموسى</option><option>لمى كمال القادرى</option>
+        <option>لمى نجم الدين محمود حسين مرسي</option><option>مريم محمد</option>
+        <option>نور اسماعيل جمال الكسار</option>
+      </select>
+      <label>🏷️ اختاري فئة نصيحتك (ستُحدد مجموعتك)</label>
+      <div class="cat-grid">
+        <div class="cat-card cc1" onclick="pickCat('كلمات المرور','cc1','🔐',this)"><div class="cat-icon">🔐</div><div class="cat-name">كلمات المرور</div><div class="cat-desc">نصائح عن إنشاء كلمات مرور آمنة</div></div>
+        <div class="cat-card cc2" onclick="pickCat('البريد الإلكتروني','cc2','📧',this)"><div class="cat-icon">📧</div><div class="cat-name">البريد الإلكتروني</div><div class="cat-desc">نصائح عن الرسائل المشبوهة</div></div>
+        <div class="cat-card cc3" onclick="pickCat('التصفح الآمن','cc3','🌐',this)"><div class="cat-icon">🌐</div><div class="cat-name">التصفح الآمن</div><div class="cat-desc">نصائح عن زيارة المواقع بأمان</div></div>
+        <div class="cat-card cc4" onclick="pickCat('برامج الحماية','cc4','🛡️',this)"><div class="cat-icon">🛡️</div><div class="cat-name">برامج الحماية</div><div class="cat-desc">نصائح عن مكافحة الفيروسات</div></div>
+      </div>
+      <button class="btn btn-full" onclick="goWrite()">🧱 أضيفي نصيحتك للجدار</button>
+    </div>
+  </div>
+
+  <!-- step2: write tip -->
+  <div class="step" id="step2">
+    <div class="card">
+      <div id="catHeader" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.2);border-radius:12px;padding:12px 16px">
+        <span id="catIcon" style="font-size:1.8rem"></span>
+        <div>
+          <div id="catName" style="font-size:0.88rem;font-weight:700;color:#00ff88"></div>
+          <div style="font-size:0.78rem;color:#8a9bb5">اكتبي نصيحة حماية خاصة بهذه الفئة</div>
+        </div>
+      </div>
+      <label>✍️ نصيحتك للجدار</label>
+      <textarea id="tipText" class="input-tip" placeholder="مثال: تأكدي من تحديث برنامج الحماية كل أسبوع..."></textarea>
+      <button class="btn btn-full" onclick="submitTip()">🧱 أضيفي للجدار</button>
+    </div>
+
+    <!-- Wall live view -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <span style="font-size:1rem;font-weight:700;color:#00ff88">🧱 الجدار الجماعي</span>
+        <span class="count-badge" id="countBadge">0 نصيحة</span>
+      </div>
+      <div class="wall" id="wallGrid">
+        <div class="wall-col"><div class="wcol-title" style="color:#00d4ff">🔐 كلمات المرور</div><div id="col_كلمات_المرور"></div></div>
+        <div class="wall-col"><div class="wcol-title" style="color:#ffa500">📧 البريد الإلكتروني</div><div id="col_البريد_الإلكتروني"></div></div>
+        <div class="wall-col"><div class="wcol-title" style="color:#00ff88">🌐 التصفح الآمن</div><div id="col_التصفح_الآمن"></div></div>
+        <div class="wall-col"><div class="wcol-title" style="color:#ff5050">🛡️ برامج الحماية</div><div id="col_برامج_الحماية"></div></div>
+      </div>
+      <div class="refresh-info">يتحدث الجدار تلقائياً كل 6 ثوانٍ 🔄</div>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div class="step" id="stepDone">
+    <div class="card done-card">
+      <div class="done-icon">🧱</div>
+      <p style="color:#00ff88;font-size:1.2rem;font-weight:700;margin-bottom:8px">أُضيفت نصيحتك!</p>
+      <p style="color:#8a9bb5;font-size:0.9rem;margin-bottom:20px">ستظهر في الجدار الجماعي على شاشة المعلمة</p>
+      <button class="btn" onclick="location.href='index.html'">← الرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+function san(n){return n.replace(/\s+/g,'_').replace(/[.#$[\]/]/g,'');}
+const catColorClass={كلمات_المرور:'t1',البريد_الإلكتروني:'t2',التصفح_الآمن:'t3',برامج_الحماية:'t4'};
+let selCat='',selCatIcon='',selCatClass='';
+
+function pickCat(cat,cls,icon,el){
+  selCat=cat;selCatIcon=icon;selCatClass=cls;
+  document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function goWrite(){
+  const name=document.getElementById('nameSelect').value;
+  if(!name||!selCat){alert('اختاري اسمك وفئة النصيحة');return;}
+  document.getElementById('catIcon').textContent=selCatIcon;
+  document.getElementById('catName').textContent='الفئة: '+selCat;
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+  loadWall();
+}
+
+async function submitTip(){
+  const name=document.getElementById('nameSelect').value;
+  const tip=document.getElementById('tipText').value.trim();
+  if(!tip){alert('اكتبي نصيحتك أولاً');return;}
+  try{
+    const catKey=san(selCat);
+    const key=san(name);
+    await fetch(`${DB}/activity2_group/${catKey}/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,tip,category:selCat,timestamp:Date.now()})});
+    const pr=await fetch(`${DB}/points/${key}.json`);
+    const pd=await pr.json();
+    await fetch(`${DB}/points/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,points:(pd?.points||0)+30,timestamp:Date.now()})});
+  }catch(e){}
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('stepDone').classList.add('active');
+}
+
+async function loadWall(){
+  try{
+    const r=await fetch(`${DB}/activity2_group.json`);
+    const data=await r.json();
+    if(!data)return;
+    const cats=['كلمات_المرور','البريد_الإلكتروني','التصفح_الآمن','برامج_الحماية'];
+    let total=0;
+    cats.forEach(cat=>{
+      const col=document.getElementById('col_'+cat);
+      if(!col)return;
+      const entries=data[cat];
+      if(!entries){col.innerHTML='';return;}
+      col.innerHTML='';
+      Object.values(entries).forEach(e=>{
+        total++;
+        const d=document.createElement('div');
+        d.className='tip-card '+(catColorClass[cat]||'t1');
+        d.innerHTML=`<div>${e.tip}</div><div class="tip-author">✍️ ${e.name.split(' ')[0]}</div>`;
+        col.appendChild(d);
+      });
+    });
+    document.getElementById('countBadge').textContent=total+' نصيحة';
+  }catch(e){}
+}
+setInterval(loadWall,6000);
+</script>
+</body>
+</html>

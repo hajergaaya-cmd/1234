@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التقييم الختامي الشامل</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#0a0f1e;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 20%,#1a0a2e,transparent 55%),radial-gradient(ellipse at 80% 80%,#0a1a0a,transparent 55%),#0a0f1e;z-index:0}
+.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.p{position:absolute;border-radius:50%;animation:drift linear infinite;opacity:.15}
+@keyframes drift{from{transform:translateY(100vh) rotate(0deg)}to{transform:translateY(-100px) rotate(360deg)}}
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:25px;transition:all .3s}
+.back:hover{color:#fff}
+.header{text-align:center;margin-bottom:32px}
+.badge-final{display:inline-block;background:linear-gradient(135deg,rgba(141,27,61,0.3),rgba(255,165,0,0.2));border:1px solid rgba(255,165,0,0.4);color:#ffd700;padding:6px 20px;border-radius:20px;font-size:0.85rem;font-weight:700;margin-bottom:14px}
+h1{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#fff 0%,#ffd700 50%,#ff6b8a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.sub{color:#8a9bb5;font-size:0.95rem}
+.step{display:none}.step.active{display:block;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.card{background:rgba(255,255,255,0.04);border-radius:22px;padding:30px}
+
+/* Star level selector */
+.star-levels{display:grid;gap:14px;margin-bottom:20px}
+.star-card{border:2px solid;border-radius:18px;padding:22px;cursor:pointer;transition:all .35s;display:flex;align-items:center;gap:18px}
+.star-card:hover{transform:translateY(-3px)}
+.sc1{border-color:rgba(0,212,255,0.35);background:rgba(0,212,255,0.05)}
+.sc1:hover,.sc1.sel{border-color:#00d4ff;background:rgba(0,212,255,0.12);box-shadow:0 0 25px rgba(0,212,255,0.15)}
+.sc2{border-color:rgba(0,200,100,0.35);background:rgba(0,200,100,0.05)}
+.sc2:hover,.sc2.sel{border-color:#00ff88;background:rgba(0,200,100,0.12);box-shadow:0 0 25px rgba(0,200,100,0.15)}
+.sc3{border-color:rgba(255,215,0,0.4);background:rgba(255,165,0,0.05)}
+.sc3:hover,.sc3.sel{border-color:#ffd700;background:rgba(255,215,0,0.12);box-shadow:0 0 25px rgba(255,215,0,0.15)}
+.sc-stars{font-size:2rem;min-width:52px;text-align:center}
+.sc-info{flex:1}
+.sc-title{font-size:1.05rem;font-weight:800;margin-bottom:4px}
+.sc1 .sc-title{color:#00d4ff}.sc2 .sc-title{color:#00ff88}.sc3 .sc-title{color:#ffd700}
+.sc-desc{font-size:0.82rem;color:#8a9bb5;line-height:1.5}
+.sc-count{font-size:0.75rem;border:1px solid;border-radius:20px;padding:2px 10px;margin-top:5px;display:inline-block;font-weight:700}
+.sc1 .sc-count{border-color:rgba(0,212,255,0.3);color:#00d4ff}
+.sc2 .sc-count{border-color:rgba(0,200,100,0.3);color:#00ff88}
+.sc3 .sc-count{border-color:rgba(255,215,0,0.3);color:#ffd700}
+
+label{display:block;color:#ffd700;font-size:0.88rem;font-weight:700;margin-bottom:8px}
+select{width:100%;background:rgba(255,255,255,0.06);border:2px solid rgba(255,215,0,0.25);border-radius:12px;padding:12px 16px;color:#fff;font-size:0.95rem;font-family:'Tajawal',sans-serif;outline:none;margin-bottom:18px}
+select:focus{border-color:rgba(255,215,0,0.5)}
+select option{background:#1a2035}
+.btn{width:100%;background:linear-gradient(135deg,#8D1B3D,#ffa500);border:none;border-radius:14px;padding:15px;color:#fff;font-size:1.1rem;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:14px;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,165,0,0.3)}
+
+/* Quiz header */
+.q-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.q-label{font-size:0.82rem;color:#8a9bb5}
+.q-pts{font-size:1rem;font-weight:800;color:#ffd700}
+.prog-bar{background:rgba(255,255,255,0.08);border-radius:99px;height:8px;overflow:hidden;margin-bottom:22px}
+.prog-fill{height:100%;border-radius:99px;transition:width .5s}
+.pf1{background:linear-gradient(90deg,#00d4ff,#0099cc)}
+.pf2{background:linear-gradient(90deg,#00ff88,#00aa55)}
+.pf3{background:linear-gradient(90deg,#ffd700,#ff8c00)}
+.section-tag{display:inline-block;padding:4px 14px;border-radius:20px;font-size:0.75rem;font-weight:700;margin-bottom:12px}
+.tag1{background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);color:#00d4ff}
+.tag2{background:rgba(0,200,100,0.15);border:1px solid rgba(0,200,100,0.3);color:#00ff88}
+.q-box{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px;margin-bottom:16px;transition:border-color .3s}
+.q-text{font-size:1.05rem;font-weight:700;color:#e2e8f0;line-height:1.75}
+.opts{display:grid;gap:10px}
+.opt{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:13px 16px;cursor:pointer;font-size:0.93rem;transition:all .25s;font-family:'Tajawal',sans-serif;text-align:right;color:#e2e8f0}
+.opt:hover{border-color:rgba(255,215,0,0.4);background:rgba(255,215,0,0.06)}
+.opt.correct{border-color:#00ff88 !important;background:rgba(0,255,136,0.12) !important;color:#00ff88}
+.opt.wrong{border-color:#ff5050 !important;background:rgba(255,80,80,0.12) !important;color:#ff8080}
+.opt.disabled{pointer-events:none}
+.fb{margin-top:12px;padding:12px 16px;border-radius:11px;font-size:0.9rem;display:none;animation:fadeUp .3s;line-height:1.6}
+.fb.show{display:block}
+.fb-ok{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.25);color:#00ff88}
+.fb-no{background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);color:#ff6464}
+.open-q textarea{width:100%;background:rgba(255,255,255,0.05);border:2px solid rgba(255,215,0,0.2);border-radius:12px;padding:12px;color:#fff;font-size:0.9rem;font-family:'Tajawal',sans-serif;outline:none;resize:none;min-height:75px;margin-top:8px}
+.open-q textarea:focus{border-color:rgba(255,215,0,0.45)}
+.next-btn{margin-top:14px;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);color:#ffd700;border-radius:10px;padding:11px 24px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;font-weight:700;transition:all .3s;display:none}
+.next-btn:hover{background:rgba(255,215,0,0.2)}
+
+/* Certificate result */
+.cert{text-align:center;padding:10px}
+.cert-icon{font-size:5rem;margin-bottom:10px;animation:bounce .8s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+.cert-stars{font-size:3rem;margin-bottom:10px;letter-spacing:4px}
+.cert-name{font-size:1.6rem;font-weight:900;color:#ffd700;margin:8px 0;text-shadow:0 0 20px rgba(255,215,0,0.35)}
+.cert-score-box{display:flex;align-items:center;justify-content:center;gap:20px;margin:18px 0}
+.cert-score{text-align:center}
+.cert-score-num{font-size:2.5rem;font-weight:900;color:#ffd700}
+.cert-score-lbl{font-size:0.75rem;color:#8a9bb5}
+.cert-divider{width:1px;height:50px;background:rgba(255,255,255,0.15)}
+.cert-msg{font-size:1rem;color:#8a9bb5;max-width:400px;margin:0 auto 20px;line-height:1.7}
+.badge-earned{display:inline-block;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.1));border:2px solid rgba(255,215,0,0.4);border-radius:14px;padding:12px 24px;font-size:0.9rem;font-weight:700;color:#ffd700;margin-bottom:20px}
+.breakdown{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.bk-card{background:rgba(255,255,255,0.04);border-radius:14px;padding:16px;text-align:center}
+.bk-icon{font-size:1.8rem;margin-bottom:6px}
+.bk-num{font-size:1.4rem;font-weight:900;color:#ffd700}
+.bk-lbl{font-size:0.78rem;color:#8a9bb5;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="particles" id="particles"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  <div class="header">
+    <div class="badge-final">🏅 التقييم الختامي الشامل</div>
+    <h1>أثبتي تفوّقك!</h1>
+    <p class="sub">تقييم شامل للهدفين – اختاري مستواك وانطلقي</p>
+  </div>
+
+  <!-- Step 1: setup -->
+  <div class="step active" id="step1">
+    <div class="card" style="border:1px solid rgba(255,215,0,0.25)">
+      <label>👤 اختاري اسمك</label>
+      <select id="nameSelect">
+        <option value="">— اختاري اسمك —</option>
+        <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+        <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+        <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+        <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+        <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+        <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+        <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+        <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option><option>فاطمه احمد</option>
+        <option>فاطمه عبدالله الدرويش</option><option>فايزه عمر فتحى محمد حسين</option>
+        <option>فجر حميد فرحان اجديع اشبيح</option><option>لطيفه يحيى الاحمد العبدالموسى</option>
+        <option>لمى كمال القادرى</option><option>لمى نجم الدين محمود حسين مرسي</option>
+        <option>مريم محمد</option><option>نور اسماعيل جمال الكسار</option>
+      </select>
+      <label>🌟 اختاري مستوى التقييم</label>
+      <div class="star-levels">
+        <div class="star-card sc1" onclick="pickStar(1,this)">
+          <div class="sc-stars">⭐</div>
+          <div class="sc-info">
+            <div class="sc-title">مستوى نجمة – الأساسي</div>
+            <div class="sc-desc">أسئلة تعريف واختيار مباشر لكلا الهدفين</div>
+            <span class="sc-count">6 أسئلة اختيارية</span>
+          </div>
+        </div>
+        <div class="star-card sc2" onclick="pickStar(2,this)">
+          <div class="sc-stars">⭐⭐</div>
+          <div class="sc-info">
+            <div class="sc-title">مستوى نجمتان – التطبيقي</div>
+            <div class="sc-desc">تطبيق المعرفة على سيناريوهات ومواقف حقيقية</div>
+            <span class="sc-count">6 أسئلة + سيناريوهات</span>
+          </div>
+        </div>
+        <div class="star-card sc3" onclick="pickStar(3,this)">
+          <div class="sc-stars">⭐⭐⭐</div>
+          <div class="sc-info">
+            <div class="sc-title">مستوى ثلاث نجوم – التحليلي</div>
+            <div class="sc-desc">تحليل ومقارنة وأسئلة مفتوحة متعمقة</div>
+            <span class="sc-count">6 أسئلة + تحليل</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn" onclick="startFinal()">🏁 ابدئي التقييم الختامي</button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="step" id="stepQuiz">
+    <div class="card" style="border:1px solid rgba(255,215,0,0.2)">
+      <div class="q-topbar">
+        <span class="q-label" id="qNum">السؤال 1/6</span>
+        <span class="q-pts" id="qPts">0 نقطة</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill pf1" id="progFill" style="width:0%"></div></div>
+      <div id="qArea"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">التالي ←</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="step" id="stepResult">
+    <div class="card cert" style="border:1px solid rgba(255,215,0,0.3)">
+      <div class="cert-icon" id="certIcon"></div>
+      <div class="cert-stars" id="certStars"></div>
+      <div class="cert-name" id="certName"></div>
+      <div class="badge-earned" id="badgeEarned"></div>
+      <div class="cert-score-box">
+        <div class="cert-score"><div class="cert-score-num" id="finalScore"></div><div class="cert-score-lbl">نقطة</div></div>
+        <div class="cert-divider"></div>
+        <div class="cert-score"><div class="cert-score-num" id="finalLevel"></div><div class="cert-score-lbl">المستوى</div></div>
+        <div class="cert-divider"></div>
+        <div class="cert-score"><div class="cert-score-num" id="correctCount"></div><div class="cert-score-lbl">إجابة صحيحة</div></div>
+      </div>
+      <div class="breakdown" id="breakdown"></div>
+      <div class="cert-msg" id="certMsg"></div>
+      <button class="btn" onclick="location.href='index.html'">← العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+function san(n){return n.replace(/\s+/g,'_').replace(/[.#$[\]/]/g,'');}
+
+const qBank={
+  1:[ // ⭐ Basic
+    {sec:1,q:"أي البرمجيات تشبه البرنامج العادي تماماً لكنها مصممة لفتح باب خلفي للقراصنة؟",opts:["أحصنة طروادة","الديدان","برمجيات التجسس","البرمجيات الدعائية"],ans:0,exp:"أحصنة طروادة (Trojans) تشبه البرامج العادية وهدفها السماح للقراصنة بالوصول غير المصرح به."},
+    {sec:1,q:"أي البرمجيات تنتشر تلقائياً في الحواسيب المتصلة بالشبكة؟",opts:["البرمجيات الدعائية","الديدان","برمجيات التجسس","أحصنة طروادة"],ans:1,exp:"الديدان (Worms) تنسخ نفسها وتنتشر عبر الشبكة تلقائياً دون تدخل المستخدم."},
+    {sec:1,q:"أي البرمجيات تُزعج المستخدم بإعلانات منبثقة في واجهة برامجه؟",opts:["الديدان","برمجيات التجسس","البرمجيات الدعائية","أحصنة طروادة"],ans:2,exp:"البرمجيات الدعائية (Adware) تعرض إعلانات غير مرغوب فيها في واجهة البرامج."},
+    {sec:2,q:"ما الإجراء الصحيح عند استلام رسالة بريد من مرسل غير معروف؟",opts:["افتحيها لمعرفة محتواها","احذفيها دون فتحها","أرسليها لصديقتك","أجيبي بطلب معلومات المرسل"],ans:1,exp:"يجب حذف رسائل المرسلين المجهولين دون فتحها لتجنب البرمجيات الخبيثة."},
+    {sec:2,q:"ما مميزات كلمة المرور القوية؟",opts:["اسم المستخدم فقط","أرقام فقط","أحرف كبيرة وصغيرة وأرقام ورموز","تاريخ الميلاد"],ans:2,exp:"الكلمة القوية تجمع: أحرف كبيرة + صغيرة + أرقام + رموز خاصة وتُغيَّر كل فترة."},
+    {sec:2,q:"لماذا يجب عدم استخدام نفس كلمة المرور في كل الحسابات؟",opts:["لأن ذلك مخالف للقانون","لأن سرقتها تعني اختراق جميع حساباتك","لأن الحواسيب لا تقبل تكرار كلمات المرور","لأنها تُنسى بسرعة"],ans:1,exp:"إذا سُرقت كلمة مرور واحدة فستُخترق كل حساباتك دفعة واحدة."}
+  ],
+  2:[ // ⭐⭐ Applied
+    {sec:1,q:"لاحظت سلمى أن جهازها يُرسل رسائل لأصدقائها تلقائياً وهي لم تُرسلها، وانتشرت المشكلة لكل الحواسيب المتصلة. ما نوع البرمجية؟",opts:["البرمجيات الدعائية","برمجيات التجسس","الديدان","أحصنة طروادة"],ans:2,exp:"الانتشار التلقائي عبر الشبكة هو السمة الرئيسية للديدان (Worms)."},
+    {sec:1,q:"نزّلت هند تطبيقاً لتعديل الصور. ظهرت إعلانات كثيرة أثناء استخدام أي برنامج. لكن لم تُسرق أي بيانات. ما البرمجية الأرجح؟",opts:["الديدان","أحصنة طروادة","برمجيات التجسس","البرمجيات الدعائية"],ans:3,exp:"الإعلانات المنبثقة دون سرقة بيانات = البرمجيات الدعائية (Adware)."},
+    {sec:1,q:"اكتشفت رنا أن شخصاً يعرف كلماتها السرية وبياناتها الشخصية دون أن تشاركها أحداً، والبرنامج لا يزال يعمل دون تغيير. ما البرمجية؟",opts:["الديدان","البرمجيات الدعائية","برمجيات التجسس","أحصنة طروادة"],ans:2,exp:"جمع البيانات سراً دون علم المستخدم وصعوبة اكتشافه = برمجيات التجسس (Spyware)."},
+    {sec:2,q:"طُلب من نوف في موقع مجهول إدخال كلمة مرور بريدها 'لتأكيد الفوز بجائزة'. ماذا يجب أن تفعل؟",opts:["تُدخل كلمة المرور لتحصل على الجائزة","تتجاهل الموقع فوراً ولا تُدخل أي بيانات","تسأل صديقتها أولاً","تُنشئ كلمة مرور جديدة وتُدخلها"],ans:1,exp:"يجب عدم زيارة المواقع المشبوهة التي تطلب كلمة المرور – هذا نوع من الاحتيال الإلكتروني."},
+    {sec:2,q:"أيّ من هذه الخيارات يُمثّل كلمة مرور قوية بشكل صحيح؟",opts:["nour2015","Nour@2015!Sec","nourhind","12345678"],ans:1,exp:"Nour@2015!Sec تجمع: حرف كبير + أحرف صغيرة + رقم + رمزَي @ و! = كلمة مرور قوية."},
+    {sec:2,q:"أرسلت برمجية بريداً من حساب مي لكل أصدقائها محتوياً على رابط خبيث. ما الإجراء الصحيح للمستقبِلة؟",opts:["تفتح الرابط لأن المُرسِلة صديقتها","لا تفتح الرابط وتُبلّغ مي فوراً","تُعيد إرسال الرابط للتأكد","تُدخل كلمة مرورها في الرابط"],ans:1,exp:"حتى لو كانت المُرسِلة معروفة، رسائل الروابط الغريبة تعني أن حسابها قد اختُرق – لا تفتحي الرابط."}
+  ],
+  3:[ // ⭐⭐⭐ Analytical
+    {sec:1,open:true,q:"قارني بين أحصنة طروادة والديدان من حيث: طريقة الانتشار، الهدف الرئيسي، هل تُستنسخ أم لا؟",exp:"أحصنة طروادة: لا تستنسخ نفسها، تنتقل عبر التثبيت، هدفها السماح بالوصول غير المصرح وسرقة البيانات. الديدان: تنسخ نفسها تلقائياً وتنتشر عبر الشبكة، هدفها التدمير والانتشار واستغلال الثغرات."},
+    {sec:1,open:true,q:"برمجيات التجسس أخطر من البرمجيات الدعائية برأيك. هل توافقين؟ برّري رأيك بأدلة من ما تعلمتِه.",exp:"نعم: Spyware خطيرة لأنها تجمع بياناتك الحساسة (كلمات مرور، معلومات بنكية) بشكل سري، بينما Adware مزعجة لكن أضرارها أقل خطورة – تعرض إعلانات فقط ولا تسرق بياناتك."},
+    {sec:1,q:"أيّ من الخصائص التالية تنفرد بها الديدان (Worms) عن غيرها من البرمجيات الخبيثة؟",opts:["تشبه البرامج العادية","تعرض الإعلانات المنبثقة","تنسخ نفسها وتنتشر ذاتياً دون تدخل المستخدم","تجمع المعلومات بسرية تامة"],ans:2,exp:"الانتشار الذاتي عبر الشبكة دون تدخل المستخدم هي الخاصية الفريدة للديدان."},
+    {sec:2,open:true,q:"بنتِ نظام حماية كامل لحاسوبك. صِفي 4 إجراءات ستتخذينها من طرق الحماية التي تعلمتِها مع تبرير كل واحدة.",exp:"مثال: 1-كلمة مرور قوية ومختلفة لكل حساب لأن سرقة واحدة لا تُخترق الكل. 2-تحديث مكافحة الفيروسات لأن التحديث يُغلق الثغرات الجديدة. 3-تجاهل الروابط المجهولة لأنها قد تحمل برمجيات. 4-عدم مشاركة كلمة المرور لأن الخصوصية أساس الأمان."},
+    {sec:2,open:true,q:"تلقّت صديقتك رسالة بريد من 'بنك وطني' تطلب منها التحقق من حسابها خلال ساعة. ماذا تنصحينها؟ لماذا؟",exp:"هذا هجوم تصيد (Phishing): يجب عدم الضغط على أي رابط، التواصل مع البنك مباشرة عبر رقمه الرسمي، وعدم إدخال أي بيانات. البنوك لا تطلب بيانات عبر البريد الإلكتروني."},
+    {sec:2,q:"أيّ من الجمل التالية تعكس سلوكاً آمناً صحيحاً على الإنترنت؟",opts:["استخدام شبكة WiFi عامة للحساب المصرفي","تغيير كلمة المرور بانتظام وعدم تكرارها","مشاركة كلمة المرور مع صديقتك الموثوقة","فتح كل الروابط إذا كانت من معارف"],ans:1,exp:"التغيير الدوري لكلمة المرور وعدم تكرارها هو السلوك الأكثر أماناً من الخيارات المذكورة."}
+  ]
+};
+
+let selStar=0, qIdx=0, score=0, correct=0, total=0, qs=[];
+const pfClass={1:'pf1',2:'pf2',3:'pf3'};
+const secLabel={1:'🦠 الهدف الأول',2:'🛡️ الهدف الثاني'};
+
+function pickStar(n,el){
+  selStar=n;
+  document.querySelectorAll('.star-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('progFill').className='prog-fill '+pfClass[n];
+}
+function startFinal(){
+  const name=document.getElementById('nameSelect').value;
+  if(!name||!selStar){alert('اختاري اسمك ومستواك');return;}
+  qs=qBank[selStar];total=qs.length;
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('stepQuiz').classList.add('active');
+  renderQ();
+}
+
+function renderQ(){
+  const q=qs[qIdx];
+  document.getElementById('qNum').textContent=`السؤال ${qIdx+1}/${total}`;
+  document.getElementById('qPts').textContent=`${score} نقطة`;
+  document.getElementById('progFill').style.width=`${(qIdx/total)*100}%`;
+  document.getElementById('nextBtn').style.display='none';
+  let html=`<span class="section-tag ${q.sec===1?'tag1':'tag2'}">${secLabel[q.sec]}</span>
+    <div class="q-box"><div class="q-text">${q.q}</div></div>`;
+  if(q.open){
+    html+=`<div class="open-q"><textarea id="openAns" placeholder="اكتبي إجابتك التحليلية..."></textarea></div>
+      <div class="fb" id="fb"></div>`;
+  }else{
+    html+=`<div class="opts">${q.opts.map((o,i)=>`<div class="opt" onclick="checkMCQ(${i})">${o}</div>`).join('')}</div>
+      <div class="fb" id="fb"></div>`;
+  }
+  document.getElementById('qArea').innerHTML=html;
+  if(q.open){
+    document.getElementById('nextBtn').style.display='block';
+    document.getElementById('nextBtn').textContent='إرسال ←';
+    document.getElementById('nextBtn').onclick=submitOpen;
+  }
+}
+
+function checkMCQ(chosen){
+  const q=qs[qIdx];
+  if(!q)return;
+  document.querySelectorAll('.opt').forEach((o,i)=>{
+    o.classList.add('disabled');
+    if(i===q.ans)o.classList.add('correct');
+    else if(i===chosen&&chosen!==q.ans)o.classList.add('wrong');
+  });
+  const isOk=(chosen===q.ans);
+  if(isOk){score+=Math.round(100/total);correct++;}
+  const fb=document.getElementById('fb');
+  fb.className='fb show '+(isOk?'fb-ok':'fb-no');
+  fb.textContent=(isOk?'✅ ':'❌ ')+q.exp;
+  const nb=document.getElementById('nextBtn');
+  nb.style.display='block';nb.onclick=nextQ;nb.textContent='التالي ←';
+}
+
+function submitOpen(){
+  const ans=document.getElementById('openAns').value.trim();
+  if(!ans){alert('اكتبي إجابتك أولاً');return;}
+  const q=qs[qIdx];
+  score+=Math.round(100/total);correct++;
+  const fb=document.getElementById('fb');
+  fb.className='fb show fb-ok';
+  fb.textContent='✅ إجابة مسجّلة. الإجابة النموذجية: '+q.exp;
+  document.getElementById('nextBtn').textContent='التالي ←';
+  document.getElementById('nextBtn').onclick=nextQ;
+}
+
+function nextQ(){qIdx++;if(qIdx>=total)endFinal();else renderQ();}
+
+async function endFinal(){
+  const name=document.getElementById('nameSelect').value;
+  const finalScore=Math.min(100,score);
+  try{
+    await fetch(`${DB}/final_quiz/${san(name)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,level:selStar,score:finalScore,correct,total,timestamp:Date.now()})});
+    const pr=await fetch(`${DB}/points/${san(name)}.json`);
+    const pd=await pr.json();
+    await fetch(`${DB}/points/${san(name)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,points:(pd?.points||0)+finalScore,timestamp:Date.now()})});
+  }catch(e){}
+  document.getElementById('stepQuiz').classList.remove('active');
+  document.getElementById('stepResult').classList.add('active');
+  const s=finalScore;
+  const icons=['🥉','🥈','🥇','🏆'];
+  const starsArr=['','⭐','⭐⭐','⭐⭐⭐'];
+  const icon=s>=90?'🏆':s>=70?'🥇':s>=50?'🥈':'🥉';
+  const badges=s>=90?'حاصلة على شارة التميّز 🏅':s>=70?'حاصلة على شارة الإجادة 🎖️':s>=50?'حاصلة على شارة المشاركة 🎗️':'استمري في التعلم 💪';
+  const msgs=s>=90?'أثبتتِ تفوقاً حقيقياً – إتقان تام للهدفين معاً. أنتِ بطلة الأمن الإلكتروني!':s>=70?'أداء ممتاز يعكس فهماً عميقاً للدرس. استمري بهذا المستوى!':s>=50?'أداء جيد – راجعي الأسئلة التي أخطأتِ فيها لتصلي للقمة.':'راجعي محتوى الدرس وأعيدي المحاولة – ستنجحين!';
+  document.getElementById('certIcon').textContent=icon;
+  document.getElementById('certStars').textContent=starsArr[selStar];
+  document.getElementById('certName').textContent=document.getElementById('nameSelect').value.split(' ')[0];
+  document.getElementById('badgeEarned').textContent=badges;
+  document.getElementById('finalScore').textContent=s;
+  document.getElementById('finalLevel').textContent=starsArr[selStar];
+  document.getElementById('correctCount').textContent=`${correct}/${total}`;
+  document.getElementById('certMsg').textContent=msgs;
+  document.getElementById('breakdown').innerHTML=`
+    <div class="bk-card"><div class="bk-icon">🦠</div><div class="bk-num">${selStar===1?'3':selStar===2?'3':'3'}</div><div class="bk-lbl">أسئلة الهدف الأول</div></div>
+    <div class="bk-card"><div class="bk-icon">🛡️</div><div class="bk-num">${selStar===1?'3':selStar===2?'3':'3'}</div><div class="bk-lbl">أسئلة الهدف الثاني</div></div>`;
+  spawnParticles();
+}
+
+function spawnParticles(){
+  const cont=document.getElementById('particles');cont.innerHTML='';
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');p.className='p';
+    const size=Math.random()*8+4;
+    p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:hsl(${Math.random()*60+30},90%,60%);animation-duration:${Math.random()*8+5}s;animation-delay:${Math.random()*3}s`;
+    cont.appendChild(p);
+  }
+}
+</script>
+</body>
+</html>

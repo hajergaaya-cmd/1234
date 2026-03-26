@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الغلق البنائي – الهدف الثاني</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#0a0f1e;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 70% 30%,#0a1a2e,transparent 55%),radial-gradient(ellipse at 20% 80%,#1a0a1e,transparent 55%),#0a0f1e;z-index:0}
+.wrap{position:relative;z-index:1;max-width:680px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:25px;transition:all .3s}
+.back:hover{color:#fff}
+.header{text-align:center;margin-bottom:28px}
+.badge{display:inline-block;background:rgba(141,27,61,0.2);border:1px solid rgba(141,27,61,0.45);color:#ff6b8a;padding:4px 16px;border-radius:20px;font-size:0.8rem;font-weight:700;margin-bottom:12px}
+h1{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px}
+.sub{color:#8a9bb5;font-size:0.95rem}
+.step{display:none}.step.active{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(141,27,61,0.3);border-radius:20px;padding:28px}
+
+/* Setup */
+label{display:block;color:#ff6b8a;font-size:0.88rem;font-weight:700;margin-bottom:8px}
+select{width:100%;background:rgba(255,255,255,0.06);border:2px solid rgba(141,27,61,0.25);border-radius:12px;padding:12px 16px;color:#fff;font-size:0.95rem;font-family:'Tajawal',sans-serif;outline:none;margin-bottom:18px}
+select:focus{border-color:rgba(141,27,61,0.5)}
+select option{background:#1a2035}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.lv{border-radius:14px;padding:16px 10px;text-align:center;cursor:pointer;transition:all .3s;border:2px solid rgba(255,255,255,0.1)}
+.lv:hover{transform:translateY(-2px)}
+.l1{border-color:rgba(0,212,255,0.3)}.l1:hover,.l1.sel{border-color:#00d4ff;background:rgba(0,212,255,0.1)}
+.l2{border-color:rgba(0,200,100,0.3)}.l2:hover,.l2.sel{border-color:#00ff88;background:rgba(0,200,100,0.1)}
+.l3{border-color:rgba(255,165,0,0.3)}.l3:hover,.l3.sel{border-color:#ffa500;background:rgba(255,165,0,0.1)}
+.ls{font-size:1.3rem;margin-bottom:5px}
+.lt{font-size:0.85rem;font-weight:700}
+.l1 .lt{color:#00d4ff}.l2 .lt{color:#00ff88}.l3 .lt{color:#ffa500}
+.ld{font-size:0.72rem;color:#8a9bb5;margin-top:4px;line-height:1.4}
+.btn{width:100%;background:linear-gradient(135deg,#8D1B3D,#cc2255);border:none;border-radius:14px;padding:14px;color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:14px;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(141,27,61,0.35)}
+
+/* Progress */
+.prog-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.82rem;color:#8a9bb5}
+.prog-bar{background:rgba(255,255,255,0.08);border-radius:99px;height:7px;overflow:hidden;margin-bottom:20px}
+.prog-fill{background:linear-gradient(90deg,#8D1B3D,#ff6b8a);height:100%;border-radius:99px;transition:width .5s}
+
+/* Statement card */
+.stmt-card{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:16px;padding:22px;margin-bottom:18px;transition:border-color .3s}
+.stmt-num{font-size:0.78rem;color:#8a9bb5;margin-bottom:8px}
+.stmt-text{font-size:1.05rem;font-weight:700;color:#e2e8f0;line-height:1.75;margin-bottom:16px}
+.tf-btns{display:flex;gap:12px}
+.tf-btn{flex:1;border:2px solid;border-radius:12px;padding:12px;cursor:pointer;font-size:1rem;font-weight:800;font-family:'Tajawal',sans-serif;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px}
+.tf-true{border-color:rgba(0,255,136,0.35);background:rgba(0,255,136,0.06);color:#00ff88}
+.tf-true:hover{border-color:#00ff88;background:rgba(0,255,136,0.15)}
+.tf-false{border-color:rgba(255,80,80,0.35);background:rgba(255,80,80,0.06);color:#ff5050}
+.tf-false:hover{border-color:#ff5050;background:rgba(255,80,80,0.15)}
+.tf-btn.selected-t{border-color:#00ff88;background:rgba(0,255,136,0.2);color:#00ff88}
+.tf-btn.selected-f{border-color:#ff5050;background:rgba(255,80,80,0.2);color:#ff5050}
+.tf-btn.disabled{pointer-events:none;opacity:.6}
+.tf-btn.reveal-correct{border-color:#00ff88 !important;background:rgba(0,255,136,0.2) !important;color:#00ff88 !important}
+.tf-btn.reveal-wrong{border-color:#ff5050 !important;background:rgba(255,80,80,0.2) !important}
+
+/* Justification */
+.justify-box{margin-top:14px;display:none}
+.justify-box.show{display:block;animation:fadeUp .3s ease}
+.justify-label{font-size:0.85rem;font-weight:700;color:#8a9bb5;margin-bottom:8px}
+.justify-opts{display:grid;gap:8px}
+.jopt{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;cursor:pointer;font-size:0.88rem;transition:all .25s;font-family:'Tajawal',sans-serif}
+.jopt:hover{border-color:rgba(255,107,138,0.4);background:rgba(141,27,61,0.1)}
+.jopt.sel-j{border-color:#ff6b8a;background:rgba(141,27,61,0.15);color:#ff6b8a}
+.open-just{width:100%;background:rgba(255,255,255,0.05);border:2px solid rgba(141,27,61,0.25);border-radius:10px;padding:11px;color:#fff;font-size:0.88rem;font-family:'Tajawal',sans-serif;outline:none;resize:none;min-height:60px}
+.open-just:focus{border-color:rgba(141,27,61,0.5)}
+
+/* Feedback */
+.fb{margin-top:12px;padding:12px 15px;border-radius:10px;font-size:0.88rem;display:none;animation:fadeUp .3s;line-height:1.6}
+.fb.show{display:block}
+.fb-ok{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.25);color:#00ff88}
+.fb-no{background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);color:#ff5050}
+.next-btn{margin-top:12px;background:rgba(141,27,61,0.2);border:1px solid rgba(141,27,61,0.4);color:#ff6b8a;border-radius:10px;padding:10px 22px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;font-weight:700;transition:all .3s;display:none}
+.next-btn:hover{background:rgba(141,27,61,0.3)}
+
+/* Result */
+.result-wrap{text-align:center;padding:10px 0}
+.r-ring{width:115px;height:115px;border-radius:50%;border:5px solid #8D1B3D;margin:0 auto 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(141,27,61,0.08);position:relative}
+.r-ring::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:5px solid transparent;border-top-color:#ff6b8a;animation:spin 2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.r-big{font-size:2.3rem;font-weight:900;color:#ff6b8a;position:relative;z-index:1}
+.r-of{font-size:0.72rem;color:#8a9bb5;position:relative;z-index:1}
+.r-stars{font-size:2.5rem;margin-bottom:12px}
+.r-title{font-size:1.2rem;font-weight:700;margin-bottom:6px}
+.r-sub{color:#8a9bb5;font-size:0.9rem;margin-bottom:20px}
+
+/* Summary table (L1/L2) */
+.summary{margin-top:16px;text-align:right}
+.sum-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.85rem}
+.sum-icon{font-size:1rem;min-width:20px}
+.sum-text{color:#c4cdd8;flex:1;line-height:1.5}
+.sum-verdict{font-weight:700;font-size:0.8rem;min-width:50px;text-align:center}
+.sum-v-ok{color:#00ff88}.sum-v-no{color:#ff5050}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  <div class="header">
+    <span class="badge">🎯 غلق بنائي – الهدف الثاني</span>
+    <h1>طرق الحماية – صح أم خطأ؟</h1>
+    <p class="sub">قيّمي كل جملة وبرّري إجابتك بمستويات متدرجة</p>
+  </div>
+
+  <!-- Step 1: setup -->
+  <div class="step active" id="step1">
+    <div class="card">
+      <label>👤 اختاري اسمك</label>
+      <select id="nameSelect">
+        <option value="">— اختاري اسمك —</option>
+        <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+        <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+        <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+        <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+        <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+        <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+        <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+        <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option><option>فاطمه احمد</option>
+        <option>فاطمه عبدالله الدرويش</option><option>فايزه عمر فتحى محمد حسين</option>
+        <option>فجر حميد فرحان اجديع اشبيح</option><option>لطيفه يحيى الاحمد العبدالموسى</option>
+        <option>لمى كمال القادرى</option><option>لمى نجم الدين محمود حسين مرسي</option>
+        <option>مريم محمد</option><option>نور اسماعيل جمال الكسار</option>
+      </select>
+      <label>🎯 اختاري مستوى الغلق</label>
+      <div class="levels">
+        <div class="lv l1" onclick="pickL(1,this)">
+          <div class="ls">⭐</div>
+          <div class="lt">تذكّر</div>
+          <div class="ld">صح/خطأ + اختيار السبب</div>
+        </div>
+        <div class="lv l2" onclick="pickL(2,this)">
+          <div class="ls">⭐⭐</div>
+          <div class="lt">تطبيق</div>
+          <div class="ld">صح/خطأ + كتابة التصحيح</div>
+        </div>
+        <div class="lv l3" onclick="pickL(3,this)">
+          <div class="ls">⭐⭐⭐</div>
+          <div class="lt">تحليل</div>
+          <div class="ld">صح/خطأ + تعليل مفتوح + ربط</div>
+        </div>
+      </div>
+      <button class="btn" onclick="startClose()">📝 ابدئي الغلق</button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="step" id="stepQuiz">
+    <div class="card">
+      <div class="prog-row">
+        <span id="qCounter">1 / 5</span>
+        <span id="qPts" style="color:#ff6b8a;font-weight:700">النقاط: 0</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div id="qArea"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">التالي ←</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="step" id="stepResult">
+    <div class="card result-wrap">
+      <div class="r-stars" id="rStars"></div>
+      <div class="r-ring"><div class="r-big" id="rBig"></div><div class="r-of">من 100</div></div>
+      <div class="r-title" id="rTitle"></div>
+      <div class="r-sub" id="rSub"></div>
+      <div class="summary" id="summaryArea"></div>
+      <button class="btn" style="margin-top:20px" onclick="location.href='index.html'">← الرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+function san(n){return n.replace(/\s+/g,'_').replace(/[.#$[\]/]/g,'');}
+
+// All questions - each has: stmt, correct (true/false), explanation, justOpts (for L1), correctJust index
+const allQs=[
+  {
+    stmt:"يجب عليكِ مشاركة كلمة مرورك مع أفراد عائلتك فقط لأنهم موثوقون.",
+    correct:false,
+    exp:"❌ لا يجب الكشف عن كلمة المرور لأي شخص بما في ذلك أفراد العائلة – سرية كلمة المرور مطلقة.",
+    justOpts:["لأن الثقة تعني الأمان الكامل","لأنه لا يجب الكشف عن كلمة المرور لأي أحد حتى العائلة","لأن كلمة المرور يمكن مشاركتها أحياناً"],
+    corrJ:1
+  },
+  {
+    stmt:"استخدام كلمة مرور مثل \"ahmad2010\" تعتبر كلمة مرور قوية.",
+    correct:false,
+    exp:"❌ كلمة المرور القوية تجمع: أحرف كبيرة وصغيرة + أرقام + رموز خاصة. الاسم مع السنة سهل التخمين.",
+    justOpts:["لأنها تحتوي على أرقام","لأن الكلمة القوية تحتاج أحرفاً كبيرة وصغيرة وأرقاماً ورموزاً مع بعض","لأنها طويلة بما يكفي"],
+    corrJ:1
+  },
+  {
+    stmt:"إذا وصلتكِ رسالة بريد إلكتروني من مرسل مجهول تحتوي على رابط، يمكنكِ فتحه إذا كان الموضوع مثيراً للاهتمام.",
+    correct:false,
+    exp:"❌ يجب عدم فتح روابط من مرسلين مجهولين مهما كان موضوع الرسالة. قد تحتوي على برمجيات خبيثة.",
+    justOpts:["لأن الفضول مبرر للفتح","لأن الروابط المجهولة قد تحتوي برمجيات خبيثة بغض النظر عن الموضوع","لأن البريد الإلكتروني دائماً آمن"],
+    corrJ:1
+  },
+  {
+    stmt:"تغيير كلمة المرور بانتظام كل فترة يُعدّ إجراءً مهماً للحماية.",
+    correct:true,
+    exp:"✅ التغيير الدوري لكلمة المرور يُقلّل من خطر الاختراق حتى لو سُرقت في مرحلة ما.",
+    justOpts:["لأن تغيير كلمة المرور يجعل الحساب أكثر أماناً بشكل دوري","لأن كلمة المرور القديمة لا تنتهي صلاحيتها","لأن التغيير يُعقّد الأمور على المستخدم"],
+    corrJ:0
+  },
+  {
+    stmt:"استخدام كلمة مرور واحدة لجميع حساباتك يُسهّل الحماية لأنك ستتذكرها دائماً.",
+    correct:false,
+    exp:"❌ استخدام نفس كلمة المرور في كل الحسابات خطير – إذا سُرقت من موقع واحد تُسرق كل حساباتك دفعة واحدة.",
+    justOpts:["لأن سهولة التذكر تعوّض الخطر","لأن سرقة كلمة مرور واحدة تعني سرقة جميع الحسابات","لأن المواقع تحمي كلمات المرور بشكل كافٍ"],
+    corrJ:1
+  }
+];
+
+let selLevel=0, qIdx=0, score=0, results=[], answered=false;
+
+function pickL(l,el){selLevel=l;document.querySelectorAll('.lv').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');}
+
+function startClose(){
+  const name=document.getElementById('nameSelect').value;
+  if(!name||!selLevel){alert('اختاري اسمك ومستواك');return;}
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('stepQuiz').classList.add('active');
+  renderQ();
+}
+
+function renderQ(){
+  answered=false;
+  const q=allQs[qIdx];
+  const total=allQs.length;
+  document.getElementById('qCounter').textContent=`${qIdx+1} / ${total}`;
+  document.getElementById('qPts').textContent=`النقاط: ${score}`;
+  document.getElementById('progFill').style.width=`${(qIdx/total)*100}%`;
+  document.getElementById('nextBtn').style.display='none';
+
+  let html=`<div class="stmt-card" id="stmtCard">
+    <div class="stmt-num">العبارة ${qIdx+1}</div>
+    <div class="stmt-text">${q.stmt}</div>
+    <div class="tf-btns">
+      <button class="tf-btn tf-true" onclick="checkTF(true)">✅ صحيح</button>
+      <button class="tf-btn tf-false" onclick="checkTF(false)">❌ خطأ</button>
+    </div>`;
+
+  // Justification area (shown after answer)
+  if(selLevel===1){
+    html+=`<div class="justify-box" id="justBox">
+      <div class="justify-label">💬 لماذا؟ اختاري السبب الصحيح:</div>
+      <div class="justify-opts">${q.justOpts.map((o,i)=>`<div class="jopt" onclick="selJust(${i},${q.corrJ})">${o}</div>`).join('')}</div>
+    </div>`;
+  }else if(selLevel===2){
+    html+=`<div class="justify-box" id="justBox">
+      <div class="justify-label">✍️ اكتبي تعليلك أو التصحيح:</div>
+      <textarea class="open-just" id="openJust" placeholder="اكتبي التصحيح..."></textarea>
+    </div>`;
+  }else{
+    html+=`<div class="justify-box" id="justBox">
+      <div class="justify-label">🔍 حلّلي: لماذا هذا الحكم صحيح أم خطأ؟ واربطيه بطرق الحماية المذكورة في الدرس.</div>
+      <textarea class="open-just" id="openJust" placeholder="تحليلك..."></textarea>
+    </div>`;
+  }
+
+  html+=`<div class="fb" id="fb"></div></div>`;
+  document.getElementById('qArea').innerHTML=html;
+}
+
+function checkTF(userAns){
+  if(answered)return;
+  const q=allQs[qIdx];
+  const stmtCard=document.getElementById('stmtCard');
+  const btns=stmtCard.querySelectorAll('.tf-btn');
+  btns.forEach(b=>b.classList.add('disabled'));
+  if(userAns){btns[0].classList.add('selected-t');}else{btns[1].classList.add('selected-f');}
+  // Reveal correct
+  if(q.correct){btns[0].classList.add('reveal-correct');}else{btns[1].classList.add('reveal-correct');}
+  const isCorrect=(userAns===q.correct);
+  // Show justification
+  const justBox=document.getElementById('justBox');
+  if(justBox)justBox.classList.add('show');
+  // Immediate feedback for L2/L3 open
+  if(selLevel>=2){
+    const fb=document.getElementById('fb');
+    if(isCorrect){fb.className='fb show fb-ok';fb.textContent='✅ حكمك صحيح! '+q.exp;}
+    else{fb.className='fb show fb-no';fb.textContent=q.exp;}
+    if(isCorrect)score+=selLevel===2?15:18;
+    answered=true;
+    results.push({stmt:q.stmt.substring(0,30)+'...',correct:isCorrect});
+    document.getElementById('nextBtn').style.display='block';
+    document.getElementById('qPts').textContent=`النقاط: ${score}`;
+  }else{
+    // L1: wait for justification pick
+    if(isCorrect)score+=10;
+    results.push({stmt:q.stmt.substring(0,30)+'...',correct:isCorrect});
+    document.getElementById('qPts').textContent=`النقاط: ${score}`;
+  }
+}
+
+function selJust(i,correct){
+  if(answered)return;
+  answered=true;
+  document.querySelectorAll('.jopt').forEach((j,idx)=>{
+    j.style.pointerEvents='none';
+    if(idx===correct)j.classList.add('sel-j');
+  });
+  const isJ=(i===correct);
+  const q=allQs[qIdx];
+  const fb=document.getElementById('fb');
+  if(isJ){score+=10;fb.className='fb show fb-ok';fb.textContent='✅ تعليل صحيح! '+q.exp;}
+  else{fb.className='fb show fb-no';fb.textContent=q.exp;}
+  document.getElementById('qPts').textContent=`النقاط: ${score}`;
+  document.getElementById('nextBtn').style.display='block';
+}
+
+function nextQ(){
+  // For L2/L3 open, capture answer if needed
+  if(selLevel>=2){
+    const openEl=document.getElementById('openJust');
+    if(openEl&&!openEl.value.trim()&&!answered){alert('اكتبي تعليلك أولاً');return;}
+    if(openEl&&openEl.value.trim()&&selLevel===2&&!answered){
+      // auto-mark open as attempted
+      answered=true;score+=5;
+      results.push({stmt:allQs[qIdx].stmt.substring(0,30)+'...',correct:true});
+    }
+  }
+  qIdx++;
+  if(qIdx>=allQs.length){endClose();}else{renderQ();}
+}
+
+async function endClose(){
+  const name=document.getElementById('nameSelect').value;
+  const finalScore=Math.min(100,score);
+  try{
+    await fetch(`${DB}/closure2/${san(name)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,level:selLevel,score:finalScore,timestamp:Date.now()})});
+    const pr=await fetch(`${DB}/points/${san(name)}.json`);
+    const pd=await pr.json();
+    await fetch(`${DB}/points/${san(name)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,points:(pd?.points||0)+finalScore,timestamp:Date.now()})});
+  }catch(e){}
+  document.getElementById('stepQuiz').classList.remove('active');
+  document.getElementById('stepResult').classList.add('active');
+  const s=finalScore;
+  const stars=s>=90?'⭐⭐⭐':s>=60?'⭐⭐':'⭐';
+  const msgs=s>=90?['إتقان تام! 🏅','أثبتتِ فهمك الكامل لطرق الحماية 🛡️']:s>=60?['جيد جداً 👍','راجعي الإجابات التي تحتاج تحسيناً']:['حاولي مجدداً 💪','عودي لمحتوى الهدف الثاني من الكتاب'];
+  document.getElementById('rStars').textContent=stars;
+  document.getElementById('rBig').textContent=s;
+  document.getElementById('rTitle').textContent=msgs[0];
+  document.getElementById('rSub').textContent=msgs[1];
+  // Summary
+  const sumArea=document.getElementById('summaryArea');
+  sumArea.innerHTML='<div style="font-size:0.82rem;color:#8a9bb5;margin-bottom:10px">ملخص إجاباتك:</div>'+
+    results.map(r=>`<div class="sum-row"><div class="sum-icon">${r.correct?'✅':'❌'}</div><div class="sum-text">${r.stmt}</div><div class="sum-verdict ${r.correct?'sum-v-ok':'sum-v-no'}">${r.correct?'صح':'راجعي'}</div></div>`).join('');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 1 – المحققتان (ثنائي)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#0a0f1e;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 70% 20%,#0d1a3a,transparent 55%),#0a0f1e;z-index:0}
+.wrap{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:25px;transition:all .3s}
+.back:hover{color:#fff}
+.header{text-align:center;margin-bottom:28px}
+.badge{display:inline-block;background:rgba(255,165,0,0.12);border:1px solid rgba(255,165,0,0.35);color:#ffa500;padding:4px 16px;border-radius:20px;font-size:0.8rem;font-weight:700;margin-bottom:12px}
+h1{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px}
+.sub{color:#8a9bb5;font-size:0.95rem}
+.step{display:none}
+.step.active{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,165,0,0.2);border-radius:20px;padding:28px;margin-bottom:16px}
+label{display:block;color:#ffa500;font-size:0.88rem;font-weight:700;margin-bottom:8px}
+select{width:100%;background:rgba(255,255,255,0.06);border:2px solid rgba(255,165,0,0.2);border-radius:12px;padding:12px 16px;color:#fff;font-size:0.95rem;font-family:'Tajawal',sans-serif;outline:none;margin-bottom:18px;transition:border-color .3s}
+select:focus{border-color:rgba(255,165,0,0.5)}
+select option{background:#1a2035}
+.pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.btn{width:100%;background:linear-gradient(135deg,#ffa500,#e05500);border:none;border-radius:14px;padding:14px;color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:6px;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,165,0,0.3)}
+.scenario-card{background:rgba(255,165,0,0.06);border:2px solid rgba(255,165,0,0.25);border-radius:16px;padding:22px;margin-bottom:20px}
+.sc-num{color:#ffa500;font-size:0.82rem;font-weight:700;margin-bottom:6px;text-transform:uppercase}
+.sc-text{font-size:1rem;line-height:1.9;color:#e2e8f0}
+.sc-hint{display:inline-block;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);border-radius:8px;padding:6px 14px;font-size:0.8rem;color:#00d4ff;margin-top:12px}
+.q-block{margin-bottom:20px}
+.q-label{font-size:0.95rem;font-weight:700;color:#e2e8f0;margin-bottom:10px;line-height:1.6}
+.malware-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.mopt{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;cursor:pointer;font-size:0.9rem;text-align:center;transition:all .25s;font-family:'Tajawal',sans-serif}
+.mopt:hover{border-color:rgba(255,165,0,0.4);background:rgba(255,165,0,0.08)}
+.mopt.sel{border-color:#ffa500;background:rgba(255,165,0,0.15);color:#ffa500;font-weight:700}
+textarea{width:100%;background:rgba(255,255,255,0.05);border:2px solid rgba(255,165,0,0.2);border-radius:12px;padding:13px;color:#fff;font-size:0.9rem;font-family:'Tajawal',sans-serif;outline:none;resize:vertical;min-height:75px;transition:border-color .3s}
+textarea:focus{border-color:rgba(255,165,0,0.45)}
+.tab-nav{display:flex;gap:8px;margin-bottom:20px}
+.tab-btn{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;color:#8a9bb5;transition:all .3s}
+.tab-btn.active-tab{background:rgba(255,165,0,0.12);border-color:rgba(255,165,0,0.35);color:#ffa500;font-weight:700}
+.success{text-align:center;padding:20px 0}
+.s-icon{font-size:4rem;margin-bottom:15px}
+.s-title{font-size:1.3rem;font-weight:700;color:#00ff88;margin-bottom:8px}
+.s-sub{color:#8a9bb5;font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  <div class="header">
+    <span class="badge">🕵️ نشاط ثنائي</span>
+    <h1>المحققتان</h1>
+    <p class="sub">اعملا معاً لتحديد نوع البرمجية الخبيثة في السيناريوهات</p>
+  </div>
+
+  <!-- Step 1: names -->
+  <div class="step active" id="step1">
+    <div class="card">
+      <p style="background:rgba(255,165,0,0.08);border:1px solid rgba(255,165,0,0.2);border-radius:10px;padding:12px 16px;font-size:0.88rem;color:#ffa500;margin-bottom:20px">👭 هذا النشاط ثنائي – اجلسا معاً واختارا اسمَيكما</p>
+      <div class="pair-grid">
+        <div>
+          <label>👤 الطالبة الأولى</label>
+          <select id="s1">
+            <option value="">— اختاري —</option>
+            <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+            <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+            <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+            <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+            <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+            <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+            <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+            <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option>
+            <option>فاطمه احمد</option><option>فاطمه عبدالله الدرويش</option>
+            <option>فايزه عمر فتحى محمد حسين</option><option>فجر حميد فرحان اجديع اشبيح</option>
+            <option>لطيفه يحيى الاحمد العبدالموسى</option><option>لمى كمال القادرى</option>
+            <option>لمى نجم الدين محمود حسين مرسي</option><option>مريم محمد</option>
+            <option>نور اسماعيل جمال الكسار</option>
+          </select>
+        </div>
+        <div>
+          <label>👤 الطالبة الثانية</label>
+          <select id="s2">
+            <option value="">— اختاري —</option>
+            <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+            <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+            <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+            <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+            <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+            <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+            <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+            <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option>
+            <option>فاطمه احمد</option><option>فاطمه عبدالله الدرويش</option>
+            <option>فايزه عمر فتحى محمد حسين</option><option>فجر حميد فرحان اجديع اشبيح</option>
+            <option>لطيفه يحيى الاحمد العبدالموسى</option><option>لمى كمال القادرى</option>
+            <option>لمى نجم الدين محمود حسين مرسي</option><option>مريم محمد</option>
+            <option>نور اسماعيل جمال الكسار</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="goStep2()">🔍 ابدئا التحقيق</button>
+    </div>
+  </div>
+
+  <!-- Step 2: scenarios -->
+  <div class="step" id="step2">
+    <div class="tab-nav">
+      <button class="tab-btn active-tab" onclick="showTab(0)">📁 السيناريو الأول</button>
+      <button class="tab-btn" onclick="showTab(1)">📁 السيناريو الثاني</button>
+      <button class="tab-btn" onclick="showTab(2)">📁 السيناريو الثالث</button>
+    </div>
+
+    <!-- Scenario 1 -->
+    <div id="tab0">
+      <div class="scenario-card">
+        <div class="sc-num">📋 السيناريو الأول</div>
+        <div class="sc-text">قامت نوف بتنزيل برنامج مجاني لتحرير الصور من موقع غير معروف. بعد التثبيت، بدأت تلاحظ ظهور إعلانات كثيرة ومزعجة في كل مكان على شاشتها أثناء استخدامها لأي برنامج، حتى عندما لا تكون متصلة بالإنترنت.</div>
+        <span class="sc-hint">💡 تلميح: فكّري في البرمجيات التي تتعلق بالإعلانات</span>
+      </div>
+      <div class="q-block">
+        <div class="q-label">🔎 ما نوع البرمجية الخبيثة في هذا السيناريو؟</div>
+        <div class="malware-opts">
+          <div class="mopt" onclick="selectMalware(0,this)">🐴 أحصنة طروادة</div>
+          <div class="mopt" onclick="selectMalware(0,this)">🐛 الديدان</div>
+          <div class="mopt" onclick="selectMalware(0,this)">👁 برمجيات التجسس</div>
+          <div class="mopt" onclick="selectMalware(0,this)">📢 البرمجيات الدعائية</div>
+        </div>
+        <div class="q-label">✍️ ما الدليل من النص الذي اعتمدتِ عليه؟</div>
+        <textarea id="ev0" placeholder="اكتبا الجملة أو الكلمة التي دلّت عليكما..."></textarea>
+      </div>
+    </div>
+
+    <!-- Scenario 2 -->
+    <div id="tab1" style="display:none">
+      <div class="scenario-card">
+        <div class="sc-num">📋 السيناريو الثاني</div>
+        <div class="sc-text">بعثت لمى لصديقتها ملف مشروع العلوم عبر البريد الإلكتروني. بعد دقائق، وصلت رسائل غريبة من حساب لمى لكل أصدقائها وهي لم ترسلها، وانتشرت المشكلة لحواسيب كل من فتح الملف المرفق في الشبكة المدرسية.</div>
+        <span class="sc-hint">💡 تلميح: فكّري في البرمجيات التي تنتشر تلقائياً عبر الشبكة</span>
+      </div>
+      <div class="q-block">
+        <div class="q-label">🔎 ما نوع البرمجية الخبيثة في هذا السيناريو؟</div>
+        <div class="malware-opts">
+          <div class="mopt" onclick="selectMalware(1,this)">🐴 أحصنة طروادة</div>
+          <div class="mopt" onclick="selectMalware(1,this)">🐛 الديدان</div>
+          <div class="mopt" onclick="selectMalware(1,this)">👁 برمجيات التجسس</div>
+          <div class="mopt" onclick="selectMalware(1,this)">📢 البرمجيات الدعائية</div>
+        </div>
+        <div class="q-label">✍️ ما الدليل من النص؟</div>
+        <textarea id="ev1" placeholder="اكتبا الجملة أو الكلمة الدالة..."></textarea>
+      </div>
+    </div>
+
+    <!-- Scenario 3 -->
+    <div id="tab2" style="display:none">
+      <div class="scenario-card">
+        <div class="sc-num">📋 السيناريو الثالث</div>
+        <div class="sc-text">لاحظت رنا أن حسابها في الشبكة الاجتماعية يُستخدم من مكان آخر، ومعلوماتها الشخصية تسرّبت لجهات مجهولة. لم تفتح أي رسائل مشبوهة، لكنها كانت تستخدم برنامجاً لتسجيل الملاحظات نزّلته من موقع غير موثوق.</div>
+        <span class="sc-hint">💡 تلميح: فكّري في البرمجيات التي تجمع المعلومات بسرية</span>
+      </div>
+      <div class="q-block">
+        <div class="q-label">🔎 ما نوع البرمجية الخبيثة في هذا السيناريو؟</div>
+        <div class="malware-opts">
+          <div class="mopt" onclick="selectMalware(2,this)">🐴 أحصنة طروادة</div>
+          <div class="mopt" onclick="selectMalware(2,this)">🐛 الديدان</div>
+          <div class="mopt" onclick="selectMalware(2,this)">👁 برمجيات التجسس</div>
+          <div class="mopt" onclick="selectMalware(2,this)">📢 البرمجيات الدعائية</div>
+        </div>
+        <div class="q-label">✍️ ما الدليل من النص؟</div>
+        <textarea id="ev2" placeholder="اكتبا الجملة أو الكلمة الدالة..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn" onclick="submitAll()" style="margin-top:10px">📤 إرسال إجابات الثنائي</button>
+  </div>
+
+  <!-- Success -->
+  <div class="step" id="stepDone">
+    <div class="card success">
+      <div class="s-icon">🎉</div>
+      <div class="s-title">أحسنتِ يا المحققتان!</div>
+      <p class="s-sub">تم إرسال إجاباتكما بنجاح<br>ستظهر على لوحة المعلمة الآن 📊</p>
+      <button class="btn" onclick="location.href='index.html'" style="margin-top:20px">← العودة للرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+function san(n){return n.replace(/\s+/g,'_').replace(/[.#$[\]/]/g,'');}
+const correct=['البرمجيات الدعائية','الديدان','برمجيات التجسس'];
+const selected={0:null,1:null,2:null};
+
+function goStep2(){
+  const s1=document.getElementById('s1').value;
+  const s2=document.getElementById('s2').value;
+  if(!s1||!s2){alert('يرجى اختيار اسم الطالبتين');return;}
+  if(s1===s2){alert('يرجى اختيار اسمين مختلفين');return;}
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+}
+
+function showTab(i){
+  [0,1,2].forEach(j=>{document.getElementById('tab'+j).style.display=j===i?'block':'none';});
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>{b.classList.toggle('active-tab',j===i);});
+}
+
+function selectMalware(sc,el){
+  el.closest('.malware-opts').querySelectorAll('.mopt').forEach(m=>m.classList.remove('sel'));
+  el.classList.add('sel');
+  selected[sc]=el.textContent.replace(/[🐴🐛👁📢]\s*/,'').trim();
+}
+
+async function submitAll(){
+  const s1=document.getElementById('s1').value;
+  const s2=document.getElementById('s2').value;
+  let score=0;
+  const results=[];
+  for(let i=0;i<3;i++){
+    const ev=document.getElementById('ev'+i).value.trim();
+    const ans=selected[i];
+    if(!ans||!ev){alert(`يرجى إكمال السيناريو ${i+1}`);return;}
+    const ok=ans===correct[i]||ans.includes(correct[i].replace(/برمجيات|البرمجيات/g,'').trim());
+    if(ok)score+=33;
+    results.push({scenario:i+1,answer:ans,evidence:ev,correct:ok});
+  }
+  try{
+    const key=san(s1)+'_'+san(s2);
+    await fetch(`${DB}/activity1_pair/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({student1:s1,student2:s2,results,score,timestamp:Date.now()})});
+    for(const nm of[s1,s2]){
+      const pr=await fetch(`${DB}/points/${san(nm)}.json`);
+      const pd=await pr.json();
+      const prev=pd?.points||0;
+      await fetch(`${DB}/points/${san(nm)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name:nm,points:prev+Math.round(score/2),timestamp:Date.now()})});
+    }
+  }catch(e){}
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('stepDone').classList.add('active');
+}
+</script>
+</body>
+</html>

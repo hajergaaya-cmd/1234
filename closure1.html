@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الغلق البنائي – الهدف الأول</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#0a0f1e;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 40% 60%,#1a0a2e,transparent 55%),#0a0f1e;z-index:0}
+.wrap{position:relative;z-index:1;max-width:680px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:25px;transition:all .3s}
+.back:hover{color:#fff}
+.header{text-align:center;margin-bottom:28px}
+.badge{display:inline-block;background:rgba(141,27,61,0.2);border:1px solid rgba(141,27,61,0.45);color:#ff6b8a;padding:4px 16px;border-radius:20px;font-size:0.8rem;font-weight:700;margin-bottom:12px}
+h1{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px}
+.sub{color:#8a9bb5;font-size:0.95rem}
+.step{display:none}
+.step.active{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(141,27,61,0.3);border-radius:20px;padding:28px}
+label{display:block;color:#ff6b8a;font-size:0.88rem;font-weight:700;margin-bottom:8px}
+select{width:100%;background:rgba(255,255,255,0.06);border:2px solid rgba(141,27,61,0.25);border-radius:12px;padding:12px 16px;color:#fff;font-size:0.95rem;font-family:'Tajawal',sans-serif;outline:none;margin-bottom:18px}
+select:focus{border-color:rgba(141,27,61,0.5)}
+select option{background:#1a2035}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.lvl-card{border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .3s;border:2px solid rgba(255,255,255,0.1)}
+.lvl-card:hover{transform:translateY(-2px)}
+.l1{border-color:rgba(0,212,255,0.3)}.l1:hover,.l1.sel{border-color:#00d4ff;background:rgba(0,212,255,0.1)}
+.l2{border-color:rgba(255,165,0,0.3)}.l2:hover,.l2.sel{border-color:#ffa500;background:rgba(255,165,0,0.1)}
+.l3{border-color:rgba(255,100,100,0.3)}.l3:hover,.l3.sel{border-color:#ff6464;background:rgba(255,100,100,0.1)}
+.lvl-stars{font-size:1.4rem;margin-bottom:5px}
+.lvl-title{font-size:0.85rem;font-weight:700}
+.l1 .lvl-title{color:#00d4ff}.l2 .lvl-title{color:#ffa500}.l3 .lvl-title{color:#ff6464}
+.lvl-desc{font-size:0.73rem;color:#8a9bb5;margin-top:4px;line-height:1.4}
+.btn{width:100%;background:linear-gradient(135deg,#8D1B3D,#cc2255);border:none;border-radius:14px;padding:14px;color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:14px;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(141,27,61,0.35)}
+
+/* Quiz area */
+.prog-wrap{margin-bottom:18px}
+.prog-bar{background:rgba(255,255,255,0.08);border-radius:99px;height:8px;overflow:hidden}
+.prog-fill{background:linear-gradient(90deg,#8D1B3D,#cc2255);height:100%;border-radius:99px;transition:width .5s}
+.q-info{display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.82rem;color:#8a9bb5}
+.q-box{background:rgba(141,27,61,0.07);border:1px solid rgba(141,27,61,0.25);border-radius:14px;padding:18px;margin-bottom:16px}
+.q-stem{font-size:1rem;font-weight:700;color:#e2e8f0;line-height:1.7}
+.opts{display:grid;gap:9px}
+.opt{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:11px;padding:12px 16px;cursor:pointer;font-size:0.92rem;transition:all .25s;font-family:'Tajawal',sans-serif;text-align:right;color:#e2e8f0}
+.opt:hover{border-color:rgba(141,27,61,0.45);background:rgba(141,27,61,0.08)}
+.opt.correct{border-color:#00ff88;background:rgba(0,255,136,0.1);color:#00ff88}
+.opt.wrong{border-color:#ff5050;background:rgba(255,80,80,0.1);color:#ff5050}
+.opt.disabled{pointer-events:none}
+.fb{margin-top:10px;padding:11px 15px;border-radius:10px;font-size:0.88rem;display:none;animation:fadeUp .3s}
+.fb.show{display:block}
+.fb-ok{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.25);color:#00ff88}
+.fb-no{background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);color:#ff5050}
+.next-btn{margin-top:12px;background:rgba(141,27,61,0.2);border:1px solid rgba(141,27,61,0.4);color:#ff6b8a;border-radius:10px;padding:10px 22px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.9rem;font-weight:700;transition:all .3s}
+.next-btn:hover{background:rgba(141,27,61,0.3)}
+
+/* L3 open */
+textarea{width:100%;background:rgba(255,255,255,0.05);border:2px solid rgba(141,27,61,0.25);border-radius:12px;padding:12px;color:#fff;font-size:0.9rem;font-family:'Tajawal',sans-serif;outline:none;resize:vertical;min-height:70px}
+textarea:focus{border-color:rgba(141,27,61,0.5)}
+
+/* Result */
+.result-wrap{text-align:center;padding:10px 0}
+.score-ring{width:120px;height:120px;border-radius:50%;border:5px solid #8D1B3D;margin:0 auto 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(141,27,61,0.1);position:relative}
+.score-ring::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:5px solid transparent;border-top-color:#ff6b8a;animation:spin 2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.score-big{font-size:2.2rem;font-weight:900;color:#ff6b8a;position:relative;z-index:1}
+.score-of{font-size:0.75rem;color:#8a9bb5;position:relative;z-index:1}
+.result-stars{font-size:2.5rem;margin-bottom:12px}
+.result-title{font-size:1.2rem;font-weight:700;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  <div class="header">
+    <span class="badge">🎯 غلق بنائي – الهدف الأول</span>
+    <h1>قياس الفهم</h1>
+    <p class="sub">أسئلة متدرجة لقياس إتقانك لأنواع البرمجيات الخبيثة</p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step active" id="step1">
+    <div class="card">
+      <label>👤 اختاري اسمك</label>
+      <select id="nameSelect">
+        <option value="">— اختاري اسمك —</option>
+        <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+        <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+        <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+        <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+        <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+        <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+        <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+        <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option>
+        <option>فاطمه احمد</option><option>فاطمه عبدالله الدرويش</option>
+        <option>فايزه عمر فتحى محمد حسين</option><option>فجر حميد فرحان اجديع اشبيح</option>
+        <option>لطيفه يحيى الاحمد العبدالموسى</option><option>لمى كمال القادرى</option>
+        <option>لمى نجم الدين محمود حسين مرسي</option><option>مريم محمد</option>
+        <option>نور اسماعيل جمال الكسار</option>
+      </select>
+      <label>🎯 اختاري مستوى الغلق</label>
+      <div class="levels">
+        <div class="lvl-card l1" onclick="pickL(1,this)">
+          <div class="lvl-stars">⭐</div>
+          <div class="lvl-title">تذكّر</div>
+          <div class="lvl-desc">أسئلة تعريف واختيار بسيطة</div>
+        </div>
+        <div class="lvl-card l2" onclick="pickL(2,this)">
+          <div class="lvl-stars">⭐⭐</div>
+          <div class="lvl-title">تطبيق</div>
+          <div class="lvl-desc">ربط البرمجية بالموقف الصحيح</div>
+        </div>
+        <div class="lvl-card l3" onclick="pickL(3,this)">
+          <div class="lvl-stars">⭐⭐⭐</div>
+          <div class="lvl-title">تحليل</div>
+          <div class="lvl-desc">تحليل ومقارنة عميقة</div>
+        </div>
+      </div>
+      <button class="btn" onclick="startClose()">📝 ابدئي الغلق</button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="step" id="stepQuiz">
+    <div class="card">
+      <div class="prog-wrap">
+        <div class="q-info"><span id="qN">1/4</span><span id="qScore">النقاط: 0</span></div>
+        <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      </div>
+      <div class="q-box"><div class="q-stem" id="qStem"></div></div>
+      <div class="opts" id="optsArea"></div>
+      <div class="fb" id="fb"></div>
+      <textarea id="openAns" style="display:none;margin-top:14px" placeholder="اكتبي إجابتك..."></textarea>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()" style="display:none">التالي ←</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="step" id="stepResult">
+    <div class="card result-wrap">
+      <div class="result-stars" id="rStars"></div>
+      <div class="score-ring"><div class="score-big" id="rScore"></div><div class="score-of" id="rOf"></div></div>
+      <div class="result-title" id="rTitle"></div>
+      <p style="color:#8a9bb5;font-size:0.9rem;margin-bottom:20px" id="rSub"></p>
+      <button class="btn" onclick="location.href='index.html'">← الرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+function san(n){return n.replace(/\s+/g,'_').replace(/[.#$[\]/]/g,'');}
+let selLevel=0,score=0,qIdx=0;
+
+const byLevel={
+  1:[
+    {q:"ما البرمجية التي تشبه البرامج العادية تماماً ولكنها تسمح للقراصنة بالوصول؟",opts:["أحصنة طروادة","الديدان","برمجيات التجسس","البرمجيات الدعائية"],ans:0,exp:"أحصنة طروادة تبدو برامج عادية لكن هدفها فتح باب خلفي للقراصنة."},
+    {q:"أي برنامج يعرض إعلانات بدون إذنك أثناء استخدامك للحاسوب؟",opts:["الديدان","برمجيات التجسس","البرمجيات الدعائية","أحصنة طروادة"],ans:2,exp:"البرمجيات الدعائية (Adware) تعرض الإعلانات المنبثقة دون إذن."},
+    {q:"أي البرمجيات تجمع معلوماتك بشكل سري دون أن تشعري؟",opts:["البرمجيات الدعائية","برمجيات التجسس","الديدان","أحصنة طروادة"],ans:1,exp:"Spyware تعمل خفية وتجمع بياناتك دون علمك."},
+    {q:"الديدان (Worms) تنتشر عادةً عبر:",opts:["البريد الإلكتروني فقط","الشبكات والحواسيب المتصلة","الإعلانات المنبثقة","تثبيت البرامج يدوياً فقط"],ans:1,exp:"الديدان تستغل الشبكات لنسخ نفسها والانتشار في الحواسيب الأخرى."}
+  ],
+  2:[
+    {q:"فتحت ليلى رابطاً من صديقتها. بعد ساعات، تلقى كل أصدقائها نفس الرابط تلقائياً من حسابها وانتشرت المشكلة. ما نوع البرمجية؟",opts:["أحصنة طروادة","البرمجيات الدعائية","الديدان","برمجيات التجسس"],ans:2,exp:"الانتشار التلقائي عبر الشبكة هو علامة الديدان (Worms)."},
+    {q:"نزّلت ريم تطبيقاً لتعديل الصور. بعد التثبيت، لاحظت أن شخصاً يعرف كلماتها السرية وبريدها الإلكتروني رغم أنها لم تشاركها. ما نوع البرمجية؟",opts:["الديدان","البرمجيات الدعائية","أحصنة طروادة","برمجيات التجسس"],ans:3,exp:"برمجيات التجسس تجمع المعلومات الحساسة خفية."},
+    {q:"أثناء العمل على جهازها، تظهر لسارة نوافذ إعلانية كثيرة عن منتجات لم تبحث عنها. ما نوع البرمجية على الأرجح؟",opts:["برمجيات التجسس","أحصنة طروادة","البرمجيات الدعائية","الديدان"],ans:2,exp:"الإعلانات المنبثقة هي علامة البرمجيات الدعائية (Adware)."},
+    {q:"تقريباً أيّ برمجية تُعد أخطر لأنها تفتح ثغرة للقرصنة الكاملة؟",opts:["الديدان","البرمجيات الدعائية","برمجيات التجسس","أحصنة طروادة"],ans:3,exp:"أحصنة طروادة تمنح التحكم الكامل للمهاجم عبر الوصول غير المصرح به."}
+  ],
+  3:[
+    {q:"قارني بين الديدان وأحصنة طروادة: أيهما ينتشر ذاتياً دون تدخل المستخدم؟",opts:["أحصنة طروادة فقط","الديدان فقط","كلاهما","لا أحدهما"],ans:1,exp:"الديدان فقط تنسخ نفسها وتنتشر ذاتياً، بينما أحصنة طروادة تحتاج تثبيتاً من المستخدم."},
+    {q:"هجوم معقد استخدم برمجية سرقت بيانات 1000 مستخدم خلال شهر دون أن يلاحظ أحد. أي نوع هذا؟",opts:["أحصنة طروادة","الديدان","برمجيات التجسس","البرمجيات الدعائية"],ans:2,exp:"السرية وجمع البيانات لفترة طويلة دون اكتشاف هي خاصية Spyware."},
+    {open:true,q:"اشرحي الفرق بين برمجيات التجسس والبرمجيات الدعائية من حيث: الهدف، طريقة العمل، الخطورة على المستخدم.",exp:"برمجيات التجسس: هدفها سرقة المعلومات الحساسة، تعمل بشكل خفي، خطورتها عالية جداً. البرمجيات الدعائية: هدفها التسويق، تعمل بشكل مرئي (إعلانات)، خطورتها متوسطة."},
+    {open:true,q:"تخيلي أن صديقتك تعتقد أن جهازها مصاب ببرمجية خبيثة. ما الأسئلة التي ستطرحينها عليها لمعرفة نوع البرمجية؟",exp:"أسئلة تشخيصية مثل: هل ظهرت إعلانات؟ هل انتشرت المشكلة لأجهزة أخرى؟ هل سُرقت بياناتك؟ هل ثبّتتِ برامج جديدة مؤخراً؟"}
+  ]
+};
+
+function pickL(l,el){selLevel=l;document.querySelectorAll('.lvl-card').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');}
+
+function startClose(){
+  const name=document.getElementById('nameSelect').value;
+  if(!name||!selLevel){alert('اختاري اسمك ومستواك أولاً');return;}
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('stepQuiz').classList.add('active');
+  loadQ();
+}
+
+function loadQ(){
+  const qs=byLevel[selLevel];
+  if(qIdx>=qs.length){endQuiz();return;}
+  const q=qs[qIdx];
+  const total=qs.length;
+  document.getElementById('qN').textContent=`${qIdx+1}/${total}`;
+  document.getElementById('qScore').textContent=`النقاط: ${score}`;
+  document.getElementById('progFill').style.width=`${(qIdx/total)*100}%`;
+  document.getElementById('qStem').textContent=q.q;
+  document.getElementById('fb').className='fb';
+  document.getElementById('nextBtn').style.display='none';
+  const optsEl=document.getElementById('optsArea');
+  const openEl=document.getElementById('openAns');
+  if(q.open){
+    optsEl.innerHTML='';openEl.style.display='block';openEl.value='';
+    document.getElementById('nextBtn').style.display='block';
+    document.getElementById('nextBtn').textContent='إرسال ←';
+    document.getElementById('nextBtn').onclick=()=>{
+      if(!openEl.value.trim()){alert('اكتبي إجابتك');return;}
+      score+=25;
+      const fb=document.getElementById('fb');
+      fb.className='fb show fb-ok';
+      fb.textContent='✅ إجابة مسجّلة – الإجابة النموذجية: '+q.exp;
+      document.getElementById('nextBtn').textContent='التالي ←';
+      document.getElementById('nextBtn').onclick=nextQ;
+    };
+  }else{
+    openEl.style.display='none';
+    optsEl.innerHTML='';
+    q.opts.forEach((o,i)=>{
+      const d=document.createElement('div');
+      d.className='opt';d.textContent=o;
+      d.onclick=()=>{checkAns(i,q.ans,q.exp);};
+      optsEl.appendChild(d);
+    });
+  }
+}
+
+function checkAns(c,ans,exp){
+  document.querySelectorAll('.opt').forEach((o,i)=>{
+    o.classList.add('disabled');
+    if(i===ans)o.classList.add('correct');
+    else if(i===c&&c!==ans)o.classList.add('wrong');
+  });
+  const fb=document.getElementById('fb');
+  if(c===ans){score+=25;fb.className='fb show fb-ok';fb.textContent='✅ '+exp;}
+  else{fb.className='fb show fb-no';fb.textContent='❌ '+exp;}
+  document.getElementById('qScore').textContent=`النقاط: ${score}`;
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextQ(){qIdx++;loadQ();}
+
+async function endQuiz(){
+  const name=document.getElementById('nameSelect').value;
+  try{
+    await fetch(`${DB}/closure1/${san(name)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,level:selLevel,score,timestamp:Date.now()})});
+    const pr=await fetch(`${DB}/points/${san(name)}.json`);
+    const pd=await pr.json();
+    await fetch(`${DB}/points/${san(name)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,points:(pd?.points||0)+score,timestamp:Date.now()})});
+  }catch(e){}
+  document.getElementById('stepQuiz').classList.remove('active');
+  document.getElementById('stepResult').classList.add('active');
+  const stars=score>=90?'⭐⭐⭐':score>=60?'⭐⭐':'⭐';
+  const msgs=score>=90?['ممتاز! إتقان تام 🎉','أثبتتِ فهمك الكامل لأنواع البرمجيات']:score>=60?['جيد جداً 👍','راجعي النقاط التي أخطأتِ فيها']:['لا بأس 💪','عودي لمحتوى الهدف الأول وحاولي مجدداً'];
+  document.getElementById('rStars').textContent=stars;
+  document.getElementById('rScore').textContent=score;
+  document.getElementById('rOf').textContent='من 100';
+  document.getElementById('rTitle').textContent=msgs[0];
+  document.getElementById('rSub').textContent=msgs[1];
+}
+</script>
+</body>
+</html>

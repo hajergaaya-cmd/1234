@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 2 – رتّبا الأولويات (ثنائي)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#0a0f1e;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 30% 70%,#0a2030,transparent 55%),#0a0f1e;z-index:0}
+.wrap{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:25px;transition:all .3s}
+.back:hover{color:#fff}
+.header{text-align:center;margin-bottom:28px}
+.badge{display:inline-block;background:rgba(255,165,0,0.12);border:1px solid rgba(255,165,0,0.3);color:#ffa500;padding:4px 16px;border-radius:20px;font-size:0.8rem;font-weight:700;margin-bottom:12px}
+h1{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px}
+.sub{color:#8a9bb5;font-size:0.95rem}
+.step{display:none}.step.active{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,165,0,0.2);border-radius:20px;padding:28px;margin-bottom:16px}
+label{display:block;color:#ffa500;font-size:0.88rem;font-weight:700;margin-bottom:8px}
+select{width:100%;background:rgba(255,255,255,0.06);border:2px solid rgba(255,165,0,0.2);border-radius:12px;padding:12px 16px;color:#fff;font-size:0.95rem;font-family:'Tajawal',sans-serif;outline:none;margin-bottom:18px}
+select:focus{border-color:rgba(255,165,0,0.4)}
+select option{background:#1a2035}
+.pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.btn{width:100%;background:linear-gradient(135deg,#ffa500,#cc5500);border:none;border-radius:14px;padding:14px;color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:14px;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,165,0,0.3)}
+
+/* Ranking */
+.instruct{background:rgba(255,165,0,0.07);border:1px solid rgba(255,165,0,0.2);border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:0.88rem;color:#ffa500;line-height:1.7}
+.rank-list{display:grid;gap:10px;margin-bottom:18px}
+.rank-item{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:grab;transition:all .3s;user-select:none}
+.rank-item:hover{border-color:rgba(255,165,0,0.35)}
+.rank-item.dragging{opacity:.5;border-color:#ffa500}
+.rank-item.drag-over{border-color:#ffa500;background:rgba(255,165,0,0.08)}
+.rank-num{min-width:34px;height:34px;border-radius:50%;background:rgba(255,165,0,0.12);border:1px solid rgba(255,165,0,0.3);display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:900;color:#ffa500}
+.rank-content{flex:1}
+.rank-title{font-size:0.95rem;font-weight:700;color:#e2e8f0;margin-bottom:2px}
+.rank-sub{font-size:0.78rem;color:#8a9bb5}
+.drag-handle{color:#4a5568;font-size:1.1rem;cursor:grab}
+.reason-block{margin-bottom:14px}
+.reason-label{font-size:0.88rem;font-weight:700;color:#e2e8f0;margin-bottom:8px}
+textarea{width:100%;background:rgba(255,255,255,0.05);border:2px solid rgba(255,165,0,0.2);border-radius:12px;padding:12px;color:#fff;font-size:0.88rem;font-family:'Tajawal',sans-serif;outline:none;resize:vertical;min-height:70px}
+textarea:focus{border-color:rgba(255,165,0,0.4)}
+.done-card{text-align:center;padding:20px 0}
+.done-icon{font-size:4rem;margin-bottom:14px}
+.done-title{font-size:1.2rem;font-weight:700;color:#00ff88;margin-bottom:8px}
+.done-sub{color:#8a9bb5;font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  <div class="header">
+    <span class="badge">⚖️ نشاط ثنائي</span>
+    <h1>رتّبا الأولويات</h1>
+    <p class="sub">رتّبا معاً طرق الحماية من الأهم للأقل مع تبرير اختياركما</p>
+  </div>
+
+  <!-- step1: names -->
+  <div class="step active" id="step1">
+    <div class="card">
+      <p style="background:rgba(255,165,0,0.07);border:1px solid rgba(255,165,0,0.2);border-radius:10px;padding:12px 16px;font-size:0.88rem;color:#ffa500;margin-bottom:18px">
+        👭 اجلسا معاً – ناقشا وتوافقا على ترتيب واحد مشترك
+      </p>
+      <div class="pair-grid">
+        <div>
+          <label>👤 الطالبة الأولى</label>
+          <select id="s1"><option value="">— اختاري —</option>
+            <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+            <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+            <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+            <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+            <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+            <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+            <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+            <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option>
+            <option>فاطمه احمد</option><option>فاطمه عبدالله الدرويش</option>
+            <option>فايزه عمر فتحى محمد حسين</option><option>فجر حميد فرحان اجديع اشبيح</option>
+            <option>لطيفه يحيى الاحمد العبدالموسى</option><option>لمى كمال القادرى</option>
+            <option>لمى نجم الدين محمود حسين مرسي</option><option>مريم محمد</option>
+            <option>نور اسماعيل جمال الكسار</option>
+          </select>
+        </div>
+        <div>
+          <label>👤 الطالبة الثانية</label>
+          <select id="s2"><option value="">— اختاري —</option>
+            <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+            <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+            <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+            <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+            <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+            <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+            <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+            <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option>
+            <option>فاطمه احمد</option><option>فاطمه عبدالله الدرويش</option>
+            <option>فايزه عمر فتحى محمد حسين</option><option>فجر حميد فرحان اجديع اشبيح</option>
+            <option>لطيفه يحيى الاحمد العبدالموسى</option><option>لمى كمال القادرى</option>
+            <option>لمى نجم الدين محمود حسين مرسي</option><option>مريم محمد</option>
+            <option>نور اسماعيل جمال الكسار</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="goRank()">⚖️ ابدئا الترتيب</button>
+    </div>
+  </div>
+
+  <!-- step2: ranking -->
+  <div class="step" id="step2">
+    <div class="card">
+      <div class="instruct">
+        ✋ اسحبا البطاقات وأعيدا ترتيبها: <strong>الأهم في الأعلى، الأقل أهمية في الأسفل</strong>.<br>
+        ثم اكتبا سبب اختياركما للمرتبة الأولى والأخيرة.
+      </div>
+      <div class="rank-list" id="rankList">
+        <div class="rank-item" draggable="true" ondragstart="ds(event)" ondragover="dov(event)" ondrop="dp(event,0)" data-idx="0">
+          <div class="rank-num" id="rn0">1</div>
+          <div class="rank-content"><div class="rank-title">🔐 استخدام كلمة مرور قوية</div><div class="rank-sub">أحرف كبيرة وصغيرة + أرقام + رموز</div></div>
+          <div class="drag-handle">⠿</div>
+        </div>
+        <div class="rank-item" draggable="true" ondragstart="ds(event)" ondragover="dov(event)" ondrop="dp(event,1)" data-idx="1">
+          <div class="rank-num" id="rn1">2</div>
+          <div class="rank-content"><div class="rank-title">📧 عدم فتح رسائل مشبوهة</div><div class="rank-sub">تجنبي الروابط من مرسلين مجهولين</div></div>
+          <div class="drag-handle">⠿</div>
+        </div>
+        <div class="rank-item" draggable="true" ondragstart="ds(event)" ondragover="dov(event)" ondrop="dp(event,2)" data-idx="2">
+          <div class="rank-num" id="rn2">3</div>
+          <div class="rank-content"><div class="rank-title">🛡️ تحديث برنامج مكافحة الفيروسات</div><div class="rank-sub">تأكدي من التحديث الدوري</div></div>
+          <div class="drag-handle">⠿</div>
+        </div>
+        <div class="rank-item" draggable="true" ondragstart="ds(event)" ondragover="dov(event)" ondrop="dp(event,3)" data-idx="3">
+          <div class="rank-num" id="rn3">4</div>
+          <div class="rank-content"><div class="rank-title">🔑 عدم مشاركة كلمة المرور</div><div class="rank-sub">حتى مع الأصدقاء المقربين</div></div>
+          <div class="drag-handle">⠿</div>
+        </div>
+        <div class="rank-item" draggable="true" ondragstart="ds(event)" ondragover="dov(event)" ondrop="dp(event,4)" data-idx="4">
+          <div class="rank-num" id="rn4">5</div>
+          <div class="rank-content"><div class="rank-title">🌐 تجنب المواقع المشبوهة</div><div class="rank-sub">تلك التي تطلب كلمة مرورك</div></div>
+          <div class="drag-handle">⠿</div>
+        </div>
+        <div class="rank-item" draggable="true" ondragstart="ds(event)" ondragover="dov(event)" ondrop="dp(event,5)" data-idx="5">
+          <div class="rank-num" id="rn5">6</div>
+          <div class="rank-content"><div class="rank-title">🔄 تغيير كلمة المرور بانتظام</div><div class="rank-sub">كل فترة لضمان الحماية المستمرة</div></div>
+          <div class="drag-handle">⠿</div>
+        </div>
+      </div>
+
+      <div class="reason-block">
+        <div class="reason-label">📝 لماذا اخترتِ هذا الترتيب؟ علّلي اختيار المرتبة الأولى والأخيرة:</div>
+        <textarea id="reason" placeholder="اكتبا سبب ترتيبكما..."></textarea>
+      </div>
+      <button class="btn" onclick="submitRank()">📤 إرسال ترتيبنا</button>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div class="step" id="stepDone">
+    <div class="card done-card">
+      <div class="done-icon">🎉</div>
+      <div class="done-title">أُرسل ترتيبكما بنجاح!</div>
+      <p class="done-sub">ستشاهد المعلمة ترتيبكما مع ترتيب زميلاتكما على الشاشة<br>استعدّا لمشاركة سبب اختيارك في النقاش!</p>
+      <button class="btn" onclick="location.href='index.html'" style="margin-top:20px">← الرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+function san(n){return n.replace(/\s+/g,'_').replace(/[.#$[\]/]/g,'');}
+
+function goRank(){
+  const s1=document.getElementById('s1').value;
+  const s2=document.getElementById('s2').value;
+  if(!s1||!s2){alert('اختاري اسم الطالبتين');return;}
+  if(s1===s2){alert('اختاري اسمين مختلفين');return;}
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+}
+
+let dragSrc=null;
+function ds(e){dragSrc=e.currentTarget;e.currentTarget.classList.add('dragging');}
+function dov(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
+function dp(e,idx){
+  e.preventDefault();
+  document.querySelectorAll('.rank-item').forEach(r=>r.classList.remove('drag-over','dragging'));
+  if(dragSrc===e.currentTarget)return;
+  const list=document.getElementById('rankList');
+  const items=[...list.children];
+  const si=items.indexOf(dragSrc);
+  const di=items.indexOf(e.currentTarget);
+  if(si<di)list.insertBefore(dragSrc,e.currentTarget.nextSibling);
+  else list.insertBefore(dragSrc,e.currentTarget);
+  updateNums();
+}
+function updateNums(){
+  document.querySelectorAll('.rank-item').forEach((item,i)=>{
+    item.querySelector('.rank-num').textContent=i+1;
+  });
+}
+document.addEventListener('dragend',()=>document.querySelectorAll('.rank-item').forEach(r=>r.classList.remove('dragging','drag-over')));
+
+async function submitRank(){
+  const reason=document.getElementById('reason').value.trim();
+  if(!reason){alert('يرجى كتابة السبب');return;}
+  const s1=document.getElementById('s1').value;
+  const s2=document.getElementById('s2').value;
+  const ranking=[...document.getElementById('rankList').children].map((r,i)=>({rank:i+1,tip:r.querySelector('.rank-title').textContent}));
+  try{
+    const key=san(s1)+'_'+san(s2);
+    await fetch(`${DB}/activity2_pair/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({student1:s1,student2:s2,ranking,reason,timestamp:Date.now()})});
+    for(const nm of[s1,s2]){
+      const pr=await fetch(`${DB}/points/${san(nm)}.json`);
+      const pd=await pr.json();
+      await fetch(`${DB}/points/${san(nm)}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name:nm,points:(pd?.points||0)+50,timestamp:Date.now()})});
+    }
+  }catch(e){}
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('stepDone').classList.add('active');
+}
+</script>
+</body>
+</html>

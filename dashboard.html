@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة تحكم المعلمة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#070c18;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,#0d1a35,transparent 55%),radial-gradient(ellipse at 80% 80%,#1a0a1e,transparent 55%),#070c18;z-index:0}
+.grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:40px 40px}
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:20px;transition:all .3s}
+.back:hover{color:#fff}
+
+/* Header */
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:14px}
+.dash-title{display:flex;align-items:center;gap:14px}
+.dash-icon{font-size:2.8rem}
+.dash-text h1{font-size:1.6rem;font-weight:900;color:#fff}
+.dash-text p{color:#8a9bb5;font-size:0.88rem}
+.dash-controls{display:flex;align-items:center;gap:12px}
+.refresh-btn{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:#00d4ff;border-radius:30px;padding:8px 20px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:0.88rem;font-weight:700;transition:all .3s}
+.refresh-btn:hover{background:rgba(0,212,255,0.2)}
+.live-dot{display:flex;align-items:center;gap:6px;font-size:0.8rem;color:#00ff88}
+.dot{width:8px;height:8px;border-radius:50%;background:#00ff88;animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.last-refresh{font-size:0.75rem;color:#4a5568;margin-top:2px}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:rgba(255,255,255,0.04);border-radius:16px;padding:18px;border:1px solid rgba(255,255,255,0.08);text-align:center}
+.stat-num{font-size:2.2rem;font-weight:900;margin-bottom:4px}
+.stat-lbl{font-size:0.78rem;color:#8a9bb5}
+.s-blue{color:#00d4ff}.s-green{color:#00ff88}.s-orange{color:#ffa500}.s-pink{color:#ff6b8a}.s-gold{color:#ffd700}
+
+/* Section title */
+.sec-title{font-size:1rem;font-weight:800;color:#8a9bb5;margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06);text-transform:uppercase;letter-spacing:.5px}
+.sec-dot{width:8px;height:8px;border-radius:50%}
+
+/* Leaderboard */
+.lb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:28px}
+.lb-card{background:rgba(255,255,255,0.04);border-radius:14px;padding:14px 16px;border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:12px;transition:border-color .3s}
+.lb-card.rank1{border-color:rgba(255,215,0,0.4);background:rgba(255,215,0,0.05)}
+.lb-card.rank2{border-color:rgba(192,192,192,0.3);background:rgba(192,192,192,0.03)}
+.lb-card.rank3{border-color:rgba(205,127,50,0.3);background:rgba(205,127,50,0.03)}
+.lb-rank{min-width:32px;text-align:center;font-size:1.2rem;font-weight:900}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-size:0.88rem;font-weight:700;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-pts{font-size:0.8rem;color:#8a9bb5;margin-top:2px}
+.lb-bar-wrap{width:60px}
+.lb-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+.lb-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#00d4ff,#00ff88)}
+
+/* Activity panels */
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.act-panel{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px}
+.ap-title{font-size:0.88rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.ap-count{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);color:#00d4ff;padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700}
+.entry-row{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.82rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.entry-row:last-child{border-bottom:none}
+.entry-name{color:#00d4ff;font-weight:700;min-width:80px}
+.entry-score{background:rgba(0,255,136,0.1);border-radius:6px;padding:2px 8px;color:#00ff88;font-size:0.75rem;font-weight:700}
+.entry-level{background:rgba(255,165,0,0.1);border-radius:6px;padding:2px 8px;color:#ffa500;font-size:0.72rem}
+.entry-word{background:rgba(255,165,0,0.12);border-radius:8px;padding:4px 10px;color:#ffa500;font-weight:700;font-size:0.88rem;margin-top:4px}
+.entry-answer{color:#c4cdd8;font-size:0.8rem;flex:1;line-height:1.4}
+.empty{color:#4a5568;font-size:0.85rem;text-align:center;padding:20px;font-style:italic}
+
+/* Word cloud */
+.word-cloud{display:flex;flex-wrap:wrap;gap:8px;padding:6px 0;max-height:150px;overflow-y:auto}
+.wc-word{border-radius:20px;padding:5px 14px;font-weight:700;cursor:default;transition:transform .2s}
+.wc-word:hover{transform:scale(1.08)}
+
+/* Group scores */
+.team-scores{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.ts-card{border-radius:12px;padding:12px;text-align:center;border:1px solid}
+.ts1{border-color:rgba(255,80,80,0.3);background:rgba(255,80,80,0.08)}
+.ts2{border-color:rgba(0,212,255,0.3);background:rgba(0,212,255,0.08)}
+.ts3{border-color:rgba(255,215,0,0.3);background:rgba(255,215,0,0.08)}
+.ts4{border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.08)}
+.ts-icon{font-size:1.6rem;margin-bottom:4px}
+.ts-name{font-size:0.75rem;font-weight:700}
+.ts1 .ts-name{color:#ff5050}.ts2 .ts-name{color:#00d4ff}.ts3 .ts-name{color:#ffd700}.ts4 .ts-name{color:#00ff88}
+.ts-score{font-size:1.6rem;font-weight:900}
+.ts1 .ts-score{color:#ff5050}.ts2 .ts-score{color:#00d4ff}.ts3 .ts-score{color:#ffd700}.ts4 .ts-score{color:#00ff88}
+.winner-tag{text-align:center;padding:6px;font-size:0.85rem;font-weight:700;color:#ffd700}
+
+/* Wall preview */
+.wall-preview{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wp-col{border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);max-height:200px;overflow-y:auto}
+.wp-title{font-size:0.75rem;font-weight:700;margin-bottom:8px}
+.wp-item{font-size:0.78rem;color:#c4cdd8;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);line-height:1.4}
+.wp-item:last-child{border-bottom:none}
+.wp-author{font-size:0.7rem;color:#6b7280;margin-top:2px}
+
+/* Final */
+.final-grid{display:grid;gap:8px}
+.fq-row{background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fq-name{color:#00d4ff;font-size:0.85rem;font-weight:700;min-width:90px}
+.fq-score{font-weight:900;font-size:1rem}
+.fq-level{font-size:0.75rem;background:rgba(255,165,0,0.1);border-radius:6px;padding:2px 8px;color:#ffa500}
+
+@media(max-width:700px){.act-grid{grid-template-columns:1fr}.team-scores{grid-template-columns:1fr 1fr}.wall-preview{grid-template-columns:1fr}.lb-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grid-bg"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  
+  <div class="dash-header">
+    <div class="dash-title">
+      <div class="dash-icon">📊</div>
+      <div class="dash-text">
+        <h1>لوحة تحكم المعلمة</h1>
+        <p>البرمجيات الخبيثة والحماية الرقمية – نتائج لحظية</p>
+      </div>
+    </div>
+    <div class="dash-controls">
+      <div>
+        <div class="live-dot"><div class="dot"></div> مباشر</div>
+        <div class="last-refresh" id="lastRefresh">جاري التحميل...</div>
+      </div>
+      <button class="refresh-btn" onclick="loadAll()">🔄 تحديث</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="stat-num s-blue" id="st-warmup">—</div><div class="stat-lbl">☁️ شاركن في التمهيد</div></div>
+    <div class="stat-card"><div class="stat-num s-green" id="st-a1s">—</div><div class="stat-lbl">🔍 نشاط 1 (فردي)</div></div>
+    <div class="stat-card"><div class="stat-num s-orange" id="st-a1p">—</div><div class="stat-lbl">🕵️ نشاط 1 (ثنائي)</div></div>
+    <div class="stat-card"><div class="stat-num s-green" id="st-a2s">—</div><div class="stat-lbl">🔎 نشاط 2 (فردي)</div></div>
+    <div class="stat-card"><div class="stat-num s-pink" id="st-c1">—</div><div class="stat-lbl">🎯 غلق 1</div></div>
+    <div class="stat-card"><div class="stat-num s-pink" id="st-c2">—</div><div class="stat-lbl">🎯 غلق 2</div></div>
+    <div class="stat-card"><div class="stat-num s-gold" id="st-fq">—</div><div class="stat-lbl">🏅 التقييم الختامي</div></div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div class="sec-title"><div class="sec-dot" style="background:#ffd700"></div>🏆 لوحة المتصدرين – النقاط الكاملة</div>
+  <div class="lb-grid" id="leaderboard"><div class="empty">جاري التحميل...</div></div>
+
+  <!-- Warmup word cloud -->
+  <div class="act-grid">
+    <div class="act-panel">
+      <div class="ap-title" style="color:#ffa500">☁️ سحابة الكلمات <span class="ap-count" id="wu-count">0</span></div>
+      <div class="word-cloud" id="wordCloud"><div class="empty">لا توجد كلمات بعد</div></div>
+    </div>
+    <!-- Closure 1 -->
+    <div class="act-panel">
+      <div class="ap-title" style="color:#ff6b8a">🎯 غلق بنائي – الهدف الأول <span class="ap-count" id="c1-count">0</span></div>
+      <div id="c1Area"><div class="empty">لا توجد نتائج</div></div>
+    </div>
+  </div>
+
+  <!-- Activity 1 solo + pair -->
+  <div class="act-grid">
+    <div class="act-panel">
+      <div class="ap-title" style="color:#00d4ff">🔍 نشاط 1 فردي <span class="ap-count" id="a1s-count">0</span></div>
+      <div id="a1sArea"><div class="empty">لا توجد نتائج</div></div>
+    </div>
+    <div class="act-panel">
+      <div class="ap-title" style="color:#ffa500">🕵️ نشاط 1 ثنائي <span class="ap-count" id="a1p-count">0</span></div>
+      <div id="a1pArea"><div class="empty">لا توجد نتائج</div></div>
+    </div>
+  </div>
+
+  <!-- Group competition -->
+  <div class="act-panel" style="margin-bottom:16px">
+    <div class="ap-title" style="color:#00ff88">🏆 مسابقة الفرق – الهدف الأول</div>
+    <div class="team-scores" id="teamScores">
+      <div class="ts-card ts1"><div class="ts-icon">⚡</div><div class="ts-name">الصواعق</div><div class="ts-score" id="t1s">0</div></div>
+      <div class="ts-card ts2"><div class="ts-icon">🛡️</div><div class="ts-name">الدروع</div><div class="ts-score" id="t2s">0</div></div>
+      <div class="ts-card ts3"><div class="ts-icon">🦅</div><div class="ts-name">النسور</div><div class="ts-score" id="t3s">0</div></div>
+      <div class="ts-card ts4"><div class="ts-icon">🌟</div><div class="ts-name">الأبطال</div><div class="ts-score" id="t4s">0</div></div>
+    </div>
+    <div class="winner-tag" id="groupWinner">—</div>
+  </div>
+
+  <!-- Activity 2 solo + closure 2 -->
+  <div class="act-grid">
+    <div class="act-panel">
+      <div class="ap-title" style="color:#00ff88">🔎 نشاط 2 فردي <span class="ap-count" id="a2s-count">0</span></div>
+      <div id="a2sArea"><div class="empty">لا توجد نتائج</div></div>
+    </div>
+    <div class="act-panel">
+      <div class="ap-title" style="color:#ff6b8a">🎯 غلق بنائي – الهدف الثاني <span class="ap-count" id="c2-count">0</span></div>
+      <div id="c2Area"><div class="empty">لا توجد نتائج</div></div>
+    </div>
+  </div>
+
+  <!-- Activity 2 pair -->
+  <div class="act-panel" style="margin-bottom:16px">
+    <div class="ap-title" style="color:#ffa500">⚖️ نشاط 2 ثنائي – الأولويات <span class="ap-count" id="a2p-count">0</span></div>
+    <div id="a2pArea"><div class="empty">لا توجد نتائج</div></div>
+  </div>
+
+  <!-- Wall preview -->
+  <div class="act-panel" style="margin-bottom:16px">
+    <div class="ap-title" style="color:#00ff88">🧱 جدار الحماية الجماعي <span class="ap-count" id="wall-count">0</span></div>
+    <div class="wall-preview" id="wallPreview">
+      <div class="wp-col"><div class="wp-title" style="color:#00d4ff">🔐 كلمات المرور</div><div id="wp0"><div class="empty">فارغ</div></div></div>
+      <div class="wp-col"><div class="wp-title" style="color:#ffa500">📧 البريد</div><div id="wp1"><div class="empty">فارغ</div></div></div>
+      <div class="wp-col"><div class="wp-title" style="color:#00ff88">🌐 التصفح الآمن</div><div id="wp2"><div class="empty">فارغ</div></div></div>
+      <div class="wp-col"><div class="wp-title" style="color:#ff5050">🛡️ برامج الحماية</div><div id="wp3"><div class="empty">فارغ</div></div></div>
+    </div>
+  </div>
+
+  <!-- Final quiz -->
+  <div class="act-panel">
+    <div class="ap-title" style="color:#ffd700">🏅 التقييم الختامي الشامل <span class="ap-count" id="fq-count">0</span></div>
+    <div class="final-grid" id="fqArea"><div class="empty">لا توجد نتائج</div></div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+const COLORS=['#00d4ff','#00ff88','#ffa500','#ff6b8a','#ffd700','#a78bfa','#f97316','#06b6d4','#84cc16','#e879f9'];
+
+async function fbGet(path){
+  try{const r=await fetch(`${DB}/${path}.json`);return r.json();}catch(e){return null;}
+}
+
+function count(obj){return obj?Object.keys(obj).length:0;}
+function shortName(n){if(!n)return'—';const p=n.trim().split(/\s+/);return p.length>=2?p[0]+' '+p[1]:p[0];}
+function pts2pct(pts,max){return Math.min(100,Math.round((pts/max)*100));}
+function lvlStars(l){return l===3?'⭐⭐⭐':l===2?'⭐⭐':'⭐';}
+
+async function loadAll(){
+  const [warmup,pts,a1s,a1p,a1g,cl1,a2s,a2p,a2g,cl2,fq]=await Promise.all([
+    fbGet('warmup'),fbGet('points'),fbGet('activity1_solo'),fbGet('activity1_pair'),
+    fbGet('activity1_group'),fbGet('closure1'),fbGet('activity2_solo'),
+    fbGet('activity2_pair'),fbGet('activity2_group'),fbGet('closure2'),fbGet('final_quiz')
+  ]);
+
+  // Stats
+  document.getElementById('st-warmup').textContent=count(warmup);
+  document.getElementById('st-a1s').textContent=count(a1s);
+  document.getElementById('st-a1p').textContent=count(a1p);
+  document.getElementById('st-a2s').textContent=count(a2s);
+  document.getElementById('st-c1').textContent=count(cl1);
+  document.getElementById('st-c2').textContent=count(cl2);
+  document.getElementById('st-fq').textContent=count(fq);
+
+  // Leaderboard
+  if(pts){
+    const sorted=Object.values(pts).sort((a,b)=>b.points-a.points);
+    const max=sorted[0]?.points||1;
+    const lb=document.getElementById('leaderboard');
+    lb.innerHTML=sorted.map((s,i)=>`
+      <div class="lb-card ${i===0?'rank1':i===1?'rank2':i===2?'rank3':''}">
+        <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+        <div class="lb-info">
+          <div class="lb-name">${shortName(s.name)}</div>
+          <div class="lb-pts">${s.points} نقطة</div>
+        </div>
+        <div class="lb-bar-wrap">
+          <div class="lb-bar"><div class="lb-bar-fill" style="width:${pts2pct(s.points,max)}%"></div></div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Word cloud
+  if(warmup){
+    const words=Object.values(warmup);
+    document.getElementById('wu-count').textContent=words.length;
+    const wc=document.getElementById('wordCloud');
+    wc.innerHTML=words.map((w,i)=>`<span class="wc-word" style="background:${COLORS[i%COLORS.length]}22;border:1px solid ${COLORS[i%COLORS.length]}55;color:${COLORS[i%COLORS.length]};font-size:${0.85+Math.random()*0.4}rem">${w.word}</span>`).join('');
+  }
+
+  // A1 solo
+  renderSimple('a1sArea','a1s-count',a1s,(e)=>`
+    <div class="entry-row">
+      <span class="entry-name">${shortName(e.name)}</span>
+      <span class="entry-score">${e.score||0} نقطة</span>
+      <span class="entry-level">${lvlStars(e.level)}</span>
+    </div>`);
+
+  // A1 pair
+  renderSimple('a1pArea','a1p-count',a1p,(e)=>`
+    <div class="entry-row">
+      <span class="entry-name">${shortName(e.student1)}&amp;${shortName(e.student2)}</span>
+      <span class="entry-score">${e.score||0}%</span>
+    </div>`);
+
+  // Group
+  if(a1g){
+    document.getElementById('t1s').textContent=a1g['الصواعق']||0;
+    document.getElementById('t2s').textContent=a1g['الدروع']||0;
+    document.getElementById('t3s').textContent=a1g['النسور']||0;
+    document.getElementById('t4s').textContent=a1g['الأبطال']||0;
+    if(a1g.winner)document.getElementById('groupWinner').textContent='🏆 الفائز: فريق '+a1g.winner;
+  }
+
+  // Closure 1
+  renderSimple('c1Area','c1-count',cl1,(e)=>`
+    <div class="entry-row">
+      <span class="entry-name">${shortName(e.name)}</span>
+      <span class="entry-score">${e.score||0} نقطة</span>
+      <span class="entry-level">${lvlStars(e.level)}</span>
+    </div>`);
+
+  // A2 solo
+  renderSimple('a2sArea','a2s-count',a2s,(e)=>`
+    <div class="entry-row">
+      <span class="entry-name">${shortName(e.name)}</span>
+      <span class="entry-score">${e.score||0} نقطة</span>
+      <span class="entry-level">م${e.level||1}</span>
+    </div>`);
+
+  // A2 pair
+  renderSimple('a2pArea','a2p-count',a2p,(e)=>`
+    <div class="entry-row">
+      <span class="entry-name">${shortName(e.student1)} &amp; ${shortName(e.student2)}</span>
+      <span class="entry-answer">${e.reason?e.reason.substring(0,50)+'...':''}</span>
+    </div>`);
+
+  // Wall
+  if(a2g){
+    const cats={كلمات_المرور:0,البريد_الإلكتروني:1,التصفح_الآمن:2,برامج_الحماية:3};
+    let total=0;
+    Object.entries(cats).forEach(([cat,idx])=>{
+      const entries=a2g[cat];
+      const el=document.getElementById('wp'+idx);
+      if(!entries){el.innerHTML='<div class="empty">فارغ</div>';return;}
+      const arr=Object.values(entries);total+=arr.length;
+      el.innerHTML=arr.map(e=>`<div class="wp-item">${e.tip}<div class="wp-author">✍️ ${shortName(e.name)}</div></div>`).join('');
+    });
+    document.getElementById('wall-count').textContent=total;
+  }
+
+  // Closure 2
+  renderSimple('c2Area','c2-count',cl2,(e)=>`
+    <div class="entry-row">
+      <span class="entry-name">${shortName(e.name)}</span>
+      <span class="entry-score">${e.score||0} نقطة</span>
+      <span class="entry-level">${lvlStars(e.level)}</span>
+    </div>`);
+
+  // Final quiz
+  if(fq){
+    const arr=Object.values(fq).sort((a,b)=>b.score-a.score);
+    document.getElementById('fq-count').textContent=arr.length;
+    const fqEl=document.getElementById('fqArea');
+    fqEl.innerHTML=arr.map(e=>`
+      <div class="fq-row">
+        <span class="fq-name">${shortName(e.name)}</span>
+        <span class="fq-score" style="color:${e.score>=90?'#ffd700':e.score>=70?'#00ff88':e.score>=50?'#ffa500':'#ff6464'}">${e.score||0}</span>
+        <span class="fq-level">${lvlStars(e.level)}</span>
+        <span style="font-size:0.78rem;color:#8a9bb5">${e.correct||0}/${e.total||6} صح</span>
+      </div>`).join('');
+  }
+
+  document.getElementById('lastRefresh').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar');
+}
+
+function renderSimple(areaId,countId,data,tpl){
+  const el=document.getElementById(areaId);
+  const cnt=document.getElementById(countId);
+  if(!data){el.innerHTML='<div class="empty">لا توجد نتائج</div>';cnt.textContent=0;return;}
+  const arr=Object.values(data);
+  cnt.textContent=arr.length;
+  el.innerHTML=arr.slice(-12).reverse().map(tpl).join('');
+}
+
+loadAll();
+setInterval(loadAll,6000);
+</script>
+</body>
+</html>

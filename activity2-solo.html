@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 2 – اكتشفي الأخطاء (فردي)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#0a0f1e;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 60% 20%,#0a2010,transparent 55%),#0a0f1e;z-index:0}
+.wrap{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:25px;transition:all .3s}
+.back:hover{color:#fff}
+.header{text-align:center;margin-bottom:28px}
+.badge{display:inline-block;background:rgba(0,200,100,0.1);border:1px solid rgba(0,200,100,0.3);color:#00ff88;padding:4px 16px;border-radius:20px;font-size:0.8rem;font-weight:700;margin-bottom:12px}
+h1{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px}
+.sub{color:#8a9bb5;font-size:0.95rem}
+.step{display:none}.step.active{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(0,200,100,0.2);border-radius:20px;padding:28px}
+label{display:block;color:#00ff88;font-size:0.88rem;font-weight:700;margin-bottom:8px}
+select{width:100%;background:rgba(255,255,255,0.06);border:2px solid rgba(0,200,100,0.2);border-radius:12px;padding:12px 16px;color:#fff;font-size:0.95rem;font-family:'Tajawal',sans-serif;outline:none;margin-bottom:18px}
+select:focus{border-color:rgba(0,200,100,0.5)}
+select option{background:#1a2035}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.lvl-c{border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .3s;border:2px solid rgba(255,255,255,0.1)}
+.lvl-c:hover{transform:translateY(-2px)}
+.la{border-color:rgba(0,212,255,0.3)}.la:hover,.la.sel{border-color:#00d4ff;background:rgba(0,212,255,0.1)}
+.lb{border-color:rgba(0,200,100,0.3)}.lb:hover,.lb.sel{border-color:#00ff88;background:rgba(0,200,100,0.1)}
+.lc{border-color:rgba(255,165,0,0.3)}.lc:hover,.lc.sel{border-color:#ffa500;background:rgba(255,165,0,0.1)}
+.ls{font-size:1.4rem;margin-bottom:5px}
+.lt{font-size:0.85rem;font-weight:700}
+.la .lt{color:#00d4ff}.lb .lt{color:#00ff88}.lc .lt{color:#ffa500}
+.ld{font-size:0.73rem;color:#8a9bb5;margin-top:4px;line-height:1.4}
+.btn{width:100%;background:linear-gradient(135deg,#00c864,#007a3d);border:none;border-radius:14px;padding:14px;color:#fff;font-size:1.05rem;font-weight:800;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:14px;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,200,100,0.3)}
+
+/* Story */
+.story-box{background:rgba(0,200,100,0.05);border:2px solid rgba(0,200,100,0.2);border-radius:16px;padding:22px;margin-bottom:22px;position:relative}
+.story-title{color:#00ff88;font-size:0.85rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.story-text{font-size:1rem;line-height:2;color:#e2e8f0}
+.err-mark{background:rgba(255,80,80,0.15);border-bottom:2px solid #ff5050;border-radius:4px;padding:1px 4px;cursor:pointer;color:#ffb0b0;transition:all .2s;position:relative}
+.err-mark:hover{background:rgba(255,80,80,0.3)}
+.err-mark.found{background:rgba(0,255,136,0.15);border-bottom-color:#00ff88;color:#00ff88}
+.hint-box{background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:0.88rem;color:#00d4ff}
+.errors-found{font-size:0.88rem;color:#8a9bb5;margin-bottom:14px}
+.error-list{display:grid;gap:10px;margin-bottom:18px}
+.error-item{background:rgba(255,80,80,0.07);border:1px solid rgba(255,80,80,0.2);border-radius:12px;padding:14px}
+.ei-label{font-size:0.8rem;color:#ff6b6b;font-weight:700;margin-bottom:6px}
+.ei-err{font-size:0.9rem;color:#ffb0b0;margin-bottom:8px}
+select.correction{width:100%;background:rgba(255,255,255,0.05);border:2px solid rgba(0,200,100,0.2);border-radius:10px;padding:10px 14px;color:#fff;font-size:0.9rem;font-family:'Tajawal',sans-serif;outline:none}
+select.correction:focus{border-color:rgba(0,200,100,0.5)}
+textarea.correction-text{width:100%;background:rgba(255,255,255,0.05);border:2px solid rgba(0,200,100,0.2);border-radius:10px;padding:10px;color:#fff;font-size:0.88rem;font-family:'Tajawal',sans-serif;outline:none;resize:vertical;min-height:60px}
+.result-wrap{text-align:center;padding:10px 0}
+.r-circle{width:110px;height:110px;border-radius:50%;border:4px solid #00ff88;margin:0 auto 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,255,136,0.08)}
+.r-num{font-size:2rem;font-weight:900;color:#00ff88}
+.r-lbl{font-size:0.7rem;color:#8a9bb5}
+.r-stars{font-size:2.5rem;margin-bottom:10px}
+.r-title{font-size:1.2rem;font-weight:700;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  <div class="header">
+    <span class="badge">🔎 نشاط فردي</span>
+    <h1>اكتشفي الأخطاء</h1>
+    <p class="sub">ساعدي «ريم» في اكتشاف أخطائها وتصحيحها</p>
+  </div>
+
+  <!-- step1 -->
+  <div class="step active" id="step1">
+    <div class="card">
+      <label>👤 اختاري اسمك</label>
+      <select id="nameSelect">
+        <option value="">— اختاري اسمك —</option>
+        <option>اسيل صبرى محمد الصاوى عيسوى</option><option>الجوري رشدى راشد رشيد الدوس</option>
+        <option>ايه محمد علي عبدالحميد جوده</option><option>جنا وليد فوزي محمد عماره</option>
+        <option>حبيبه عبدالسلام محمود طه الحداد</option><option>حبيبه محمد صابر علي محمد</option>
+        <option>حليمه حسام الدين محمدطريف صدقي</option><option>خديجه احمد السلامه</option>
+        <option>راما ذياب السلامه</option><option>رتاج عمر على محمد حامد</option>
+        <option>رغد هياب احمد عبدالرحمن</option><option>رفيدة احمد محمد حامد محمد</option>
+        <option>ريحانة بكالي</option><option>شهد سيف ناصر الدرعى الكعبى</option>
+        <option>فاتحه علي</option><option>فاطمة احمد اليوسف</option>
+        <option>فاطمه احمد</option><option>فاطمه عبدالله الدرويش</option>
+        <option>فايزه عمر فتحى محمد حسين</option><option>فجر حميد فرحان اجديع اشبيح</option>
+        <option>لطيفه يحيى الاحمد العبدالموسى</option><option>لمى كمال القادرى</option>
+        <option>لمى نجم الدين محمود حسين مرسي</option><option>مريم محمد</option>
+        <option>نور اسماعيل جمال الكسار</option>
+      </select>
+      <label>🎯 اختاري مستواك</label>
+      <div class="levels">
+        <div class="lvl-c la" onclick="pickLvl(1,this)">
+          <div class="ls">⭐</div><div class="lt">دعم</div>
+          <div class="ld">الأخطاء مُرقّمة، اختاري الحل</div>
+        </div>
+        <div class="lvl-c lb" onclick="pickLvl(2,this)">
+          <div class="ls">⭐⭐</div><div class="lt">أساسي</div>
+          <div class="ld">ابحثي عن الأخطاء واكتبي التصحيح</div>
+        </div>
+        <div class="lvl-c lc" onclick="pickLvl(3,this)">
+          <div class="ls">⭐⭐⭐</div><div class="lt">إثراء</div>
+          <div class="ld">أخطاء + نصيحة إضافية ابتكارية</div>
+        </div>
+      </div>
+      <button class="btn" onclick="startActivity()">🚀 ابدئي النشاط</button>
+    </div>
+  </div>
+
+  <!-- Level 1 - guided -->
+  <div class="step" id="stepL1">
+    <div class="card">
+      <p style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:12px 16px;font-size:0.88rem;color:#00d4ff;margin-bottom:16px">
+        📌 اقرئي قصة ريم جيداً – الأخطاء مُرقّمة ومُلوّنة. اختاري التصحيح الصحيح لكل خطأ.
+      </p>
+      <div class="story-box">
+        <div class="story-title">📖 يوم ريم على الإنترنت</div>
+        <div class="story-text">
+          جلست ريم أمام حاسوبها وفتحت بريدها الإلكتروني. وصلتها رسالة من مرسل غير معروف عنوانها "جائزة مجانية!"
+          <span class="err-mark" id="e1" style="background:rgba(255,80,80,0.15);border-bottom:2px dashed #ff5050;padding:2px 6px;border-radius:4px">① ففتحت الرسالة وضغطت على الرابط المرفق</span>.
+          طُلب منها تسجيل الدخول، فكتبت
+          <span class="err-mark" id="e2" style="background:rgba(255,80,80,0.15);border-bottom:2px dashed #ff5050;padding:2px 6px;border-radius:4px">② كلمة مرورها وهي نفس كلمة المرور التي تستخدمها في كل حساباتها</span>.
+          بعدها أرادت تسجيل الدخول لمنصة التعلم بكلمة مرور سهلة وهي
+          <span class="err-mark" id="e3" style="background:rgba(255,80,80,0.15);border-bottom:2px dashed #ff5050;padding:2px 6px;border-radius:4px">③ "1234" لأنها سهلة التذكر</span>.
+          نبّهها برنامج مكافحة الفيروسات لوجود تحديث، لكنها
+          <span class="err-mark" id="e4" style="background:rgba(255,80,80,0.15);border-bottom:2px dashed #ff5050;padding:2px 6px;border-radius:4px">④ تجاهلت التحديث وأغلقت التنبيه</span>
+          لأنها كانت مستعجلة.
+        </div>
+      </div>
+
+      <div class="error-list">
+        <div class="error-item">
+          <div class="ei-label">① الخطأ الأول</div>
+          <div class="ei-err">فتحت رسالة من مرسل غير معروف وضغطت على رابط مجهول</div>
+          <label>التصحيح الصحيح:</label>
+          <select class="correction" id="c1">
+            <option value="">— اختاري —</option>
+            <option value="1">احذفي الرسالة ولا تفتحي أي روابط من مرسلين غير معروفين ✓</option>
+            <option value="0">أجيبي على الرسالة لمعرفة المرسل</option>
+            <option value="0">أرسلي الرسالة لصديقتك لتفتحها</option>
+          </select>
+        </div>
+        <div class="error-item">
+          <div class="ei-label">② الخطأ الثاني</div>
+          <div class="ei-err">استخدمت نفس كلمة المرور في كل حساباتها</div>
+          <label>التصحيح الصحيح:</label>
+          <select class="correction" id="c2">
+            <option value="">— اختاري —</option>
+            <option value="0">استخدمي كلمة مرور واحدة مميزة لكل مواقع مهمة فقط</option>
+            <option value="1">استخدمي كلمة مرور مختلفة لكل حساب لتجنب سرقة الجميع دفعة واحدة ✓</option>
+            <option value="0">اكتبي كلمة مرورك في ورقة وضعيها بجانب الحاسوب</option>
+          </select>
+        </div>
+        <div class="error-item">
+          <div class="ei-label">③ الخطأ الثالث</div>
+          <div class="ei-err">كلمة مرور "1234" بسيطة جداً</div>
+          <label>التصحيح الصحيح:</label>
+          <select class="correction" id="c3">
+            <option value="">— اختاري —</option>
+            <option value="0">استخدمي اسمك مع تاريخ ميلادك كلمة مرور</option>
+            <option value="1">أنشئي كلمة مرور قوية من أحرف كبيرة وصغيرة وأرقام ورموز ✓</option>
+            <option value="0">استخدمي رقم هاتفك كلمة مرور لأنه سهل التذكر</option>
+          </select>
+        </div>
+        <div class="error-item">
+          <div class="ei-label">④ الخطأ الرابع</div>
+          <div class="ei-err">تجاهلت تحديث برنامج مكافحة الفيروسات</div>
+          <label>التصحيح الصحيح:</label>
+          <select class="correction" id="c4">
+            <option value="">— اختاري —</option>
+            <option value="0">تجاهلي التحديثات إذا كنتِ مستعجلة وحدّثي لاحقاً عند الفراغ فقط</option>
+            <option value="0">احذفي برنامج مكافحة الفيروسات لأنه يُبطئ الجهاز</option>
+            <option value="1">تأكدي دائماً من تحديث برنامج مكافحة الفيروسات للحماية الكاملة ✓</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="submitL1()">✅ تحقق من إجاباتي</button>
+    </div>
+  </div>
+
+  <!-- Level 2 - find + write -->
+  <div class="step" id="stepL2">
+    <div class="card">
+      <p style="background:rgba(0,200,100,0.06);border:1px solid rgba(0,200,100,0.2);border-radius:10px;padding:12px 16px;font-size:0.88rem;color:#00ff88;margin-bottom:16px">
+        📌 اقرئي القصة، حدّدي الأخطاء بنفسك، ثم اكتبي التصحيح الصواب.
+      </p>
+      <div class="story-box">
+        <div class="story-title">📖 يوم ريم على الإنترنت</div>
+        <div class="story-text" style="line-height:2.2">
+          فتحت ريم بريدها وقرأت رسالة من عنوان غريب تقول "لقد فزتِ بجائزة!"، 
+          <span style="background:rgba(255,200,0,0.1);border-radius:3px;padding:1px 3px">فقرّرت فتح الرابط لمعرفة الجائزة</span>. 
+          دخلت على الموقع وكتبت 
+          <span style="background:rgba(255,200,0,0.1);border-radius:3px;padding:1px 3px">كلمة مرورها المعتادة "ريم2015" التي تستخدمها في كل مواقعها</span>. 
+          بعد ذلك أخبرت صديقتها بكلمة مرورها 
+          <span style="background:rgba(255,200,0,0.1);border-radius:3px;padding:1px 3px">حتى تتمكن من مساعدتها في تسجيل الدخول عند الحاجة</span>. 
+          جاءها إشعار بتحديث برنامج الحماية، 
+          <span style="background:rgba(255,200,0,0.1);border-radius:3px;padding:1px 3px">فأجّلته لأسبوع قادم</span>. 
+          بعدها زارت موقعاً يطلب منها 
+          <span style="background:rgba(255,200,0,0.1);border-radius:3px;padding:1px 3px">كلمة مرورها لتحميل لعبة مجانية</span>.
+        </div>
+      </div>
+      <div class="errors-found">ابحثي عن الأخطاء (5 أخطاء مُرقّمة بالألوان) واكتبي التصحيح الصحيح:</div>
+      <div class="error-list">
+        <div class="error-item"><div class="ei-label">① فتح رابط مجهول</div><textarea class="correction-text" id="fix0" placeholder="ما الصواب؟"></textarea></div>
+        <div class="error-item"><div class="ei-label">② نفس كلمة المرور في كل المواقع</div><textarea class="correction-text" id="fix1" placeholder="ما الصواب؟"></textarea></div>
+        <div class="error-item"><div class="ei-label">③ إخبار صديقتها بكلمة المرور</div><textarea class="correction-text" id="fix2" placeholder="ما الصواب؟"></textarea></div>
+        <div class="error-item"><div class="ei-label">④ تأجيل تحديث برنامج الحماية</div><textarea class="correction-text" id="fix3" placeholder="ما الصواب؟"></textarea></div>
+        <div class="error-item"><div class="ei-label">⑤ الموقع يطلب كلمة المرور لتحميل لعبة</div><textarea class="correction-text" id="fix4" placeholder="ما الصواب؟"></textarea></div>
+      </div>
+      <button class="btn" onclick="submitL2()">📤 إرسال التصحيحات</button>
+    </div>
+  </div>
+
+  <!-- Level 3 - errors + innovation -->
+  <div class="step" id="stepL3">
+    <div class="card">
+      <p style="background:rgba(255,165,0,0.06);border:1px solid rgba(255,165,0,0.2);border-radius:10px;padding:12px 16px;font-size:0.88rem;color:#ffa500;margin-bottom:16px">
+        📌 صحّحي الأخطاء، ثم أضيفي نصيحة أمان مبتكرة خاصة بك لم تُذكر في الكتاب.
+      </p>
+      <div class="story-box">
+        <div class="story-title">📖 يوم ريم على الإنترنت – النسخة الكاملة</div>
+        <div class="story-text" style="line-height:2.2">
+          فتحت ريم رسالة من "prizes@free-win.com" دون التحقق من المُرسِل، وأدخلت كلمة مرورها البسيطة "123456". 
+          تلقّت رسالة أخرى تطلب منها تأكيد هويتها عبر موقع يبدو رسمياً، فأدخلت بياناتها الشخصية. 
+          ثم استخدمت شبكة WiFi عامة في المقهى لتسجيل الدخول لحسابها المصرفي. 
+          كما شاركت صورتها الشخصية مع بياناتها الكاملة على منصة غير موثوقة.
+        </div>
+      </div>
+      <div class="error-list">
+        <div class="error-item"><div class="ei-label">① فتح بريد مشبوه وإدخال البيانات</div><textarea class="correction-text" id="a1" placeholder="التصحيح الصحيح..."></textarea></div>
+        <div class="error-item"><div class="ei-label">② كلمة مرور "123456"</div><textarea class="correction-text" id="a2" placeholder="التصحيح الصحيح..."></textarea></div>
+        <div class="error-item"><div class="ei-label">③ إدخال البيانات في موقع مشبوه</div><textarea class="correction-text" id="a3" placeholder="التصحيح الصحيح..."></textarea></div>
+        <div class="error-item"><div class="ei-label">④ الحساب المصرفي عبر WiFi عام</div><textarea class="correction-text" id="a4" placeholder="التصحيح الصحيح..."></textarea></div>
+        <div class="error-item"><div class="ei-label">⑤ مشاركة البيانات الشخصية على منصة غير موثوقة</div><textarea class="correction-text" id="a5" placeholder="التصحيح الصحيح..."></textarea></div>
+      </div>
+      <div class="error-item" style="background:rgba(255,165,0,0.07);border:1px solid rgba(255,165,0,0.25);border-radius:12px;padding:14px;margin-bottom:18px">
+        <div class="ei-label" style="color:#ffa500">⭐ نصيحتك الإضافية المبتكرة</div>
+        <div style="font-size:0.82rem;color:#8a9bb5;margin-bottom:8px">اكتبي نصيحة حماية إضافية لم تُذكر في قصة ريم</div>
+        <textarea class="correction-text" id="extra" placeholder="نصيحتي الخاصة للحماية على الإنترنت..."></textarea>
+      </div>
+      <button class="btn" style="background:linear-gradient(135deg,#ffa500,#cc6600)" onclick="submitL3()">📤 إرسال إجاباتي</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="step" id="stepResult">
+    <div class="card result-wrap">
+      <div class="r-stars" id="rStars"></div>
+      <div class="r-circle"><div class="r-num" id="rNum"></div><div class="r-lbl">نقطة</div></div>
+      <div class="r-title" id="rTitle"></div>
+      <p style="color:#8a9bb5;font-size:0.9rem;margin-bottom:20px" id="rSub"></p>
+      <button class="btn" onclick="location.href='index.html'">← الرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+function san(n){return n.replace(/\s+/g,'_').replace(/[.#$[\]/]/g,'');}
+let selLvl=0;
+function pickLvl(l,el){selLvl=l;document.querySelectorAll('.lvl-c').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');}
+function startActivity(){
+  const name=document.getElementById('nameSelect').value;
+  if(!name||!selLvl){alert('اختاري اسمك ومستواك');return;}
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById(['','stepL1','stepL2','stepL3'][selLvl]).classList.add('active');
+}
+
+async function submitL1(){
+  let score=0;
+  ['c1','c2','c3','c4'].forEach(id=>{
+    const v=document.getElementById(id).value;
+    if(v==='1')score+=25;
+  });
+  await save(score,{type:'guided',level:1});showResult(score);
+}
+async function submitL2(){
+  const fixes=['fix0','fix1','fix2','fix3','fix4'].map(id=>document.getElementById(id).value.trim());
+  if(fixes.some(f=>!f)){alert('يرجى كتابة تصحيح لكل خطأ');return;}
+  await save(100,{type:'open',level:2,fixes});showResult(100);
+}
+async function submitL3(){
+  const ans=['a1','a2','a3','a4','a5','extra'].map(id=>document.getElementById(id).value.trim());
+  if(ans.some(a=>!a)){alert('يرجى إكمال جميع الحقول');return;}
+  await save(100,{type:'advanced',level:3,answers:ans});showResult(100);
+}
+
+async function save(score,extra){
+  const name=document.getElementById('nameSelect').value;
+  const key=san(name);
+  try{
+    await fetch(`${DB}/activity2_solo/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,score,...extra,timestamp:Date.now()})});
+    const pr=await fetch(`${DB}/points/${key}.json`);
+    const pd=await pr.json();
+    await fetch(`${DB}/points/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,points:(pd?.points||0)+score,timestamp:Date.now()})});
+  }catch(e){}
+}
+function showResult(score){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('stepResult').classList.add('active');
+  const stars=score>=90?'⭐⭐⭐':score>=60?'⭐⭐':'⭐';
+  const msgs=score>=90?['ممتاز! ✨','اكتشفتِ كل الأخطاء وصحّحتِها']:score>=60?['جيد جداً 👍','راجعي أخطاء ريم مجدداً']:['حاولي مجدداً 💪','اقرئي نصائح الحماية من الكتاب'];
+  document.getElementById('rStars').textContent=stars;
+  document.getElementById('rNum').textContent=score;
+  document.getElementById('rTitle').textContent=msgs[0];
+  document.getElementById('rSub').textContent=msgs[1];
+}
+</script>
+</body>
+</html>

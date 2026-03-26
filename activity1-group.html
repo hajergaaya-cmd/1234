@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 1 – مسابقة الفرق</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:#0a0f1e;color:#fff;min-height:100vh;padding:20px}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 20%,#0d2040,transparent 60%),#0a0f1e;z-index:0}
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto}
+.back{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:8px 18px;border-radius:30px;color:#8a9bb5;font-size:0.85rem;text-decoration:none;font-family:'Tajawal',sans-serif;margin-bottom:25px;transition:all .3s}
+.back:hover{color:#fff}
+.header{text-align:center;margin-bottom:28px}
+.badge{display:inline-block;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:4px 16px;border-radius:20px;font-size:0.8rem;font-weight:700;margin-bottom:12px}
+h1{font-size:1.9rem;font-weight:900;color:#fff;margin-bottom:6px}
+.sub{color:#8a9bb5;font-size:0.95rem}
+.step{display:none}
+.step.active{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Team selection */
+.teams-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.team-card{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all .3s}
+.team-card:hover{transform:translateY(-3px)}
+.t1{border-color:rgba(255,80,80,0.3)}.t1:hover,.t1.sel{border-color:#ff5050;background:rgba(255,80,80,0.1)}
+.t2{border-color:rgba(0,212,255,0.3)}.t2:hover,.t2.sel{border-color:#00d4ff;background:rgba(0,212,255,0.1)}
+.t3{border-color:rgba(255,215,0,0.3)}.t3:hover,.t3.sel{border-color:#ffd700;background:rgba(255,215,0,0.1)}
+.t4{border-color:rgba(0,255,136,0.3)}.t4:hover,.t4.sel{border-color:#00ff88;background:rgba(0,255,136,0.1)}
+.t-icon{font-size:2.5rem;margin-bottom:8px}
+.t-name{font-size:1rem;font-weight:800}
+.t-count{font-size:0.8rem;color:#8a9bb5;margin-top:4px}
+.t1 .t-name{color:#ff5050}.t2 .t-name{color:#00d4ff}.t3 .t-name{color:#ffd700}.t4 .t-name{color:#00ff88}
+
+.btn{width:100%;background:linear-gradient(135deg,#00ff88,#008f4c);border:none;border-radius:14px;padding:14px;color:#0a0f1e;font-size:1.1rem;font-weight:900;cursor:pointer;font-family:'Tajawal',sans-serif;margin-top:14px;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,255,136,0.35)}
+
+/* Scoreboard */
+.scoreboard{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+.sb-card{border-radius:14px;padding:14px 10px;text-align:center;border:2px solid}
+.sb1{border-color:#ff5050;background:rgba(255,80,80,0.08)}.sb2{border-color:#00d4ff;background:rgba(0,212,255,0.08)}
+.sb3{border-color:#ffd700;background:rgba(255,215,0,0.08)}.sb4{border-color:#00ff88;background:rgba(0,255,136,0.08)}
+.sb-icon{font-size:1.5rem;margin-bottom:4px}
+.sb-name{font-size:0.78rem;font-weight:700;margin-bottom:6px}
+.sb1 .sb-name{color:#ff5050}.sb2 .sb-name{color:#00d4ff}.sb3 .sb-name{color:#ffd700}.sb4 .sb-name{color:#00ff88}
+.sb-score{font-size:1.8rem;font-weight:900}
+.sb1 .sb-score{color:#ff5050}.sb2 .sb-score{color:#00d4ff}.sb3 .sb-score{color:#ffd700}.sb4 .sb-score{color:#00ff88}
+
+/* Question */
+.q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.q-num-badge{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:5px 14px;border-radius:20px;font-size:0.82rem;font-weight:700}
+.timer{font-size:1.8rem;font-weight:900;color:#ffd700;min-width:40px;text-align:center}
+.timer.red{color:#ff5050;animation:pulse .5s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.q-card{background:rgba(0,255,136,0.05);border:2px solid rgba(0,255,136,0.2);border-radius:18px;padding:24px;margin-bottom:20px}
+.q-text{font-size:1.1rem;font-weight:700;color:#e2e8f0;line-height:1.7;margin-bottom:6px}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);border-radius:12px;padding:13px;cursor:pointer;font-size:0.9rem;text-align:center;transition:all .25s;font-family:'Tajawal',sans-serif;font-weight:500}
+.opt:hover{border-color:rgba(0,255,136,0.4);background:rgba(0,255,136,0.08)}
+.opt.correct{border-color:#00ff88;background:rgba(0,255,136,0.15);color:#00ff88;font-weight:700}
+.opt.wrong{border-color:#ff5050;background:rgba(255,80,80,0.1);color:#ff5050}
+.opt.disabled{pointer-events:none}
+.feedback-bar{border-radius:12px;padding:13px 18px;margin-bottom:14px;font-size:0.92rem;font-weight:600;display:none;animation:fadeUp .3s ease}
+.feedback-bar.show{display:block}
+.fb-ok{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88}
+.fb-no{background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.3);color:#ff5050}
+.pts-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;font-weight:900;color:#ffd700;text-shadow:0 0 30px rgba(255,215,0,0.7);pointer-events:none;opacity:0;transition:all .5s}
+.pts-popup.show{opacity:1;top:40%}
+
+/* Winner */
+.winner-card{text-align:center;padding:20px 10px}
+.trophy{font-size:5rem;margin-bottom:15px;animation:bounce .8s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-15px)}}
+.winner-name{font-size:2rem;font-weight:900;margin-bottom:8px}
+.final-scores{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+.fs-card{border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.1)}
+.rank-1{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.3)}
+.rank-n{background:rgba(255,255,255,0.03)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div id="ptsPopup" class="pts-popup"></div>
+<div class="wrap">
+  <a href="index.html" class="back">← الرئيسية</a>
+  <div class="header">
+    <span class="badge">🏆 نشاط جماعي</span>
+    <h1>مسابقة الفرق</h1>
+    <p class="sub">4 فرق – أسئلة متتالية – الفريق الأسرع يفوز بالنقاط!</p>
+  </div>
+
+  <!-- Step 1: pick team -->
+  <div class="step active" id="step1">
+    <div class="card" style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,255,136,0.2);border-radius:20px;padding:28px">
+      <p style="color:#00ff88;font-weight:700;margin-bottom:18px;text-align:center">🏅 اختاري فريقك</p>
+      <div class="teams-grid">
+        <div class="team-card t1" onclick="pickTeam('الصواعق','t1',this)">
+          <div class="t-icon">⚡</div><div class="t-name">الصواعق</div>
+          <div class="t-count">الفريق الأول</div>
+        </div>
+        <div class="team-card t2" onclick="pickTeam('الدروع','t2',this)">
+          <div class="t-icon">🛡️</div><div class="t-name">الدروع</div>
+          <div class="t-count">الفريق الثاني</div>
+        </div>
+        <div class="team-card t3" onclick="pickTeam('النسور','t3',this)">
+          <div class="t-icon">🦅</div><div class="t-name">النسور</div>
+          <div class="t-count">الفريق الثالث</div>
+        </div>
+        <div class="team-card t4" onclick="pickTeam('الأبطال','t4',this)">
+          <div class="t-icon">🌟</div><div class="t-name">الأبطال</div>
+          <div class="t-count">الفريق الرابع</div>
+        </div>
+      </div>
+      <button class="btn" onclick="startGame()">🚀 ابدأي المسابقة</button>
+    </div>
+  </div>
+
+  <!-- Step 2: game -->
+  <div class="step" id="step2">
+    <div class="scoreboard" id="scoreboard">
+      <div class="sb-card sb1"><div class="sb-icon">⚡</div><div class="sb-name">الصواعق</div><div class="sb-score" id="sc0">0</div></div>
+      <div class="sb-card sb2"><div class="sb-icon">🛡️</div><div class="sb-name">الدروع</div><div class="sb-score" id="sc1">0</div></div>
+      <div class="sb-card sb3"><div class="sb-icon">🦅</div><div class="sb-name">النسور</div><div class="sb-score" id="sc2">0</div></div>
+      <div class="sb-card sb4"><div class="sb-icon">🌟</div><div class="sb-name">الأبطال</div><div class="sb-score" id="sc3">0</div></div>
+    </div>
+    <div class="q-header">
+      <div class="q-num-badge" id="qNumBadge">السؤال 1/8</div>
+      <div class="timer" id="timerEl">20</div>
+    </div>
+    <div class="q-card">
+      <div class="q-text" id="qText"></div>
+    </div>
+    <div class="opts-grid" id="optsArea"></div>
+    <div class="feedback-bar" id="fbBar"></div>
+  </div>
+
+  <!-- Winner -->
+  <div class="step" id="stepWinner">
+    <div class="card" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,215,0,0.3);border-radius:20px;padding:28px">
+      <div class="winner-card">
+        <div class="trophy">🏆</div>
+        <div class="winner-name" id="winnerName" style="color:#ffd700"></div>
+        <p style="color:#8a9bb5;margin-bottom:20px">يتصدر الترتيب في هذا النشاط</p>
+        <div class="final-scores" id="finalScores"></div>
+        <button class="btn" onclick="location.href='index.html'" style="margin-top:20px">← العودة للرئيسية</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB="https://cyber-safety-class-default-rtdb.firebaseio.com";
+const qs=[
+  {q:"ما البرمجية التي تشبه البرامج العادية لكنها مصممة لسرقة البيانات؟",opts:["أحصنة طروادة","الديدان","برمجيات التجسس","البرمجيات الدعائية"],ans:0},
+  {q:"تنسخ نفسها وتنتشر في الحواسيب عبر الشبكة تلقائياً دون تدخل المستخدم. ما اسمها؟",opts:["البرمجيات الدعائية","أحصنة طروادة","الديدان","برمجيات التجسس"],ans:2},
+  {q:"أي برمجية تجمع معلوماتك سراً وهي صعبة جداً على الاكتشاف؟",opts:["الديدان","برمجيات التجسس","أحصنة طروادة","البرمجيات الدعائية"],ans:1},
+  {q:"تعرض إعلانات منبثقة في واجهة برامجك دون إذنك. ما اسمها؟",opts:["برمجيات التجسس","الديدان","البرمجيات الدعائية","أحصنة طروادة"],ans:2},
+  {q:"أي من البرمجيات التالية لا تستنسخ نفسها لكنها تسرق البيانات؟",opts:["الديدان","أحصنة طروادة","البرمجيات الدعائية","برمجيات التجسس"],ans:1},
+  {q:"ما الهدف الرئيسي من برمجيات Spyware؟",opts:["نشر الإعلانات","سرقة البيانات وتجميع المعلومات","الانتشار عبر الشبكة","فتح باب خلفي للقراصنة"],ans:1},
+  {q:"أي البرمجيات يستغل الثغرات الأمنية للانتشار وقد يدمّر الملفات؟",opts:["البرمجيات الدعائية","برمجيات التجسس","أحصنة طروادة","الديدان"],ans:3},
+  {q:"ما وجه الشبه بين أحصنة طروادة والديدان؟",opts:["كلاهما ينتشر تلقائياً","كلاهما برامج خبيثة تضر بالحاسوب","كلاهما يعرض إعلانات","كلاهما مرئيان للمستخدم"],ans:1}
+];
+
+const teamNames=["الصواعق","الدروع","النسور","الأبطال"];
+const teamClasses=["t1","t2","t3","t4"];
+const scores=[0,0,0,0];
+let myTeam=-1, myTeamName='', qIdx=0, timerVal=20, timerInt=null, answered=false;
+
+function pickTeam(name,cls,el){
+  myTeamName=name;
+  myTeam=teamNames.indexOf(name);
+  document.querySelectorAll('.team-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function startGame(){
+  if(myTeam<0){alert('اختاري فريقك أولاً');return;}
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+  loadQ();
+}
+
+function loadQ(){
+  if(qIdx>=qs.length){endGame();return;}
+  answered=false;
+  const q=qs[qIdx];
+  document.getElementById('qNumBadge').textContent=`السؤال ${qIdx+1}/${qs.length}`;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('fbBar').className='feedback-bar';
+  const area=document.getElementById('optsArea');
+  area.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const d=document.createElement('div');
+    d.className='opt';d.textContent=o;
+    d.onclick=()=>checkAns(i,q.ans,q);
+    area.appendChild(d);
+  });
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerInt);timerVal=20;
+  updateTimer();
+  timerInt=setInterval(()=>{
+    timerVal--;updateTimer();
+    if(timerVal<=0){clearInterval(timerInt);if(!answered)timeUp();}
+  },1000);
+}
+
+function updateTimer(){
+  const el=document.getElementById('timerEl');
+  el.textContent=timerVal;
+  el.classList.toggle('red',timerVal<=5);
+}
+
+function checkAns(chosen,correct,q){
+  if(answered)return;
+  answered=true;
+  clearInterval(timerInt);
+  document.querySelectorAll('.opt').forEach((o,i)=>{
+    o.classList.add('disabled');
+    if(i===correct)o.classList.add('correct');
+    else if(i===chosen)o.classList.add('wrong');
+  });
+  const fb=document.getElementById('fbBar');
+  if(chosen===correct){
+    const pts=Math.max(10,timerVal*5);
+    scores[myTeam]+=pts;
+    updateScores();
+    fb.className='feedback-bar show fb-ok';
+    fb.textContent=`✅ إجابة صحيحة! +${pts} نقطة لفريق ${myTeamName} 🎉`;
+    showPts('+'+pts);
+  }else{
+    fb.className='feedback-bar show fb-no';
+    fb.textContent='❌ إجابة خاطئة – الصواب: '+q.opts[correct];
+  }
+  setTimeout(()=>{qIdx++;loadQ();},2200);
+}
+
+function timeUp(){
+  answered=true;
+  document.querySelectorAll('.opt').forEach((o,i)=>{
+    o.classList.add('disabled');
+    if(i===qs[qIdx].ans)o.classList.add('correct');
+  });
+  const fb=document.getElementById('fbBar');
+  fb.className='feedback-bar show fb-no';
+  fb.textContent='⏰ انتهى الوقت! الصواب: '+qs[qIdx].opts[qs[qIdx].ans];
+  setTimeout(()=>{qIdx++;loadQ();},2200);
+}
+
+function updateScores(){
+  [0,1,2,3].forEach(i=>document.getElementById('sc'+i).textContent=scores[i]);
+}
+
+function showPts(txt){
+  const el=document.getElementById('ptsPopup');
+  el.textContent=txt;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),1200);
+}
+
+async function endGame(){
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('stepWinner').classList.add('active');
+  const maxScore=Math.max(...scores);
+  const winIdx=scores.indexOf(maxScore);
+  document.getElementById('winnerName').textContent='🏆 فريق '+teamNames[winIdx];
+  const fs=document.getElementById('finalScores');
+  const sorted=[...scores.map((s,i)=>({s,i}))].sort((a,b)=>b.s-a.s);
+  fs.innerHTML=sorted.map((x,rank)=>`
+    <div class="${rank===0?'fs-card rank-1':'fs-card rank-n'}">
+      <div style="font-size:1.5rem">${rank===0?'🥇':rank===1?'🥈':rank===2?'🥉':'4️⃣'}</div>
+      <div style="font-size:0.85rem;font-weight:700;margin:4px 0">${teamNames[x.i]}</div>
+      <div style="font-size:1.4rem;font-weight:900;color:${rank===0?'#ffd700':'#8a9bb5'}">${x.s}</div>
+    </div>`).join('');
+  try{
+    await fetch(`${DB}/activity1_group.json`,{method:'PUT',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        الصواعق:scores[0],الدروع:scores[1],النسور:scores[2],الأبطال:scores[3],
+        winner:teamNames[winIdx],timestamp:Date.now()
+      })});
+  }catch(e){}
+}
+
+// Sync scores from Firebase every 8s
+async function syncScores(){
+  try{
+    const r=await fetch(`${DB}/activity1_group.json`);
+    const d=await r.json();
+    if(d){
+      const map={الصواعق:0,الدروع:1,النسور:2,الأبطال:3};
+      Object.keys(map).forEach(t=>{if(d[t]!==undefined)scores[map[t]]=d[t];});
+      updateScores();
+    }
+  }catch(e){}
+}
+setInterval(syncScores,8000);
+</script>
+</body>
+</html>
