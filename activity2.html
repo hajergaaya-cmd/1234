@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 2 — المواقع المشبوهة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a1628;--card:#1a1030;--border:#2a1a50;--pu:#7c4dff;--pu-l:#a67cff;--gold:#f0a500;--red:#e74c3c;--green:#27ae60;--white:#f0f4f8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
+header{background:linear-gradient(135deg,#1a0a3a,#7c4dff22);border-bottom:2px solid var(--pu);padding:18px 28px;display:flex;align-items:center;gap:14px}
+.hi{font-size:2.2rem}.ht{font-size:1.5rem;font-weight:800;color:var(--pu-l)}.hs{font-size:.9rem;color:#8ab4cc;margin-top:2px}
+.badge{margin-right:auto;background:var(--pu);color:#fff;padding:5px 16px;border-radius:20px;font-weight:700;font-size:.88rem}
+main{max-width:800px;margin:0 auto;padding:26px 18px 60px}
+.slbl{display:flex;align-items:center;gap:10px;margin:28px 0 14px}
+.slbl .n{background:var(--pu);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.95rem;flex-shrink:0}
+.slbl h2{font-size:1.15rem;font-weight:700;color:var(--pu-l)}
+.intro{background:var(--card);border:1px solid var(--border);border-right:4px solid var(--pu-l);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:1rem;line-height:1.9}
+.nm{color:var(--pu-l);font-weight:800}
+.scene{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
+.scene.show{opacity:1;transform:translateY(0)}
+.sh{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#1a0a3a;border-bottom:1px solid var(--border)}
+.sn{background:var(--pu);color:#fff;font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:10px}
+.st{font-weight:700;color:#c4a0ff;font-size:.97rem}
+.sb{padding:14px 18px;font-size:.97rem;line-height:1.9;color:#d4e8f5}
+.btn{display:block;margin:16px auto 0;background:var(--pu);color:#fff;border:none;padding:9px 28px;border-radius:22px;font-family:'Tajawal',sans-serif;font-size:.97rem;font-weight:700;cursor:pointer;transition:background .2s}
+.btn:hover{background:var(--pu-l)}.btn:disabled{background:#2a1a4a;color:#6a5a9a;cursor:default}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
+.qt{font-size:1rem;font-weight:700;margin-bottom:14px;color:var(--gold)}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:flex-start;gap:11px;background:#0e0a2a;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.95rem;line-height:1.7}
+.opt:hover{border-color:var(--pu);background:#1a0a3a}
+.opt input{margin-top:3px;accent-color:var(--pu);flex-shrink:0;width:15px;height:15px}
+.opt.ok{border-color:var(--green)!important;background:#0e3020!important}
+.opt.no{border-color:var(--red)!important;background:#2a1010!important}
+.fb{margin-top:10px;padding:9px 14px;border-radius:8px;font-size:.92rem;font-weight:600;display:none}
+.fb.show{display:block}.fb.g{background:#0e3020;color:#4fd37a;border:1px solid var(--green)}.fb.b{background:#2a1010;color:#f07070;border:1px solid var(--red)}
+.tips-box{display:none;background:#0e0a2a;border:1.5px solid var(--pu);border-radius:14px;padding:20px;animation:fi .6s ease}
+.tips-box.show{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.tip-unlock{background:#1a0a3a;border:1.5px solid var(--green);border-radius:12px;padding:13px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;font-size:.97rem;line-height:1.8}
+.tip-unlock:last-child{margin-bottom:0}
+.ticon{font-size:1.6rem;flex-shrink:0}
+.tlbl{font-size:.78rem;color:#8ab4cc;margin-bottom:3px;font-weight:700}
+.ttext{color:#4fd37a;font-weight:700}
+.send-box{display:none;background:var(--card);border:1.5px solid var(--gold);border-radius:12px;padding:20px;margin-top:8px;animation:fi .6s ease}
+.send-box.show{display:block}
+.sinp{width:100%;background:#0e0a2a;border:1.5px solid var(--border);border-radius:9px;color:var(--white);font-family:'Tajawal',sans-serif;font-size:1rem;padding:11px 14px;direction:rtl;margin-top:6px;transition:border-color .2s}
+.sinp:focus{outline:none;border-color:var(--pu)}
+.sbtn{display:block;width:100%;margin-top:14px;background:linear-gradient(135deg,var(--green),#1a7a3a);color:#fff;border:none;padding:14px;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s}
+.sbtn:hover{opacity:.9}.sbtn:disabled{background:#1a3a1a;color:#3a6a3a;cursor:default}
+.suc{display:none;margin-top:12px;background:#0e3020;border:1.5px solid var(--green);border-radius:11px;padding:16px;text-align:center;color:#4fd37a;font-size:1rem;font-weight:700;animation:fi .5s ease}
+.suc.show{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="hi">🌐</div>
+  <div><div class="ht">السيناريو 2 — المواقع المشبوهة</div><div class="hs">فريق الحماة | الصف السابع</div></div>
+  <div class="badge">المجموعة الثانية</div>
+</header>
+<main>
+  <div class="slbl"><div class="n">١</div><h2>اقرئي القصة</h2></div>
+  <div class="intro">تعرّف على <span class="nm">خالد 👦</span> — يجلس أمام حاسوبه يبحث عن فيلم كرتوني. ماذا سيحدث معه؟</div>
+  <div class="scene" id="s1">
+    <div class="sh"><span class="sn">المشهد الأول</span><span class="st">رابط مغرٍ! 🎬</span></div>
+    <div class="sb">يبحث خالد عن فيلم كرتوني، فيجد رابطًا: <strong>"شاهد أحدث الأفلام مجانًا وبدون إعلانات!"</strong><br>دون تفكير، يضغط على الرابط. 🖱️</div>
+  </div>
+  <div class="scene" id="s2">
+    <div class="sh"><span class="sn">المشهد الثاني</span><span class="st">تحذير غريب! ⚠️</span></div>
+    <div class="sb">يطلب الموقع <strong>تحميل برنامج</strong> لتشغيل الفيلم. يضغط خالد على "تحميل"، ويظهر <strong>تحذير غريب</strong>...<br>لكنه يتجاهله ويكمل التثبيت! 😬</div>
+  </div>
+  <div class="scene" id="s3">
+    <div class="sh"><span class="sn">المشهد الثالث</span><span class="st">الكارثة! 💀</span></div>
+    <div class="sb">بعد دقائق يبدأ الحاسوب بالتباطؤ، وتظهر نوافذ منبثقة مزعجة.<br>فجأة يتجمد الجهاز ويظهر: <strong>"تم اختراق جهازك!"</strong> 🚨</div>
+  </div>
+  <button class="btn" id="revBtn" onclick="revealNext()">▶ اضغطي لعرض المشاهد</button>
+
+  <div class="slbl"><div class="n">٢</div><h2>حللي وأجيبي</h2></div>
+  <div class="qcard">
+    <div class="qt">السؤال الأول: ما الخطأ الأول الذي ارتكبه خالد؟</div>
+    <div class="opts" id="q1">
+      <label class="opt"><input type="radio" name="q1" value="a" onchange="checkQ(1,'b')"><span>أ) بحث عن أفلام كرتونية</span></label>
+      <label class="opt"><input type="radio" name="q1" value="b" onchange="checkQ(1,'b')"><span>ب) ضغط على رابط مشبوه دون التحقق منه</span></label>
+      <label class="opt"><input type="radio" name="q1" value="c" onchange="checkQ(1,'b')"><span>ج) فتح الحاسوب في المساء</span></label>
+    </div>
+    <div class="fb" id="fb1"></div>
+  </div>
+  <div class="qcard">
+    <div class="qt">السؤال الثاني: ماذا كان يجب أن يفعل خالد حين ظهر التحذير؟</div>
+    <div class="opts" id="q2">
+      <label class="opt"><input type="radio" name="q2" value="a" onchange="checkQ(2,'a')"><span>أ) يغلق النافذة فورًا ولا يكمل التحميل</span></label>
+      <label class="opt"><input type="radio" name="q2" value="b" onchange="checkQ(2,'a')"><span>ب) يكتب اسمه وكلمة مروره</span></label>
+      <label class="opt"><input type="radio" name="q2" value="c" onchange="checkQ(2,'a')"><span>ج) يتجاهل التحذير ويكمل</span></label>
+    </div>
+    <div class="fb" id="fb2"></div>
+  </div>
+  <div class="qcard">
+    <div class="qt">السؤال الثالث: البرنامج الذي حمّله خالد وأضر بجهازه يُسمى:</div>
+    <div class="opts" id="q3">
+      <label class="opt"><input type="radio" name="q3" value="a" onchange="checkQ(3,'c')"><span>أ) برنامج مكافحة فيروسات</span></label>
+      <label class="opt"><input type="radio" name="q3" value="b" onchange="checkQ(3,'c')"><span>ب) برنامج تشغيل الأفلام</span></label>
+      <label class="opt"><input type="radio" name="q3" value="c" onchange="checkQ(3,'c')"><span>ج) برنامج خبيث (Malware)</span></label>
+    </div>
+    <div class="fb" id="fb3"></div>
+  </div>
+
+  <div class="slbl"><div class="n">٣</div><h2>النصائح التي اكتشفتِها 🔓</h2></div>
+  <div class="tips-box" id="tipsBox">
+    <div style="color:var(--pu-l);font-size:1rem;font-weight:800;margin-bottom:14px">🛡️ مجموعتك اكتشفت هاتين النصيحتين!</div>
+    <div class="tip-unlock">
+      <span class="ticon">🔓</span>
+      <div><div class="tlbl">النصيحة الأولى</div><div class="ttext">لا تزوري مواقع الويب المشبوهة التي تطلب منكِ تزويدها بكلمة المرور أو تحميل برامج.</div></div>
+    </div>
+    <div class="tip-unlock">
+      <span class="ticon">🔓</span>
+      <div><div class="tlbl">النصيحة الثانية</div><div class="ttext">تأكدي من تحديث برنامج مكافحة الفيروسات على حاسوبكِ باستمرار.</div></div>
+    </div>
+  </div>
+
+  <div class="slbl"><div class="n">٤</div><h2>أرسلي نصائحك للصفحة المشتركة 🌐</h2></div>
+  <div class="send-box" id="sendBox">
+    <div style="color:#a8d0e6;font-size:.97rem;margin-bottom:4px">اكتبي اسمكِ ثم أرسلي النصيحتين للصفحة المشتركة</div>
+    <input type="text" class="sinp" id="sname" placeholder="اكتبي اسمكِ الكامل...">
+    <button class="sbtn" id="sbtn" onclick="sendTips()">📤 أرسلي نصائحك للصفحة المشتركة</button>
+    <div class="suc" id="suc">✅ تم الإرسال! نصائحك تظهر الآن على الصفحة المشتركة 🎉</div>
+  </div>
+</main>
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const TIPS=['لا تزوري مواقع الويب المشبوهة التي تطلب منكِ تزويدها بكلمة المرور أو تحميل برامج.','تأكدي من تحديث برنامج مكافحة الفيروسات على حاسوبكِ باستمرار.'];
+let step=0,ans={1:false,2:false,3:false};
+window.onload=()=>setTimeout(()=>{document.getElementById('s1').classList.add('show');step=1;},300);
+function revealNext(){
+  const ids=['s1','s2','s3'];
+  if(step<ids.length){document.getElementById(ids[step]).classList.add('show');step++;}
+  if(step===ids.length){document.getElementById('revBtn').textContent='✅ تم عرض القصة';document.getElementById('revBtn').disabled=true;}
+}
+function checkQ(n,c){
+  const sel=document.querySelector(`input[name="q${n}"]:checked`);if(!sel)return;
+  document.querySelectorAll(`#q${n} .opt`).forEach(o=>{
+    o.classList.remove('ok','no');
+    if(o.querySelector('input').value===c)o.classList.add('ok');
+    else if(o.querySelector('input').checked)o.classList.add('no');
+  });
+  const fb=document.getElementById(`fb${n}`);
+  if(sel.value===c){fb.textContent='✅ إجابة صحيحة!';fb.className='fb show g';ans[n]=true;}
+  else{fb.textContent='❌ راجعي إجابتكِ — الجواب الصحيح باللون الأخضر.';fb.className='fb show b';}
+  if(Object.values(ans).every(v=>v)){document.getElementById('tipsBox').classList.add('show');document.getElementById('sendBox').classList.add('show');}
+}
+async function sendTips(){
+  const name=document.getElementById('sname').value.trim();
+  if(!name){alert('من فضلكِ اكتبي اسمكِ أولاً');return;}
+  const btn=document.getElementById('sbtn');btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';
+  try{
+    await fetch(`${DB}/tips/group2.json`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,tip1:TIPS[0],tip2:TIPS[1],group:'المجموعة الثانية 🌐',scenario:'المواقع المشبوهة',time:new Date().toLocaleTimeString('ar-QA')})});
+    document.getElementById('suc').classList.add('show');btn.style.display='none';
+  }catch(e){btn.disabled=false;btn.textContent='📤 أرسلي نصائحك للصفحة المشتركة';alert('حدث خطأ، حاولي مرة أخرى');}
+}
+</script>
+</body>
+</html>
