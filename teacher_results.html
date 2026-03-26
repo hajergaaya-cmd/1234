@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — النتائج الحية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03080f;--card:#0a1628;--card2:#0e1e34;--border:#1a3050;--teal:#0e8f8f;--teal-l:#13b8b8;--gold:#f0c030;--red:#e74c3c;--green:#27ae60;--white:#eef4ff;--pu:#7c4dff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#06101e,#0e8f8f15,#7c4dff10);border-bottom:2px solid #1a3a5a;padding:16px 28px;display:flex;align-items:center;gap:14px}
+.h-logo{font-size:2rem}
+.h-title{font-size:1.4rem;font-weight:800;color:var(--teal-l)}
+.h-sub{font-size:.82rem;color:#6a8aaa;margin-top:2px}
+.live-badge{margin-right:auto;display:flex;align-items:center;gap:6px;background:#0a1e0e;border:1px solid var(--green);border-radius:20px;padding:5px 14px;font-size:.82rem;color:#4fd37a;font-weight:700}
+.live-dot{width:8px;height:8px;background:#4fd37a;border-radius:50%;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* STATS ROW */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px 24px;max-width:1100px;margin:0 auto}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.stat .val{font-size:2rem;font-weight:800;line-height:1}
+.stat .lbl{font-size:.78rem;color:#6a8aaa;margin-top:4px}
+.s-total .val{color:var(--teal-l)}
+.s-full .val{color:var(--gold)}
+.s-part .val{color:#a0c0ff}
+.s-zero .val{color:var(--red)}
+
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 340px;gap:16px;padding:0 24px 40px;max-width:1100px;margin:0 auto}
+
+/* RESULTS TABLE */
+.table-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.tc-header{padding:14px 18px;background:#071428;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.tc-title{font-size:1rem;font-weight:800;color:var(--teal-l);display:flex;align-items:center;gap:8px}
+.clear-btn{background:transparent;border:1px solid #2a4a6a;color:#4a6a8a;padding:5px 14px;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s}
+.clear-btn:hover{border-color:var(--red);color:var(--red)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#071428;padding:11px 14px;text-align:right;font-size:.82rem;color:#6a8aaa;font-weight:700;border-bottom:1px solid var(--border)}
+td{padding:12px 14px;font-size:.92rem;border-bottom:1px solid #0e1e30;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#0a1e32}
+.rank-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+.r1{background:var(--gold);color:#0a0a0a}
+.r2{background:#c0c0c0;color:#0a0a0a}
+.r3{background:#cd7f32;color:#fff}
+.rn{background:#1a3050;color:#6a8aaa}
+.score-bar-wrap{display:flex;align-items:center;gap:8px}
+.score-bar{height:7px;background:#1a3050;border-radius:4px;flex:1;overflow:hidden}
+.score-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.s3{background:var(--gold)}.s2{background:var(--teal-l)}.s1{background:#a0c0ff}.s0{background:var(--red)}
+.score-num{font-weight:800;font-size:.88rem;min-width:30px}
+.sn3{color:var(--gold)}.sn2{color:var(--teal-l)}.sn1{color:#a0c0ff}.sn0{color:var(--red)}
+.time-tag{font-size:.78rem;color:#4a6a8a}
+.name-cell{font-weight:700}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;gap:14px}
+
+/* WINNER CARD */
+.winner-card{background:linear-gradient(135deg,#1a1000,#2a1a00);border:2px solid var(--gold);border-radius:14px;padding:20px;text-align:center;animation:glowPulse 2s infinite;display:none}
+.winner-card.show{display:block}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 10px #f0c03040}50%{box-shadow:0 0 25px #f0c03080}}
+.crown{font-size:3rem;animation:bounce 1s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.w-label{font-size:.78rem;color:#c0a030;margin:6px 0 3px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.w-name{font-size:1.4rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.w-score{font-size:.9rem;color:#c0a030}
+.confetti-row{font-size:1.3rem;letter-spacing:4px;margin-top:8px}
+
+/* WAITING CARD */
+.waiting-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;display:none}
+.waiting-card.show{display:block}
+.w-icon{font-size:2.5rem;margin-bottom:8px;animation:spin 3s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.w-msg{font-size:.95rem;color:#6a8aaa}
+
+/* PROGRESS CARD */
+.progress-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.pc-title{font-size:.9rem;font-weight:700;color:var(--teal-l);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.pc-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:.85rem}
+.pc-bar{height:6px;background:#1a3050;border-radius:3px;margin-top:4px;overflow:hidden}
+.pc-fill{height:100%;border-radius:3px;background:var(--gold);transition:width .5s}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:50px 20px;color:#3a5a7a}
+.empty-state .ei{font-size:3rem;margin-bottom:10px}
+
+/* ENTRY ANIMATION */
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.new-row{animation:slideIn .4s ease}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-logo">📊</div>
+  <div>
+    <div class="h-title">شاشة المعلمة — الغلق الختامي</div>
+    <div class="h-sub">طرق الحماية عند استخدام شبكة الإنترنت | نتائج حية</div>
+  </div>
+  <div class="live-badge"><span class="live-dot"></span>مباشر</div>
+</header>
+
+<div class="stats" id="statsRow">
+  <div class="stat s-total"><div class="val" id="totalCount">0</div><div class="lbl">👥 عدد المشاركات</div></div>
+  <div class="stat s-full"><div class="val" id="fullScore">0</div><div class="lbl">🏆 علامة كاملة 3/3</div></div>
+  <div class="stat s-part"><div class="val" id="partScore">0</div><div class="lbl">⭐ إجابتان صحيحتان</div></div>
+  <div class="stat s-zero"><div class="val" id="lowScore">0</div><div class="lbl">💪 إجابة أو أقل</div></div>
+</div>
+
+<div class="main-grid">
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="tc-header">
+      <div class="tc-title">📋 نتائج الطالبات</div>
+      <button class="clear-btn" onclick="clearResults()">🗑️ مسح النتائج</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:46px">#</th>
+            <th>اسم الطالبة</th>
+            <th>النتيجة</th>
+            <th>س١</th><th>س٢</th><th>س٣</th>
+            <th>الوقت</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody">
+          <tr><td colspan="7"><div class="empty-state"><div class="ei">⏳</div><p>في انتظار إجابات الطالبات...</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <!-- WAITING -->
+    <div class="waiting-card show" id="waitingCard">
+      <div class="w-icon">🔄</div>
+      <div class="w-msg">في انتظار إجابات الطالبات...<br>يتحدث كل 4 ثوانٍ</div>
+    </div>
+
+    <!-- WINNER -->
+    <div class="winner-card" id="winnerCard">
+      <div class="crown">👑</div>
+      <div class="w-label">المتصدرة</div>
+      <div class="w-name" id="winnerName">—</div>
+      <div class="w-score" id="winnerScore"></div>
+      <div class="confetti-row">🎉 🌟 🎊 🌟 🎉</div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-card">
+      <div class="pc-title">📈 توزيع النتائج</div>
+      <div class="pc-row"><span>🏆 كاملة (3/3)</span><span id="pct3">0%</span></div>
+      <div class="pc-bar"><div class="pc-fill" id="bar3" style="width:0%;background:var(--gold)"></div></div>
+      <div style="margin-top:8px"></div>
+      <div class="pc-row"><span>⭐ جيد (2/3)</span><span id="pct2">0%</span></div>
+      <div class="pc-bar"><div class="pc-fill" id="bar2" style="width:0%;background:var(--teal-l)"></div></div>
+      <div style="margin-top:8px"></div>
+      <div class="pc-row"><span>💪 ضعيف (1/3 أو أقل)</span><span id="pct1">0%</span></div>
+      <div class="pc-bar"><div class="pc-fill" id="bar1" style="width:0%;background:var(--red)"></div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const ANS_ICONS=['أ','ب','ج'];
+let lastCount=0;
+
+async function fetchResults(){
+  try{
+    const res=await fetch(`${DB}/quiz_results.json`);
+    if(!res.ok)return;
+    const data=await res.json();
+    if(!data){renderEmpty();return;}
+    const entries=Object.values(data).sort((a,b)=>(b.score-a.score)||(a.time?.localeCompare(b.time)||0));
+    renderTable(entries);
+    renderStats(entries);
+    renderWinner(entries);
+    if(entries.length!==lastCount){lastCount=entries.length;}
+  }catch(e){}
+}
+
+function renderEmpty(){
+  document.getElementById('resultsBody').innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="ei">⏳</div><p>في انتظار إجابات الطالبات...</p></div></td></tr>`;
+  document.getElementById('totalCount').textContent='0';
+  document.getElementById('fullScore').textContent='0';
+  document.getElementById('partScore').textContent='0';
+  document.getElementById('lowScore').textContent='0';
+  document.getElementById('winnerCard').classList.remove('show');
+  document.getElementById('waitingCard').classList.add('show');
+  ['bar3','bar2','bar1'].forEach(b=>document.getElementById(b).style.width='0%');
+  ['pct3','pct2','pct1'].forEach(p=>document.getElementById(p).textContent='0%');
+}
+
+function renderTable(entries){
+  if(!entries.length){renderEmpty();return;}
+  document.getElementById('waitingCard').classList.remove('show');
+  const ARABIC_NUMS=['١','٢','٣'];
+  document.getElementById('resultsBody').innerHTML=entries.map((e,i)=>{
+    const rankClass=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+    const rankSymbol=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+    const sClass=`s${e.score}`;
+    const snClass=`sn${e.score}`;
+    const barW=Math.round((e.score/3)*100);
+    const ans=e.answers||[0,0,0];
+    return `<tr class="${i<lastCount?'':'new-row'}">
+      <td><div class="rank-badge ${rankClass}">${rankSymbol}</div></td>
+      <td class="name-cell">${e.name||'—'}</td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar"><div class="score-fill ${sClass}" style="width:${barW}%"></div></div>
+          <span class="score-num ${snClass}">${e.score}/3</span>
+        </div>
+      </td>
+      <td>${ans[0]?'✅':'❌'}</td>
+      <td>${ans[1]?'✅':'❌'}</td>
+      <td>${ans[2]?'✅':'❌'}</td>
+      <td class="time-tag">${e.time||''}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStats(entries){
+  const total=entries.length;
+  const full=entries.filter(e=>e.score===3).length;
+  const part=entries.filter(e=>e.score===2).length;
+  const low=entries.filter(e=>e.score<=1).length;
+  document.getElementById('totalCount').textContent=total;
+  document.getElementById('fullScore').textContent=full;
+  document.getElementById('partScore').textContent=part;
+  document.getElementById('lowScore').textContent=low;
+  if(total>0){
+    const p3=Math.round((full/total)*100);
+    const p2=Math.round((part/total)*100);
+    const p1=Math.round((low/total)*100);
+    document.getElementById('bar3').style.width=p3+'%';
+    document.getElementById('bar2').style.width=p2+'%';
+    document.getElementById('bar1').style.width=p1+'%';
+    document.getElementById('pct3').textContent=p3+'%';
+    document.getElementById('pct2').textContent=p2+'%';
+    document.getElementById('pct1').textContent=p1+'%';
+  }
+}
+
+function renderWinner(entries){
+  if(!entries.length)return;
+  const top=entries[0];
+  if(top.score>0){
+    document.getElementById('winnerCard').classList.add('show');
+    document.getElementById('winnerName').textContent=top.name||'—';
+    document.getElementById('winnerScore').textContent=`${top.score}/3 ✨ ${top.score===3?'علامة كاملة!':'أعلى علامة'}`;
+  }
+}
+
+async function clearResults(){
+  if(!confirm('هل أنتِ متأكدة من مسح جميع النتائج؟'))return;
+  await fetch(`${DB}/quiz_results.json`,{method:'DELETE'});
+  renderEmpty();
+  lastCount=0;
+}
+
+fetchResults();
+setInterval(fetchResults,4000);
+</script>
+</body>
+</html>

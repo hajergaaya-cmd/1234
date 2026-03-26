@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الغلق الختامي — طرق الحماية على الإنترنت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060d1a;--card:#0e1e34;--border:#1e3a5a;--teal:#0e8f8f;--teal-l:#13b8b8;--gold:#f0c030;--red:#e74c3c;--green:#27ae60;--white:#eef4ff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+
+/* SCREENS */
+.screen{width:100%;max-width:560px;display:none;animation:pop .5s ease}
+.screen.active{display:block}
+@keyframes pop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+
+/* NAME SCREEN */
+.name-card{background:var(--card);border:1.5px solid var(--teal);border-radius:20px;padding:36px 30px;text-align:center}
+.logo{font-size:3.5rem;margin-bottom:10px}
+.main-title{font-size:1.6rem;font-weight:800;color:var(--teal-l);margin-bottom:6px}
+.sub{font-size:.95rem;color:#7a9abb;margin-bottom:28px}
+.name-inp{width:100%;background:#071428;border:2px solid var(--border);border-radius:12px;color:var(--white);font-family:'Tajawal',sans-serif;font-size:1.1rem;padding:14px 16px;direction:rtl;text-align:center;transition:border-color .2s;margin-bottom:16px}
+.name-inp:focus{outline:none;border-color:var(--teal)}
+.start-btn{width:100%;background:linear-gradient(135deg,var(--teal),#0a6a6a);color:#fff;border:none;padding:15px;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.1rem;font-weight:800;cursor:pointer;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+
+/* QUIZ SCREEN */
+.progress-bar{background:#0e1e34;border-radius:20px;height:8px;margin-bottom:22px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--teal),var(--teal-l));height:100%;border-radius:20px;transition:width .4s ease}
+.q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.q-num{background:var(--teal);color:#fff;padding:4px 14px;border-radius:20px;font-weight:700;font-size:.88rem}
+.q-name{color:#7a9abb;font-size:.88rem}
+.q-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:24px}
+.q-text{font-size:1.1rem;font-weight:700;margin-bottom:20px;line-height:1.7;color:var(--gold)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;background:#071428;border:2px solid var(--border);border-radius:12px;padding:13px 16px;cursor:pointer;transition:all .2s;font-size:1rem;font-weight:600}
+.opt:hover{border-color:var(--teal);background:#0e2040}
+.opt.selected{border-color:var(--teal);background:#0e2a3a}
+.opt.correct{border-color:var(--green)!important;background:#0a2a18!important}
+.opt.wrong{border-color:var(--red)!important;background:#2a0e0e!important}
+.opt-letter{width:32px;height:32px;border-radius:50%;background:#1a3a5a;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.88rem;flex-shrink:0;transition:background .2s}
+.opt.selected .opt-letter{background:var(--teal)}
+.opt.correct .opt-letter{background:var(--green)}
+.opt.wrong .opt-letter{background:var(--red)}
+.next-btn{width:100%;margin-top:16px;background:var(--teal);color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;display:none;transition:opacity .2s}
+.next-btn:hover{opacity:.9}
+.next-btn.show{display:block;animation:pop .3s ease}
+
+/* RESULT SCREEN */
+.result-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:32px 26px;text-align:center}
+.result-emoji{font-size:4rem;margin-bottom:10px}
+.result-title{font-size:1.5rem;font-weight:800;margin-bottom:6px}
+.result-score{font-size:3rem;font-weight:800;margin:16px 0}
+.score-label{font-size:.95rem;color:#7a9abb;margin-bottom:20px}
+.answers-review{text-align:right;margin-top:20px}
+.rev-title{font-size:.95rem;font-weight:700;color:#7a9abb;margin-bottom:12px}
+.rev-item{background:#071428;border-radius:10px;padding:11px 14px;margin-bottom:8px;font-size:.92rem;line-height:1.7;border-right:3px solid}
+.rev-item.ok{border-color:var(--green);color:#a0e0b0}
+.rev-item.no{border-color:var(--red);color:#f0a0a0}
+.sent-msg{margin-top:16px;background:#0a2a18;border:1px solid var(--green);border-radius:10px;padding:12px;color:#4fd37a;font-size:.92rem;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: NAME -->
+<div class="screen active" id="nameScreen">
+  <div class="name-card">
+    <div class="logo">🛡️</div>
+    <div class="main-title">الغلق الختامي</div>
+    <div class="sub">طرق الحماية عند استخدام شبكة الإنترنت<br>3 أسئلة — أجيبي بتأنٍّ!</div>
+    <input type="text" class="name-inp" id="nameInp" placeholder="اكتبي اسمكِ الكامل..." maxlength="40">
+    <button class="start-btn" onclick="startQuiz()">🚀 ابدئي الاختبار</button>
+  </div>
+</div>
+
+<!-- SCREEN 2: QUIZ -->
+<div class="screen" id="quizScreen" style="max-width:580px">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="q-header">
+    <span class="q-num" id="qNum">السؤال 1 من 3</span>
+    <span class="q-name" id="qNameTag"></span>
+  </div>
+  <div class="q-card">
+    <div class="q-text" id="qText"></div>
+    <div class="opts" id="optsContainer"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQ()">التالي ←</button>
+  </div>
+</div>
+
+<!-- SCREEN 3: RESULT -->
+<div class="screen" id="resultScreen">
+  <div class="result-card">
+    <div class="result-emoji" id="resEmoji"></div>
+    <div class="result-title" id="resTitle"></div>
+    <div class="result-score" id="resScore"></div>
+    <div class="score-label" id="resLabel"></div>
+    <div class="answers-review">
+      <div class="rev-title">مراجعة إجاباتكِ:</div>
+      <div id="reviewList"></div>
+    </div>
+    <div class="sent-msg">✅ تم إرسال نتيجتكِ لشاشة المعلمة!</div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+
+const QUESTIONS=[
+  {
+    q:'ماذا يجب أن تفعلي إذا وصلتكِ رسالة بريد إلكتروني من شخص لا تعرفينه؟',
+    opts:['أ) تفتحينها فورًا لأن الرسائل آمنة دائمًا','ب) تحذفينها ولا تفتحينها','ج) تردّين عليها وتعطينه معلوماتك'],
+    correct:1,
+    explain:'لا تفتحي رسائل من مرسلين مجهولين — قد تكون محاولة تصيّد.'
+  },
+  {
+    q:'ما الذي يجعل كلمة المرور قوية وآمنة؟',
+    opts:['أ) أن تكون اسمكِ أو تاريخ ميلادكِ','ب) أن تكون قصيرة وسهلة مثل 123456','ج) أحرف كبيرة وصغيرة + أرقام + رموز مثل @#$'],
+    correct:2,
+    explain:'كلمة المرور القوية تجمع بين أحرف وأرقام ورموز ويصعب تخمينها.'
+  },
+  {
+    q:'دخلتِ موقعًا وطلب منكِ تحميل برنامج لمشاهدة فيلم مجاني. ماذا تفعلين؟',
+    opts:['أ) تحمّلين البرنامج فورًا','ب) تغلقين الموقع فورًا ولا تحمّلين أي شيء','ج) تعطين الموقع كلمة مرورك لتأكيد هويتك'],
+    correct:1,
+    explain:'المواقع المشبوهة التي تطلب تحميل برامج قد تحتوي على فيروسات.'
+  }
+];
+
+let currentQ=0, score=0, studentName='', answers=[];
+
+function startQuiz(){
+  const n=document.getElementById('nameInp').value.trim();
+  if(!n){document.getElementById('nameInp').style.borderColor='#e74c3c';return;}
+  studentName=n;
+  document.getElementById('qNameTag').textContent=n;
+  showScreen('quizScreen');
+  renderQ();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQ(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('qNum').textContent=`السؤال ${currentQ+1} من ${QUESTIONS.length}`;
+  document.getElementById('progressFill').style.width=`${((currentQ)/QUESTIONS.length)*100}%`;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('nextBtn').classList.remove('show');
+  const letters=['أ','ب','ج'];
+  document.getElementById('optsContainer').innerHTML=q.opts.map((o,i)=>`
+    <div class="opt" id="opt${i}" onclick="selectOpt(${i})">
+      <div class="opt-letter">${letters[i]}</div>
+      <span>${o}</span>
+    </div>
+  `).join('');
+}
+
+function selectOpt(i){
+  // disable all
+  document.querySelectorAll('.opt').forEach(o=>o.onclick=null);
+  const correct=QUESTIONS[currentQ].correct;
+  document.getElementById(`opt${i}`).classList.add(i===correct?'correct':'wrong');
+  if(i!==correct) document.getElementById(`opt${correct}`).classList.add('correct');
+  answers.push({q:QUESTIONS[currentQ].q, chosen:i, correct, right:i===correct});
+  if(i===correct) score++;
+  const btn=document.getElementById('nextBtn');
+  btn.textContent=currentQ===QUESTIONS.length-1?'🏁 اعرضي نتيجتكِ':'التالي ←';
+  btn.classList.add('show');
+}
+
+function nextQ(){
+  currentQ++;
+  if(currentQ<QUESTIONS.length){renderQ();}
+  else{showResult();}
+}
+
+async function showResult(){
+  document.getElementById('progressFill').style.width='100%';
+  const pct=Math.round((score/QUESTIONS.length)*100);
+  const emoji=score===3?'🏆':score===2?'⭐':'💪';
+  const title=score===3?'ممتاز! إجاباتكِ كلها صحيحة':score===2?'جيد جدًا! تقريبًا وصلتِ':'استمري في التعلم!';
+  document.getElementById('resEmoji').textContent=emoji;
+  document.getElementById('resTitle').textContent=title;
+  document.getElementById('resScore').textContent=`${score}/${QUESTIONS.length}`;
+  document.getElementById('resScore').style.color=score===3?'#f0c030':score===2?'#13b8b8':'#e74c3c';
+  document.getElementById('resLabel').textContent=`نسبة الإجابات الصحيحة: ${pct}%`;
+  document.getElementById('reviewList').innerHTML=answers.map((a,i)=>`
+    <div class="rev-item ${a.right?'ok':'no'}">
+      ${a.right?'✅':'❌'} س${i+1}: ${a.right?'إجابة صحيحة':'إجابة خاطئة — '+QUESTIONS[i].explain}
+    </div>
+  `).join('');
+  showScreen('resultScreen');
+  // Send to Firebase
+  try{
+    await fetch(`${DB}/quiz_results.json`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:studentName,score,total:QUESTIONS.length,pct,emoji,time:new Date().toLocaleTimeString('ar-QA'),answers:answers.map(a=>a.right?1:0)})});
+  }catch(e){}
+}
+</script>
+</body>
+</html>
