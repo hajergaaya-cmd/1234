@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الصفحة المشتركة — نصائح الأمان</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060e1a;--card:#0e1e34;--teal:#0e8f8f;--teal-l:#13b8b8;--pu:#7c4dff;--pu-l:#a67cff;--gr:#0e8f5a;--gr-l:#13d48a;--gold:#f0c030;--white:#eef4ff;--border:#1e3a5a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#0a1a3a 0%,#0e8f8f18 50%,#7c4dff10 100%);border-bottom:2px solid #1e3a6a;padding:22px 30px;text-align:center;position:relative}
+.logo{font-size:2.8rem;margin-bottom:6px}
+.title{font-size:1.8rem;font-weight:800;background:linear-gradient(90deg,var(--teal-l),var(--pu-l),var(--gr-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{font-size:.95rem;color:#7a9abb;margin-top:4px}
+.pulse{display:inline-flex;align-items:center;gap:6px;background:#0e2a1a;border:1px solid var(--gr);border-radius:20px;padding:5px 14px;font-size:.82rem;color:var(--gr-l);font-weight:700;margin-top:10px}
+.pulse-dot{width:8px;height:8px;background:var(--gr-l);border-radius:50%;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:700px;margin:24px auto 0;padding:0 16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.stat .count{font-size:2rem;font-weight:800;line-height:1}
+.stat .slbl{font-size:.82rem;color:#7a9abb;margin-top:4px;display:block}
+.stat.g1 .count{color:var(--teal-l)}.stat.g2 .count{color:var(--pu-l)}.stat.g3 .count{color:var(--gr-l)}
+
+/* MAIN */
+main{max-width:900px;margin:0 auto;padding:28px 16px 60px}
+.section-header{display:flex;align-items:center;gap:12px;margin:32px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sh-icon{font-size:1.6rem}
+.sh-title{font-size:1.15rem;font-weight:800}
+.sh-badge{margin-right:auto;font-size:.78rem;font-weight:700;padding:3px 12px;border-radius:10px}
+.g1-color{color:var(--teal-l)}.g2-color{color:var(--pu-l)}.g3-color{color:var(--gr-l)}
+.g1-bg{background:#071a2e;border-color:var(--teal)!important}
+.g2-bg{background:#0e0a2a;border-color:var(--pu)!important}
+.g3-bg{background:#061410;border-color:var(--gr)!important}
+.g1-badge{background:#071a2e;color:var(--teal-l);border:1px solid var(--teal)}
+.g2-badge{background:#0e0a2a;color:var(--pu-l);border:1px solid var(--pu)}
+.g3-badge{background:#061410;color:var(--gr-l);border:1px solid var(--gr)}
+
+/* TIP CARDS */
+.tips-pinned{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px}
+.tp-label{font-size:.75rem;color:#7a9abb;font-weight:700;margin-bottom:6px}
+.tp-text{font-size:1rem;font-weight:700;line-height:1.8}
+
+/* STUDENT ENTRIES */
+.entries-grid{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.entry{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px 16px;display:flex;align-items:flex-start;gap:14px;animation:appear .5s ease}
+@keyframes appear{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.entry-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;font-weight:800}
+.g1-av{background:#071a2e;border:2px solid var(--teal);color:var(--teal-l)}
+.g2-av{background:#0e0a2a;border:2px solid var(--pu);color:var(--pu-l)}
+.g3-av{background:#061410;border:2px solid var(--gr);color:var(--gr-l)}
+.entry-content{flex:1}
+.entry-name{font-weight:700;font-size:.97rem;margin-bottom:3px}
+.entry-time{font-size:.75rem;color:#5a7a9a;margin-bottom:8px}
+.entry-tip{background:#0a1628;border-radius:8px;padding:8px 12px;font-size:.92rem;line-height:1.75;color:#c0d8f0;margin-bottom:6px;border-right:3px solid}
+.entry-tip:last-child{margin-bottom:0}
+.g1-tip-border{border-color:var(--teal-l)}
+.g2-tip-border{border-color:var(--pu-l)}
+.g3-tip-border{border-color:var(--gr-l)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:#4a6a8a}
+.empty .eicon{font-size:3rem;margin-bottom:10px}
+.empty p{font-size:.97rem}
+
+/* FINAL BOARD */
+.final-board{background:linear-gradient(135deg,#071428,#0e2a1a);border:2px solid #1e4a3a;border-radius:16px;padding:24px;margin-top:36px;display:none}
+.final-board.show{display:block;animation:appear .6s ease}
+.fb-title{text-align:center;font-size:1.2rem;font-weight:800;color:var(--gold);margin-bottom:20px}
+.fb-tips{display:grid;gap:10px}
+.fb-tip{display:flex;align-items:flex-start;gap:12px;background:#0a1e18;border:1px solid #1e4a34;border-radius:10px;padding:12px 15px;font-size:.97rem;line-height:1.8}
+.fb-num{background:var(--gold);color:#060e1a;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;margin-top:1px}
+
+/* LOADING */
+.loading{text-align:center;padding:30px;color:#4a6a8a;font-size:.95rem}
+
+/* RESET BTN */
+.reset-btn{display:block;margin:20px auto 0;background:transparent;border:1px solid #2a4a6a;color:#4a6a8a;padding:7px 20px;border-radius:20px;font-family:'Tajawal',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+.reset-btn:hover{border-color:#e74c3c;color:#e74c3c}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🛡️</div>
+  <div class="title">لوحة نصائح الأمان المشتركة</div>
+  <div class="subtitle">كل مجموعة تكتشف نصيحتين — معًا نكمل الصورة!</div>
+  <div class="pulse"><span class="pulse-dot"></span> تحديث تلقائي كل 5 ثوانٍ</div>
+</header>
+
+<div class="stats" id="statsBar">
+  <div class="stat g1"><div class="count" id="c1">0</div><span class="slbl">🎣 المجموعة الأولى</span></div>
+  <div class="stat g2"><div class="count" id="c2">0</div><span class="slbl">🌐 المجموعة الثانية</span></div>
+  <div class="stat g3"><div class="count" id="c3">0</div><span class="slbl">🔐 المجموعة الثالثة</span></div>
+</div>
+
+<main>
+
+  <!-- GROUP 1 -->
+  <div class="section-header">
+    <span class="sh-icon">🎣</span>
+    <span class="sh-title g1-color">المجموعة الأولى — الفخ الإلكتروني</span>
+    <span class="sh-badge g1-badge">نصيحتان</span>
+  </div>
+  <div class="tips-pinned g1-bg" style="border-color:var(--teal)">
+    <div class="tp-label">النصيحة الثابتة 1</div>
+    <div class="tp-text g1-color">لا تفتحي رسائل البريد الإلكتروني من مرسلين غير معروفين أو مواضيع مشبوهة.</div>
+  </div>
+  <div class="tips-pinned g1-bg" style="border-color:var(--teal);margin-top:-4px">
+    <div class="tp-label">النصيحة الثابتة 2</div>
+    <div class="tp-text g1-color">لا تكشفي عن اسم المستخدم أو كلمة المرور الخاصتين بكِ لأي أحد.</div>
+  </div>
+  <div class="entries-grid" id="entries1"><div class="loading">⏳ في انتظار إرسال المجموعة الأولى...</div></div>
+
+  <!-- GROUP 2 -->
+  <div class="section-header">
+    <span class="sh-icon">🌐</span>
+    <span class="sh-title g2-color">المجموعة الثانية — المواقع المشبوهة</span>
+    <span class="sh-badge g2-badge">نصيحتان</span>
+  </div>
+  <div class="tips-pinned g2-bg" style="border-color:var(--pu)">
+    <div class="tp-label">النصيحة الثابتة 1</div>
+    <div class="tp-text g2-color">لا تزوري مواقع الويب المشبوهة التي تطلب منكِ تزويدها بكلمة المرور أو تحميل برامج.</div>
+  </div>
+  <div class="tips-pinned g2-bg" style="border-color:var(--pu);margin-top:-4px">
+    <div class="tp-label">النصيحة الثابتة 2</div>
+    <div class="tp-text g2-color">تأكدي من تحديث برنامج مكافحة الفيروسات على حاسوبكِ باستمرار.</div>
+  </div>
+  <div class="entries-grid" id="entries2"><div class="loading">⏳ في انتظار إرسال المجموعة الثانية...</div></div>
+
+  <!-- GROUP 3 -->
+  <div class="section-header">
+    <span class="sh-icon">🔐</span>
+    <span class="sh-title g3-color">المجموعة الثالثة — كلمة المرور الضعيفة</span>
+    <span class="sh-badge g3-badge">نصيحتان</span>
+  </div>
+  <div class="tips-pinned g3-bg" style="border-color:var(--gr)">
+    <div class="tp-label">النصيحة الثابتة 1</div>
+    <div class="tp-text g3-color">أنشئي كلمات مرور قوية مستخدمةً أحرف كبيرة وصغيرة وأرقامًا ورموزًا، وغيّريها بانتظام.</div>
+  </div>
+  <div class="tips-pinned g3-bg" style="border-color:var(--gr);margin-top:-4px">
+    <div class="tp-label">النصيحة الثابتة 2</div>
+    <div class="tp-text g3-color">لا تستخدمي كلمة المرور نفسها لأكثر من حساب.</div>
+  </div>
+  <div class="entries-grid" id="entries3"><div class="loading">⏳ في انتظار إرسال المجموعة الثالثة...</div></div>
+
+  <!-- FINAL BOARD -->
+  <div class="final-board" id="finalBoard">
+    <div class="fb-title">🌟 لوحة النصائح الكاملة — أنجزتم معًا!</div>
+    <div class="fb-tips">
+      <div class="fb-tip"><div class="fb-num">١</div><span>لا تفتحي رسائل البريد الإلكتروني من مرسلين غير معروفين أو مواضيع مشبوهة.</span></div>
+      <div class="fb-tip"><div class="fb-num">٢</div><span>لا تكشفي عن اسم المستخدم أو كلمة المرور الخاصتين بكِ لأي أحد.</span></div>
+      <div class="fb-tip"><div class="fb-num">٣</div><span>لا تزوري مواقع الويب المشبوهة التي تطلب منكِ تزويدها بكلمة المرور أو تحميل برامج.</span></div>
+      <div class="fb-tip"><div class="fb-num">٤</div><span>تأكدي من تحديث برنامج مكافحة الفيروسات على حاسوبكِ باستمرار.</span></div>
+      <div class="fb-tip"><div class="fb-num">٥</div><span>أنشئي كلمات مرور قوية مستخدمةً أحرف كبيرة وصغيرة وأرقامًا ورموزًا، وغيّريها بانتظام.</span></div>
+      <div class="fb-tip"><div class="fb-num">٦</div><span>لا تستخدمي كلمة المرور نفسها لأكثر من حساب.</span></div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="clearAll()">🗑️ مسح جميع الإجابات (للمعلمة فقط)</button>
+</main>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const GROUPS={
+  group1:{el:'entries1',cnt:'c1',av:'g1-av',border:'g1-tip-border',icon:'🎣'},
+  group2:{el:'entries2',cnt:'c2',av:'g2-av',border:'g2-tip-border',icon:'🌐'},
+  group3:{el:'entries3',cnt:'c3',av:'g3-av',border:'g3-tip-border',icon:'🔐'}
+};
+
+let lastData={group1:null,group2:null,group3:null};
+
+async function fetchAll(){
+  try{
+    const res=await fetch(`${DB}/tips.json`);
+    if(!res.ok)return;
+    const data=await res.json();
+    if(!data){clearDisplays();return;}
+    let total=0;
+    for(const [gkey,cfg] of Object.entries(GROUPS)){
+      const gdata=data[gkey]||{};
+      const entries=Object.values(gdata);
+      total+=entries.length;
+      renderGroup(gkey,entries,cfg);
+      document.getElementById(cfg.cnt).textContent=entries.length;
+    }
+    // Show final board if all 3 groups have at least 1 entry
+    const allSent=Object.keys(GROUPS).every(g=>data[g]&&Object.keys(data[g]).length>0);
+    document.getElementById('finalBoard').classList.toggle('show',allSent);
+  }catch(e){console.log('fetch error',e);}
+}
+
+function renderGroup(gkey,entries,cfg){
+  const el=document.getElementById(cfg.el);
+  if(!entries.length){
+    el.innerHTML=`<div class="loading">⏳ في انتظار إرسال الطالبات...</div>`;
+    return;
+  }
+  el.innerHTML=entries.map((e,i)=>`
+    <div class="entry">
+      <div class="entry-avatar ${cfg.av}">${cfg.icon}</div>
+      <div class="entry-content">
+        <div class="entry-name">${e.name||'طالبة'}</div>
+        <div class="entry-time">⏰ ${e.time||''}</div>
+        <div class="entry-tip ${cfg.border}">💡 ${e.tip1||''}</div>
+        <div class="entry-tip ${cfg.border}">💡 ${e.tip2||''}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function clearDisplays(){
+  for(const [gkey,cfg] of Object.entries(GROUPS)){
+    document.getElementById(cfg.el).innerHTML=`<div class="loading">⏳ في انتظار إرسال الطالبات...</div>`;
+    document.getElementById(cfg.cnt).textContent='0';
+  }
+  document.getElementById('finalBoard').classList.remove('show');
+}
+
+async function clearAll(){
+  if(!confirm('هل أنتِ متأكدة من مسح جميع إجابات الطالبات؟'))return;
+  await fetch(`${DB}/tips.json`,{method:'DELETE'});
+  clearDisplays();
+}
+
+fetchAll();
+setInterval(fetchAll,5000);
+</script>
+</body>
+</html>
