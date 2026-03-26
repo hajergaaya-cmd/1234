@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — المحقق والشاهد | الشعبة الثانية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--surface:#f7f8fc;--border:#dde6f0;--text:#1a1a2e;--text2:#5a6a8a;--teal:#0e7a6a;--gold:#c07a00;--red:#e74c3c;--green:#27ae60;--shadow:0 2px 12px rgba(0,0,0,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+header{background:#fff;border-bottom:3px solid var(--teal);padding:14px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow)}
+.h-logo{font-size:1.8rem}.h-title{font-size:1.2rem;font-weight:800;color:var(--teal)}.h-sub{font-size:.76rem;color:var(--text2);margin-top:1px}
+.class-badge{background:#e8f4ff;border:1.5px solid #4a9aff;color:#1a5aaa;border-radius:20px;padding:4px 14px;font-size:.82rem;font-weight:700}
+.hctrl{margin-right:auto;display:flex;gap:8px;align-items:center}
+.live{display:flex;align-items:center;gap:5px;background:#f0faf5;border:1px solid var(--teal);border-radius:18px;padding:4px 12px;font-size:.78rem;color:var(--teal);font-weight:700}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 1.3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.cbtn{background:transparent;border:1.5px solid var(--border);color:var(--text2);border-radius:10px;padding:6px 13px;font-family:'Tajawal',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s}
+.cbtn:hover{border-color:var(--red);color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 20px;max-width:1200px;margin:0 auto}
+.stat{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px;text-align:center;box-shadow:var(--shadow)}
+.stat .v{font-size:1.5rem;font-weight:800;line-height:1}.stat .l{font-size:.72rem;color:var(--text2);margin-top:3px}
+.sv0{color:var(--teal)}.sv1{color:var(--green)}.sv2{color:var(--gold)}.sv3{color:var(--red)}
+.winner{max-width:1200px;margin:0 20px 12px;padding:13px 16px;background:linear-gradient(135deg,#fffbe8,#fff8d0);border:2px solid var(--gold);border-radius:13px;display:none;align-items:center;gap:12px}
+.winner.show{display:flex;animation:pop .4s ease}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.wcrown{font-size:1.6rem;animation:bounce .8s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.wname{font-size:1.1rem;font-weight:800;color:var(--gold)}.wscore{font-size:.8rem;color:#a08020;margin-top:2px}.wstars{margin-right:auto;font-size:1.1rem;letter-spacing:3px}
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding:0 20px 40px;max-width:1200px;margin:0 auto}
+.pr-card{background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .2s}
+.pr-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.prc-header{padding:11px 15px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:10px}
+.prc-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#fff;flex-shrink:0}
+.prc-names{font-size:.88rem;font-weight:700;flex:1;line-height:1.5}
+.prc-time{font-size:.68rem;color:var(--text2)}
+.prc-badge{font-size:.68rem;padding:2px 8px;border-radius:8px;font-weight:700;white-space:nowrap}
+.prc-done{background:#e8f8ee;color:var(--green)}.prc-active{background:#fff8e8;color:var(--gold)}.prc-idle{background:var(--surface);color:var(--text2)}
+.prc-body{padding:13px 15px}
+.round-row{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+.round-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.rr-label{font-size:.7rem;font-weight:700;color:var(--text2);margin-bottom:5px}
+.rr-q{font-size:.83rem;color:var(--text);line-height:1.55;margin-bottom:4px;font-weight:600}
+.rr-result{display:flex;align-items:center;gap:6px;font-size:.8rem}
+.rr-name{font-weight:700}.rr-ok{color:var(--green)}.rr-no{color:var(--red)}
+.wait-txt{text-align:center;padding:16px;color:#ccc;font-size:.85rem}
+.step-txt{text-align:center;padding:12px;color:var(--text2);font-size:.85rem}
+@keyframes slideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.new-card{animation:slideIn .4s ease}
+</style>
+</head>
+<body>
+<header>
+  <div class="h-logo">📋</div>
+  <div>
+    <div class="h-title">شاشة المعلمة — المحقق والشاهد</div>
+    <div class="h-sub">البرمجيات الخبيثة | نتائج الثنائيات حية</div>
+  </div>
+  <div class="class-badge">🏫 الشعبة الثانية</div>
+  <div class="hctrl">
+    <div class="live"><span class="ldot"></span>مباشر</div>
+    <button class="cbtn" onclick="clearAll()">🗑️ مسح النتائج</button>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="v sv0" id="sTotal">0</div><div class="l">👥 الثنائيات</div></div>
+  <div class="stat"><div class="v sv1" id="sDone">0</div><div class="l">✅ أكملت</div></div>
+  <div class="stat"><div class="v sv2" id="sActive">0</div><div class="l">🔴 جارية</div></div>
+  <div class="stat"><div class="v sv3" id="sCorrect">0%</div><div class="l">🏆 نسبة الإجابات الصحيحة</div></div>
+</div>
+
+<div class="winner" id="winnerBanner">
+  <div class="wcrown">👑</div>
+  <div><div class="wname" id="wName">—</div><div class="wscore" id="wScore"></div></div>
+  <div class="wstars">🌟🌟🌟</div>
+</div>
+
+<div class="results-grid" id="resultsGrid">
+  <div style="grid-column:1/-1;text-align:center;padding:50px;color:var(--text2)">⏳ في انتظار بدء الثنائيات...</div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PAIRS_NUM=12;
+const COLORS=['#0e7a6a','#c07a00','#7c4dff','#0e5a8f','#8f3a0e','#2a8f0e','#7a0e5a','#0e8a8f','#5a3a0e','#3a0e8f','#0e3a7a','#7a5a0e'];
+const PAIRS_NAMES=[
+  ['أباء أسامه','الجازي فيصل'],
+  ['الريم حميد','الريم ناصر'],
+  ['ايلا سامر','ايه اسحق'],
+  ['بلسم فارس','بلقيس نوراحمد'],
+  ['حنين علاء','حنين محمد'],
+  ['دانه عبدالرحمن','رهف محمد'],
+  ['رهف هياب','روضة رضا'],
+  ['ساره سعود','سجى محمد'],
+  ['سما احمد','ضحى محمد'],
+  ['عائشه موسى','فاطمه حكيم'],
+  ['فاطمه عبدالله','ليان هانى'],
+  ['مريم سعيد','نور محمود','نوران عرفات'],
+];
+
+async function fetchAll(){
+  try{
+    const [pairsRes,resultsRes]=await Promise.all([
+      fetch(`${DB}/detective_pairs_c2.json`),
+      fetch(`${DB}/detective_results_c2.json`)
+    ]);
+    const pairs=await pairsRes.json()||{};
+    const results=await resultsRes.json()||{};
+    renderGrid(pairs,results);
+    renderStats(pairs,results);
+  }catch(e){}
+}
+
+function renderGrid(pairs,results){
+  const grid=document.getElementById('resultsGrid');
+  let html='';
+  for(let i=1;i<=PAIRS_NUM;i++){
+    const pid='c2p'+i;
+    const p=pairs[pid]||{};
+    const r=results[pid]||{};
+    const col=COLORS[i-1];
+    const isDone=p.status==='done',isActive=p.status&&p.status!=='idle'&&!isDone;
+    const statusCls=isDone?'prc-done':isActive?'prc-active':'prc-idle';
+    const statusTxt=isDone?'✅ مكتمل':isActive?'🔴 جارٍ':'⚪ لم يبدأ';
+    const names=PAIRS_NAMES[i-1]?.join(' + ')||'—';
+    let bodyHtml='';
+    if(r.r1_q){
+      bodyHtml=`
+        <div class="round-row">
+          <div class="rr-label">🔍 الجولة 1 — المحقق: ${r.r1_inv||'—'}</div>
+          <div class="rr-q">${r.r1_q}</div>
+          <div class="rr-result"><span class="rr-name">${r.r1_wit||'—'}:</span><span class="${r.r1_correct?'rr-ok':'rr-no'}">${r.r1_correct?'✅ صحيحة':'❌ خاطئة'}</span></div>
+        </div>
+        <div class="round-row">
+          <div class="rr-label">🔍 الجولة 2 — المحقق: ${r.r2_inv||'—'}</div>
+          <div class="rr-q">${r.r2_q||'لم تكتمل'}</div>
+          <div class="rr-result"><span class="rr-name">${r.r2_wit||'—'}:</span><span class="${r.r2_correct?'rr-ok':'rr-no'}">${r.r2_q?r.r2_correct?'✅ صحيحة':'❌ خاطئة':'—'}</span></div>
+        </div>`;
+    } else if(isActive){
+      const step=p.status==='r1_q'?'المحقق يختار السؤال...':p.status==='r1_a'?'الشاهدة تجيب...':p.status==='r2_q'?'الجولة 2 — المحقق يختار...':'الجولة 2 — الشاهدة تجيب...';
+      bodyHtml=`<div class="step-txt">🔄 ${step}</div>`;
+    } else {
+      bodyHtml=`<div class="wait-txt">في الانتظار...</div>`;
+    }
+    html+=`
+      <div class="pr-card ${i<=3?'new-card':''}">
+        <div class="prc-header">
+          <div class="prc-num" style="background:${col}">${i}</div>
+          <div style="flex:1">
+            <div class="prc-names">${names}</div>
+            <div class="prc-time">${r.time||''}</div>
+          </div>
+          <span class="prc-badge ${statusCls}">${statusTxt}</span>
+        </div>
+        <div class="prc-body">${bodyHtml}</div>
+      </div>`;
+  }
+  grid.innerHTML=html;
+}
+
+function renderStats(pairs,results){
+  const vals=Object.values(pairs).filter(p=>p&&p.status);
+  const done=vals.filter(p=>p.status==='done').length;
+  const active=vals.filter(p=>p.status!=='idle'&&p.status!=='done').length;
+  let total=0,correct=0;
+  Object.values(results).forEach(r=>{
+    if(r?.r1_q){total++;if(r.r1_correct)correct++;}
+    if(r?.r2_q){total++;if(r.r2_correct)correct++;}
+  });
+  document.getElementById('sTotal').textContent=done+active;
+  document.getElementById('sDone').textContent=done;
+  document.getElementById('sActive').textContent=active;
+  document.getElementById('sCorrect').textContent=total?Math.round(correct/total*100)+'%':'—';
+  // Winner
+  const resultArr=Object.values(results);
+  if(resultArr.length){
+    const top=resultArr.sort((a,b)=>((b.r1_correct?1:0)+(b.r2_correct?1:0))-((a.r1_correct?1:0)+(a.r2_correct?1:0)))[0];
+    const score=(top.r1_correct?1:0)+(top.r2_correct?1:0);
+    document.getElementById('winnerBanner').classList.add('show');
+    document.getElementById('wName').textContent=top.s1+' + '+top.s2;
+    document.getElementById('wScore').textContent=top.pair+' | '+score+'/2 إجابة صحيحة';
+  }
+}
+
+async function clearAll(){
+  if(!confirm('مسح جميع نتائج الشعبة الثانية؟'))return;
+  await Promise.all([
+    fetch(`${DB}/detective_pairs_c2.json`,{method:'DELETE'}),
+    fetch(`${DB}/detective_results_c2.json`,{method:'DELETE'})
+  ]);
+  document.getElementById('resultsGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:50px;color:var(--text2)">⏳ في انتظار بدء الثنائيات...</div>';
+  document.getElementById('winnerBanner').classList.remove('show');
+  ['sTotal','sDone','sActive'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('sCorrect').textContent='—';
+}
+
+window.onload=()=>{fetchAll();setInterval(fetchAll,4000);};
+</script>
+</body>
+</html>
