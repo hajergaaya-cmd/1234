@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — المحقق الرقمي المجموعات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0c14;--card:#0e1220;--border:#1e2a44;--text:#eef4ff;--text2:#7a9abb;--teal:#0e9f8a;--teal-l:#13c8a8;--gold:#f0c030;--red:#e74c3c;--green:#27ae60}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+
+header{background:linear-gradient(135deg,#040610,#0e1a2a);border-bottom:2px solid #1a2a44;padding:14px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.h-logo{font-size:1.9rem}.h-title{font-size:1.25rem;font-weight:800;color:var(--teal-l)}.h-sub{font-size:.76rem;color:var(--text2);margin-top:1px}
+.hctrl{margin-right:auto;display:flex;gap:8px;align-items:center}
+.live{display:flex;align-items:center;gap:5px;background:#040a10;border:1px solid var(--teal);border-radius:18px;padding:4px 12px;font-size:.78rem;color:var(--teal-l);font-weight:700}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--teal-l);animation:blink 1.3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.cbtn{background:transparent;border:1px solid #1a2a44;color:var(--text2);border-radius:9px;padding:5px 12px;font-family:'Tajawal',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s}
+.cbtn:hover{border-color:var(--red);color:var(--red)}
+
+/* STATUS BAR */
+.status-bar{display:flex;gap:10px;padding:14px 20px;max-width:1200px;margin:0 auto;flex-wrap:wrap}
+.sb-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:8px}
+.sb-stat .v{font-size:1.4rem;font-weight:800}.sb-stat .l{font-size:.75rem;color:var(--text2)}
+.sv-sent{color:var(--teal-l)}.sv-correct{color:var(--green)}.sv-wrong{color:var(--red)}
+
+/* MAIN GRID — 4 group cards */
+.groups-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:1200px;margin:0 auto;padding:0 20px 40px}
+@media(max-width:700px){.groups-grid{grid-template-columns:1fr}}
+
+.group-card{border-radius:16px;overflow:hidden;border:2px solid;transition:box-shadow .2s}
+.group-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.5)}
+
+/* CARD HEADER */
+.gc-header{padding:16px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.06)}
+.gc-icon{font-size:2.2rem}
+.gc-name{font-size:1rem;font-weight:800}
+.gc-leader{font-size:.75rem;margin-top:2px;display:flex;align-items:center;gap:4px}
+.gc-status{margin-right:auto;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:10px}
+.gs-sent{background:#041008;border:1px solid var(--green);color:var(--green)}
+.gs-wait{background:#0a1020;border:1px solid #1a2a44;color:var(--text2)}
+
+/* CARD BODY */
+.gc-body{padding:16px 18px}
+/* RESULT */
+.result-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 14px;border-radius:10px}
+.rr-ok{background:#041008;border:1px solid var(--green)}
+.rr-no{background:#100404;border:1px solid var(--red)}
+.rr-icon{font-size:1.8rem}
+.rr-label{font-size:.75rem;color:var(--text2);margin-bottom:2px}
+.rr-val{font-size:1rem;font-weight:800}
+.rr-ok .rr-val{color:var(--green)}.rr-no .rr-val{color:var(--red)}
+/* PROPS TABLE */
+.props-title{font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.prop-row{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.84rem;line-height:1.65}
+.prop-row:last-child{border-bottom:none}
+.pl{font-weight:700;min-width:90px;flex-shrink:0;font-size:.78rem;opacity:.8}
+.pv{color:var(--text)}
+/* SENT BY */
+.sent-by-row{margin-top:12px;font-size:.74rem;color:var(--text2);text-align:left;display:flex;align-items:center;justify-content:space-between}
+/* WAITING */
+.waiting-state{text-align:center;padding:30px 16px;color:var(--text2)}
+.ws-icon{font-size:2.5rem;margin-bottom:8px;opacity:.4}
+.ws-msg{font-size:.9rem;font-weight:600}
+.ws-leader{font-size:.8rem;margin-top:5px;opacity:.7}
+/* CONFETTI */
+.confetti-overlay{position:fixed;inset:0;pointer-events:none;z-index:999;display:none}
+.cp{position:absolute;width:9px;height:9px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+/* WINNER */
+.winner-banner{max-width:1200px;margin:0 20px 16px;padding:16px 20px;border-radius:16px;display:none;animation:pop .5s ease;text-align:center}
+.winner-banner.show{display:block}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.wb-crown{font-size:2.5rem;animation:bounce .7s infinite;display:block;margin-bottom:5px}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.wb-title{font-size:.85rem;font-weight:700;opacity:.8;margin-bottom:3px}
+.wb-name{font-size:1.4rem;font-weight:900}
+</style>
+</head>
+<body>
+<div class="confetti-overlay" id="confettiEl"></div>
+
+<header>
+  <div class="h-logo">🔍</div>
+  <div><div class="h-title">شاشة المعلمة — المحقق الرقمي</div><div class="h-sub">4 مجموعات | كل مجموعة ترسل إجابة واحدة من قائدتها</div></div>
+  <div class="hctrl">
+    <div class="live"><span class="dot"></span>مباشر</div>
+    <button class="cbtn" onclick="triggerConfetti()">🎉 احتفال</button>
+    <button class="cbtn" onclick="clearAll()">🗑️ مسح</button>
+  </div>
+</header>
+
+<div class="status-bar">
+  <div class="sb-stat"><div class="v sv-sent" id="sSent">0/4</div><div class="l">📤 أرسلت</div></div>
+  <div class="sb-stat"><div class="v sv-correct" id="sCorrect">0</div><div class="l">✅ اكتشفت صحيح</div></div>
+  <div class="sb-stat"><div class="v sv-wrong" id="sWrong">0</div><div class="l">❌ خطأ في التخمين</div></div>
+</div>
+
+<!-- WINNER -->
+<div class="winner-banner" id="winnerBanner">
+  <span class="wb-crown">🏆</span>
+  <div class="wb-title">جميع المجموعات أرسلت! النتيجة النهائية:</div>
+  <div class="wb-name" id="wbText">—</div>
+</div>
+
+<div class="groups-grid" id="groupsGrid">
+  <!-- rendered by JS -->
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const GROUPS_META={
+  worm:{icon:'🐛',name:'فريق الدودة Worm',color:'#0e9f8a',bg:'#04140e',leader:'لطيفه يحيى'},
+  trojan:{icon:'🐴',name:'فريق حصان طروادة Trojan',color:'#f0c030',bg:'#14100a',leader:'أسيل صبري'},
+  spyware:{icon:'🕵️',name:'فريق التجسس Spyware',color:'#a67cff',bg:'#0c0a18',leader:'حبيبه محمد صابر'},
+  adware:{icon:'📢',name:'فريق الإعلانات Adware',color:'#e74c3c',bg:'#140808',leader:'جنا وليد'},
+};
+
+async function fetchData(){
+  try{
+    const r=await fetch(`${DB}/detective_groups.json`);
+    const data=await r.json()||{};
+    renderAll(data);
+  }catch(e){}
+}
+
+function renderAll(data){
+  const grid=document.getElementById('groupsGrid');
+  const keys=['worm','trojan','spyware','adware'];
+  grid.innerHTML=keys.map(key=>{
+    const meta=GROUPS_META[key];
+    const d=data[key];
+    return `<div class="group-card" style="border-color:${meta.color};background:${meta.bg}">
+      <div class="gc-header" style="background:${meta.bg}">
+        <div class="gc-icon">${meta.icon}</div>
+        <div>
+          <div class="gc-name" style="color:${meta.color}">${meta.name}</div>
+          <div class="gc-leader" style="color:${meta.color}88">👑 قائدة: ${meta.leader}</div>
+        </div>
+        <div class="gc-status ${d?'gs-sent':'gs-wait'}">${d?'✅ أرسلت':'⏳ تنتظر'}</div>
+      </div>
+      <div class="gc-body">
+        ${d?renderGroupResult(d,meta):renderWaiting(meta)}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Stats
+  const sent=keys.filter(k=>data[k]).length;
+  const correct=keys.filter(k=>data[k]?.correct).length;
+  document.getElementById('sSent').textContent=sent+'/4';
+  document.getElementById('sCorrect').textContent=correct;
+  document.getElementById('sWrong').textContent=sent-correct;
+
+  // All sent?
+  if(sent===4){
+    const wb=document.getElementById('winnerBanner');
+    wb.style.background=correct===4?'#041008':correct>=3?'#0a1008':'#100404';
+    wb.style.border=`2px solid ${correct===4?'#27ae60':correct>=3?'#f0c030':'#e74c3c'}`;
+    wb.classList.add('show');
+    document.getElementById('wbText').textContent=
+      correct===4?'🏆 جميع الفرق اكتشفت البرنامج الضار بشكل صحيح!':
+      correct>=3?`⭐ ${correct} من 4 فرق اكتشفت بشكل صحيح`:
+      `💪 ${correct} من 4 فرق فقط اكتشفت بشكل صحيح`;
+    document.getElementById('wbText').style.color=correct===4?'#27ae60':correct>=3?'#f0c030':'#e74c3c';
+    if(correct===4)triggerConfetti();
+  }
+}
+
+function renderGroupResult(d,meta){
+  const propsHtml=(d.props||[]).map(p=>`
+    <div class="prop-row">
+      <span class="pl" style="color:${meta.color}88">${p.l}</span>
+      <span class="pv">${p.v}</span>
+    </div>`).join('');
+  return `
+    <div class="result-row ${d.correct?'rr-ok':'rr-no'}">
+      <div class="rr-icon">${d.correct?'✅':'❌'}</div>
+      <div>
+        <div class="rr-label">تخمين الفريق</div>
+        <div class="rr-val">${d.correct?'صحيح! اكتشفن البرنامج 🎉':'خاطئ — لم يكتشفن البرنامج'}</div>
+      </div>
+    </div>
+    <div class="props-title" style="color:${meta.color}">📋 خصائص اكتشفها الفريق:</div>
+    ${propsHtml}
+    <div class="sent-by-row">
+      <span>أرسلتها القائدة: <strong style="color:${meta.color}">${d.leader||'—'}</strong></span>
+      <span>${d.sentAt||''}</span>
+    </div>`;
+}
+
+function renderWaiting(meta){
+  return `<div class="waiting-state">
+    <div class="ws-icon">⏳</div>
+    <div class="ws-msg">في انتظار إرسال القائدة...</div>
+    <div class="ws-leader">القائدة: ${meta.leader}</div>
+  </div>`;
+}
+
+let confettiDone=false;
+function triggerConfetti(){
+  if(confettiDone)return;confettiDone=true;
+  const el=document.getElementById('confettiEl');el.style.display='block';el.innerHTML='';
+  const cols=['#f0c030','#13c8a8','#e74c3c','#a67cff','#4fd37a','#60b8ff'];
+  for(let i=0;i<80;i++){
+    const p=document.createElement('div');p.className='cp';
+    p.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};width:${7+Math.random()*8}px;height:${7+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation:fall ${1.5+Math.random()*2}s linear ${Math.random()*1.5}s forwards`;
+    el.appendChild(p);
+  }
+  setTimeout(()=>{el.style.display='none';confettiDone=false;},5000);
+}
+
+async function clearAll(){
+  if(!confirm('مسح جميع نتائج المجموعات؟'))return;
+  await fetch(`${DB}/detective_groups.json`,{method:'DELETE'});
+  document.getElementById('winnerBanner').classList.remove('show');
+  confettiDone=false;
+  fetchData();
+}
+
+fetchData();
+setInterval(fetchData,4000);
+</script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المحقق الرقمي — مجموعات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c14;--card:#0e1220;--border:#1e2a44;
+  --text:#eef4ff;--text2:#7a9abb;
+  --teal:#0e9f8a;--teal-l:#13c8a8;
+  --gold:#f0c030;--red:#e74c3c;--green:#27ae60
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+.screen{width:100%;max-width:620px;margin:0 auto;display:none;padding:20px 16px 50px;animation:up .4s ease}
+.screen.active{display:block}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAME */
+.boot-top{text-align:center;padding-top:30px;margin-bottom:20px}
+.bl{font-size:3rem;margin-bottom:8px}.bt{font-size:1.4rem;font-weight:800;color:var(--teal-l);margin-bottom:5px}
+.bs{font-size:.9rem;color:var(--text2);line-height:1.7}
+.search-inp{width:100%;background:#04060c;border:2px solid var(--border);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1rem;padding:12px 16px;direction:rtl;margin-bottom:12px;transition:border-color .2s}
+.search-inp:focus{outline:none;border-color:var(--teal)}
+.names-list{display:flex;flex-direction:column;gap:7px;max-height:420px;overflow-y:auto}
+.name-item{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s}
+.name-item:hover{border-color:var(--teal);background:#06101a}
+.ni-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:#fff;flex-shrink:0}
+.ni-name{font-size:.95rem;font-weight:600;flex:1}
+.ni-grp{font-size:.7rem;padding:2px 8px;border-radius:8px;font-weight:700}
+
+/* WELCOME */
+.welcome-card{border:2px solid;border-radius:18px;padding:26px 20px;text-align:center;margin-top:16px}
+.wc-icon{font-size:3.5rem;margin-bottom:8px}
+.leader-badge{font-size:.95rem;font-weight:800;padding:7px 18px;border-radius:20px;display:inline-block;margin-bottom:10px;animation:glow 1.5s infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 8px currentColor}50%{box-shadow:0 0 20px currentColor}}
+.member-badge{font-size:.88rem;padding:5px 14px;border-radius:20px;display:inline-block;margin-bottom:10px}
+.wc-name{font-size:1.3rem;font-weight:800;margin-bottom:5px}
+.wc-sub{font-size:.88rem;color:var(--text2);margin-bottom:18px;line-height:1.7}
+.case-preview{border-radius:12px;padding:13px 16px;margin-bottom:18px;text-align:right;border:1px solid}
+.cp-label{font-size:.72rem;font-weight:700;margin-bottom:4px;opacity:.8}
+.cp-title{font-size:.97rem;font-weight:800}
+.start-btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;color:#fff;transition:opacity .2s}
+.start-btn:hover{opacity:.9}
+
+/* INVESTIGATION */
+.inv-top{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.it-badge{font-size:.82rem;font-weight:700;padding:4px 12px;border-radius:20px}
+.it-role{font-size:.72rem;padding:2px 9px;border-radius:8px;font-weight:700;background:#0a1a10;color:var(--teal-l);border:1px solid var(--teal)}
+.it-prog{margin-right:auto;font-size:.78rem;color:var(--text2)}
+
+.clue-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px;animation:up .4s ease}
+.clue-hdr{padding:10px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;background:#06080f}
+.clue-num-badge{font-size:.75rem;font-weight:700;color:#fff;padding:2px 9px;border-radius:9px}
+.clue-title{font-size:.93rem;font-weight:700}
+.clue-body{padding:14px 17px;font-size:.95rem;line-height:1.9;color:#c0d8f0}
+.clue-body strong{color:var(--gold)}
+
+.next-clue-btn{display:block;margin:12px auto 0;padding:9px 26px;border:none;border-radius:22px;font-family:'Tajawal',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;color:#fff;transition:all .2s}
+.next-clue-btn:hover{opacity:.9}
+
+/* GUESS */
+.guess-box{background:var(--card);border:1.5px solid var(--gold);border-radius:14px;padding:20px;margin-top:14px;animation:up .5s ease}
+.gb-title{font-size:.95rem;font-weight:700;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.guess-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.g-opt{background:#06080f;border:2px solid var(--border);border-radius:11px;padding:13px 10px;cursor:pointer;text-align:center;transition:all .2s;font-size:.88rem;font-weight:700;color:var(--text)}
+.g-opt:hover{border-color:var(--gold);background:#1a1200}
+.g-opt.sel{border-color:var(--gold);background:#1a1200;color:var(--gold)}
+.g-opt .gi{font-size:1.6rem;display:block;margin-bottom:5px}
+.submit-guess{width:100%;padding:13px;border:none;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;background:var(--gold);color:#0a0c14;transition:opacity .2s}
+.submit-guess:hover{opacity:.9}.submit-guess:disabled{background:#2a2a0a;color:#4a4a1a;cursor:default}
+.discuss-hint{background:#0a1020;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:.85rem;color:var(--text2);margin-bottom:12px;line-height:1.7;display:flex;align-items:flex-start;gap:8px}
+
+/* RESULT */
+.result-box{border-radius:14px;padding:22px;text-align:center;margin-top:14px;animation:up .5s ease}
+.rb-ok{background:#041008;border:2px solid var(--green)}
+.rb-no{background:#100404;border:2px solid var(--red)}
+.rb-icon{font-size:3rem;margin-bottom:10px}
+.rb-title{font-size:1.15rem;font-weight:800;margin-bottom:6px}
+.rb-ok .rb-title{color:var(--green)}.rb-no .rb-title{color:var(--red)}
+.rb-detail{font-size:.88rem;color:var(--text2);line-height:1.75;text-align:right;margin-bottom:14px}
+
+.props-reveal{background:#041008;border:1.5px solid var(--green);border-radius:12px;padding:16px;margin-top:10px;text-align:right}
+.pr-title{font-size:.82rem;font-weight:700;color:var(--green);margin-bottom:12px}
+.prop-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #0a2a18;font-size:.88rem;line-height:1.7}
+.prop-row:last-child{border-bottom:none}
+.pl{color:var(--teal-l);font-weight:700;min-width:90px;flex-shrink:0;font-size:.8rem}
+.pv{color:#a0d8c0}
+
+/* SEND — leader only */
+.send-box{background:var(--card);border:2px solid var(--teal);border-radius:14px;padding:20px;margin-top:14px;animation:up .5s ease}
+.sb-title{font-size:.97rem;font-weight:800;color:var(--teal-l);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sb-sub{font-size:.85rem;color:var(--text2);margin-bottom:14px;line-height:1.7}
+.send-final-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--teal),#0a7a6a);transition:opacity .2s}
+.send-final-btn:hover{opacity:.9}.send-final-btn:disabled{background:#1a2a2a;color:#3a5a5a;cursor:default}
+.sent-badge{background:#041008;border:1px solid var(--green);border-radius:10px;padding:12px;text-align:center;color:#4fd37a;font-size:.9rem;font-weight:700;margin-top:10px;display:none}
+.sent-badge.show{display:block}
+
+/* WAITING (non-leader) */
+.wait-box{background:var(--card);border:1.5px dashed var(--border);border-radius:14px;padding:28px 20px;text-align:center;margin-top:14px}
+.wb-spin{font-size:2.5rem;display:block;margin-bottom:10px;animation:sp 2s linear infinite}
+@keyframes sp{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.wb-title{font-size:.97rem;font-weight:700;margin-bottom:5px}
+.wb-sub{font-size:.85rem;color:var(--text2)}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: SELECT NAME -->
+<div class="screen active" id="nameScreen">
+  <div class="boot-top">
+    <div class="bl">🔍</div>
+    <div class="bt">المحقق الرقمي</div>
+    <div class="bs">ابحثي عن اسمكِ — كل مجموعة لها قضية خاصة!</div>
+  </div>
+  <input type="text" class="search-inp" id="searchInp" placeholder="🔍 ابحثي عن اسمكِ..." oninput="filterNames()">
+  <div class="names-list" id="namesList"></div>
+</div>
+
+<!-- SCREEN 2: WELCOME -->
+<div class="screen" id="welcomeScreen">
+  <div class="welcome-card" id="welcomeCard">
+    <div class="wc-icon" id="wcIcon"></div>
+    <div id="wcBadge"></div>
+    <div class="wc-name" id="wcName"></div>
+    <div class="wc-sub" id="wcSub"></div>
+    <div class="case-preview" id="casePreview">
+      <div class="cp-label" id="cpLabel"></div>
+      <div class="cp-title" id="cpTitle"></div>
+    </div>
+    <button class="start-btn" id="startBtn" onclick="startInv()"></button>
+  </div>
+</div>
+
+<!-- SCREEN 3: INVESTIGATION -->
+<div class="screen" id="invScreen">
+  <div class="inv-top">
+    <span class="it-badge" id="itBadge"></span>
+    <span class="it-role" id="itRole"></span>
+    <span class="it-prog" id="itProg">دليل 1/3</span>
+  </div>
+  <div id="cluesArea"></div>
+  <div id="guessArea" style="display:none"></div>
+  <div id="resultArea" style="display:none"></div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+
+// ===== GROUPS DATA =====
+const GROUPS={
+  worm:{
+    id:'worm',icon:'🐛',color:'#0e9f8a',light:'#13c8a8',bg:'#041410',
+    name:'فريق الدودة Worm',
+    caseTitle:'القضية — الجهاز المنتشر',
+    leader:'لطيفه يحيى',
+    members:['لطيفه يحيى','لمى كمال','لمى نجم','مريم محمد','نور اسماعيل','فجر حميد'],
+    clues:[
+      {t:'الدليل الأول 📁',b:'بدأ جهاز مريم يعمل ببطء شديد. وعند الفحص وجدت أن <strong>مساحة القرص الصلب امتلأت فجأة</strong> بآلاف الملفات المكررة لم تقم بإنشائها!'},
+      {t:'الدليل الثاني 🌐',b:'تبيّن أن <strong>جميع أجهزة المختبر المتصلة بنفس الشبكة</strong> أُصيبت بنفس المشكلة في غضون دقائق — الملفات المكررة انتشرت لوحدها!'},
+      {t:'الدليل الثالث 💥',b:'الفاحص الرقمي وجد أن البرنامج <strong>لا يحتاج تدخلاً بشرياً</strong> للانتشار — يستغل ثغرات الشبكة وينسخ نفسه تلقائياً ويُدمر الملفات الأصلية.'},
+    ],
+    props:[
+      {l:'كيف ينتشر؟',v:'يستغل ثغرات الشبكة وينسخ نفسه تلقائياً'},
+      {l:'ماذا يفعل؟',v:'يملأ القرص بنسخ من نفسه ويدمر الملفات'},
+      {l:'هل يحتاج مساعدة؟',v:'لا — ينتشر وحده دون تدخل المستخدم'},
+      {l:'مثال على ضرره',v:'تعطّل جميع أجهزة الشبكة دفعة واحدة'},
+    ]
+  },
+  trojan:{
+    id:'trojan',icon:'🐴',color:'#f0c030',light:'#f8e070',bg:'#14100a',
+    name:'فريق حصان طروادة Trojan',
+    caseTitle:'القضية — الهدية المسمومة',
+    leader:'أسيل صبري',
+    members:['أسيل صبري','الجوري رشدى','ايه محمد','حليمه حسام','خديجه احمد','راما ذياب'],
+    clues:[
+      {t:'الدليل الأول 🎮',b:'حمّل أحمد برنامجاً مجانياً لتحرير الفيديو من موقع غير رسمي. <strong>البرنامج عمل بشكل طبيعي</strong> وفعل ما يُفترض به تماماً!'},
+      {t:'الدليل الثاني 🔓',b:'بعد أسبوع اكتشف أن <strong>كلمات مروره على مواقع متعددة تغيّرت</strong> وأن ملفات شخصية سُرقت — رغم أنه لم يفتح أي رسائل مشبوهة!'},
+      {t:'الدليل الثالث 🕵️',b:'أثبت التحقيق أن البرنامج المُحمَّل <strong>كان يُرسل بياناته سراً للمخترق</strong> في الخلفية بينما يعمل البرنامج الظاهر بشكل طبيعي تماماً.'},
+    ],
+    props:[
+      {l:'كيف يدخل؟',v:'يتنكّر كبرنامج مفيد أو مجاني'},
+      {l:'ماذا يفعل؟',v:'يسرق البيانات وكلمات المرور سراً'},
+      {l:'هل يُبدي أعراضاً؟',v:'لا — يعمل في الخفاء بدون أعراض واضحة'},
+      {l:'مثال على ضرره',v:'سرقة كلمات المرور والملفات الشخصية'},
+    ]
+  },
+  spyware:{
+    id:'spyware',icon:'🕵️',color:'#a67cff',light:'#c4a8ff',bg:'#0c0a18',
+    name:'فريق التجسس Spyware',
+    caseTitle:'القضية — العيون الخفية',
+    leader:'حبيبه محمد صابر',
+    members:['حبيبه محمد صابر','حبيبه عبدالسلام','رتاج عمر','رغد هياب','رفيدة احمد','ريحانة بكالي'],
+    clues:[
+      {t:'الدليل الأول 📊',b:'لاحظت سارة أن <strong>إعلانات دقيقة جداً</strong> تظهر لها على الإنترنت — عن الأشياء التي تبحث عنها تحديداً، كأن أحداً يعرف كل تفاصيل حياتها الرقمية!'},
+      {t:'الدليل الثاني 🖱️',b:'اكتشف التحليل أن <strong>جميع ضغطات لوحة المفاتيح</strong> وتاريخ التصفح وكلمات المرور المكتوبة <strong>كانت تُسجَّل وتُرسَل</strong> لجهة مجهولة!'},
+      {t:'الدليل الثالث 👁️',b:'البرنامج <strong>مُثبَّت منذ أشهر</strong> دون علم سارة — لا يُبطئ الجهاز ولا يُظهر نوافذ — فقط يجمع المعلومات ويرسلها بصمت تام.'},
+    ],
+    props:[
+      {l:'وظيفته الأساسية',v:'جمع معلومات المستخدم ومراقبة نشاطه'},
+      {l:'ماذا يجمع؟',v:'كلمات المرور، التصفح، ضغطات المفاتيح'},
+      {l:'هل يُكشَف بسهولة؟',v:'صعب جداً — يعمل خفيةً وبصمت تام'},
+      {l:'مثال على ضرره',v:'كشف الخصوصية وبيع البيانات لجهات مجهولة'},
+    ]
+  },
+  adware:{
+    id:'adware',icon:'📢',color:'#e74c3c',light:'#f07060',bg:'#140808',
+    name:'فريق الإعلانات Adware',
+    caseTitle:'القضية — النوافذ المزعجة',
+    leader:'جنا وليد',
+    members:['جنا وليد','شهد سيف','فاتحه علي','فاطمة اليوسف','فاطمه احمد','فاطمه عبدالله','فايزه عمر'],
+    clues:[
+      {t:'الدليل الأول 💻',b:'فتح علي متصفحه ليبحث عن واجبه، فتحوّلت الصفحة الرئيسية! وبمجرد أن فتح موقعاً <strong>انبثقت 5 نوافذ إعلانية</strong> لم يطلبها.'},
+      {t:'الدليل الثاني 🛍️',b:'الإعلانات ليست عشوائية — <strong>كلها لمنتجات يبحث عنها علي</strong> عادةً. المتصفح بطأ جداً وأُضيف شريط أدوات غريب لم يطلبه!'},
+      {t:'الدليل الثالث 💰',b:'البرنامج <strong>لا يُدمّر الملفات ولا يسرق البيانات البنكية</strong> — هدفه الوحيد إجبار المستخدم على رؤية الإعلانات لكسب المال من وراء ذلك.'},
+    ],
+    props:[
+      {l:'هدفه الرئيسي',v:'عرض إعلانات مزعجة لكسب المال'},
+      {l:'كيف يظهر؟',v:'نوافذ منبثقة وأشرطة أدوات غير مرغوبة'},
+      {l:'هل هو خطير جداً؟',v:'مزعج أكثر من كونه خطيراً — يُبطئ الجهاز'},
+      {l:'مثال على ضرره',v:'إبطاء الجهاز والمتصفح وغزو الخصوصية'},
+    ]
+  }
+};
+
+const GUESS_OPTS=[
+  {id:'worm',icon:'🐛',name:'الدودة Worm'},
+  {id:'trojan',icon:'🐴',name:'حصان طروادة Trojan'},
+  {id:'spyware',icon:'🕵️',name:'برنامج التجسس Spyware'},
+  {id:'adware',icon:'📢',name:'البرنامج الدعائي Adware'},
+];
+
+// STATE
+let myName='',myGroup=null,isLeader=false;
+let currentClue=0,guessSelected=null;
+
+// HELPERS
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+async function dbGet(p){try{const r=await fetch(`${DB}/${p}.json`);return await r.json();}catch(e){return null;}}
+async function dbSet(p,v){try{await fetch(`${DB}/${p}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});}catch(e){}}
+async function dbPatch(p,v){try{await fetch(`${DB}/${p}.json`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});}catch(e){}}
+
+// BUILD NAMES
+function buildAllNames(){
+  const all=[];
+  Object.values(GROUPS).forEach(g=>g.members.forEach(n=>all.push({name:n,group:g})));
+  return all.sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+}
+function renderNames(list){
+  document.getElementById('namesList').innerHTML=list.map(({name,group:g})=>`
+    <div class="name-item" onclick="selectName('${name.replace(/'/g,"\\'")}','${g.id}')">
+      <div class="ni-av" style="background:${g.color}">${name.charAt(0)}</div>
+      <span class="ni-name">${name}</span>
+      <span class="ni-grp" style="background:${g.bg};color:${g.light};border:1px solid ${g.color}">${g.icon} ${g.name}</span>
+    </div>`).join('');
+}
+function filterNames(){
+  const q=document.getElementById('searchInp').value.trim();
+  const all=buildAllNames();
+  renderNames(q?all.filter(({name})=>name.includes(q)):all);
+}
+
+// SELECT NAME
+function selectName(name,groupId){
+  myName=name;
+  myGroup=GROUPS[groupId];
+  isLeader=(myGroup.leader===name);
+  const g=myGroup;
+  // Style welcome card
+  const card=document.getElementById('welcomeCard');
+  card.style.borderColor=g.color;card.style.background=g.bg;
+  document.getElementById('wcIcon').textContent=isLeader?'👑':g.icon;
+  // Badge
+  const badge=document.getElementById('wcBadge');
+  if(isLeader){
+    badge.innerHTML=`<div class="leader-badge" style="background:${g.bg};color:${g.light};border:2px solid ${g.light}">👑 قائدة الفريق</div>`;
+  } else {
+    badge.innerHTML=`<div class="member-badge" style="background:${g.bg};color:${g.light};border:1px solid ${g.color}">${g.icon} عضوة الفريق</div>`;
+  }
+  document.getElementById('wcName').textContent='مرحباً '+name+'!';
+  document.getElementById('wcSub').textContent=isLeader
+    ?`أنتِ قائدة ${g.name} 👑\nستصلكِ إجابات زميلاتكِ وأنتِ من سترسل نتيجة الفريق للمعلمة.`
+    :`أنتِ عضوة في ${g.name}\nقائدة فريقكِ هي ${g.leader} 👑`;
+  // Case preview
+  const cp=document.getElementById('casePreview');
+  cp.style.background=g.bg;cp.style.borderColor=g.color;
+  document.getElementById('cpLabel').style.color=g.light;
+  document.getElementById('cpLabel').textContent=`🔍 قضية فريقكِ:`;
+  document.getElementById('cpTitle').style.color=g.light;
+  document.getElementById('cpTitle').textContent=g.caseTitle;
+  // Start button
+  const btn=document.getElementById('startBtn');
+  btn.style.background=`linear-gradient(135deg,${g.color},${g.color}99)`;
+  btn.textContent='▶ ابدئي التحقيق';
+  showScreen('welcomeScreen');
+}
+
+// START INVESTIGATION
+function startInv(){
+  currentClue=0;guessSelected=null;
+  const g=myGroup;
+  // Top bar
+  const badge=document.getElementById('itBadge');
+  badge.textContent=g.icon+' '+g.name;
+  badge.style.background=g.bg;badge.style.color=g.light;badge.style.border=`1px solid ${g.color}`;
+  document.getElementById('itRole').textContent=isLeader?'👑 قائدة الفريق':'عضوة';
+  document.getElementById('cluesArea').innerHTML='';
+  document.getElementById('guessArea').style.display='none';
+  document.getElementById('resultArea').style.display='none';
+  showScreen('invScreen');
+  showClue(0);
+}
+
+function showClue(idx){
+  const g=myGroup;
+  const clue=g.clues[idx];
+  document.getElementById('itProg').textContent=`دليل ${idx+1}/${g.clues.length}`;
+  const el=document.createElement('div');
+  el.className='clue-card';
+  el.innerHTML=`
+    <div class="clue-hdr">
+      <span class="clue-num-badge" style="background:${g.color}">الدليل ${idx+1}</span>
+      <span class="clue-title" style="color:${g.light}">${clue.t}</span>
+    </div>
+    <div class="clue-body">${clue.b}</div>`;
+  document.getElementById('cluesArea').appendChild(el);
+  const old=document.getElementById('nextClueBtn');if(old)old.remove();
+  if(idx<g.clues.length-1){
+    const btn=document.createElement('button');
+    btn.className='next-clue-btn';btn.id='nextClueBtn';
+    btn.style.background=g.color;btn.textContent='▶ الدليل التالي';
+    btn.onclick=()=>{currentClue++;showClue(currentClue);btn.remove();};
+    document.getElementById('cluesArea').appendChild(btn);
+  } else {
+    setTimeout(showGuess,400);
+  }
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function showGuess(){
+  const g=myGroup;
+  const area=document.getElementById('guessArea');
+  area.style.display='block';
+  area.innerHTML=`
+    <div class="guess-box">
+      <div class="gb-title">🔍 ناقشي مع فريقكِ... من أنا؟</div>
+      <div class="discuss-hint">💬 تحدثي مع زميلاتكِ في المجموعة قبل الاختيار — الإجابة ستُرسل باسم الفريق!</div>
+      <div class="guess-grid">
+        ${GUESS_OPTS.map(g=>`
+          <div class="g-opt" id="go_${g.id}" onclick="selGuess('${g.id}')">
+            <span class="gi">${g.icon}</span>${g.name}
+          </div>`).join('')}
+      </div>
+      <button class="submit-guess" id="submitGuessBtn" onclick="submitGuess()" disabled>✅ هذا هو البرنامج الضار!</button>
+    </div>`;
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function selGuess(id){
+  guessSelected=id;
+  document.querySelectorAll('.g-opt').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('go_'+id).classList.add('sel');
+  document.getElementById('submitGuessBtn').disabled=false;
+}
+
+function submitGuess(){
+  if(!guessSelected)return;
+  const isCorrect=guessSelected===myGroup.id;
+  document.querySelectorAll('.g-opt').forEach(el=>el.onclick=null);
+  document.getElementById('submitGuessBtn').disabled=true;
+  showResult(isCorrect);
+}
+
+function showResult(isCorrect){
+  const g=myGroup;
+  const area=document.getElementById('resultArea');
+  area.style.display='block';
+  const propsHtml=g.props.map(p=>`
+    <div class="prop-row">
+      <span class="pl">${p.l}</span>
+      <span class="pv">${p.v}</span>
+    </div>`).join('');
+  let sendSection='';
+  if(isLeader){
+    sendSection=`
+      <div class="send-box">
+        <div class="sb-title">👑 أنتِ قائدة الفريق — أرسلي نتيجة مجموعتكِ للمعلمة</div>
+        <div class="sb-sub">اتفقي مع فريقكِ على الخصائص أعلاه ثم اضغطي إرسال</div>
+        <button class="send-final-btn" id="sendFinalBtn" onclick="sendGroupResult(${isCorrect})">📤 أرسلي نتيجة ${g.name} للمعلمة</button>
+        <div class="sent-badge" id="sentBadge">✅ تم الإرسال! نتيجة فريقكِ ظهرت على شاشة المعلمة 🎉</div>
+      </div>`;
+  } else {
+    sendSection=`
+      <div class="wait-box">
+        <span class="wb-spin">⏳</span>
+        <div class="wb-title">في انتظار قائدة الفريق</div>
+        <div class="wb-sub">قائدة فريقكِ <strong style="color:${g.light}">${g.leader}</strong> ستُرسل نتيجة المجموعة للمعلمة</div>
+      </div>`;
+  }
+  area.innerHTML=`
+    <div class="result-box ${isCorrect?'rb-ok':'rb-no'}">
+      <div class="rb-icon">${isCorrect?'🎉':'💪'}</div>
+      <div class="rb-title">${isCorrect?'فريقكِ اكتشف البرنامج! '+g.icon:'لم تكتشفيه بعد!'}</div>
+      <div class="rb-detail">${isCorrect?'أحسن الفريق! جمعتم الأدلة بشكل صحيح.':'الجواب الصحيح: '+g.name+' '+g.icon}</div>
+      <div class="props-reveal">
+        <div class="pr-title" style="color:${g.light}">📋 خصائص ${g.name}:</div>
+        ${propsHtml}
+      </div>
+    </div>
+    ${sendSection}`;
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function sendGroupResult(correct){
+  const btn=document.getElementById('sendFinalBtn');
+  btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';
+  const g=myGroup;
+  await dbSet(`detective_groups/${g.id}`,{
+    group:g.name,icon:g.icon,color:g.color,
+    correct,guess:guessSelected,
+    props:g.props,
+    leader:myName,
+    sentAt:new Date().toLocaleTimeString('ar-QA')
+  });
+  btn.style.display='none';
+  document.getElementById('sentBadge').classList.add('show');
+}
+
+window.onload=()=>{renderNames(buildAllNames());};
+</script>
+</body>
+</html>
