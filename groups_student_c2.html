@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط المجموعات — حماية الشبكات | الشعبة الثانية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff;--surface:#f7f8fc;--border:#e0e8f0;--text:#1a1a2e;--text2:#5a6a8a;
+  --g1:#0e7a6a;--g1l:#13a88a;--g1bg:#eef8f5;
+  --g2:#7c4dff;--g2l:#a67cff;--g2bg:#f0eeff;
+  --g3:#c07a00;--g3l:#e8b800;--g3bg:#fff8e8;
+  --red:#e74c3c;--green:#27ae60;--shadow:0 2px 14px rgba(0,0,0,.08)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px}
+.screen{width:100%;max-width:580px;display:none;animation:pop .4s ease}
+.screen.active{display:block}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SELECT NAME */
+.sel-header{text-align:center;margin:24px 0 20px}
+.sel-logo{font-size:3rem;margin-bottom:8px}
+.sel-title{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:5px}
+.sel-sub{font-size:.9rem;color:var(--text2);line-height:1.7}
+.search-box{width:100%;border:2px solid var(--border);border-radius:12px;padding:12px 16px;font-family:'Tajawal',sans-serif;font-size:1rem;color:var(--text);margin-bottom:14px;transition:border-color .2s;background:#fff}
+.search-box:focus{outline:none;border-color:var(--g1)}
+.names-list{display:flex;flex-direction:column;gap:7px;max-height:380px;overflow-y:auto;padding-left:2px}
+.name-item{background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:13px 16px;cursor:pointer;font-size:.95rem;font-weight:600;transition:all .2s;display:flex;align-items:center;gap:12px}
+.name-item:hover{border-color:var(--g1);background:var(--g1bg)}
+.ni-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:#fff;flex-shrink:0}
+.ni-name{flex:1}
+.ni-group{font-size:.72rem;padding:2px 8px;border-radius:8px;font-weight:700}
+
+/* GROUP WELCOME */
+.group-welcome{background:var(--card-bg,#fff);border:2px solid var(--g-color,#0e7a6a);border-radius:18px;padding:28px 22px;text-align:center;margin-top:20px}
+.gw-icon{font-size:3.5rem;margin-bottom:10px}
+.gw-group{font-size:1rem;font-weight:700;padding:5px 16px;border-radius:20px;display:inline-block;margin-bottom:10px}
+.gw-name{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.gw-sub{font-size:.88rem;color:var(--text2);margin-bottom:22px;line-height:1.7}
+.gw-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;color:#fff;transition:opacity .2s}
+.gw-btn:hover{opacity:.9}
+
+/* SCENARIO */
+.scenario-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.sc-header{padding:11px 16px;display:flex;align-items:center;gap:10px}
+.sc-num{font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:10px;color:#fff}
+.sc-title{font-weight:700;font-size:.97rem}
+.sc-body{padding:14px 18px;font-size:.95rem;line-height:1.9;color:#2a3a5a}
+.sc-body strong{color:var(--text)}
+.show-btn{display:block;margin:14px auto 0;padding:9px 26px;border:none;border-radius:22px;font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;color:#fff;transition:all .2s}
+.show-btn:disabled{background:#ccc!important;cursor:default}
+
+/* QUESTIONS */
+.q-card{background:#fff;border:1.5px solid var(--border);border-radius:13px;padding:18px;margin-bottom:12px}
+.q-num-badge{display:inline-block;font-size:.72rem;font-weight:700;padding:2px 10px;border-radius:8px;margin-bottom:10px;color:#fff}
+.q-text{font-size:.97rem;font-weight:700;color:#c07a00;margin-bottom:13px;line-height:1.65}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;cursor:pointer;font-size:.92rem;line-height:1.65;transition:all .2s;width:100%;text-align:right;font-family:'Tajawal',sans-serif}
+.opt:hover{border-color:var(--g-color,#0e7a6a);background:var(--g1bg)}
+.opt input{accent-color:var(--g-color,#0e7a6a);flex-shrink:0;width:15px;height:15px;margin-top:2px}
+.opt.ok{border-color:var(--green)!important;background:#e8f8ee!important}
+.opt.no{border-color:var(--red)!important;background:#fee8e8!important}
+.fb{margin-top:9px;padding:8px 13px;border-radius:8px;font-size:.88rem;font-weight:600;display:none}
+.fb.show{display:block}.fb.g{background:#e8f8ee;color:var(--green)}.fb.b{background:#fee8e8;color:var(--red)}
+.next-q-btn{width:100%;margin-top:10px;padding:13px;border:none;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;color:#fff;transition:opacity .2s;display:none}
+.next-q-btn.show{display:block}.next-q-btn:hover{opacity:.9}
+
+/* TIPS */
+.tips-reveal{background:var(--surface);border:2px solid var(--g-color,#0e7a6a);border-radius:16px;padding:22px;margin-bottom:14px;animation:pop .5s ease}
+.tr-title{font-size:1rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.tip-card{border:1.5px solid var(--green);border-radius:11px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:flex-start;gap:12px;background:#e8f8ee;font-size:.95rem;line-height:1.8;font-weight:600;color:#1a4a2a}
+.tip-card:last-child{margin-bottom:0}
+.tip-icon{font-size:1.5rem;flex-shrink:0}
+.send-btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;color:#fff;background:var(--green);transition:opacity .2s;margin-bottom:12px}
+.send-btn:hover{opacity:.9}.send-btn:disabled{background:#ccc;cursor:default}
+.sent-ok{background:#e8f8ee;border:1px solid var(--green);border-radius:10px;padding:12px;text-align:center;color:var(--green);font-weight:700;font-size:.92rem;display:none}
+.sent-ok.show{display:block}
+
+/* WAITING CHALLENGE */
+.wait-challenge{background:var(--surface);border:2px dashed var(--border);border-radius:16px;padding:32px 20px;text-align:center;margin-top:10px}
+.wc-icon{font-size:3rem;margin-bottom:10px;animation:spin 2s linear infinite;display:block}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.wc-title{font-size:1rem;font-weight:700;margin-bottom:5px}.wc-sub{font-size:.85rem;color:var(--text2)}
+
+/* CHALLENGE MCQ */
+.challenge-header{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center}
+.ch-title{font-size:1.15rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.ch-group{font-size:.85rem;font-weight:700;padding:4px 14px;border-radius:20px;display:inline-block}
+.ch-progress{font-size:.8rem;color:var(--text2);margin-top:6px}
+.ch-q-card{background:#fff;border:2px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
+.ch-q-text{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:16px;line-height:1.7}
+.ch-opts{display:flex;flex-direction:column;gap:9px}
+.ch-opt{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:2px solid var(--border);border-radius:11px;padding:12px 14px;cursor:pointer;font-size:.93rem;line-height:1.65;transition:all .2s;width:100%;font-family:'Tajawal',sans-serif;text-align:right}
+.ch-opt:hover{border-color:var(--g-color,#0e7a6a);background:var(--g1bg)}
+.ch-opt.sel{border-color:var(--g-color,#0e7a6a);background:var(--g1bg);font-weight:700}
+.ch-opt.ok{border-color:var(--green)!important;background:#e8f8ee!important}
+.ch-opt.no{border-color:var(--red)!important;background:#fee8e8!important}
+.ch-letter{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;flex-shrink:0;pointer-events:none;transition:all .2s}
+.ch-opt.sel .ch-letter{background:var(--g-color,#0e7a6a);color:#fff}
+.ch-submit{width:100%;padding:13px;border:none;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;color:#fff;transition:opacity .2s}
+.ch-submit:hover{opacity:.9}.ch-submit:disabled{background:#ccc;cursor:default}
+
+/* FINAL */
+.final-screen{text-align:center;padding:30px 20px}
+.fs-icon{font-size:3.5rem;margin-bottom:12px}
+.fs-title{font-size:1.3rem;font-weight:800;margin-bottom:8px}
+.fs-score{font-size:2rem;font-weight:800;margin:10px 0}
+.fs-group{font-size:.9rem;padding:5px 16px;border-radius:20px;display:inline-block;font-weight:700;margin-bottom:16px}
+.fs-detail{background:var(--surface);border-radius:12px;padding:14px;text-align:right;margin-top:14px}
+.fs-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.88rem}
+.fs-row:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: SELECT NAME -->
+<div class="screen active" id="nameScreen">
+  <div class="sel-header">
+    <div class="sel-logo">🛡️</div>
+    <div class="sel-title">نشاط حماية الشبكات</div>
+    <div class="sel-sub">ابحثي عن اسمكِ واضغطي عليه للدخول</div>
+  </div>
+  <input type="text" class="search-box" id="searchBox" placeholder="🔍 ابحثي عن اسمكِ..." oninput="filterNames()">
+  <div class="names-list" id="namesList"></div>
+</div>
+
+<!-- SCREEN 2: GROUP WELCOME -->
+<div class="screen" id="welcomeScreen">
+  <div class="group-welcome" id="groupWelcomeCard">
+    <div class="gw-icon" id="gwIcon"></div>
+    <div class="gw-group" id="gwGroup"></div>
+    <div class="gw-name" id="gwName"></div>
+    <div class="gw-sub" id="gwSub"></div>
+    <button class="gw-btn" id="gwBtn" onclick="startScenario()"></button>
+  </div>
+</div>
+
+<!-- SCREEN 3: SCENARIO + QUESTIONS -->
+<div class="screen" id="activityScreen">
+  <div id="scenarioArea"></div>
+  <button class="show-btn" id="showNextScene" style="display:none" onclick="showNextScene()"></button>
+  <div id="questionsArea" style="display:none"></div>
+</div>
+
+<!-- SCREEN 4: TIPS -->
+<div class="screen" id="tipsScreen">
+  <div class="tips-reveal" id="tipsCard">
+    <div class="tr-title" id="trTitle"></div>
+    <div id="tipsContent"></div>
+  </div>
+  <button class="send-btn" id="sendTipsBtn" onclick="sendTips()">📤 أرسلي نصائح مجموعتكِ للشاشة المشتركة</button>
+  <div class="sent-ok" id="sentOk">✅ تم الإرسال! انتظري بدء التحدي...</div>
+  <div class="wait-challenge" id="waitChallenge" style="display:none">
+    <span class="wc-icon">⚙️</span>
+    <div class="wc-title">في انتظار المعلمة لبدء التحدي...</div>
+    <div class="wc-sub">ستنتقلين تلقائياً عند بدء التحدي</div>
+  </div>
+</div>
+
+<!-- SCREEN 5: CHALLENGE -->
+<div class="screen" id="challengeScreen">
+  <div class="challenge-header">
+    <div class="ch-title">⚔️ تحدي المجموعات</div>
+    <div class="ch-group" id="chGroupBadge"></div>
+    <div class="ch-progress" id="chProgress">السؤال 1 من 5</div>
+  </div>
+  <div id="challengeArea"></div>
+</div>
+
+<!-- SCREEN 6: CHALLENGE DONE -->
+<div class="screen" id="finalScreen">
+  <div class="final-screen">
+    <div class="fs-icon" id="fsIcon">🎉</div>
+    <div class="fs-title" id="fsTitle">أحسنتِ!</div>
+    <div class="fs-group" id="fsGroup"></div>
+    <div class="fs-score" id="fsScore"></div>
+    <div style="font-size:.88rem;color:var(--text2);margin-bottom:10px">نقاطكِ أُضيفت لمجموعتكِ 🏆</div>
+    <div class="fs-detail" id="fsDetail"></div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+
+// ===== GROUPS & NAMES =====
+const GROUPS={
+  g1:{name:'فريق الحماة',icon:'🛡️',color:'#0e7a6a',light:'#13a88a',bg:'#eef8f5',scenario:1,
+    tips:['لا تفتحي رسائل البريد الإلكتروني من مرسلين غير معروفين أو مواضيع مشبوهة.','لا تكشفي عن اسم المستخدم أو كلمة المرور الخاصتين بكِ لأي أحد.'],
+    members:['أباء أسامه','الجازي فيصل','الريم حميد','الريم ناصر','ايلا سامر','ايه اسحق','بلسم فارس','بلقيس نوراحمد']},
+  g2:{name:'فريق الأمان',icon:'🔐',color:'#7c4dff',light:'#a67cff',bg:'#f0eeff',scenario:2,
+    tips:['لا تزوري مواقع الويب المشبوهة التي تطلب منكِ تزويدها بكلمة المرور أو تحميل برامج.','تأكدي من تحديث برنامج مكافحة الفيروسات على حاسوبكِ باستمرار.'],
+    members:['حنين علاء','حنين محمد','دانه عبدالرحمن','رهف محمد','رهف هياب','روضة رضا','ساره سعود','سجى محمد']},
+  g3:{name:'فريق الدفاع',icon:'🔒',color:'#c07a00',light:'#e8b800',bg:'#fff8e8',scenario:3,
+    tips:['أنشئي كلمات مرور قوية باستخدام أحرف كبيرة وصغيرة وأرقام ورموز، وغيّريها بانتظام.','لا تستخدمي كلمة المرور نفسها لأكثر من حساب.'],
+    members:['سما احمد','ضحى محمد','عائشه موسى','فاطمه حكيم','فاطمه عبدالله','ليان هانى','مريم سعيد','نور محمود','نوران عرفات']},
+};
+
+const SCENARIOS={
+  1:{title:'السيناريو 1 — الفخ الإلكتروني',scenes:[
+    {t:'المشهد الأول — رسالة مفاجئة 📧',b:'يجلس أحمد يتصفح بريده، فيجد رسالة: <strong>"مبروك! لقد ربحت جائزة كبرى"</strong> 🎁 يتردد قليلاً... لكنه يفتحها بدافع الفضول.'},
+    {t:'المشهد الثاني — طلب البيانات 📝',b:'تطلب منه الرسالة إدخال <strong>بياناته الشخصية والبنكية</strong> لاستلام الجائزة. دون تفكير، يملأ النموذج ويرسله. 💳'},
+    {t:'المشهد الثالث — الصدمة! 😱',b:'يتلقى اتصالاً من البنك: <strong>"تم سحب مبلغ كبير من حسابك!"</strong> يدرك أحمد أنه وقع ضحية <strong>احتيال إلكتروني</strong>. 🚨'},
+  ],qs:[
+    {q:'ما أول خطأ ارتكبه أحمد؟',opts:['فتح رسالة من مرسل مجهول دون التحقق','استخدم كلمة مرور ضعيفة','زار موقعاً مشبوهاً'],c:0},
+    {q:'ما الخطأ الأكبر الذي أضرّ بأحمد؟',opts:['أخبر صديقه بالخبر','أدخل بياناته البنكية في نموذج مجهول','فتح الحاسوب في وقت متأخر'],c:1},
+    {q:'هذا النوع من الاحتيال يُسمى:',opts:['برنامج تجسس','هجوم بكلمة المرور','تصيد إلكتروني (Phishing)'],c:2},
+  ]},
+  2:{title:'السيناريو 2 — المواقع المشبوهة',scenes:[
+    {t:'المشهد الأول — رابط مغرٍ! 🎬',b:'يبحث خالد عن فيلم كرتوني، فيجد رابطاً: <strong>"شاهد أحدث الأفلام مجانًا وبدون إعلانات!"</strong> دون تفكير، يضغط على الرابط. 🖱️'},
+    {t:'المشهد الثاني — تحذير غريب! ⚠️',b:'يطلب الموقع <strong>تحميل برنامج</strong> لتشغيل الفيلم. يضغط خالد على "تحميل"، ويظهر <strong>تحذير غريب</strong>... لكنه يتجاهله! 😬'},
+    {t:'المشهد الثالث — الكارثة! 💀',b:'بعد دقائق يبدأ الحاسوب بالتباطؤ، وتظهر نوافذ مزعجة. فجأة يتجمد الجهاز: <strong>"تم اختراق جهازك!"</strong> 🚨'},
+  ],qs:[
+    {q:'ما الخطأ الأول الذي ارتكبه خالد؟',opts:['بحث عن أفلام كرتونية','ضغط على رابط مشبوه دون التحقق','فتح الحاسوب في المساء'],c:1},
+    {q:'ماذا كان يجب أن يفعل خالد حين ظهر التحذير؟',opts:['يغلق النافذة فورًا ولا يكمل التحميل','يكتب اسمه وكلمة مروره','يتجاهل التحذير ويكمل'],c:0},
+    {q:'البرنامج الذي حمّله خالد وأضر بجهازه يُسمى:',opts:['برنامج مكافحة فيروسات','برنامج تشغيل الأفلام','برنامج خبيث (Malware)'],c:2},
+  ]},
+  3:{title:'السيناريو 3 — كلمة المرور الضعيفة',scenes:[
+    {t:'المشهد الأول — كلمة مرور سهلة! 🔑',b:'يجلس جاسم لإنشاء حسابه ويختار كلمة مرور: <strong style="color:#e74c3c;font-family:monospace;font-size:1.2rem">123456</strong> معتقدًا أنها مريحة وسهلة التذكر. 😕'},
+    {t:'المشهد الثاني — الحساب مخترق! 🚨',b:'بعد أيام، يحاول جاسم الدخول لكنه يفشل! يصله إشعار: <strong>"تم تغيير كلمة المرور الخاصة بك"</strong> 😱 يدرك أن <strong>حسابه قد تم اختراقه</strong>.'},
+  ],qs:[
+    {q:'لماذا تعتبر كلمة "123456" ضعيفة؟',opts:['لأنها تحتوي على أرقام فقط وهذا ممنوع','لأنها طويلة جدًا','لأنها شائعة وسهلة التخمين لأي شخص'],c:2},
+    {q:'ما المكوّنات التي تجعل كلمة المرور قوية؟',opts:['اسمكِ أو تاريخ ميلادكِ','أحرف كبيرة وصغيرة + أرقام + رموز @#$','أن تكون قصيرة وسهلة التذكر'],c:1},
+    {q:'ماذا تفعلين إذا استخدمتِ نفس كلمة المرور في حسابات متعددة؟',opts:['تغييرها فورًا وجعل كلمة مرور مختلفة لكل حساب','الاحتفاظ بها لأن تذكرها أسهل','مشاركتها مع صديقة موثوقة'],c:0},
+  ]},
+};
+
+const CHALLENGE_QS=[
+  {q:'ما أهم نصيحة للحماية عند فتح البريد الإلكتروني؟',opts:['افتحي كل الرسائل بسرعة','لا تفتحي رسائل من مرسلين مجهولين','احذفي صندوق الوارد دائماً','أرسلي ردًا على كل رسالة'],c:1},
+  {q:'كيف تصنعين كلمة مرور قوية؟',opts:['تاريخ ميلادكِ فقط','اسمكِ بالكامل','أحرف كبيرة وصغيرة + أرقام + رموز','كلمة واحدة من القاموس'],c:2},
+  {q:'ماذا تفعلين عند ظهور تحذير غريب عند تحميل برنامج؟',opts:['تكملين التحميل فورًا','تتجاهلين التحذير','تغلقين النافذة وتتوقفين عن التحميل','تضغطين "موافق" على كل النوافذ'],c:2},
+  {q:'ما البرنامج الذي يتنكر كبرنامج مفيد لكنه يسرق البيانات؟',opts:['Worm الدودة','Adware الدعائية','Trojan حصان طروادة','برنامج مكافحة فيروسات'],c:2},
+  {q:'أيٌّ من التالي يحميكِ من البرمجيات الخبيثة؟',opts:['تحميل كل برنامج تجدينه','تحديث برنامج مكافحة الفيروسات باستمرار','فتح كل رابط يصلكِ','استخدام كلمة مرور واحدة لكل حساباتكِ'],c:1},
+];
+
+// STATE
+let myName='',myGroupId='',myGroup=null;
+let currentScene=0,currentQ=0,qAnswered=[false,false,false];
+let chQ=0,chAnswers=[],chSelected=-1;
+let pollInterval=null;
+
+// HELPERS
+async function dbGet(p){try{const r=await fetch(`${DB}/${p}.json`);return await r.json();}catch(e){return null;}}
+async function dbSet(p,v){try{await fetch(`${DB}/${p}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});}catch(e){}}
+async function dbPatch(p,v){try{await fetch(`${DB}/${p}.json`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});}catch(e){}}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+
+function applyGroupStyle(gid){
+  const g=GROUPS[gid];
+  document.documentElement.style.setProperty('--g-color',g.color);
+  document.documentElement.style.setProperty('--g-light',g.light);
+  document.documentElement.style.setProperty('--g-bg',g.bg);
+}
+
+// BUILD NAMES LIST
+function buildNames(){
+  const all=[];
+  Object.entries(GROUPS).forEach(([gid,g])=>g.members.forEach(n=>all.push({name:n,gid})));
+  return all.sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+}
+
+function renderNames(list){
+  const el=document.getElementById('namesList');
+  el.innerHTML=list.map(({name,gid})=>{
+    const g=GROUPS[gid];
+    return `<div class="name-item" onclick="selectName('${name.replace(/'/g,"\\'")}','${gid}')">
+      <div class="ni-avatar" style="background:${g.color}">${name.charAt(0)}</div>
+      <span class="ni-name">${name}</span>
+      <span class="ni-group" style="background:${g.bg};color:${g.color};border:1px solid ${g.color}">${g.icon} ${g.name}</span>
+    </div>`;
+  }).join('');
+}
+
+function filterNames(){
+  const q=document.getElementById('searchBox').value.trim();
+  const all=buildNames();
+  const filtered=q?all.filter(({name})=>name.includes(q)):all;
+  renderNames(filtered);
+}
+
+// SELECT NAME
+function selectName(name,gid){
+  myName=name;myGroupId=gid;myGroup=GROUPS[gid];
+  applyGroupStyle(gid);
+  // Show welcome
+  const card=document.getElementById('groupWelcomeCard');
+  card.style.borderColor=myGroup.color;
+  document.getElementById('gwIcon').textContent=myGroup.icon;
+  const badge=document.getElementById('gwGroup');
+  badge.textContent=myGroup.name;badge.style.background=myGroup.bg;badge.style.color=myGroup.color;badge.style.border=`1.5px solid ${myGroup.color}`;
+  document.getElementById('gwName').textContent='مرحباً '+name+'!';
+  document.getElementById('gwSub').textContent='ستعمل مع '+myGroup.name+' على السيناريو الخاص بمجموعتكِ';
+  const btn=document.getElementById('gwBtn');
+  btn.textContent='▶ ابدئي النشاط';btn.style.background=myGroup.color;
+  showScreen('welcomeScreen');
+}
+
+// SCENARIO
+function startScenario(){
+  currentScene=0;currentQ=0;qAnswered=[false,false,false];
+  const sc=SCENARIOS[myGroup.scenario];
+  buildScenario(sc);
+  showScreen('activityScreen');
+}
+
+function buildScenario(sc){
+  // Build all scenes hidden
+  const area=document.getElementById('scenarioArea');
+  area.innerHTML=`<div style="font-weight:800;font-size:1rem;color:${myGroup.color};margin-bottom:14px;padding:10px 14px;background:${myGroup.bg};border-radius:10px">${myGroup.icon} ${sc.title}</div>`+
+    sc.scenes.map((s,i)=>`
+      <div class="scenario-card" id="sc${i}" style="display:${i===0?'block':'none'}">
+        <div class="sc-header" style="background:${myGroup.bg}">
+          <span class="sc-num" style="background:${myGroup.color}">${['الأول','الثاني','الثالث'][i]}</span>
+          <span class="sc-title" style="color:${myGroup.color}">${s.t}</span>
+        </div>
+        <div class="sc-body">${s.b}</div>
+      </div>`).join('');
+  // Show/hide button
+  updateSceneBtn(sc);
+}
+
+function updateSceneBtn(sc){
+  const btn=document.getElementById('showNextScene');
+  const total=sc.scenes.length;
+  if(currentScene<total-1){
+    btn.style.display='block';btn.textContent='▶ المشهد التالي';btn.style.background=myGroup.color;
+  } else if(currentScene===total-1){
+    btn.style.display='block';btn.textContent='✅ انتقلي للأسئلة';btn.style.background=myGroup.color;
+  } else {btn.style.display='none';}
+}
+
+function showNextScene(){
+  const sc=SCENARIOS[myGroup.scenario];
+  currentScene++;
+  if(currentScene<sc.scenes.length){
+    document.getElementById('sc'+(currentScene)).style.display='block';
+    updateSceneBtn(sc);
+    if(currentScene===sc.scenes.length-1){
+      document.getElementById('showNextScene').textContent='✅ انتقلي للأسئلة';
+    }
+  } else {
+    document.getElementById('showNextScene').style.display='none';
+    showQuestions();
+  }
+}
+
+function showQuestions(){
+  document.getElementById('questionsArea').style.display='block';
+  const qs=SCENARIOS[myGroup.scenario].qs;
+  document.getElementById('questionsArea').innerHTML=qs.map((q,i)=>`
+    <div class="q-card" id="qcard${i}" style="${i>0?'display:none':''}">
+      <span class="q-num-badge" style="background:${myGroup.color}">السؤال ${i+1} من ${qs.length}</span>
+      <div class="q-text">${q.q}</div>
+      <div class="opts">
+        ${q.opts.map((o,j)=>`<label class="opt" id="opt${i}_${j}">
+          <input type="radio" name="q${i}" value="${j}" onchange="answerQ(${i},${j})"> ${o}
+        </label>`).join('')}
+      </div>
+      <div class="fb" id="fb${i}"></div>
+      <button class="next-q-btn" id="nqb${i}" style="background:${myGroup.color}" onclick="nextQ(${i})">${i<qs.length-1?'السؤال التالي ←':'✅ اعرضي النصائح'}</button>
+    </div>`).join('');
+}
+
+function answerQ(qi,vi){
+  const qs=SCENARIOS[myGroup.scenario].qs;
+  const correct=qs[qi].c;
+  const opts=document.querySelectorAll(`[id^="opt${qi}_"]`);
+  opts.forEach((o,i)=>{
+    o.classList.remove('ok','no');
+    if(i===correct)o.classList.add('ok');
+    else if(i===vi&&vi!==correct)o.classList.add('no');
+    o.querySelector('input').disabled=true;
+  });
+  const fb=document.getElementById(`fb${qi}`);
+  if(vi===correct){fb.textContent='✅ إجابة صحيحة!';fb.className='fb show g';}
+  else{fb.textContent='❌ راجعي — الإجابة الصحيحة باللون الأخضر.';fb.className='fb show b';}
+  document.getElementById(`nqb${qi}`).classList.add('show');
+  qAnswered[qi]=true;
+}
+
+function nextQ(qi){
+  const qs=SCENARIOS[myGroup.scenario].qs;
+  if(qi<qs.length-1){
+    document.getElementById(`qcard${qi}`).style.display='none';
+    document.getElementById(`qcard${qi+1}`).style.display='block';
+    window.scrollTo(0,0);
+  } else {showTips();}
+}
+
+// TIPS
+function showTips(){
+  const g=myGroup;
+  const card=document.getElementById('tipsCard');
+  card.style.borderColor=g.color;
+  const title=document.getElementById('trTitle');
+  title.innerHTML=`<span style="font-size:1.4rem">${g.icon}</span> <span style="color:${g.color}">${g.name} — اكتشفتِ هاتين النصيحتين!</span>`;
+  document.getElementById('tipsContent').innerHTML=g.tips.map((t,i)=>`
+    <div class="tip-card">
+      <span class="tip-icon">🔓</span>
+      <div><div style="font-size:.72rem;font-weight:700;color:#4a8a6a;margin-bottom:3px">النصيحة ${i===0?'الأولى':'الثانية'}</div>${t}</div>
+    </div>`).join('');
+  showScreen('tipsScreen');
+  // Poll for challenge start
+  startPolling();
+}
+
+async function sendTips(){
+  const btn=document.getElementById('sendTipsBtn');
+  btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';
+  // Send group tips ONCE — only if not already sent
+  const existing=await dbGet(`groups_tips_c2/${myGroupId}`);
+  if(!existing){
+    await dbSet(`groups_tips_c2/${myGroupId}`,{
+      group:myGroup.name,icon:myGroup.icon,
+      tip1:myGroup.tips[0],tip2:myGroup.tips[1],
+      color:myGroup.color,sentAt:new Date().toLocaleTimeString('ar-QA'),
+      sentBy:myName
+    });
+  }
+  // Mark this student as done
+  await dbSet(`groups_members_c2/${myGroupId}/${myName.replace(/ /g,'_')}/done`,true);
+  document.getElementById('sentOk').classList.add('show');
+  btn.style.display='none';
+  document.getElementById('waitChallenge').style.display='block';
+}
+
+// POLLING
+function startPolling(){
+  clearInterval(pollInterval);
+  pollInterval=setInterval(async()=>{
+    const state=await dbGet('groups_challenge_c2/state');
+    if(state==='active'){
+      clearInterval(pollInterval);
+      startChallenge();
+    }
+  },3000);
+}
+
+// CHALLENGE
+function startChallenge(){
+  chQ=0;chAnswers=[];chSelected=-1;
+  applyGroupStyle(myGroupId);
+  const badge=document.getElementById('chGroupBadge');
+  badge.textContent=myGroup.icon+' '+myGroup.name;
+  badge.style.background=myGroup.bg;badge.style.color=myGroup.color;badge.style.border=`1px solid ${myGroup.color}`;
+  showScreen('challengeScreen');
+  renderChallengeQ();
+}
+
+function renderChallengeQ(){
+  const q=CHALLENGE_QS[chQ];
+  const letters=['أ','ب','ج','د'];
+  chSelected=-1;
+  document.getElementById('chProgress').textContent=`السؤال ${chQ+1} من ${CHALLENGE_QS.length}`;
+  document.getElementById('challengeArea').innerHTML=`
+    <div class="ch-q-card">
+      <div class="ch-q-text">${q.q}</div>
+      <div class="ch-opts">
+        ${q.opts.map((o,i)=>`<button class="ch-opt" id="cho${i}" onclick="selCh(${i})">
+          <div class="ch-letter" id="chl${i}">${letters[i]}</div><span>${o}</span>
+        </button>`).join('')}
+      </div>
+    </div>
+    <button class="ch-submit" id="chSubmit" style="background:${myGroup.color}" onclick="submitCh()" disabled>
+      ${chQ<CHALLENGE_QS.length-1?'التالي ←':'🏁 إنهاء التحدي'}
+    </button>`;
+}
+
+function selCh(i){
+  chSelected=i;
+  document.querySelectorAll('.ch-opt').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('cho'+i).classList.add('sel');
+  document.getElementById('chl'+i).style.background=myGroup.color;
+  document.getElementById('chl'+i).style.color='#fff';
+  document.getElementById('chSubmit').disabled=false;
+}
+
+async function submitCh(){
+  if(chSelected===-1)return;
+  const q=CHALLENGE_QS[chQ];
+  const ok=chSelected===q.c;
+  chAnswers.push(ok);
+  // Show correct/wrong briefly
+  document.querySelectorAll('.ch-opt').forEach((b,i)=>{
+    if(i===q.c)b.classList.add('ok');
+    else if(i===chSelected&&!ok)b.classList.add('no');
+    b.onclick=null;
+  });
+  document.getElementById('chSubmit').disabled=true;
+  await new Promise(r=>setTimeout(r,800));
+  chQ++;
+  if(chQ<CHALLENGE_QS.length){renderChallengeQ();}
+  else{finishChallenge();}
+}
+
+async function finishChallenge(){
+  const score=chAnswers.filter(Boolean).length;
+  const pct=Math.round(score/CHALLENGE_QS.length*100);
+  // Add score to group
+  await dbPatch(`groups_challenge_c2/scores`,{[myGroupId]:{name:myGroup.name,icon:myGroup.icon,score:(await getGroupScore())+score,color:myGroup.color}});
+  // Show final
+  document.getElementById('fsIcon').textContent=pct===100?'🏆':pct>=60?'⭐':'💪';
+  document.getElementById('fsTitle').textContent=pct===100?'ممتاز! إجاباتكِ كاملة!':pct>=60?'جيد جداً!':'استمري في التعلم!';
+  const gb=document.getElementById('fsGroup');
+  gb.textContent=myGroup.icon+' '+myGroup.name;gb.style.background=myGroup.bg;gb.style.color=myGroup.color;gb.style.border=`1px solid ${myGroup.color}`;
+  document.getElementById('fsScore').textContent=`${score}/${CHALLENGE_QS.length}`;
+  document.getElementById('fsScore').style.color=myGroup.color;
+  document.getElementById('fsDetail').innerHTML=chAnswers.map((ok,i)=>`
+    <div class="fs-row">
+      <span>${ok?'✅':'❌'}</span>
+      <span style="flex:1;font-size:.85rem">${CHALLENGE_QS[i].q.substring(0,50)}...</span>
+    </div>`).join('');
+  showScreen('finalScreen');
+}
+
+async function getGroupScore(){
+  const s=await dbGet(`groups_challenge_c2/scores/${myGroupId}/score`);
+  return s||0;
+}
+
+window.onload=()=>{renderNames(buildNames());};
+</script>
+</body>
+</html>

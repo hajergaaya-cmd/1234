@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — نشاط المجموعات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--surface:#f7f8fc;--border:#e0e8f0;--text:#1a1a2e;--text2:#5a6a8a;--g1:#0e7a6a;--g2:#7c4dff;--g3:#c07a00;--red:#e74c3c;--green:#27ae60;--shadow:0 2px 14px rgba(0,0,0,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl}
+
+header{background:linear-gradient(135deg,#0a3a2a,#0e7a6a);padding:14px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.h-logo{font-size:1.9rem}.h-title{font-size:1.25rem;font-weight:800;color:#fff}.h-sub{font-size:.78rem;color:#a0d8cc;margin-top:1px}
+.hctrl{margin-right:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.live{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:4px 12px;font-size:.78rem;color:#a0d8cc;font-weight:700}
+.ldot{width:6px;height:6px;border-radius:50%;background:#4fd37a;animation:blink 1.3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.cbtn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:background .2s}
+.cbtn:hover{background:rgba(255,255,255,.22)}
+
+/* PHASE INDICATOR */
+.phase-bar{background:var(--surface);border-bottom:2px solid var(--border);padding:12px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.phase-step{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:700;color:var(--text2);padding:7px 16px;border-radius:22px;border:1.5px solid var(--border);transition:all .3s}
+.phase-step.active{background:#e8f8ee;border-color:var(--green);color:var(--green)}
+.phase-step.done{background:var(--surface);color:var(--text2);opacity:.5}
+.phase-arrow{color:var(--text2);font-size:1rem}
+.start-challenge-btn{margin-right:auto;padding:10px 24px;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;transition:opacity .2s;display:none}
+.start-challenge-btn:hover{opacity:.9}.start-challenge-btn.show{display:block}
+
+/* TIPS GRID */
+.tips-section{max-width:1200px;margin:0 auto;padding:18px 20px 0}
+.ts-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.tips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:700px){.tips-grid{grid-template-columns:1fr}}
+.tip-group-card{border-radius:16px;padding:20px;border:2px solid;position:relative;overflow:hidden}
+.tgc-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,.06)}
+.tgc-icon{font-size:2rem}
+.tgc-name{font-size:1.05rem;font-weight:800}
+.tgc-badge{font-size:.72rem;padding:2px 9px;border-radius:8px;font-weight:700;background:rgba(255,255,255,.8);margin-top:2px}
+.tgc-tip{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border-radius:10px;background:rgba(255,255,255,.6);margin-bottom:8px;font-size:.9rem;line-height:1.75;font-weight:600;border:1px solid rgba(0,0,0,.06)}
+.tgc-tip:last-child{margin-bottom:0}
+.tip-num{font-size:.72rem;font-weight:800;padding:2px 7px;border-radius:6px;flex-shrink:0;background:rgba(255,255,255,.8);margin-top:2px}
+.tgc-waiting{text-align:center;padding:30px;color:rgba(0,0,0,.3);font-size:.9rem}
+.tgc-sent-by{font-size:.72rem;opacity:.6;margin-top:10px;text-align:left}
+.members-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
+.member-chip{font-size:.72rem;background:rgba(255,255,255,.7);border-radius:20px;padding:3px 9px;border:1px solid rgba(0,0,0,.08)}
+.member-chip.done{border-color:var(--green);background:#e8f8ee;color:var(--green)}
+
+/* CHALLENGE SECTION */
+.challenge-section{max-width:1200px;margin:0 auto;padding:0 20px 40px;display:none}
+.challenge-section.show{display:block}
+.challenge-header-bar{background:linear-gradient(135deg,#1a0a2e,#3a1a6a);border-radius:16px;padding:20px;text-align:center;margin-bottom:20px;color:#fff}
+.chb-title{font-size:1.3rem;font-weight:800;margin-bottom:4px}
+.chb-sub{font-size:.85rem;opacity:.7}
+
+/* SCORES */
+.scores-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.score-card{border-radius:16px;padding:20px;border:2px solid;text-align:center}
+.scard-icon{font-size:2.5rem;margin-bottom:6px}
+.scard-name{font-size:1rem;font-weight:800;margin-bottom:10px}
+.scard-score{font-size:2.8rem;font-weight:900;line-height:1}
+.scard-label{font-size:.78rem;opacity:.7;margin-top:3px}
+.score-bar{height:10px;background:rgba(0,0,0,.1);border-radius:5px;overflow:hidden;margin-top:10px}
+.score-fill{height:100%;border-radius:5px;transition:width .5s ease}
+
+/* WINNER BANNER */
+.winner-banner{border-radius:18px;padding:26px;text-align:center;margin-bottom:18px;display:none;animation:wPop .6s ease}
+.winner-banner.show{display:block}
+@keyframes wPop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.wb-crown{font-size:4rem;margin-bottom:8px;animation:bounce .7s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.wb-title{font-size:1rem;font-weight:700;opacity:.8;margin-bottom:4px}
+.wb-name{font-size:1.8rem;font-weight:900;margin-bottom:6px}
+.wb-score{font-size:1rem;opacity:.8}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:999;display:none}
+.cp{position:absolute;width:10px;height:10px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+.reset-btn{background:rgba(231,76,60,.15);border:1px solid var(--red);color:var(--red);border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s}
+.reset-btn:hover{background:rgba(231,76,60,.25)}
+</style>
+</head>
+<body>
+<div class="confetti" id="confetti"></div>
+
+<header>
+  <div class="h-logo">🛡️</div>
+  <div><div class="h-title">شاشة المعلمة — نشاط المجموعات</div><div class="h-sub">حماية الشبكات | 3 مجموعات | الشعبة الثانية</div></div>
+  <div class="hctrl">
+    <div class="live"><span class="ldot"></span>مباشر</div>
+    <button class="reset-btn" onclick="resetAll()">🗑️ إعادة ضبط</button>
+  </div>
+</header>
+
+<!-- PHASE BAR -->
+<div class="phase-bar">
+  <div class="phase-step" id="ph1">📝 المجموعات تعمل</div>
+  <div class="phase-arrow">←</div>
+  <div class="phase-step" id="ph2">🔓 ظهور النصائح</div>
+  <div class="phase-arrow">←</div>
+  <div class="phase-step" id="ph3">⚔️ التحدي</div>
+  <div class="phase-arrow">←</div>
+  <div class="phase-step" id="ph4">🏆 الفائزة</div>
+  <button class="start-challenge-btn" id="startChallengeBtn" onclick="startChallenge()">⚔️ ابدئي تحدي المجموعات!</button>
+</div>
+
+<!-- TIPS GRID -->
+<div class="tips-section" id="tipsSection">
+  <div class="ts-title">🔓 النصائح التي اكتشفتها كل مجموعة</div>
+  <div class="tips-grid" id="tipsGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text2)">⏳ في انتظار إرسال المجموعات...</div>
+  </div>
+  <!-- MEMBERS STATUS -->
+  <div class="ts-title" style="margin-top:8px">👥 حالة الطالبات</div>
+  <div class="tips-grid" id="membersGrid"></div>
+</div>
+
+<!-- CHALLENGE SECTION -->
+<div class="challenge-section" id="challengeSection">
+  <div class="challenge-header-bar">
+    <div class="wb-crown" style="font-size:2.5rem;animation:none">⚔️</div>
+    <div class="chb-title">تحدي المجموعات — جارٍ الآن!</div>
+    <div class="chb-sub">كل طالبة تجيب على 5 أسئلة — النقاط تُجمع للمجموعة</div>
+  </div>
+  <div class="winner-banner" id="winnerBanner">
+    <div class="wb-crown">👑</div>
+    <div class="wb-title">المجموعة الفائزة</div>
+    <div class="wb-name" id="wbName">—</div>
+    <div class="wb-score" id="wbScore"></div>
+  </div>
+  <div class="scores-grid" id="scoresGrid"></div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const GROUPS={
+  g1:{name:'فريق الحماة',icon:'🛡️',color:'#0e7a6a',bg:'#eef8f5',
+    members:['أباء أسامه','الجازي فيصل','الريم حميد','الريم ناصر','ايلا سامر','ايه اسحق','بلسم فارس','بلقيس نوراحمد']},
+  g2:{name:'فريق الأمان',icon:'🔐',color:'#7c4dff',bg:'#f0eeff',
+    members:['حنين علاء','حنين محمد','دانه عبدالرحمن','رهف محمد','رهف هياب','روضة رضا','ساره سعود','سجى محمد']},
+  g3:{name:'فريق الدفاع',icon:'🔒',color:'#c07a00',bg:'#fff8e8',
+    members:['سما احمد','ضحى محمد','عائشه موسى','فاطمه حكيم','فاطمه عبدالله','ليان هانى','مريم سعيد','نور محمود','نوران عرفات']},
+};
+const MAX_SCORE=25*5; // max if all 25 students answer all 5 correctly
+
+async function dbGet(p){try{const r=await fetch(`${DB}/${p}.json`);return await r.json();}catch(e){return null;}}
+async function dbSet(p,v){try{await fetch(`${DB}/${p}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});}catch(e){}}
+async function dbDel(p){try{await fetch(`${DB}/${p}.json`,{method:'DELETE'});}catch(e){}}
+
+async function fetchAll(){
+  const [tips,members,challenge]=await Promise.all([
+    dbGet('groups_tips_c2'),
+    dbGet('groups_members_c2'),
+    dbGet('groups_challenge_c2'),
+  ]);
+  renderTips(tips||{});
+  renderMembers(members||{});
+  renderPhase(tips||{},challenge||{});
+  if(challenge?.state==='active')renderScores(challenge?.scores||{});
+}
+
+function renderTips(tips){
+  const grid=document.getElementById('tipsGrid');
+  const hasTips=Object.keys(tips).length>0;
+  if(!hasTips){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text2)">⏳ في انتظار إرسال المجموعات...</div>`;
+    return;
+  }
+  grid.innerHTML=Object.entries(GROUPS).map(([gid,g])=>{
+    const t=tips[gid];
+    const bgStyle=`background:${g.bg};border-color:${g.color}`;
+    if(!t)return `<div class="tip-group-card" style="${bgStyle}">
+      <div class="tgc-header"><div class="tgc-icon">${g.icon}</div><div><div class="tgc-name" style="color:${g.color}">${g.name}</div></div></div>
+      <div class="tgc-waiting">⏳ لم ترسل بعد...</div></div>`;
+    return `<div class="tip-group-card" style="${bgStyle}">
+      <div class="tgc-header">
+        <div class="tgc-icon">${g.icon}</div>
+        <div><div class="tgc-name" style="color:${g.color}">${g.name}</div>
+        <div class="tgc-badge" style="color:${g.color}">✅ أرسلت النصائح</div></div>
+      </div>
+      <div class="tgc-tip"><span class="tip-num" style="color:${g.color}">1</span>${t.tip1}</div>
+      <div class="tgc-tip"><span class="tip-num" style="color:${g.color}">2</span>${t.tip2}</div>
+      <div class="tgc-sent-by">أرسلتها: ${t.sentBy||'—'} | ${t.sentAt||''}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMembers(members){
+  const grid=document.getElementById('membersGrid');
+  grid.innerHTML=Object.entries(GROUPS).map(([gid,g])=>{
+    const gm=members[gid]||{};
+    const chips=g.members.map(name=>{
+      const key=name.replace(/ /g,'_');
+      const isDone=gm[key]?.done;
+      return `<span class="member-chip ${isDone?'done':''}">${isDone?'✅ ':''} ${name}</span>`;
+    }).join('');
+    const done=g.members.filter(n=>gm[n.replace(/ /g,'_')]?.done).length;
+    return `<div class="tip-group-card" style="background:${g.bg};border-color:${g.color}">
+      <div class="tgc-header"><div class="tgc-icon">${g.icon}</div>
+        <div><div class="tgc-name" style="color:${g.color}">${g.name}</div>
+        <div style="font-size:.75rem;color:${g.color};font-weight:700">${done}/${g.members.length} أنهين النشاط</div></div>
+      </div>
+      <div class="members-row">${chips}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderPhase(tips,challenge){
+  const tipsCount=Object.keys(tips).length;
+  const state=challenge?.state;
+  document.getElementById('ph1').className='phase-step'+(tipsCount>0?' done':' active');
+  document.getElementById('ph2').className='phase-step'+(tipsCount===3?' active':tipsCount>0?' active':'');
+  document.getElementById('ph3').className='phase-step'+(state==='active'?' active':'');
+  document.getElementById('ph4').className='phase-step'+(state==='done'?' active':'');
+  // Show start button if all 3 groups sent tips and challenge not started
+  const btn=document.getElementById('startChallengeBtn');
+  if(tipsCount===3&&!state){btn.classList.add('show');}
+  else{btn.classList.remove('show');}
+  // Show challenge section
+  if(state==='active'||state==='done'){
+    document.getElementById('challengeSection').classList.add('show');
+    document.getElementById('tipsSection').style.opacity='.5';
+  }
+}
+
+async function startChallenge(){
+  if(!confirm('هل أنتِ جاهزة لبدء تحدي المجموعات؟'))return;
+  await dbSet('groups_challenge_c2/state','active');
+  await dbSet('groups_challenge_c2/scores',{
+    g1:{name:'فريق الحماة',icon:'🛡️',color:'#0e7a6a',score:0},
+    g2:{name:'فريق الأمان',icon:'🔐',color:'#7c4dff',score:0},
+    g3:{name:'فريق الدفاع',icon:'🔒',color:'#c07a00',score:0},
+  });
+  document.getElementById('challengeSection').classList.add('show');
+  document.getElementById('startChallengeBtn').style.display='none';
+}
+
+function renderScores(scores){
+  if(!scores||!Object.keys(scores).length)return;
+  const entries=Object.entries(scores).sort((a,b)=>b[1].score-a[1].score);
+  const maxS=Math.max(...entries.map(([,s])=>s.score),1);
+  document.getElementById('scoresGrid').innerHTML=entries.map(([gid,s],i)=>`
+    <div class="score-card" style="background:${GROUPS[gid]?.bg||'#f7f8fc'};border-color:${s.color}">
+      <div class="scard-icon">${i===0?'🥇':i===1?'🥈':'🥉'} ${s.icon}</div>
+      <div class="scard-name" style="color:${s.color}">${s.name}</div>
+      <div class="scard-score" style="color:${s.color}">${s.score}</div>
+      <div class="scard-label">نقطة</div>
+      <div class="score-bar"><div class="score-fill" style="width:${Math.round(s.score/maxS*100)}%;background:${s.color}"></div></div>
+    </div>`).join('');
+  // Winner
+  if(entries[0][1].score>0){
+    const top=entries[0][1];
+    const wb=document.getElementById('winnerBanner');
+    wb.style.background=GROUPS[entries[0][0]]?.bg||'#fff8e8';
+    wb.style.borderColor=top.color;wb.style.border=`2px solid ${top.color}`;
+    wb.classList.add('show');
+    document.getElementById('wbName').textContent=top.icon+' '+top.name;
+    document.getElementById('wbName').style.color=top.color;
+    document.getElementById('wbScore').textContent=top.score+' نقطة';
+    if(entries[0][1].score!==entries[1][1].score)showConfetti();
+  }
+}
+
+let confettiShown=false;
+function showConfetti(){
+  if(confettiShown)return;confettiShown=true;
+  const el=document.getElementById('confetti');el.style.display='block';el.innerHTML='';
+  const colors=['#ffd700','#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ff9ff3'];
+  for(let i=0;i<70;i++){
+    const p=document.createElement('div');p.className='cp';
+    p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${7+Math.random()*8}px;height:${7+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation:fall ${1.5+Math.random()*2}s linear ${Math.random()*1.5}s forwards`;
+    el.appendChild(p);
+  }
+  setTimeout(()=>{el.style.display='none';},5000);
+}
+
+async function resetAll(){
+  if(!confirm('إعادة ضبط نشاط المجموعات؟'))return;
+  await Promise.all([dbDel('groups_tips_c2'),dbDel('groups_members_c2'),dbDel('groups_challenge_c2')]);
+  confettiShown=false;
+  document.getElementById('challengeSection').classList.remove('show');
+  document.getElementById('tipsSection').style.opacity='1';
+  document.getElementById('winnerBanner').classList.remove('show');
+  document.getElementById('ph1').className='phase-step active';
+  ['ph2','ph3','ph4'].forEach(p=>document.getElementById(p).className='phase-step');
+  fetchAll();
+}
+
+fetchAll();
+setInterval(fetchAll,4000);
+</script>
+</body>
+</html>
