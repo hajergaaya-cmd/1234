@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة المعلمة | مقدمة إلى الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#0d1117;min-height:100vh;color:#fff}
+/* HEADER */
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #333}
+.header h1{font-size:1.6em;font-weight:900;background:linear-gradient(90deg,#ffd200,#ff9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-right{display:flex;gap:12px;align-items:center}
+.refresh-btn{background:#4361EE;color:#fff;border:none;border-radius:12px;padding:10px 22px;font-family:'Tajawal',sans-serif;font-size:1em;font-weight:800;cursor:pointer;transition:.2s}
+.refresh-btn:hover{background:#3451d1;transform:translateY(-1px)}
+.home-btn{background:#2a2a4e;color:#aaa;border:1px solid #444;border-radius:12px;padding:10px 18px;font-family:'Tajawal',sans-serif;font-size:.95em;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.home-btn:hover{background:#333;color:#fff}
+/* LIVE BADGE */
+.live-dot{display:inline-block;width:10px;height:10px;background:#10b981;border-radius:50%;margin-left:6px;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+/* SUMMARY CARDS */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;padding:22px 28px}
+.s-card{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:18px;padding:20px 16px;text-align:center;border:1px solid #333}
+.s-card .s-num{font-size:2.5em;font-weight:900;margin-bottom:4px}
+.s-card .s-lbl{font-size:.9em;color:#aaa;font-weight:600}
+/* PODIUM */
+.section{padding:0 28px 22px}
+.section h2{font-size:1.2em;font-weight:800;color:#ffd200;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.podium{display:flex;justify-content:center;gap:20px;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap}
+.pod-card{border-radius:18px;padding:20px 16px;text-align:center;min-width:180px;position:relative}
+.pod-card .pos{font-size:2.5em;margin-bottom:8px}
+.pod-card .pod-name{font-weight:900;font-size:1em;margin-bottom:6px}
+.pod-card .pod-score{font-size:1.6em;font-weight:900;margin-bottom:4px}
+.pod-card .pod-lbl{font-size:.8em;opacity:.7}
+.pod-1{background:linear-gradient(135deg,#f6d365,#fda085);color:#5a0000;order:2}
+.pod-2{background:linear-gradient(135deg,#a8edea,#fed6e3);color:#1a3a4a;order:1}
+.pod-3{background:linear-gradient(135deg,#d4a6ff,#c7ecee);color:#2a1a4a;order:3}
+.pod-ribbon{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.3em;box-shadow:0 4px 10px rgba(0,0,0,0.2)}
+/* TABS */
+.tabs{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.tab{background:#1a1a2e;color:#888;border:1.5px solid #333;border-radius:12px;padding:8px 18px;font-family:'Tajawal',sans-serif;font-size:.95em;font-weight:700;cursor:pointer;transition:.2s}
+.tab.active{background:#4361EE;border-color:#4361EE;color:#fff}
+/* STUDENT TABLE */
+.std-table{width:100%;border-collapse:collapse}
+.std-table th{background:#1a1a2e;color:#ffd200;padding:12px 14px;font-size:.95em;text-align:right;border-bottom:2px solid #333}
+.std-table td{padding:11px 14px;font-size:.9em;border-bottom:1px solid #222;vertical-align:middle}
+.std-table tr:hover td{background:#1a1a2e}
+.rank-cell{font-size:1.2em;font-weight:900;text-align:center;min-width:50px}
+.score-bar{background:#333;border-radius:8px;height:8px;margin-top:4px;overflow:hidden}
+.score-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#4361EE,#7c3aed)}
+.badge-act{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.8em;font-weight:700;margin:2px}
+.badge-done{background:#d1fae5;color:#065f46}
+.badge-partial{background:#fef9c3;color:#7a5a00}
+.badge-miss{background:#fee2e2;color:#b91c1c}
+.obj-score{display:inline-block;background:#2a2a4e;border-radius:8px;padding:3px 10px;margin:2px;font-size:.82em;color:#aaa}
+.obj-score span{color:#ffd200;font-weight:800}
+/* ANALYSIS */
+.analysis-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.an-card{background:#1a1a2e;border-radius:16px;padding:18px 16px;border:1px solid #333}
+.an-card h3{font-size:1em;font-weight:800;margin-bottom:12px;color:#a78bfa}
+.an-stat{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.an-stat .lbl{color:#aaa;font-size:.88em}
+.an-stat .val{font-weight:800;color:#fff;font-size:1em}
+.progress-bar{background:#333;border-radius:6px;height:6px;margin-top:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:6px;transition:.4s}
+/* STATUS FILTER */
+.filter-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-btn{background:#1a1a2e;color:#888;border:1px solid #333;border-radius:10px;padding:6px 16px;font-family:'Tajawal',sans-serif;font-size:.9em;cursor:pointer}
+.filter-btn.active{background:#7c3aed;border-color:#7c3aed;color:#fff}
+/* RESET */
+.reset-zone{background:#1a0000;border:1.5px dashed #dc2626;border-radius:14px;padding:18px 22px;margin-top:18px}
+.reset-zone h3{color:#dc2626;font-size:1em;margin-bottom:10px}
+.reset-btns{display:flex;gap:10px;flex-wrap:wrap}
+.reset-btn{background:#dc2626;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:'Tajawal',sans-serif;font-size:.88em;font-weight:700;cursor:pointer;transition:.2s}
+.reset-btn:hover{background:#b91c1c}
+.reset-btn.safe{background:#2a2a4e;color:#aaa;border:1px solid #444}
+/* LOADING */
+.loading{text-align:center;padding:40px;color:#666;font-size:1.1em}
+/* TROPHY ANIMATION */
+@keyframes tada{0%,100%{transform:scale(1) rotate(0)}10%,90%{transform:scale(1.1) rotate(-3deg)}20%,80%{transform:scale(1.1) rotate(3deg)}30%,50%,70%{transform:scale(1.1) rotate(-3deg)}40%,60%{transform:scale(1.1) rotate(3deg)}}
+.trophy-anim{animation:tada 1.5s ease infinite}
+/* AUTO REFRESH */
+.auto-badge{background:#2a2a4e;border:1px solid #555;border-radius:8px;padding:4px 12px;font-size:.85em;color:#888}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🏆 لوحة المعلمة - مقدمة إلى الروبوت</h1>
+    <div style="color:#888;font-size:.9em;margin-top:4px">
+      <span class="live-dot"></span> بيانات حية من Firebase
+      <span class="auto-badge" style="margin-right:10px">🔄 تحديث كل 30 ثانية</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="refresh-btn" onclick="loadAll()">🔄 تحديث</button>
+    <a href="index.html" class="home-btn">🏠 الرئيسية</a>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary" id="summaryCards">
+  <div class="s-card"><div class="s-num" style="color:#4361EE">—</div><div class="s-lbl">إجمالي الطالبات</div></div>
+  <div class="s-card"><div class="s-num" style="color:#10b981" id="sumActive">—</div><div class="s-lbl">شاركن في الأنشطة</div></div>
+  <div class="s-card"><div class="s-num" style="color:#ffd200" id="sumAvg">—</div><div class="s-lbl">متوسط النقاط</div></div>
+  <div class="s-card"><div class="s-num" style="color:#f72585" id="sumTop">—</div><div class="s-lbl">أعلى نقاط</div></div>
+  <div class="s-card"><div class="s-num" style="color:#7c3aed" id="sumComplete">—</div><div class="s-lbl">أكملن كل الأنشطة</div></div>
+</div>
+
+<!-- PODIUM -->
+<div class="section">
+  <h2><span class="trophy-anim">🏆</span> المراكز الثلاثة الأولى</h2>
+  <div class="podium" id="podiumSection">
+    <div class="loading">جارٍ تحميل النتائج...</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="section">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('all')">📋 جميع الطالبات</button>
+    <button class="tab" onclick="switchTab('analysis')">📊 تحليل الأهداف</button>
+    <button class="tab" onclick="switchTab('settings')">⚙️ إدارة</button>
+  </div>
+
+  <!-- TAB: ALL STUDENTS -->
+  <div id="tab-all">
+    <div class="filter-row">
+      <span style="color:#888;font-size:.9em">تصفية:</span>
+      <button class="filter-btn active" onclick="setFilter('all',this)">الكل</button>
+      <button class="filter-btn" onclick="setFilter('high',this)">🌟 متفوقات (75%+)</button>
+      <button class="filter-btn" onclick="setFilter('mid',this)">👍 متوسطات</button>
+      <button class="filter-btn" onclick="setFilter('low',this)">⚠️ تحتاج دعم</button>
+      <button class="filter-btn" onclick="setFilter('absent',this)">⏳ لم تشارك</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="std-table" id="stdTable">
+        <thead>
+          <tr>
+            <th style="text-align:center">الترتيب</th>
+            <th>اسم الطالبة</th>
+            <th>المجموع</th>
+            <th>التهيئة</th>
+            <th>ن1</th><th>ن2</th><th>ن3</th><th>ن4</th><th>ن5</th>
+            <th>غ1</th><th>غ2</th><th>غ3</th><th>غ4</th><th>غ5</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="stdBody"><tr><td colspan="15" class="loading">جارٍ التحميل...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: ANALYSIS -->
+  <div id="tab-analysis" style="display:none">
+    <div class="analysis-grid" id="analysisGrid">
+      <div class="loading">جارٍ التحليل...</div>
+    </div>
+  </div>
+
+  <!-- TAB: SETTINGS -->
+  <div id="tab-settings" style="display:none">
+    <div class="reset-zone">
+      <h3>⚠️ منطقة إعادة الضبط — تعمل بحذر</h3>
+      <div class="reset-btns">
+        <button class="reset-btn" onclick="resetPath('warmup')">مسح التهيئة</button>
+        <button class="reset-btn" onclick="resetPath('activity1')">مسح ن1</button>
+        <button class="reset-btn" onclick="resetPath('activity2')">مسح ن2</button>
+        <button class="reset-btn" onclick="resetPath('activity3')">مسح ن3</button>
+        <button class="reset-btn" onclick="resetPath('activity4')">مسح ن4</button>
+        <button class="reset-btn" onclick="resetPath('activity5')">مسح ن5</button>
+        <button class="reset-btn" onclick="resetPath('closure1')">مسح غ1</button>
+        <button class="reset-btn" onclick="resetPath('closure2')">مسح غ2</button>
+        <button class="reset-btn" onclick="resetPath('closure3')">مسح غ3</button>
+        <button class="reset-btn" onclick="resetPath('closure4')">مسح غ4</button>
+        <button class="reset-btn" onclick="resetPath('closure5')">مسح غ5</button>
+        <button class="reset-btn" onclick="resetPath('scores')">مسح النقاط الكلية</button>
+        <button class="reset-btn" style="background:#7c3aed" onclick="resetAll()">🗑️ مسح كل البيانات</button>
+        <button class="reset-btn safe" onclick="loadAll()">↩️ إلغاء وتحديث</button>
+      </div>
+    </div>
+    <div style="background:#1a1a2e;border-radius:14px;padding:18px;margin-top:18px">
+      <h3 style="color:#ffd200;margin-bottom:12px">🔗 روابط سريعة للأنشطة</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="warm-up.html" target="_blank" class="home-btn">التهيئة KWL</a>
+        <a href="activity1.html" target="_blank" class="home-btn">نشاط 1</a>
+        <a href="activity2.html" target="_blank" class="home-btn">نشاط 2</a>
+        <a href="activity3.html" target="_blank" class="home-btn">نشاط 3</a>
+        <a href="activity4.html" target="_blank" class="home-btn">نشاط 4</a>
+        <a href="activity5.html" target="_blank" class="home-btn">نشاط 5</a>
+        <a href="closure.html?obj=1" target="_blank" class="home-btn">غلق 1</a>
+        <a href="closure.html?obj=2" target="_blank" class="home-btn">غلق 2</a>
+        <a href="closure.html?obj=3" target="_blank" class="home-btn">غلق 3</a>
+        <a href="closure.html?obj=4" target="_blank" class="home-btn">غلق 4</a>
+        <a href="closure.html?obj=5" target="_blank" class="home-btn">غلق 5</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const BASE=`${DB}/robots-lesson`;
+const STUDENTS=['أريام حميد الحبيني','أسيل موسى العوض','الجازي عبدالعزيز عبدالله محمد المنصورى','أمامه سليم علبي','أمنه هياب احمد عبدالرحمن','أنوار حمد العبيد','أنيسه نعمة الله','حبيبه علاء ابراهيم مشعل','حفصه احمد عبد المنعم عبد الغني','حلا أحمد محمد الباز عبدالعال','حنان محمد طاهر','حوريه نبيل احمد السيد الحفنى','داليا رمضان العلي','ذهب محمد طاهر','رغد نبي جول','رقية حمدى سعيد عباس خواجة','رنيم حسني عواد الخلايله','روقيه شعبان محمد هنداوي حسانين','رؤى بوكيوض','ريان محمود الحاج أمين نجار','ريتال حسني عواد الخلايله','شما عمر بشير عبدالقادر','فاطمه فخر الدين احمد الامين','قمر حازم عمر','ليا عبد الحاج اسماعيل','ماريا عبدالعليم الرزوق','مريم حافظ فاروق احمد احمد','ملاك عبدالله الدرويش','نداء حسين المحمد العبادي','نور أيهاب عبدالحميد عبدالسلام غمري','نورا عبدالعزيز عبدالله محمد المنصورى','نيللي أمير سعيد محمود الحداد','هنادي محمد عبدالله علي','هيلان','وعد مصطفى أحمد عثمان'];
+
+const MAX_SCORE=235;
+let allData={};
+let filterMode='all';
+
+async function loadAll(){
+  try{
+    const [scores,wu,a1,a2,a3,a4,a5,c1,c2,c3,c4,c5]=await Promise.all([
+      fetch(`${BASE}/scores.json`).then(r=>r.json()),
+      fetch(`${BASE}/warmup.json`).then(r=>r.json()),
+      fetch(`${BASE}/activity1.json`).then(r=>r.json()),
+      fetch(`${BASE}/activity2.json`).then(r=>r.json()),
+      fetch(`${BASE}/activity3.json`).then(r=>r.json()),
+      fetch(`${BASE}/activity4.json`).then(r=>r.json()),
+      fetch(`${BASE}/activity5.json`).then(r=>r.json()),
+      fetch(`${BASE}/closure1.json`).then(r=>r.json()),
+      fetch(`${BASE}/closure2.json`).then(r=>r.json()),
+      fetch(`${BASE}/closure3.json`).then(r=>r.json()),
+      fetch(`${BASE}/closure4.json`).then(r=>r.json()),
+      fetch(`${BASE}/closure5.json`).then(r=>r.json()),
+    ]);
+    allData={scores:scores||{},wu:wu||{},a1:a1||{},a2:a2||{},a3:a3||{},a4:a4||{},a5:a5||{},c1:c1||{},c2:c2||{},c3:c3||{},c4:c4||{},c5:c5||{}};
+    buildView();
+  }catch(e){console.error(e);}
+}
+
+function getKey(name){return encodeURIComponent(name.replace(/\s+/g,'_'));}
+
+function findInData(ds,name){
+  const k=getKey(name);
+  for(const d of Object.values(ds)){
+    if(d&&(d.name===name||Object.keys(ds).includes(k)))return d;
+  }
+  const direct=ds[k];
+  return direct||null;
+}
+
+function buildStudentList(){
+  return STUDENTS.map(name=>{
+    const k=getKey(name);
+    const sc=allData.scores[k]||{};
+    const wu=allData.wu[k];
+    const a=[allData.a1[k],allData.a2[k],allData.a3[k],allData.a4[k],allData.a5[k]];
+    const c=[allData.c1[k],allData.c2[k],allData.c3[k],allData.c4[k],allData.c5[k]];
+    const wuS=wu?.score||0;
+    const aS=a.map(x=>x?.score||0);
+    const cS=c.map(x=>x?.score||0);
+    const total=wuS+aS.reduce((s,v)=>s+v,0)+cS.reduce((s,v)=>s+v,0);
+    const actCount=[wu,...a,...c].filter(Boolean).length;
+    return {name,wuS,aS,cS,total,actCount,participated:actCount>0};
+  });
+}
+
+function buildView(){
+  const list=buildStudentList().sort((a,b)=>b.total-a.total);
+  buildSummary(list);
+  buildPodium(list);
+  buildTable(list);
+  buildAnalysis(list);
+}
+
+function buildSummary(list){
+  const participated=list.filter(s=>s.participated).length;
+  const avg=participated>0?Math.round(list.filter(s=>s.participated).reduce((s,v)=>s+v.total,0)/participated):0;
+  const top=list[0]?.total||0;
+  const complete=list.filter(s=>s.actCount>=11).length;
+  document.getElementById('sumActive').textContent=participated;
+  document.getElementById('sumAvg').textContent=avg;
+  document.getElementById('sumTop').textContent=top;
+  document.getElementById('sumComplete').textContent=complete;
+  document.querySelector('.s-card .s-num').textContent=STUDENTS.length;
+}
+
+function buildPodium(list){
+  const participated=list.filter(s=>s.participated);
+  if(!participated.length){document.getElementById('podiumSection').innerHTML='<p style="color:#666">لا توجد بيانات بعد</p>';return;}
+  const [f,s,t]=participated;
+  let html='';
+  if(s)html+=`<div class="pod-card pod-2"><div class="pod-ribbon">🥈</div><div class="pos" style="font-size:1.8em">🥈</div><div class="pod-name">${s.name}</div><div class="pod-score">${s.total}</div><div class="pod-lbl">نقطة</div></div>`;
+  if(f)html+=`<div class="pod-card pod-1"><div class="pod-ribbon" style="font-size:1.5em">👑</div><div class="pos">🥇</div><div class="pod-name">${f.name}</div><div class="pod-score">${f.total}</div><div class="pod-lbl">نقطة</div></div>`;
+  if(t)html+=`<div class="pod-card pod-3"><div class="pod-ribbon">🥉</div><div class="pos" style="font-size:1.8em">🥉</div><div class="pod-name">${t.name}</div><div class="pod-score">${t.total}</div><div class="pod-lbl">نقطة</div></div>`;
+  document.getElementById('podiumSection').innerHTML=html;
+}
+
+function buildTable(list){
+  let filtered=list;
+  if(filterMode==='high')filtered=list.filter(s=>s.total/MAX_SCORE>=0.75&&s.participated);
+  else if(filterMode==='mid')filtered=list.filter(s=>{const p=s.total/MAX_SCORE;return p<0.75&&p>=0.4&&s.participated;});
+  else if(filterMode==='low')filtered=list.filter(s=>s.total/MAX_SCORE<0.4&&s.participated);
+  else if(filterMode==='absent')filtered=list.filter(s=>!s.participated);
+  
+  const rows=filtered.map((s,i)=>{
+    const pct=Math.round(s.total/MAX_SCORE*100);
+    const medal=i===0&&filterMode==='all'?'🥇':i===1&&filterMode==='all'?'🥈':i===2&&filterMode==='all'?'🥉':'';
+    const status=!s.participated?'<span class="badge-act badge-miss">لم تشارك</span>':s.actCount>=11?'<span class="badge-act badge-done">مكتمل</span>':s.actCount>=6?'<span class="badge-act badge-partial">جزئي</span>':'<span class="badge-act badge-miss">بداية</span>';
+    const aN=s.aS.map((v,i)=>`<td><span class="obj-score">${v||'—'}</span></td>`).join('');
+    const cN=s.cS.map((v,i)=>`<td><span class="obj-score">${v||'—'}</span></td>`).join('');
+    return `<tr>
+      <td class="rank-cell">${medal||'#'+(i+1)}</td>
+      <td style="font-weight:700;color:#fff">${s.name}</td>
+      <td><div style="font-weight:900;color:#ffd200;font-size:1.1em">${s.total}</div>
+          <div class="score-bar"><div class="score-fill" style="width:${pct}%"></div></div>
+          <div style="color:#666;font-size:.78em">${pct}%</div></td>
+      <td><span class="obj-score">${s.wuS||'—'}</span></td>
+      ${aN}${cN}
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('stdBody').innerHTML=rows||'<tr><td colspan="15" class="loading">لا توجد بيانات</td></tr>';
+}
+
+function buildAnalysis(list){
+  const participated=list.filter(s=>s.participated);
+  if(!participated.length){document.getElementById('analysisGrid').innerHTML='<p style="color:#666;padding:20px">لا توجد بيانات بعد</p>';return;}
+  const objNames=['تعريف الروبوت','وظائف الروبوت','مكونات SPIKE PRIME','وحدة التحكم','أنواع المحركات'];
+  const objColors=['#4361EE','#11998e','#ee0979','#8E54E9','#F7971E'];
+  let html=`<div class="an-card">
+    <h3>📈 نظرة عامة</h3>
+    <div class="an-stat"><div class="lbl">نسبة المشاركة</div><div class="val">${Math.round(participated.length/STUDENTS.length*100)}%</div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(participated.length/STUDENTS.length*100)}%;background:#4361EE"></div></div>
+    <div class="an-stat" style="margin-top:10px"><div class="lbl">متوسط النقاط</div><div class="val">${Math.round(participated.reduce((s,v)=>s+v.total,0)/participated.length)} / ${MAX_SCORE}</div></div>
+    <div class="an-stat"><div class="lbl">متفوقات (75%+)</div><div class="val" style="color:#10b981">${participated.filter(s=>s.total/MAX_SCORE>=0.75).length}</div></div>
+    <div class="an-stat"><div class="lbl">تحتاج دعم (أقل 40%)</div><div class="val" style="color:#ef4444">${participated.filter(s=>s.total/MAX_SCORE<0.4).length}</div></div>
+  </div>`;
+  
+  objNames.forEach((n,i)=>{
+    const actScores=participated.map(s=>s.aS[i]).filter(v=>v>0);
+    const clScores=participated.map(s=>s.cS[i]).filter(v=>v>0);
+    const maxAct=30,maxCl=20;
+    const avgA=actScores.length?Math.round(actScores.reduce((s,v)=>s+v,0)/actScores.length):0;
+    const avgC=clScores.length?Math.round(clScores.reduce((s,v)=>s+v,0)/clScores.length):0;
+    const pctA=Math.round(avgA/maxAct*100);
+    const pctC=Math.round(avgC/maxCl*100);
+    html+=`<div class="an-card">
+      <h3 style="color:${objColors[i]}">${i+1}. ${n}</h3>
+      <div class="an-stat"><div class="lbl">متوسط النشاط</div><div class="val">${avgA}/${maxAct}</div></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pctA}%;background:${objColors[i]}"></div></div>
+      <div class="an-stat" style="margin-top:8px"><div class="lbl">متوسط الغلق</div><div class="val">${avgC}/${maxCl}</div></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pctC}%;background:${objColors[i]}88"></div></div>
+      <div class="an-stat" style="margin-top:10px"><div class="lbl">أكملن النشاط</div><div class="val">${actScores.length}</div></div>
+      <div class="an-stat"><div class="lbl">أكملن الغلق</div><div class="val">${clScores.length}</div></div>
+    </div>`;
+  });
+  document.getElementById('analysisGrid').innerHTML=html;
+}
+
+function setFilter(mode,btn){
+  filterMode=mode;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const list=buildStudentList().sort((a,b)=>b.total-a.total);
+  buildTable(list);
+}
+
+function switchTab(tab){
+  ['all','analysis','settings'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach((b,i)=>{
+    b.classList.toggle('active',['all','analysis','settings'][i]===tab);
+  });
+}
+
+async function resetPath(path){
+  if(!confirm(`⚠️ هل أنتِ متأكدة من مسح بيانات "${path}"؟ لا يمكن التراجع!`))return;
+  try{
+    await fetch(`${BASE}/${path}.json`,{method:'DELETE'});
+    alert('✅ تم المسح بنجاح');
+    loadAll();
+  }catch(e){alert('❌ خطأ في المسح');}
+}
+
+async function resetAll(){
+  if(!confirm('⚠️⚠️ تحذير: سيتم مسح جميع بيانات الدرس نهائياً. هل أنتِ متأكدة تماماً؟'))return;
+  if(!confirm('هذا إجراء لا يمكن التراجع عنه. اضغطي موافق مجدداً للتأكيد.'))return;
+  try{
+    await fetch(`${BASE}.json`,{method:'DELETE'});
+    alert('✅ تم مسح جميع البيانات');
+    loadAll();
+  }catch(e){alert('❌ خطأ في المسح');}
+}
+
+// Load on start
+loadAll();
+// Auto refresh every 30s
+setInterval(loadAll,30000);
+</script>
+</body>
+</html>

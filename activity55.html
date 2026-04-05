@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 5 - أنواع المحركات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#F0FFF8;min-height:100vh}
+.top-bar{background:linear-gradient(135deg,#00b09b,#96c93d);padding:12px 22px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 15px rgba(0,176,155,0.4)}
+.top-bar h1{color:#fff;font-size:1.3em;font-weight:900}
+.timer-box{background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);border-radius:12px;padding:7px 16px;color:#fff;font-size:1.5em;font-weight:900;min-width:76px;text-align:center}
+.timer-box.urgent{background:rgba(220,38,38,0.35);border-color:#dc2626;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.view{display:none}.view.active{display:block}
+.center-screen{max-width:650px;margin:50px auto;padding:20px}
+.card{background:#fff;border-radius:22px;padding:36px;box-shadow:0 10px 35px rgba(0,0,0,0.1);text-align:center}
+.card .icon{font-size:4em;margin-bottom:12px}
+.card h2{font-size:1.7em;font-weight:900;color:#1e3a5f;margin-bottom:8px}
+.card p{color:#666;margin-bottom:20px}
+select.name-sel{width:100%;padding:12px 16px;border:2px solid #00b09b;border-radius:12px;font-family:'Tajawal';font-size:1.05em;margin-bottom:16px}
+.go-btn{background:linear-gradient(135deg,#00b09b,#96c93d);color:#fff;border:none;border-radius:12px;padding:13px 36px;font-size:1.15em;font-family:'Tajawal';font-weight:800;cursor:pointer;width:100%}
+.activity-area{max-width:1000px;margin:0 auto;padding:20px}
+.student-bar{background:linear-gradient(135deg,#00b09b,#96c93d);border-radius:12px;padding:10px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+.sname{font-weight:800;font-size:1.05em}
+.level-badge{background:rgba(255,255,255,0.25);border-radius:8px;padding:3px 14px;font-size:0.9em}
+.levels-row{display:flex;gap:10px;margin-bottom:16px}
+.lv-dot{flex:1;background:#e0e0e0;border-radius:10px;height:8px;transition:background 0.5s}
+.lv-dot.done{background:#00b09b}
+.lv-dot.active{background:#ffd200;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+.level-panel{background:#fff;border-radius:20px;padding:24px;box-shadow:0 6px 22px rgba(0,0,0,0.08);min-height:260px}
+.level-title{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.level-title .badge{background:linear-gradient(135deg,#00b09b,#96c93d);color:#fff;border-radius:10px;padding:6px 18px;font-weight:800;font-size:0.95em}
+.level-title h3{font-size:1.15em;color:#1e3a5f;font-weight:800}
+/* Level 1: Motor cards */
+.motors-compare{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px}
+.motor-card{border-radius:18px;padding:20px;text-align:center;border:3px solid transparent}
+.motor-card.medium{background:linear-gradient(135deg,#E0FFF7,#B2FFE8);border-color:#00b09b}
+.motor-card.large{background:linear-gradient(135deg,#E8FFF0,#BDFFD1);border-color:#96c93d}
+.motor-card .m-icon{font-size:3em;margin-bottom:10px}
+.motor-card h3{font-weight:900;color:#1e3a5f;margin-bottom:8px;font-size:1.2em}
+.motor-card .m-tag{display:inline-block;background:#fff;border-radius:10px;padding:3px 14px;font-size:0.85em;color:#00b09b;font-weight:700;margin-bottom:8px}
+.motor-card p{color:#555;font-size:0.9em;line-height:1.6}
+.q-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.q-choice{background:#F0FFF8;border:2px solid #00b09b;border-radius:12px;padding:10px 14px;text-align:center;cursor:pointer;font-weight:700;transition:all 0.2s}
+.q-choice:hover{background:#D0FFF0}
+.q-choice.correct{background:#D1FAE5;border-color:#10b981;color:#065f46}
+.q-choice.wrong{background:#FEE2E2;border-color:#ef4444;color:#7f1d1d}
+/* Level 2: Match task to motor */
+.task-match{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.task-item{background:#F0FFF8;border:2px solid #c0f0dc;border-radius:14px;padding:14px;display:flex;align-items:center;gap:14px;justify-content:space-between}
+.task-desc{font-size:0.95em;color:#333;font-weight:700;flex:1}
+.motor-select{background:#fff;border:2px solid #00b09b;border-radius:10px;padding:7px 12px;font-family:'Tajawal';font-size:0.9em;color:#1e3a5f}
+/* Level 3: open analysis */
+.analysis-box{background:linear-gradient(135deg,#F0FFF8,#E0FFF0);border-radius:14px;padding:16px;margin-bottom:14px}
+.analysis-box p{color:#555;font-size:0.95em;margin-bottom:8px}
+.open-textarea{width:100%;padding:14px;border:2px solid #00b09b;border-radius:12px;font-family:'Tajawal';font-size:1.05em;min-height:120px;resize:vertical;direction:rtl}
+.open-textarea:focus{outline:none;border-color:#96c93d}
+.hint-box{background:#E0FFF0;border:1px solid #00b09b;border-radius:10px;padding:10px 14px;margin-top:10px;color:#065f46;font-size:0.9em}
+.action-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.next-btn{background:linear-gradient(135deg,#00b09b,#96c93d);color:#fff;border:none;border-radius:12px;padding:12px 30px;font-size:1.05em;font-family:'Tajawal';font-weight:800;cursor:pointer;flex:1}
+.skip-btn{background:#f5f5f5;color:#888;border:none;border-radius:12px;padding:12px 20px;font-family:'Tajawal';font-weight:700;cursor:pointer;font-size:0.95em}
+.level-timer{color:#888;font-size:0.9em}
+.success-area{max-width:560px;margin:60px auto;text-align:center;padding:20px}
+.success-card{background:#fff;border-radius:22px;padding:40px;box-shadow:0 10px 35px rgba(0,0,0,0.1)}
+.score-big{background:linear-gradient(135deg,#00b09b,#96c93d);color:#fff;border-radius:14px;padding:14px 40px;font-size:1.5em;font-weight:900;display:inline-block;margin:14px 0}
+.teacher-toggle{position:fixed;bottom:20px;left:20px;background:#1a1a2e;color:#fff;border:2px solid #96c93d;border-radius:12px;padding:10px 18px;font-family:'Tajawal';cursor:pointer;font-weight:700;z-index:100}
+.t-panel{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.82);z-index:200;display:none;overflow-y:auto}
+.t-panel.open{display:block}
+.t-inner{background:#0f172a;min-height:100vh;padding:24px}
+.t-inner h2{color:#96c93d;font-size:1.4em;margin-bottom:18px}
+.close-tp{background:#dc2626;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:'Tajawal';cursor:pointer;float:left;font-weight:700}
+.refresh-tp{background:#4776E6;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:'Tajawal';cursor:pointer;font-weight:700;margin-right:10px}
+.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
+.t-card{background:#16213e;border-radius:12px;padding:14px;border:1px solid #333}
+.t-card.done{border-color:#96c93d}
+.t-name{color:#ffd200;font-weight:800;font-size:0.9em;margin-bottom:6px}
+.t-row{color:#aaa;font-size:0.8em;margin-bottom:3px}
+.t-row span{color:#ddd}
+.t-status{font-size:0.75em;padding:2px 10px;border-radius:8px;display:inline-block}
+.done-s{background:rgba(150,201,61,0.2);color:#c5f56b}
+.pend-s{background:rgba(255,165,0,0.12);color:#ffa500}
+.t-stat{background:#16213e;border-radius:10px;padding:8px 16px;font-weight:800;display:inline-block;margin-left:10px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <h1>⚙️ نشاط 5 - أنواع المحركات | ثنائي</h1>
+  <div id="timerDisplay" class="timer-box">05:00</div>
+</div>
+
+<div id="nameView" class="view active">
+  <div class="center-screen"><div class="card">
+    <div class="icon">⚙️</div>
+    <h2>اكتشاف أنواع المحركات</h2>
+    <p>ستتعلمين مع شريكتك الفرق بين المحرك المتوسط والمحرك الكبير في SPIKE PRIME</p>
+    <select id="nameSelect" class="name-sel"><option value="">-- اختاري اسمك --</option></select>
+    <button class="go-btn" onclick="startAct()">🚀 ابدئي النشاط</button>
+  </div></div>
+</div>
+
+<div id="actView" class="view">
+  <div class="activity-area">
+    <div class="student-bar">
+      <span class="sname" id="sName"></span>
+      <span class="level-badge" id="lvBadge">المستوى 1 من 3</span>
+    </div>
+    <div class="levels-row">
+      <div class="lv-dot active" id="dot0"></div>
+      <div class="lv-dot" id="dot1"></div>
+      <div class="lv-dot" id="dot2"></div>
+    </div>
+    <div class="level-panel" id="levelPanel"></div>
+    <div class="action-row">
+      <span class="level-timer" id="lvTimer">⏱ دقيقة للمستوى</span>
+      <button class="skip-btn" onclick="nextLevel()">تخطي ←</button>
+      <button class="next-btn" id="nextBtn" onclick="nextLevel()">التالي ←</button>
+    </div>
+  </div>
+</div>
+
+<div id="successView" class="view">
+  <div class="success-area"><div class="success-card">
+    <div style="font-size:3.5em;margin-bottom:12px">🎊</div>
+    <h2 style="color:#00b09b;font-size:1.8em;margin-bottom:8px">أحسنتِ!</h2>
+    <div class="score-big" id="finalScore">+20 نقطة!</div>
+    <p style="color:#555">تم حفظ إجاباتك. انتظري الغلق من المعلمة.</p>
+    <a href="index.html" style="display:inline-block;margin-top:16px;color:#00b09b;font-weight:700">← العودة للقائمة</a>
+  </div></div>
+</div>
+
+<button class="teacher-toggle" onclick="toggleT()">🎓 شاشة المعلمة</button>
+<div class="t-panel" id="tPanel">
+  <div class="t-inner">
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+      <h2>🎓 نشاط 5 - متابعة الطالبات</h2>
+      <div><button class="refresh-tp" onclick="loadT()">🔄 تحديث</button><button class="close-tp" onclick="toggleT()">✕ إغلاق</button></div>
+    </div>
+    <div id="tStats"></div>
+    <div id="tCards" class="t-grid"></div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH='robots-lesson/activity5';
+const TOTAL=300,LV_TIME=60;
+const STUDENTS=["أريام حميد الحبيني","أسيل موسى العوض","الجازي عبدالعزيز عبدالله محمد المنصورى","أمامه سليم علبي","أمنه هياب احمد عبدالرحمن","أنوار حمد العبيد","أنيسه نعمة الله","حبيبه علاء ابراهيم مشعل","حفصه احمد عبد المنعم عبد الغني","حلا أحمد محمد الباز عبدالعال","حنان محمد طاهر","حوريه نبيل احمد السيد الحفنى","داليا رمضان العلي","ذهب محمد طاهر","رغد نبي جول","رقية حمدى سعيد عباس خواجة","رنيم حسني عواد الخلايله","روقيه شعبان محمد هنداوي حسانين","رؤى بوكيوض","ريان محمود الحاج أمين نجار","ريتال حسني عواد الخلايله","شما عمر بشير عبدالقادر","فاطمه فخر الدين احمد الامين","قمر حازم عمر","ليا عبد الحاج اسماعيل","ماريا عبدالعليم الرزوق","مريم حافظ فاروق احمد احمد","ملاك عبدالله الدرويش","نداء حسين المحمد العبادي","نور أيهاب عبدالحميد عبدالسلام غمري","نورا عبدالعزيز عبدالله محمد المنصورى","نيللي أمير سعيد محمود الحداد","هنادي محمد عبدالله علي","هيلان","وعد مصطفى أحمد عثمان"];
+
+let student='',level=0,totalTimer=null,lvTimer=null,lvSec=LV_TIME,totalSec=TOTAL;
+let answers={l1:[],l2:{},l3:''};
+
+window.onload=()=>{
+  const s=document.getElementById('nameSelect');
+  STUDENTS.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});
+};
+
+function startAct(){
+  const s=document.getElementById('nameSelect');
+  if(!s.value){alert('اختاري اسمك');return;}
+  student=s.value;
+  document.getElementById('sName').textContent='👩‍🎓 '+student;
+  showView('actView');
+  renderLevel();
+  startTotalTimer();
+}
+
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function startTotalTimer(){
+  totalTimer=setInterval(()=>{
+    totalSec--;
+    const m=Math.floor(totalSec/60),s=totalSec%60;
+    const d=document.getElementById('timerDisplay');
+    d.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(totalSec<=60)d.classList.add('urgent');
+    if(totalSec<=0){clearInterval(totalTimer);submitAll();}
+  },1000);
+}
+
+function startLvTimer(){
+  clearInterval(lvTimer);lvSec=LV_TIME;
+  lvTimer=setInterval(()=>{
+    lvSec--;
+    document.getElementById('lvTimer').textContent='⏱ دقيقة للمستوى: '+lvSec+'ث';
+    if(lvSec<=0){clearInterval(lvTimer);if(level<2)nextLevel();}
+  },1000);
+}
+
+function renderLevel(){
+  [0,1,2].forEach(i=>{
+    const d=document.getElementById('dot'+i);
+    d.className='lv-dot '+(i<level?'done':i===level?'active':'');
+  });
+  document.getElementById('lvBadge').textContent=`المستوى ${level+1} من 3 ${'★'.repeat(level+1)}`;
+  const panel=document.getElementById('levelPanel');
+  if(level===0) panel.innerHTML=renderL1();
+  else if(level===1) panel.innerHTML=renderL2();
+  else panel.innerHTML=renderL3();
+  startLvTimer();
+}
+
+let l1Score=0;
+function renderL1(){
+  l1Score=0;
+  return `
+  <div class="level-title"><span class="badge">⭐ المستوى 1</span><h3>تعرّفي على نوعي المحركات</h3></div>
+  <div class="motors-compare">
+    <div class="motor-card medium">
+      <div class="m-icon">⚙️</div>
+      <h3>المحرك المتوسط</h3>
+      <span class="m-tag">Medium Motor</span>
+      <p>أصغر حجماً وأخف وزناً، مناسب للحركات الدقيقة مثل تحريك الذراع أو الرافعة</p>
+    </div>
+    <div class="motor-card large">
+      <div class="m-icon">⚙️⚙️</div>
+      <h3>المحرك الكبير</h3>
+      <span class="m-tag">Large Motor</span>
+      <p>أكبر حجماً وأقوى، مناسب لتحريك العجلات ورفع الأثقال</p>
+    </div>
+  </div>
+  <p style="font-weight:800;color:#1e3a5f;margin-bottom:10px">📌 أي محرك يُستخدم لتحريك عجلات الروبوت؟</p>
+  <div class="q-choices">
+    <div class="q-choice" onclick="ansL1('large',this)">⚙️⚙️ المحرك الكبير</div>
+    <div class="q-choice" onclick="ansL1('medium',this)">⚙️ المحرك المتوسط</div>
+    <div class="q-choice" onclick="ansL1('both',this)">كلاهما</div>
+    <div class="q-choice" onclick="ansL1('none',this)">لا يحرك عجلات</div>
+  </div>
+  <div id="l1msg" style="margin-top:10px;font-weight:700;text-align:center"></div>`;
+}
+
+function ansL1(ans,el){
+  document.querySelectorAll('.q-choice').forEach(e=>e.style.pointerEvents='none');
+  if(ans==='large'){
+    el.classList.add('correct');
+    document.getElementById('l1msg').innerHTML='<span style="color:#00b09b">✅ صحيح! المحرك الكبير يُستخدم للعجلات</span>';
+    answers.l1=['large'];l1Score=10;
+  } else {
+    el.classList.add('wrong');
+    document.querySelectorAll('.q-choice').forEach(e=>{if(e.textContent.includes('الكبير'))e.classList.add('correct');});
+    document.getElementById('l1msg').innerHTML='<span style="color:#ef4444">❌ حاولي في المرة القادمة! الإجابة: المحرك الكبير</span>';
+    answers.l1=[ans];l1Score=5;
+  }
+}
+
+function renderL2(){
+  const tasks=[
+    {task:'تحريك الذراع الآلية',correct:'medium'},
+    {task:'قيادة عجلات الروبوت',correct:'large'},
+    {task:'رفع الأثقال الثقيلة',correct:'large'},
+    {task:'تدوير عقرب الساعة',correct:'medium'},
+  ];
+  answers.l2={};
+  return `
+  <div class="level-title"><span class="badge">⭐⭐ المستوى 2</span><h3>طابقي المهمة مع المحرك المناسب</h3></div>
+  <div class="task-match">
+    ${tasks.map((t,i)=>`
+    <div class="task-item">
+      <span class="task-desc">📌 ${t.task}</span>
+      <select class="motor-select" id="task_${i}" onchange="answers.l2['${t.task}']=this.value">
+        <option value="">-- اختاري --</option>
+        <option value="medium">⚙️ المحرك المتوسط</option>
+        <option value="large">⚙️⚙️ المحرك الكبير</option>
+      </select>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderL3(){
+  return `
+  <div class="level-title"><span class="badge">⭐⭐⭐ المستوى 3</span><h3>اشرحي الفرق بكلماتك الخاصة</h3></div>
+  <div class="analysis-box">
+    <p>🤔 <strong>سؤال تحليلي:</strong> لو صممتِ روبوتاً يمشي ويرفع كرة... أي محركين ستستخدمين ولماذا؟</p>
+  </div>
+  <textarea class="open-textarea" id="openAns5" placeholder="اكتبي إجابتك هنا مع التبرير..."></textarea>
+  <div class="hint-box">💡 فكّري: المشي يحتاج قوة للعجلات، أما رفع الكرة فيحتاج دقة في الحركة.</div>`;
+}
+
+function nextLevel(){
+  clearInterval(lvTimer);
+  if(level===2){
+    answers.l3=document.getElementById('openAns5')?.value||'';
+    submitAll();return;
+  }
+  level++;
+  renderLevel();
+}
+
+async function submitAll(){
+  clearInterval(totalTimer);clearInterval(lvTimer);
+  let score=15+l1Score;
+  const matchCount=Object.values(answers.l2).filter(v=>v).length;
+  score+=matchCount*2;
+  if(answers.l3&&answers.l3.length>15) score+=5;
+  const timebonus=totalSec>180?3:0;
+  score+=timebonus;
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  const data={name:student,score,l1:answers.l1[0]||'',l2:JSON.stringify(answers.l2),l3:answers.l3,timestamp:Date.now()};
+  try{
+    await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});
+    await fetch(`${DB}/robots-lesson/scores/${key}/act5.json`,{method:'PUT',body:JSON.stringify(score)});
+    await fetch(`${DB}/robots-lesson/scores/${key}/name.json`,{method:'PUT',body:JSON.stringify(student)});
+  }catch(e){}
+  document.getElementById('finalScore').textContent=`+${score} نقطة! 🎉`;
+  showView('successView');
+}
+
+function toggleT(){document.getElementById('tPanel').classList.toggle('open');loadT();}
+async function loadT(){
+  try{
+    const r=await fetch(`${DB}/${PATH}.json`);
+    const data=await r.json()||{};
+    const done=Object.values(data);
+    document.getElementById('tStats').innerHTML=`<div>
+      <span class="t-stat" style="color:#96c93d">✅ أكملن: ${done.length}</span>
+      <span class="t-stat" style="color:#ffa500">⏳ لم يكملن: ${STUDENTS.length-done.length}</span>
+    </div>`;
+    const names=done.map(d=>d.name);
+    const missing=STUDENTS.filter(s=>!names.includes(s));
+    let html=done.sort((a,b)=>(b.score||0)-(a.score||0)).map(d=>`
+    <div class="t-card done">
+      <div class="t-name">✅ ${d.name}</div>
+      <div class="t-row">النقاط: <span>${d.score}</span></div>
+      <div class="t-row">التحليل: <span>${d.l3?d.l3.substring(0,40)+'...':'-'}</span></div>
+    </div>`).join('');
+    html+=missing.map(n=>`<div class="t-card"><div class="t-name">⏳ ${n}</div><span class="t-status pend-s">لم تبدأ</span></div>`).join('');
+    document.getElementById('tCards').innerHTML=html;
+  }catch(e){}
+}
+</script>
+</body>
+</html>

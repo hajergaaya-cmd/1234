@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مقدمة إلى الروبوت - مركز الأنشطة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Tajawal', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+.container { max-width: 1100px; margin: 0 auto; }
+.main-header { text-align: center; color: #fff; padding: 30px 0 20px; }
+.main-header h1 { font-size: 2.8em; font-weight: 900; text-shadow: 0 3px 10px rgba(0,0,0,0.3); }
+.main-header p { font-size: 1.2em; opacity: 0.9; margin-top: 8px; }
+.badge { background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); border-radius: 20px; display: inline-block; padding: 6px 20px; font-size: 1em; color: #fff; margin-top: 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 24px; }
+.card { background: #fff; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; text-decoration: none; display: block; }
+.card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+.card-header { padding: 20px; color: #fff; text-align: center; }
+.card-header .icon { font-size: 2.5em; margin-bottom: 8px; display: block; }
+.card-header h2 { font-size: 1.2em; font-weight: 800; }
+.card-header .meta { font-size: 0.85em; opacity: 0.9; margin-top: 4px; }
+.card-body { padding: 16px 20px; }
+.card-body p { color: #555; font-size: 0.95em; line-height: 1.6; }
+.card-footer { padding: 12px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+.tag { background: #f0f0f0; border-radius: 10px; padding: 4px 12px; font-size: 0.8em; color: #555; }
+.btn { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none; border-radius: 10px; padding: 8px 18px; font-size: 0.9em; font-family: 'Tajawal', sans-serif; cursor: pointer; font-weight: 700; }
+.c1 .card-header { background: linear-gradient(135deg, #f7971e, #ffd200); }
+.c2 .card-header { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.c3 .card-header { background: linear-gradient(135deg, #ee0979, #ff6a00); }
+.c4 .card-header { background: linear-gradient(135deg, #4776E6, #8E54E9); }
+.c5 .card-header { background: linear-gradient(135deg, #00b09b, #96c93d); }
+.c6 .card-header { background: linear-gradient(135deg, #f953c6, #b91d73); }
+.c7 .card-header { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
+.ct .card-header { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+.time-badge { background: rgba(255,255,255,0.25); border-radius: 8px; padding: 2px 10px; font-size: 0.8em; display: inline-block; margin-top: 6px; }
+.section-label { color: #fff; text-align: center; font-size: 1em; margin: 16px 0 8px; opacity: 0.8; font-weight: 700; letter-spacing: 1px; }
+.divider { border: none; border-top: 1px solid rgba(255,255,255,0.3); margin: 10px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="main-header">
+    <div style="font-size:3em">🤖</div>
+    <h1>مقدمة إلى الروبوت</h1>
+    <p>الدرس الرابع | الصف الرابع | تقنية المعلومات</p>
+    <span class="badge">⏱ 70 دقيقة | 35 طالبة | LEGO SPIKE PRIME</span>
+  </div>
+
+  <p class="section-label">▶ مرحلة التهيئة</p>
+  <div class="grid" style="grid-template-columns: 1fr;">
+    <a class="card c1" href="warm-up.html">
+      <div class="card-header">
+        <span class="icon">💡</span>
+        <h2>التهيئة - استراتيجية KWL</h2>
+        <span class="time-badge">⏱ 10 دقائق | ثنائي</span>
+      </div>
+      <div class="card-body"><p>اكتشفي ما تعرفينه عن الروبوتات وما تودين معرفته! استراتيجية KWL الإلكترونية التفاعلية.</p></div>
+      <div class="card-footer"><span class="tag">ثنائي 👥</span><button class="btn">ابدئي الآن ←</button></div>
+    </a>
+  </div>
+
+  <p class="section-label">▶ الأنشطة التعليمية (اكتشاف المفاهيم)</p>
+  <div class="grid">
+    <a class="card c2" href="activity1.html">
+      <div class="card-header">
+        <span class="icon">🤖</span>
+        <h2>نشاط 1 - ما هو الروبوت؟</h2>
+        <span class="time-badge">⏱ 8 دقائق | الهدف 1</span>
+      </div>
+      <div class="card-body"><p>ابني تعريف الروبوت من خلال الكلمات المفتاحية! نشاط ثنائي بثلاثة مستويات.</p></div>
+      <div class="card-footer"><span class="tag">ثنائي 👥</span><button class="btn">ابدئي ←</button></div>
+    </a>
+    <a class="card c3" href="activity2.html">
+      <div class="card-header">
+        <span class="icon">⚙️</span>
+        <h2>نشاط 2 - ماذا يفعل الروبوت؟</h2>
+        <span class="time-badge">⏱ 8 دقائق | الهدف 2</span>
+      </div>
+      <div class="card-body"><p>صنفي المهام! ما الذي يمكن للروبوت عمله وما لا يستطيعه؟ نشاط المجموعات.</p></div>
+      <div class="card-footer"><span class="tag">مجموعات 👥👥</span><button class="btn">ابدئي ←</button></div>
+    </a>
+    <a class="card c4" href="activity3.html">
+      <div class="card-header">
+        <span class="icon">🔩</span>
+        <h2>نشاط 3 - مكونات SPIKE PRIME</h2>
+        <span class="time-badge">⏱ 8 دقائق | الهدف 3</span>
+      </div>
+      <div class="card-body"><p>سمي مكونات الروبوت الثلاثة الأساسية وتعرفي على وظيفة كل منها!</p></div>
+      <div class="card-footer"><span class="tag">ثنائي 👥</span><button class="btn">ابدئي ←</button></div>
+    </a>
+    <a class="card c5" href="activity4.html">
+      <div class="card-header">
+        <span class="icon">🖥️</span>
+        <h2>نشاط 4 - وحدة التحكم Spike Hub</h2>
+        <span class="time-badge">⏱ 8 دقائق | الهدف 4</span>
+      </div>
+      <div class="card-body"><p>استكشفي مكونات وحدة التحكم الذكية! اكتشفي كل زر ووظيفته.</p></div>
+      <div class="card-footer"><span class="tag">فردي 👤</span><button class="btn">ابدئي ←</button></div>
+    </a>
+    <a class="card c6" href="activity5.html">
+      <div class="card-header">
+        <span class="icon">🔧</span>
+        <h2>نشاط 5 - أنواع المحركات</h2>
+        <span class="time-badge">⏱ 5 دقائق | الهدف 5</span>
+      </div>
+      <div class="card-body"><p>قارني بين المحرك المتوسط والمحرك الكبير! اكتشفي متى تستخدمين كلاً منهما.</p></div>
+      <div class="card-footer"><span class="tag">ثنائي 👥</span><button class="btn">ابدئي ←</button></div>
+    </a>
+  </div>
+
+  <p class="section-label">▶ بطاقات الغلق (فردي)</p>
+  <div class="grid">
+    <a class="card c7" href="closure.html?obj=1"><div class="card-header"><span class="icon">📝</span><h2>غلق 1 - تعريف الروبوت</h2><span class="time-badge">⏱ 5 دق | فردي</span></div><div class="card-footer"><span class="tag">فردي ⭐</span><button class="btn">ابدئي ←</button></div></a>
+    <a class="card c7" href="closure.html?obj=2"><div class="card-header"><span class="icon">📝</span><h2>غلق 2 - وظائف الروبوت</h2><span class="time-badge">⏱ 5 دق | فردي</span></div><div class="card-footer"><span class="tag">فردي ⭐</span><button class="btn">ابدئي ←</button></div></a>
+    <a class="card c7" href="closure.html?obj=3"><div class="card-header"><span class="icon">📝</span><h2>غلق 3 - مكونات SPIKE</h2><span class="time-badge">⏱ 5 دق | فردي</span></div><div class="card-footer"><span class="tag">فردي ⭐</span><button class="btn">ابدئي ←</button></div></a>
+    <a class="card c7" href="closure.html?obj=4"><div class="card-header"><span class="icon">📝</span><h2>غلق 4 - وحدة التحكم</h2><span class="time-badge">⏱ 4 دق | فردي</span></div><div class="card-footer"><span class="tag">فردي ⭐</span><button class="btn">ابدئي ←</button></div></a>
+    <a class="card c7" href="closure.html?obj=5"><div class="card-header"><span class="icon">📝</span><h2>غلق 5 - المحركات</h2><span class="time-badge">⏱ 4 دق | فردي</span></div><div class="card-footer"><span class="tag">فردي ⭐</span><button class="btn">ابدئي ←</button></div></a>
+  </div>
+
+  <p class="section-label">▶ لوحة المعلم</p>
+  <div class="grid" style="grid-template-columns: 1fr;">
+    <a class="card ct" href="teacher-dashboard.html">
+      <div class="card-header">
+        <span class="icon">🏆</span>
+        <h2>لوحة تحكم المعلمة - النتائج والفائزات</h2>
+        <span class="time-badge">للمعلمة فقط | الإغلاق الكلي</span>
+      </div>
+      <div class="card-body" style="background:#1a1a2e"><p style="color:#aaa">عرض النتائج الحية، تحليل أداء كل طالبة، إعلان المراكز الثلاثة الأولى.</p></div>
+      <div class="card-footer" style="background:#16213e; border-top-color:#333"><span class="tag" style="background:#333;color:#aaa">للمعلمة 🎓</span><button class="btn">فتح اللوحة ←</button></div>
+    </a>
+  </div>
+</div>
+</body>
+</html>

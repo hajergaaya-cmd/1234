@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التهيئة - KWL | مقدمة إلى الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Tajawal', sans-serif; background: #FFF8F0; min-height: 100vh; }
+/* ===== HEADER ===== */
+.top-bar { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(247,151,30,0.4); }
+.top-bar h1 { color: #fff; font-size: 1.4em; font-weight: 900; text-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+.timer-box { background: rgba(255,255,255,0.25); border: 2px solid rgba(255,255,255,0.5); border-radius: 12px; padding: 8px 18px; color: #fff; font-size: 1.6em; font-weight: 900; min-width: 80px; text-align: center; font-variant-numeric: tabular-nums; }
+.timer-box.urgent { background: rgba(220,38,38,0.3); border-color: #dc2626; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+/* ===== VIEWS ===== */
+.view { display: none; }
+.view.active { display: block; }
+/* ===== NAME SELECT ===== */
+.name-screen { max-width: 700px; margin: 40px auto; padding: 20px; }
+.name-card { background: #fff; border-radius: 24px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); text-align: center; }
+.name-card .robot-icon { font-size: 5em; margin-bottom: 16px; }
+.name-card h2 { font-size: 1.8em; font-weight: 900; color: #1e3a5f; margin-bottom: 8px; }
+.name-card p { color: #666; margin-bottom: 24px; font-size: 1.05em; }
+.name-select { width: 100%; padding: 14px 18px; border: 2px solid #f7971e; border-radius: 14px; font-family: 'Tajawal', sans-serif; font-size: 1.1em; background: #fff; color: #333; margin-bottom: 20px; }
+.name-select:focus { outline: none; border-color: #ff9800; box-shadow: 0 0 0 3px rgba(247,151,30,0.2); }
+.start-btn { background: linear-gradient(135deg, #f7971e, #ffd200); color: #fff; border: none; border-radius: 14px; padding: 14px 40px; font-size: 1.2em; font-family: 'Tajawal', sans-serif; font-weight: 800; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; width: 100%; }
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(247,151,30,0.4); }
+/* ===== KWL MAIN ===== */
+.kwl-layout { max-width: 1100px; margin: 0 auto; padding: 20px; }
+.student-info { background: linear-gradient(135deg, #f7971e, #ffd200); border-radius: 14px; padding: 12px 20px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; color: #fff; }
+.student-info .name { font-size: 1.1em; font-weight: 800; }
+.student-info .pair-badge { background: rgba(255,255,255,0.25); border-radius: 8px; padding: 4px 14px; font-size: 0.9em; }
+.progress-bar-wrap { background: rgba(255,255,255,0.3); border-radius: 6px; height: 8px; margin-top: 8px; overflow: hidden; }
+.progress-bar { background: #fff; height: 100%; border-radius: 6px; transition: width 1s linear; }
+.kwl-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.kwl-col { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.kwl-col-header { padding: 18px; text-align: center; color: #fff; }
+.kwl-col-header .letter { font-size: 2.5em; font-weight: 900; display: block; }
+.kwl-col-header .label { font-size: 1em; font-weight: 700; }
+.kwl-col-header .sublabel { font-size: 0.8em; opacity: 0.85; margin-top: 2px; }
+.k-col .kwl-col-header { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.w-col .kwl-col-header { background: linear-gradient(135deg, #4776E6, #8E54E9); }
+.l-col .kwl-col-header { background: linear-gradient(135deg, #f953c6, #b91d73); }
+.kwl-textarea { width: 100%; padding: 16px; border: none; font-family: 'Tajawal', sans-serif; font-size: 1em; color: #333; resize: none; height: 220px; direction: rtl; line-height: 1.8; }
+.kwl-textarea:focus { outline: none; }
+.kwl-textarea::placeholder { color: #bbb; font-style: italic; }
+.kwl-textarea:disabled { background: #f9f9f9; color: #666; }
+.discovery-section { background: #fff; border-radius: 20px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 18px; }
+.discovery-section h3 { color: #f7971e; font-size: 1.2em; font-weight: 800; margin-bottom: 12px; }
+.disc-q { background: #FFF8F0; border: 2px solid #f7971e; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.disc-q p { color: #333; font-size: 1em; font-weight: 600; margin-bottom: 8px; }
+.disc-input { width: 100%; padding: 10px 14px; border: 1.5px solid #ddd; border-radius: 10px; font-family: 'Tajawal', sans-serif; font-size: 0.95em; direction: rtl; }
+.disc-input:focus { outline: none; border-color: #f7971e; }
+.action-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.submit-btn { background: linear-gradient(135deg, #11998e, #38ef7d); color: #fff; border: none; border-radius: 14px; padding: 14px 36px; font-size: 1.1em; font-family: 'Tajawal', sans-serif; font-weight: 800; cursor: pointer; flex: 1; transition: transform 0.2s; }
+.submit-btn:hover { transform: translateY(-2px); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.back-btn { background: #eee; color: #555; border: none; border-radius: 14px; padding: 14px 24px; font-family: 'Tajawal', sans-serif; font-weight: 700; cursor: pointer; font-size: 1em; }
+/* ===== SUCCESS ===== */
+.success-screen { max-width: 600px; margin: 60px auto; text-align: center; padding: 20px; }
+.success-card { background: #fff; border-radius: 24px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+.success-icon { font-size: 4em; margin-bottom: 16px; }
+.success-card h2 { font-size: 1.8em; font-weight: 900; color: #11998e; margin-bottom: 10px; }
+.success-card p { color: #555; font-size: 1.1em; line-height: 1.7; }
+.score-badge { background: linear-gradient(135deg, #f7971e, #ffd200); color: #fff; border-radius: 14px; padding: 12px 30px; font-size: 1.3em; font-weight: 900; display: inline-block; margin: 16px 0; }
+/* ===== TEACHER VIEW ===== */
+.teacher-btn { position: fixed; bottom: 20px; left: 20px; background: #1a1a2e; color: #fff; border: 2px solid #4776E6; border-radius: 12px; padding: 10px 18px; font-family: 'Tajawal'; font-size: 0.9em; cursor: pointer; font-weight: 700; z-index: 100; }
+.teacher-panel { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; display: none; overflow-y: auto; }
+.teacher-panel.open { display: block; }
+.teacher-inner { background: #1a1a2e; min-height: 100vh; padding: 24px; }
+.teacher-inner h2 { color: #ffd200; font-size: 1.5em; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 12px; }
+.close-teacher { background: #dc2626; color: #fff; border: none; border-radius: 10px; padding: 8px 18px; font-family: 'Tajawal'; cursor: pointer; float: left; font-weight: 700; }
+.student-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-top: 10px; }
+.s-card { background: #16213e; border-radius: 14px; padding: 16px; border: 1px solid #333; }
+.s-card .s-name { color: #ffd200; font-weight: 800; font-size: 0.95em; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+.s-card .s-row { display: flex; gap: 6px; margin-bottom: 4px; }
+.s-card .s-label { color: #888; font-size: 0.78em; white-space: nowrap; }
+.s-card .s-val { color: #ddd; font-size: 0.82em; flex: 1; }
+.s-card.submitted { border-color: #38ef7d; }
+.s-card .status { font-size: 0.75em; padding: 2px 10px; border-radius: 8px; }
+.status.done { background: rgba(56,239,125,0.2); color: #38ef7d; }
+.status.pending { background: rgba(255,165,0,0.15); color: #ffa500; }
+.refresh-btn { background: #4776E6; color: #fff; border: none; border-radius: 10px; padding: 8px 18px; font-family: 'Tajawal'; cursor: pointer; font-weight: 700; margin-right: 10px; }
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <h1>💡 التهيئة - استراتيجية KWL | مقدمة إلى الروبوت</h1>
+  <div id="timerDisplay" class="timer-box">10:00</div>
+</div>
+
+<!-- NAME SELECT VIEW -->
+<div id="nameView" class="view active">
+  <div class="name-screen">
+    <div class="name-card">
+      <div class="robot-icon">🤖</div>
+      <h2>أهلاً وسهلاً!</h2>
+      <p>قبل أن نبدأ رحلتنا مع الروبوتات، اختاري اسمك من القائمة</p>
+      <select id="nameSelect" class="name-select">
+        <option value="">-- اختاري اسمك --</option>
+      </select>
+      <button class="start-btn" onclick="startActivity()">🚀 ابدئي النشاط</button>
+    </div>
+  </div>
+</div>
+
+<!-- KWL MAIN VIEW -->
+<div id="kwlView" class="view">
+  <div class="kwl-layout">
+    <div class="student-info">
+      <span class="name" id="displayName"></span>
+      <span class="pair-badge">👥 نشاط ثنائي</span>
+      <div style="flex:1;margin:0 16px">
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:100%"></div></div>
+      </div>
+    </div>
+
+    <div class="kwl-grid">
+      <div class="kwl-col k-col">
+        <div class="kwl-col-header">
+          <span class="letter">K</span>
+          <span class="label">ما أعرفه</span>
+          <span class="sublabel">عن الروبوت</span>
+        </div>
+        <textarea id="knowText" class="kwl-textarea" placeholder="اكتبي ما تعرفينه عن الروبوتات...&#10;&#10;مثال: الروبوت آلة ذكية..."></textarea>
+      </div>
+      <div class="kwl-col w-col">
+        <div class="kwl-col-header">
+          <span class="letter">W</span>
+          <span class="label">ما أريد معرفته</span>
+          <span class="sublabel">أسئلتي وفضولي</span>
+        </div>
+        <textarea id="wantText" class="kwl-textarea" placeholder="ما الذي تريدين تعلمه؟&#10;&#10;مثال: كيف يتحرك الروبوت؟..."></textarea>
+      </div>
+      <div class="kwl-col l-col">
+        <div class="kwl-col-header">
+          <span class="letter">L</span>
+          <span class="label">ما تعلمته</span>
+          <span class="sublabel">بعد نهاية الدرس</span>
+        </div>
+        <textarea id="learnedText" class="kwl-textarea" placeholder="ستملئين هذا العمود في نهاية الدرس... 🌟" disabled></textarea>
+      </div>
+    </div>
+
+    <div class="discovery-section">
+      <h3>🔍 سؤال الاكتشاف (ناقشي مع شريكتك)</h3>
+      <div class="disc-q">
+        <p>📸 انظري إلى الصورة التالية: 🤖 ⚙️ 🔧 🖥️ | ما الذي يجمع هذه الأشياء معاً؟ وماذا تتوقعين أن يكون موضوع درسنا اليوم؟</p>
+        <input type="text" id="discAnswer" class="disc-input" placeholder="اكتبي توقعك هنا...">
+      </div>
+      <div class="disc-q">
+        <p>🌍 هل سبق أن رأيتِ روبوتاً في حياتك؟ أين رأيتِه؟ وماذا كان يفعل؟</p>
+        <input type="text" id="seeAnswer" class="disc-input" placeholder="صفي ما رأيتِه...">
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="back-btn" onclick="goBack()">← رجوع</button>
+      <button class="submit-btn" onclick="submitKWL()" id="submitBtn">✅ إرسال الإجابات</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS VIEW -->
+<div id="successView" class="view">
+  <div class="success-screen">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <h2>ممتاز!</h2>
+      <div class="score-badge">+10 نقاط للتهيئة!</div>
+      <p>تم حفظ إجاباتك بنجاح. لا تنسي إكمال عمود <strong>"ما تعلمته"</strong> في نهاية الدرس!</p>
+      <br>
+      <p style="color:#888;font-size:0.9em">يمكنك الآن الانتظار حتى تبدأ المعلمة النشاط التالي</p>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher toggle -->
+<button class="teacher-btn" onclick="toggleTeacher()">🎓 شاشة المعلمة</button>
+
+<!-- Teacher Panel -->
+<div class="teacher-panel" id="teacherPanel">
+  <div class="teacher-inner">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2>🎓 شاشة المعلمة - استجابات KWL</h2>
+      <div>
+        <button class="refresh-btn" onclick="loadTeacherData()">🔄 تحديث</button>
+        <button class="close-teacher" onclick="toggleTeacher()">✕ إغلاق</button>
+      </div>
+    </div>
+    <div id="statsBar" style="display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap"></div>
+    <div id="teacherCards" class="student-cards-grid"></div>
+  </div>
+</div>
+
+<script>
+const DB = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH = 'robots-lesson/warmup';
+const TOTAL_SECONDS = 600;
+
+const STUDENTS = [
+  "أريام حميد الحبيني","أسيل موسى العوض","الجازي عبدالعزيز عبدالله محمد المنصورى",
+  "أمامه سليم علبي","أمنه هياب احمد عبدالرحمن","أنوار حمد العبيد","أنيسه نعمة الله",
+  "حبيبه علاء ابراهيم مشعل","حفصه احمد عبد المنعم عبد الغني","حلا أحمد محمد الباز عبدالعال",
+  "حنان محمد طاهر","حوريه نبيل احمد السيد الحفنى","داليا رمضان العلي","ذهب محمد طاهر",
+  "رغد نبي جول","رقية حمدى سعيد عباس خواجة","رنيم حسني عواد الخلايله",
+  "روقيه شعبان محمد هنداوي حسانين","رؤى بوكيوض","ريان محمود الحاج أمين نجار",
+  "ريتال حسني عواد الخلايله","شما عمر بشير عبدالقادر","فاطمه فخر الدين احمد الامين",
+  "قمر حازم عمر","ليا عبد الحاج اسماعيل","ماريا عبدالعليم الرزوق",
+  "مريم حافظ فاروق احمد احمد","ملاك عبدالله الدرويش","نداء حسين المحمد العبادي",
+  "نور أيهاب عبدالحميد عبدالسلام غمري","نورا عبدالعزيز عبدالله محمد المنصورى",
+  "نيللي أمير سعيد محمود الحداد","هنادي محمد عبدالله علي","هيلان","وعد مصطفى أحمد عثمان"
+];
+
+let currentStudent = '';
+let timerInterval = null;
+let secondsLeft = TOTAL_SECONDS;
+let timerStarted = false;
+
+// Populate student dropdown
+window.onload = () => {
+  const sel = document.getElementById('nameSelect');
+  STUDENTS.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; sel.appendChild(o); });
+};
+
+function startActivity() {
+  const sel = document.getElementById('nameSelect');
+  if (!sel.value) { alert('الرجاء اختيار اسمك أولاً'); return; }
+  currentStudent = sel.value;
+  document.getElementById('displayName').textContent = '👩‍🎓 ' + currentStudent;
+  showView('kwlView');
+  startTimer();
+}
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goBack() { showView('nameView'); clearInterval(timerInterval); }
+
+function startTimer() {
+  if (timerStarted) return;
+  timerStarted = true;
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = Math.floor(secondsLeft / 60), s = secondsLeft % 60;
+    const d = document.getElementById('timerDisplay');
+    d.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    document.getElementById('progressBar').style.width = (secondsLeft / TOTAL_SECONDS * 100) + '%';
+    if (secondsLeft <= 60) d.classList.add('urgent');
+    if (secondsLeft <= 0) { clearInterval(timerInterval); autoSubmit(); }
+  }, 1000);
+}
+
+function autoSubmit() {
+  const btn = document.getElementById('submitBtn');
+  if (btn && !btn.disabled) submitKWL();
+}
+
+async function submitKWL() {
+  const know = document.getElementById('knowText').value.trim();
+  const want = document.getElementById('wantText').value.trim();
+  const disc = document.getElementById('discAnswer').value.trim();
+  const saw = document.getElementById('seeAnswer').value.trim();
+  if (!know && !want) { alert('الرجاء ملء عمود ما أعرفه أو ما أريد معرفته'); return; }
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = '⏳ جارٍ الإرسال...';
+  const key = encodeURIComponent(currentStudent.replace(/\s+/g,'_'));
+  try {
+    await fetch(`${DB}/${PATH}/${key}.json`, {
+      method: 'PUT',
+      body: JSON.stringify({ name: currentStudent, know, want, disc, saw, score: 10, timestamp: Date.now() })
+    });
+    clearInterval(timerInterval);
+    showView('successView');
+  } catch(e) {
+    btn.disabled = false; btn.textContent = '✅ إرسال الإجابات';
+    alert('حدث خطأ في الإرسال. تأكدي من الاتصال بالإنترنت.');
+  }
+}
+
+function toggleTeacher() {
+  const p = document.getElementById('teacherPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) loadTeacherData();
+}
+
+async function loadTeacherData() {
+  const container = document.getElementById('teacherCards');
+  const stats = document.getElementById('statsBar');
+  container.innerHTML = '<p style="color:#888;text-align:center;padding:20px">⏳ جارٍ التحميل...</p>';
+  try {
+    const res = await fetch(`${DB}/${PATH}.json`);
+    const data = await res.json() || {};
+    const submitted = Object.values(data);
+    const names = submitted.map(d => d.name);
+    const pending = STUDENTS.filter(s => !names.includes(s));
+    stats.innerHTML = `
+      <div style="background:#16213e;border:1px solid #38ef7d;border-radius:10px;padding:8px 18px;color:#38ef7d;font-weight:800">✅ أرسلت: ${submitted.length}</div>
+      <div style="background:#16213e;border:1px solid #ffa500;border-radius:10px;padding:8px 18px;color:#ffa500;font-weight:800">⏳ بانتظار: ${pending.length}</div>
+      <div style="background:#16213e;border:1px solid #4776E6;border-radius:10px;padding:8px 18px;color:#4776E6;font-weight:800">👥 الإجمالي: ${STUDENTS.length}</div>
+    `;
+    container.innerHTML = '';
+    // Submitted cards
+    submitted.forEach(d => {
+      container.innerHTML += `
+        <div class="s-card submitted">
+          <div class="s-name">${d.name} <span class="status done">✅ أرسلت</span></div>
+          <div class="s-row"><span class="s-label">ما أعرف:</span><span class="s-val">${d.know||'—'}</span></div>
+          <div class="s-row"><span class="s-label">ما أريد:</span><span class="s-val">${d.want||'—'}</span></div>
+          <div class="s-row"><span class="s-label">الاكتشاف:</span><span class="s-val">${d.disc||'—'}</span></div>
+          <div style="color:#38ef7d;font-size:0.8em;margin-top:6px">+${d.score||10} نقطة</div>
+        </div>`;
+    });
+    // Pending cards
+    pending.forEach(n => {
+      container.innerHTML += `<div class="s-card"><div class="s-name">${n} <span class="status pending">⏳ لم تُرسل</span></div></div>`;
+    });
+  } catch(e) {
+    container.innerHTML = '<p style="color:#dc2626;text-align:center;padding:20px">❌ خطأ في التحميل</p>';
+  }
+}
+</script>
+</body>
+</html>

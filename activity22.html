@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 2 - وظائف الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#FFF0F5;min-height:100vh}
+.top-bar{background:linear-gradient(135deg,#ee0979,#ff6a00);padding:12px 22px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 15px rgba(238,9,121,0.35)}
+.top-bar h1{color:#fff;font-size:1.25em;font-weight:900}
+.timer-box{background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);border-radius:12px;padding:7px 16px;color:#fff;font-size:1.5em;font-weight:900;min-width:76px;text-align:center}
+.timer-box.urgent{background:rgba(220,38,38,0.35);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.view{display:none}.view.active{display:block}
+.center-screen{max-width:650px;margin:50px auto;padding:20px}
+.card{background:#fff;border-radius:22px;padding:36px;box-shadow:0 10px 35px rgba(0,0,0,0.1);text-align:center}
+.card .icon{font-size:4em;margin-bottom:12px}
+select.name-sel{width:100%;padding:12px 16px;border:2px solid #ee0979;border-radius:12px;font-family:'Tajawal';font-size:1.05em;margin-bottom:16px}
+.go-btn{background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff;border:none;border-radius:12px;padding:13px 36px;font-size:1.15em;font-family:'Tajawal';font-weight:800;cursor:pointer;width:100%}
+.activity-area{max-width:1000px;margin:0 auto;padding:20px}
+.student-bar{background:linear-gradient(135deg,#ee0979,#ff6a00);border-radius:12px;padding:10px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+.levels-row{display:flex;gap:10px;margin-bottom:16px}
+.lv-dot{flex:1;background:#e0e0e0;border-radius:10px;height:8px;transition:background 0.5s}
+.lv-dot.done{background:#ee0979}.lv-dot.active{background:#ffd200;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+.level-panel{background:#fff;border-radius:20px;padding:24px;box-shadow:0 6px 22px rgba(0,0,0,0.08);min-height:300px}
+.level-title{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.badge{background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff;border-radius:10px;padding:6px 18px;font-weight:800;font-size:0.95em}
+.badge.l2{background:linear-gradient(135deg,#f7971e,#ffd200)}
+.badge.l3{background:linear-gradient(135deg,#4776E6,#8E54E9)}
+.level-title h3{font-size:1.1em;color:#1e3a5f;font-weight:800}
+/* Sorting columns */
+.sort-area{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.sort-col{border-radius:14px;padding:14px;min-height:200px}
+.sort-col.can{background:#E8FFF5;border:2px dashed #11998e}
+.sort-col.cant{background:#FFF0F0;border:2px dashed #dc2626}
+.sort-col h4{text-align:center;font-weight:800;margin-bottom:10px;font-size:1em}
+.sort-col.can h4{color:#11998e}.sort-col.cant h4{color:#dc2626}
+.task-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;padding:12px;background:#f9f9f9;border:2px dashed #ccc;border-radius:12px;min-height:60px}
+.task-chip{background:#fff;border:2px solid #ddd;border-radius:12px;padding:8px 14px;cursor:grab;font-size:0.9em;font-weight:600;color:#333;transition:transform 0.2s;user-select:none;direction:rtl}
+.task-chip:hover{transform:scale(1.03);box-shadow:0 3px 10px rgba(0,0,0,0.1)}
+.task-chip.placed-can{border-color:#11998e;background:#D1FAE5;color:#065f46;cursor:pointer}
+.task-chip.placed-cant{border-color:#dc2626;background:#FEE2E2;color:#7f1d1d;cursor:pointer}
+/* Level 2 */
+.list-area{min-height:120px}
+.list-input{width:100%;padding:12px;border:2px solid #ee0979;border-radius:10px;font-family:'Tajawal';font-size:1em;margin-bottom:10px;direction:rtl}
+.list-input:focus{outline:none;border-color:#ff6a00}
+/* Level 3 */
+.design-area{background:#FFF0F5;border:2px solid #ee0979;border-radius:14px;padding:20px}
+.design-textarea{width:100%;padding:12px;border:2px solid #ee0979;border-radius:10px;font-family:'Tajawal';font-size:1em;min-height:100px;resize:vertical;direction:rtl}
+.design-textarea:focus{outline:none}
+.action-row{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:12px}
+.next-btn{background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:1.05em;font-family:'Tajawal';font-weight:800;cursor:pointer;flex:1}
+.skip-btn{background:#f5f5f5;color:#888;border:none;border-radius:12px;padding:12px 18px;font-family:'Tajawal';font-weight:700;cursor:pointer}
+.success-area{max-width:540px;margin:60px auto;text-align:center;padding:20px}
+.success-card{background:#fff;border-radius:22px;padding:40px;box-shadow:0 10px 35px rgba(0,0,0,0.1)}
+.score-big{background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff;border-radius:14px;padding:14px 40px;font-size:1.5em;font-weight:900;display:inline-block;margin:14px 0}
+.teacher-toggle{position:fixed;bottom:20px;left:20px;background:#1a1a2e;color:#fff;border:2px solid #ee0979;border-radius:12px;padding:10px 18px;font-family:'Tajawal';cursor:pointer;font-weight:700;z-index:100}
+.t-panel{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.82);z-index:200;display:none;overflow-y:auto}
+.t-panel.open{display:block}
+.t-inner{background:#0f172a;min-height:100vh;padding:24px}
+.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
+.t-card{background:#16213e;border-radius:12px;padding:14px;border:1px solid #333}
+.t-card.done{border-color:#38ef7d}
+.t-name{color:#ffd200;font-weight:800;font-size:0.9em;margin-bottom:6px}
+.t-row{color:#aaa;font-size:0.8em;margin-bottom:3px}
+.t-row span{color:#ddd}
+.close-tp{background:#dc2626;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-family:'Tajawal';cursor:pointer;float:left;font-weight:700}
+.refresh-tp{background:#4776E6;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-family:'Tajawal';cursor:pointer;font-weight:700;margin-right:10px}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <h1>⚙️ نشاط 2 - وظائف الروبوت | مجموعات</h1>
+  <div id="timerDisplay" class="timer-box">08:00</div>
+</div>
+
+<div id="nameView" class="view active">
+  <div class="center-screen"><div class="card">
+    <div class="icon">⚙️</div>
+    <h2>نشاط اكتشاف الوظائف</h2>
+    <p>صنفي المهام واكتشفي ما الذي يمكن للروبوت عمله! نشاط مجموعات.</p>
+    <select id="nameSelect" class="name-sel"><option value="">-- اختاري اسمك --</option></select>
+    <button class="go-btn" onclick="startAct()">🚀 ابدئي</button>
+  </div></div>
+</div>
+
+<div id="actView" class="view">
+  <div class="activity-area">
+    <div class="student-bar">
+      <span id="sName" style="font-weight:800"></span>
+      <span id="lvBadge" style="background:rgba(255,255,255,0.25);border-radius:8px;padding:3px 14px">المستوى 1</span>
+    </div>
+    <div class="levels-row">
+      <div class="lv-dot active" id="dot0"></div>
+      <div class="lv-dot" id="dot1"></div>
+      <div class="lv-dot" id="dot2"></div>
+    </div>
+    <div class="level-panel" id="levelPanel"></div>
+    <div class="action-row">
+      <span id="lvTimer" style="color:#888;font-size:0.9em">⏱ دقيقة للمستوى</span>
+      <button class="skip-btn" onclick="nextLevel()">تخطي ←</button>
+      <button class="next-btn" onclick="nextLevel()">التالي ←</button>
+    </div>
+  </div>
+</div>
+
+<div id="successView" class="view">
+  <div class="success-area"><div class="success-card">
+    <div style="font-size:3.5em;margin-bottom:12px">🎉</div>
+    <h2 style="color:#ee0979;font-size:1.8em;margin-bottom:8px">رائع!</h2>
+    <div class="score-big" id="finalScore">+20 نقطة!</div>
+    <p style="color:#555">انتظري النشاط التالي من المعلمة.</p>
+  </div></div>
+</div>
+
+<button class="teacher-toggle" onclick="toggleT()">🎓 شاشة المعلمة</button>
+<div class="t-panel" id="tPanel">
+  <div class="t-inner">
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+      <h2 style="color:#ee0979">🎓 نشاط 2 - متابعة الطالبات</h2>
+      <div><button class="refresh-tp" onclick="loadT()">🔄</button><button class="close-tp" onclick="toggleT()">✕</button></div>
+    </div>
+    <div id="tStats"></div>
+    <div id="tCards" class="t-grid"></div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH='robots-lesson/activity2';
+const TOTAL=480,LV_TIME=60;
+const STUDENTS=["أريام حميد الحبيني","أسيل موسى العوض","الجازي عبدالعزيز عبدالله محمد المنصورى","أمامه سليم علبي","أمنه هياب احمد عبدالرحمن","أنوار حمد العبيد","أنيسه نعمة الله","حبيبه علاء ابراهيم مشعل","حفصه احمد عبد المنعم عبد الغني","حلا أحمد محمد الباز عبدالعال","حنان محمد طاهر","حوريه نبيل احمد السيد الحفنى","داليا رمضان العلي","ذهب محمد طاهر","رغد نبي جول","رقية حمدى سعيد عباس خواجة","رنيم حسني عواد الخلايله","روقيه شعبان محمد هنداوي حسانين","رؤى بوكيوض","ريان محمود الحاج أمين نجار","ريتال حسني عواد الخلايله","شما عمر بشير عبدالقادر","فاطمه فخر الدين احمد الامين","قمر حازم عمر","ليا عبد الحاج اسماعيل","ماريا عبدالعليم الرزوق","مريم حافظ فاروق احمد احمد","ملاك عبدالله الدرويش","نداء حسين المحمد العبادي","نور أيهاب عبدالحميد عبدالسلام غمري","نورا عبدالعزيز عبدالله محمد المنصورى","نيللي أمير سعيد محمود الحداد","هنادي محمد عبدالله علي","هيلان","وعد مصطفى أحمد عثمان"];
+
+const TASKS_CAN=['تسريع العمل في المصانع','القيام بمهام خطرة','حمل الأشياء الثقيلة','مهام متكررة وشاقة','الاستشعار بالبيئة المحيطة','رفع العقبات'];
+const TASKS_CANT=['كتابة الشعر الإبداعي','الشعور بالمشاعر','اتخاذ قرارات أخلاقية معقدة','الطهي بدون برمجة'];
+
+let student='',level=0,totalScore=0,totalTimer=null,lvTimer=null,lvSec=LV_TIME,totalSec=TOTAL;
+let canList=[],cantList=[];
+
+window.onload=()=>{const s=document.getElementById('nameSelect');STUDENTS.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});};
+
+function startAct(){const s=document.getElementById('nameSelect');if(!s.value){alert('اختاري اسمك');return;}student=s.value;document.getElementById('sName').textContent='👩‍🎓 '+student;showView('actView');renderLevel();startTotalTimer();}
+
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function startTotalTimer(){totalTimer=setInterval(()=>{totalSec--;const m=Math.floor(totalSec/60),s=totalSec%60;const d=document.getElementById('timerDisplay');d.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(totalSec<=60)d.classList.add('urgent');if(totalSec<=0){clearInterval(totalTimer);submitAll();}},1000);}
+
+function startLvTimer(){clearInterval(lvTimer);lvSec=LV_TIME;lvTimer=setInterval(()=>{lvSec--;document.getElementById('lvTimer').textContent='⏱ '+lvSec+'ث';if(lvSec<=0){clearInterval(lvTimer);if(level<2)nextLevel();}},1000);}
+
+function renderLevel(){
+  [0,1,2].forEach(i=>{const d=document.getElementById('dot'+i);d.className='lv-dot '+(i<level?'done':i===level?'active':'');});
+  document.getElementById('lvBadge').textContent=`المستوى ${level+1} ${'★'.repeat(level+1)}`;
+  const panel=document.getElementById('levelPanel');
+  if(level===0) panel.innerHTML=renderL1();
+  else if(level===1) panel.innerHTML=renderL2();
+  else panel.innerHTML=renderL3();
+  startLvTimer();
+}
+
+function renderL1(){
+  const allTasks=[...TASKS_CAN,...TASKS_CANT].sort(()=>Math.random()-0.5);
+  const chips=allTasks.map((t,i)=>`<div class="task-chip" id="chip${i}" draggable="true" data-task="${t}" data-cat="${TASKS_CAN.includes(t)?'can':'cant'}" ondragstart="dStart(event)">${t}</div>`).join('');
+  return `<div class="level-title"><span class="badge">★ المستوى الأول</span><h3>صنفي المهام: ما يستطيعه الروبوت وما لا يستطيعه</h3></div>
+  <div class="task-bank" id="taskBank">${chips}</div>
+  <div class="sort-area">
+    <div class="sort-col can" ondragover="dOver(event)" ondrop="dropCan(event)"><h4>✅ يستطيع الروبوت</h4><div id="canZone"></div></div>
+    <div class="sort-col cant" ondragover="dOver(event)" ondrop="dropCant(event)"><h4>❌ لا يستطيع الروبوت</h4><div id="cantZone"></div></div>
+  </div>`;
+}
+
+function renderL2(){
+  return `<div class="level-title"><span class="badge l2">★★ المستوى الثاني</span><h3>اذكري ثلاث مجالات يُستخدم فيها الروبوت من الدرس</h3></div>
+  ${[1,2,3].map(i=>`<input class="list-input" id="t${i}" placeholder="المجال ${i}: ..."/>`).join('')}
+  <p style="color:#888;font-size:0.9em;margin-top:8px">💡 تلميح: فكري في المصانع، المهام الخطرة، المهام الشاقة</p>`;
+}
+
+function renderL3(){
+  return `<div class="level-title"><span class="badge l3">★★★ المستوى الثالث</span><h3>صممي مهمة لروبوت وبرري لماذا الروبوت هو الأنسب</h3></div>
+  <div class="design-area">
+    <p style="color:#555;margin-bottom:10px">تخيلي مصنعاً أو مكاناً يحتاج لروبوت. اكتبي:</p>
+    <textarea class="design-textarea" id="designT" placeholder="المهمة التي سيؤديها الروبوت:&#10;السبب في اختيار الروبوت بدلاً من الإنسان:&#10;المزايا:"></textarea>
+  </div>`;
+}
+
+let draggedTask=null,draggedCat=null;
+function dStart(e){draggedTask=e.target.dataset.task;draggedCat=e.target.dataset.cat;e.target.style.opacity='0.4';}
+function dOver(e){e.preventDefault();}
+function dropCan(e){e.preventDefault();if(draggedTask){canList.push({task:draggedTask,correct:draggedCat==='can'});const z=document.getElementById('canZone');z.innerHTML+=`<div class="task-chip placed-can">${draggedTask}</div>`;removeChip();}}
+function dropCant(e){e.preventDefault();if(draggedTask){cantList.push({task:draggedTask,correct:draggedCat==='cant'});const z=document.getElementById('cantZone');z.innerHTML+=`<div class="task-chip placed-cant">${draggedTask}</div>`;removeChip();}}
+function removeChip(){document.querySelectorAll(`[data-task="${draggedTask}"]`).forEach(c=>{if(c.parentElement?.id==='taskBank')c.remove();});draggedTask=null;}
+
+function scoreLevel(lv){
+  if(lv===0){const correct=canList.filter(i=>i.correct).length+cantList.filter(i=>i.correct).length;return correct>=6?15:correct>=4?10:5;}
+  if(lv===1){const t1=document.getElementById('t1')?.value||'',t2=document.getElementById('t2')?.value||'',t3=document.getElementById('t3')?.value||'';return([t1,t2,t3].filter(t=>t.trim().length>3).length>=2)?20:10;}
+  if(lv===2){const v=document.getElementById('designT')?.value||'';return v.length>50?30:v.length>20?15:5;}
+  return 0;
+}
+
+function nextLevel(){clearInterval(lvTimer);totalScore+=scoreLevel(level);level++;if(level>=3)submitAll();else renderLevel();}
+
+async function submitAll(){
+  clearInterval(totalTimer);clearInterval(lvTimer);
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  const data={name:student,score:totalScore,canList:JSON.stringify(canList),design:document.getElementById('designT')?.value||'',timestamp:Date.now()};
+  try{
+    await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});
+    const sc=await fetch(`${DB}/robots-lesson/scores/${key}.json`).then(r=>r.json()).catch(()=>({}));
+    await fetch(`${DB}/robots-lesson/scores/${key}.json`,{method:'PATCH',body:JSON.stringify({name:student,total:(sc?.total||0)+totalScore,act2:totalScore})});
+  }catch(e){}
+  document.getElementById('finalScore').textContent=`+${totalScore} نقطة!`;
+  showView('successView');
+}
+
+function toggleT(){const p=document.getElementById('tPanel');p.classList.toggle('open');if(p.classList.contains('open'))loadT();}
+async function loadT(){
+  const cards=document.getElementById('tCards'),stats=document.getElementById('tStats');
+  cards.innerHTML='<p style="color:#888;text-align:center;padding:20px">⏳</p>';
+  const data=await fetch(`${DB}/${PATH}.json`).then(r=>r.json()).catch(()=>({}));
+  const submitted=Object.values(data||{});
+  const names=submitted.map(d=>d.name);
+  const pending=STUDENTS.filter(s=>!names.includes(s));
+  stats.innerHTML=`<span style="background:#16213e;border:1px solid #38ef7d;border-radius:10px;padding:7px 16px;color:#38ef7d;font-weight:800;margin-left:10px">✅ ${submitted.length}</span><span style="background:#16213e;border:1px solid #ffa500;border-radius:10px;padding:7px 16px;color:#ffa500;font-weight:800">⏳ ${pending.length}</span>`;
+  cards.innerHTML='';
+  submitted.sort((a,b)=>b.score-a.score).forEach((d,i)=>{
+    cards.innerHTML+=`<div class="t-card done"><div class="t-name">${['🥇','🥈','🥉'][i]||''} ${d.name}</div><div class="t-row">النقاط: <span>${d.score}</span></div><div class="t-row">التصميم: <span>${d.design?.slice(0,50)||'—'}</span></div></div>`;
+  });
+  pending.forEach(n=>{cards.innerHTML+=`<div class="t-card"><div class="t-name">${n} <span style="background:rgba(255,165,0,0.12);color:#ffa500;border-radius:8px;padding:2px 10px;font-size:0.75em">⏳</span></div></div>`;});
+}
+</script>
+</body>
+</html>
