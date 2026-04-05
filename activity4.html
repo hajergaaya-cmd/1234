@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 4 - وحدة التحكم Spike Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#F0F4FF;min-height:100vh}
+.top-bar{background:linear-gradient(135deg,#4776E6,#8E54E9);padding:12px 22px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 15px rgba(71,118,230,0.4)}
+.top-bar h1{color:#fff;font-size:1.3em;font-weight:900}
+.timer-box{background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);border-radius:12px;padding:7px 16px;color:#fff;font-size:1.5em;font-weight:900;min-width:76px;text-align:center}
+.timer-box.urgent{background:rgba(220,38,38,0.35);border-color:#dc2626;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.view{display:none}.view.active{display:block}
+.center-screen{max-width:650px;margin:50px auto;padding:20px}
+.card{background:#fff;border-radius:22px;padding:36px;box-shadow:0 10px 35px rgba(0,0,0,0.1);text-align:center}
+.card .icon{font-size:4em;margin-bottom:12px}
+.card h2{font-size:1.7em;font-weight:900;color:#1e3a5f;margin-bottom:8px}
+.card p{color:#666;margin-bottom:20px}
+select.name-sel{width:100%;padding:12px 16px;border:2px solid #4776E6;border-radius:12px;font-family:'Tajawal';font-size:1.05em;margin-bottom:16px}
+.go-btn{background:linear-gradient(135deg,#4776E6,#8E54E9);color:#fff;border:none;border-radius:12px;padding:13px 36px;font-size:1.15em;font-family:'Tajawal';font-weight:800;cursor:pointer;width:100%}
+.activity-area{max-width:1000px;margin:0 auto;padding:20px}
+.student-bar{background:linear-gradient(135deg,#4776E6,#8E54E9);border-radius:12px;padding:10px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+.sname{font-weight:800;font-size:1.05em}
+.level-badge{background:rgba(255,255,255,0.25);border-radius:8px;padding:3px 14px;font-size:0.9em}
+.levels-row{display:flex;gap:10px;margin-bottom:16px}
+.lv-dot{flex:1;background:#e0e0e0;border-radius:10px;height:8px;transition:background 0.5s}
+.lv-dot.done{background:#4776E6}
+.lv-dot.active{background:#ffd200;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+.level-panel{background:#fff;border-radius:20px;padding:24px;box-shadow:0 6px 22px rgba(0,0,0,0.08);min-height:300px}
+.level-title{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.level-title .badge{background:linear-gradient(135deg,#4776E6,#8E54E9);color:#fff;border-radius:10px;padding:6px 18px;font-weight:800;font-size:0.95em}
+.level-title h3{font-size:1.15em;color:#1e3a5f;font-weight:800}
+/* Matching game */
+.match-area{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:10px}
+.match-col h4{color:#4776E6;font-weight:800;margin-bottom:10px;text-align:center}
+.match-item{background:#F0F4FF;border:2px solid #c7d4ff;border-radius:12px;padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.match-item:hover{background:#DCE6FF;border-color:#4776E6}
+.match-item.selected{background:#4776E6;color:#fff;border-color:#4776E6}
+.match-item.matched{background:#D1FAE5;border-color:#10b981;color:#065f46;cursor:default}
+.match-item.wrong{background:#FEE2E2;border-color:#ef4444;animation:shake 0.3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* Level 2: fill blanks */
+.hub-desc{background:linear-gradient(135deg,#F0F4FF,#E8EDFF);border-radius:14px;padding:16px;margin-bottom:16px}
+.hub-desc p{font-size:0.95em;color:#333;line-height:2.4;margin-bottom:6px}
+.blank-input{border:none;border-bottom:2px solid #4776E6;background:transparent;font-family:'Tajawal';font-size:1em;width:150px;text-align:center;color:#1e3a5f;font-weight:700;padding:0 4px}
+.blank-input:focus{outline:none;border-bottom-color:#8E54E9}
+/* Level 3 */
+.hub-parts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.hub-part{background:#F0F4FF;border:2px solid #c7d4ff;border-radius:12px;padding:12px}
+.hub-part h5{color:#4776E6;font-weight:800;margin-bottom:6px;font-size:0.9em}
+.hub-part textarea{width:100%;border:1px solid #c7d4ff;border-radius:8px;font-family:'Tajawal';font-size:0.88em;padding:8px;min-height:65px;resize:none;direction:rtl;background:#fff}
+.hub-part textarea:focus{outline:none;border-color:#4776E6}
+.action-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.next-btn{background:linear-gradient(135deg,#4776E6,#8E54E9);color:#fff;border:none;border-radius:12px;padding:12px 30px;font-size:1.05em;font-family:'Tajawal';font-weight:800;cursor:pointer;flex:1}
+.skip-btn{background:#f5f5f5;color:#888;border:none;border-radius:12px;padding:12px 20px;font-family:'Tajawal';font-weight:700;cursor:pointer;font-size:0.95em}
+.level-timer{color:#888;font-size:0.9em}
+.success-area{max-width:560px;margin:60px auto;text-align:center;padding:20px}
+.success-card{background:#fff;border-radius:22px;padding:40px;box-shadow:0 10px 35px rgba(0,0,0,0.1)}
+.score-big{background:linear-gradient(135deg,#4776E6,#8E54E9);color:#fff;border-radius:14px;padding:14px 40px;font-size:1.5em;font-weight:900;display:inline-block;margin:14px 0}
+.teacher-toggle{position:fixed;bottom:20px;left:20px;background:#1a1a2e;color:#fff;border:2px solid #8E54E9;border-radius:12px;padding:10px 18px;font-family:'Tajawal';cursor:pointer;font-weight:700;z-index:100}
+.t-panel{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.82);z-index:200;display:none;overflow-y:auto}
+.t-panel.open{display:block}
+.t-inner{background:#0f172a;min-height:100vh;padding:24px}
+.t-inner h2{color:#8E54E9;font-size:1.4em;margin-bottom:18px}
+.close-tp{background:#dc2626;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:'Tajawal';cursor:pointer;float:left;font-weight:700}
+.refresh-tp{background:#4776E6;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:'Tajawal';cursor:pointer;font-weight:700;margin-right:10px}
+.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
+.t-card{background:#16213e;border-radius:12px;padding:14px;border:1px solid #333}
+.t-card.done{border-color:#8E54E9}
+.t-name{color:#ffd200;font-weight:800;font-size:0.9em;margin-bottom:6px}
+.t-row{color:#aaa;font-size:0.8em;margin-bottom:3px}
+.t-row span{color:#ddd}
+.t-status{font-size:0.75em;padding:2px 10px;border-radius:8px;display:inline-block}
+.done-s{background:rgba(142,84,233,0.2);color:#c4a0ff}
+.pend-s{background:rgba(255,165,0,0.12);color:#ffa500}
+.t-stat{background:#16213e;border-radius:10px;padding:8px 16px;font-weight:800;display:inline-block;margin-left:10px;margin-bottom:12px}
+.score-badge{display:inline-block;background:rgba(71,118,230,0.2);color:#a0b8ff;border-radius:8px;padding:1px 10px;font-size:0.8em}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <h1>🖥️ نشاط 4 - وحدة التحكم Spike Hub | فردي</h1>
+  <div id="timerDisplay" class="timer-box">08:00</div>
+</div>
+
+<div id="nameView" class="view active">
+  <div class="center-screen"><div class="card">
+    <div class="icon">🖥️</div>
+    <h2>استكشاف Spike Hub</h2>
+    <p>ستكتشفين بشكل فردي مكونات وحدة التحكم Spike Hub ووظيفة كل منها</p>
+    <select id="nameSelect" class="name-sel"><option value="">-- اختاري اسمك --</option></select>
+    <button class="go-btn" onclick="startAct()">🚀 ابدئي النشاط</button>
+  </div></div>
+</div>
+
+<div id="actView" class="view">
+  <div class="activity-area">
+    <div class="student-bar">
+      <span class="sname" id="sName"></span>
+      <span class="level-badge" id="lvBadge">المستوى 1 من 3</span>
+    </div>
+    <div class="levels-row">
+      <div class="lv-dot active" id="dot0"></div>
+      <div class="lv-dot" id="dot1"></div>
+      <div class="lv-dot" id="dot2"></div>
+    </div>
+    <div class="level-panel" id="levelPanel"></div>
+    <div class="action-row">
+      <span class="level-timer" id="lvTimer">⏱ دقيقة للمستوى</span>
+      <button class="skip-btn" onclick="nextLevel()">تخطي ←</button>
+      <button class="next-btn" id="nextBtn" onclick="nextLevel()">التالي ←</button>
+    </div>
+  </div>
+</div>
+
+<div id="successView" class="view">
+  <div class="success-area"><div class="success-card">
+    <div style="font-size:3.5em;margin-bottom:12px">🌟</div>
+    <h2 style="color:#4776E6;font-size:1.8em;margin-bottom:8px">ممتازة!</h2>
+    <div class="score-big" id="finalScore">+25 نقطة!</div>
+    <p style="color:#555">تم حفظ إجاباتك. انتظري تعليمات المعلمة.</p>
+    <a href="index.html" style="display:inline-block;margin-top:16px;color:#4776E6;font-weight:700">← العودة للقائمة</a>
+  </div></div>
+</div>
+
+<button class="teacher-toggle" onclick="toggleT()">🎓 شاشة المعلمة</button>
+<div class="t-panel" id="tPanel">
+  <div class="t-inner">
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+      <h2>🎓 نشاط 4 - متابعة الطالبات</h2>
+      <div><button class="refresh-tp" onclick="loadT()">🔄 تحديث</button><button class="close-tp" onclick="toggleT()">✕ إغلاق</button></div>
+    </div>
+    <div id="tStats"></div>
+    <div id="tCards" class="t-grid"></div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH='robots-lesson/activity4';
+const TOTAL=480,LV_TIME=60;
+const STUDENTS=["أريام حميد الحبيني","أسيل موسى العوض","الجازي عبدالعزيز عبدالله محمد المنصورى","أمامه سليم علبي","أمنه هياب احمد عبدالرحمن","أنوار حمد العبيد","أنيسه نعمة الله","حبيبه علاء ابراهيم مشعل","حفصه احمد عبد المنعم عبد الغني","حلا أحمد محمد الباز عبدالعال","حنان محمد طاهر","حوريه نبيل احمد السيد الحفنى","داليا رمضان العلي","ذهب محمد طاهر","رغد نبي جول","رقية حمدى سعيد عباس خواجة","رنيم حسني عواد الخلايله","روقيه شعبان محمد هنداوي حسانين","رؤى بوكيوض","ريان محمود الحاج أمين نجار","ريتال حسني عواد الخلايله","شما عمر بشير عبدالقادر","فاطمه فخر الدين احمد الامين","قمر حازم عمر","ليا عبد الحاج اسماعيل","ماريا عبدالعليم الرزوق","مريم حافظ فاروق احمد احمد","ملاك عبدالله الدرويش","نداء حسين المحمد العبادي","نور أيهاب عبدالحميد عبدالسلام غمري","نورا عبدالعزيز عبدالله محمد المنصورى","نيللي أمير سعيد محمود الحداد","هنادي محمد عبدالله علي","هيلان","وعد مصطفى أحمد عثمان"];
+
+let student='',level=0,totalTimer=null,lvTimer=null,lvSec=LV_TIME,totalSec=TOTAL;
+let answers={l1:{},l2:{},l3:{}};
+// Matching pairs: component name → description
+const matchPairs=[
+  {comp:'شاشة LED (5×5)',desc:'تعرض نقاطاً ضوئية أو كلمات ورسومات'},
+  {comp:'المفتاح المركزي',desc:'يُشغّل الروبوت ويوقفه'},
+  {comp:'مفاتيح التنقل',desc:'للانتقال بين البرامج في القائمة'},
+  {comp:'مفتاح البلوتوث',desc:'للتواصل مع الحاسوب لاسلكياً'},
+  {comp:'المنافذ (A-F)',desc:'لتوصيل المحركات والمستشعرات'},
+];
+let selectedComp=null,selectedDesc=null,matched={};
+
+window.onload=()=>{
+  const s=document.getElementById('nameSelect');
+  STUDENTS.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});
+};
+
+function startAct(){
+  const s=document.getElementById('nameSelect');
+  if(!s.value){alert('اختاري اسمك');return;}
+  student=s.value;
+  document.getElementById('sName').textContent='👩‍🎓 '+student;
+  showView('actView');
+  renderLevel();
+  startTotalTimer();
+}
+
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function startTotalTimer(){
+  totalTimer=setInterval(()=>{
+    totalSec--;
+    const m=Math.floor(totalSec/60),s=totalSec%60;
+    const d=document.getElementById('timerDisplay');
+    d.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(totalSec<=60)d.classList.add('urgent');
+    if(totalSec<=0){clearInterval(totalTimer);submitAll();}
+  },1000);
+}
+
+function startLvTimer(){
+  clearInterval(lvTimer);lvSec=LV_TIME;
+  lvTimer=setInterval(()=>{
+    lvSec--;
+    document.getElementById('lvTimer').textContent='⏱ دقيقة للمستوى: '+lvSec+'ث';
+    if(lvSec<=0){clearInterval(lvTimer);if(level<2)nextLevel();}
+  },1000);
+}
+
+function renderLevel(){
+  [0,1,2].forEach(i=>{
+    const d=document.getElementById('dot'+i);
+    d.className='lv-dot '+(i<level?'done':i===level?'active':'');
+  });
+  document.getElementById('lvBadge').textContent=`المستوى ${level+1} من 3 ${'★'.repeat(level+1)}`;
+  const panel=document.getElementById('levelPanel');
+  if(level===0) panel.innerHTML=renderL1();
+  else if(level===1) panel.innerHTML=renderL2();
+  else panel.innerHTML=renderL3();
+  startLvTimer();
+}
+
+function renderL1(){
+  selectedComp=null;selectedDesc=null;matched={};
+  const shuffledDescs=[...matchPairs].sort(()=>Math.random()-0.5);
+  return `
+  <div class="level-title"><span class="badge">⭐ المستوى 1</span><h3>طابقي كل مكوّن بوظيفته الصحيحة</h3></div>
+  <p style="color:#888;font-size:0.9em;margin-bottom:14px">📌 انقري على اسم المكوّن ثم انقري على وصفه</p>
+  <div class="match-area">
+    <div>
+      <h4>🖥️ مكونات Spike Hub</h4>
+      ${matchPairs.map((p,i)=>`<div class="match-item" id="comp_${i}" onclick="selectComp(${i})">${p.comp}</div>`).join('')}
+    </div>
+    <div>
+      <h4>📝 الوظائف</h4>
+      ${shuffledDescs.map((p,i)=>`<div class="match-item" id="desc_${i}" onclick="selectDesc(${i})" data-desc="${p.desc}">${p.desc}</div>`).join('')}
+    </div>
+  </div>
+  <div id="matchMsg" style="color:#4776E6;font-weight:700;text-align:center;margin-top:10px"></div>`;
+}
+
+function selectComp(i){
+  if(document.getElementById('comp_'+i).classList.contains('matched')) return;
+  document.querySelectorAll('[id^="comp_"]').forEach(el=>{if(!el.classList.contains('matched'))el.classList.remove('selected');});
+  document.getElementById('comp_'+i).classList.add('selected');
+  selectedComp=i;
+  tryMatch();
+}
+
+function selectDesc(i){
+  const el=document.getElementById('desc_'+i);
+  if(el.classList.contains('matched')) return;
+  document.querySelectorAll('[id^="desc_"]').forEach(e=>{if(!e.classList.contains('matched'))e.classList.remove('selected');});
+  el.classList.add('selected');
+  selectedDesc=i;
+  tryMatch();
+}
+
+function tryMatch(){
+  if(selectedComp===null||selectedDesc===null) return;
+  const comp=matchPairs[selectedComp];
+  const descEl=document.getElementById('desc_'+selectedDesc);
+  const desc=descEl.dataset.desc;
+  const compEl=document.getElementById('comp_'+selectedComp);
+  if(comp.desc===desc){
+    compEl.classList.remove('selected');compEl.classList.add('matched');
+    descEl.classList.remove('selected');descEl.classList.add('matched');
+    matched[comp.comp]=desc;
+    document.getElementById('matchMsg').textContent=`✅ صحيح! ${comp.comp} = ${desc}`;
+    answers.l1[comp.comp]=desc;
+  } else {
+    compEl.classList.add('wrong');descEl.classList.add('wrong');
+    document.getElementById('matchMsg').textContent='❌ حاولي مرة أخرى!';
+    setTimeout(()=>{compEl.classList.remove('wrong','selected');descEl.classList.remove('wrong','selected');},600);
+  }
+  selectedComp=null;selectedDesc=null;
+}
+
+function renderL2(){
+  return `
+  <div class="level-title"><span class="badge">⭐⭐ المستوى 2</span><h3>أكملي الجمل بالكلمة المناسبة</h3></div>
+  <div class="hub-desc">
+    <p>تحتوي وحدة التحكم <strong>Spike Hub</strong> على شاشة ضوئية تُسمى <input class="blank-input" id="b1" placeholder="..."> تتكوّن من 25 نقطة ضوئية.</p>
+    <p>المفتاح الذي يُشغّل الروبوت ويوقفه هو <input class="blank-input" id="b2" placeholder="...">.</p>
+    <p>للتواصل مع الحاسوب اللاسلكي يُستخدم مفتاح <input class="blank-input" id="b3" placeholder="...">.</p>
+    <p>لتوصيل المحركات والمستشعرات توجد <input class="blank-input" id="b4" placeholder="..."> من A إلى F.</p>
+    <p>للانتقال بين البرامج نستخدم <input class="blank-input" id="b5" placeholder="...">.</p>
+  </div>
+  <div style="background:#E8EDFF;border-radius:10px;padding:10px 14px;color:#4776E6;font-size:0.9em">
+    💡 الكلمات المساعدة: المفتاح المركزي | شاشة LED | البلوتوث | المنافذ | مفاتيح التنقل
+  </div>`;
+}
+
+function renderL3(){
+  return `
+  <div class="level-title"><span class="badge">⭐⭐⭐ المستوى 3</span><h3>اشرحي وظيفة كل مكوّن بكلماتك</h3></div>
+  <p style="color:#666;margin-bottom:12px;font-size:0.95em">💡 تخيّلي: لو كنتِ تشرحين Spike Hub لطفلة أصغر منك... كيف تصفين كل جزء؟</p>
+  <div class="hub-parts">
+    ${[['شاشة LED','💡'],['المفتاح المركزي','🔘'],['مفاتيح التنقل','◀▶'],['المنافذ A-F','🔌']].map(([name,icon])=>`
+    <div class="hub-part">
+      <h5>${icon} ${name}</h5>
+      <textarea id="ans_${name}" placeholder="اكتبي وظيفته..."></textarea>
+    </div>`).join('')}
+  </div>`;
+}
+
+function nextLevel(){
+  clearInterval(lvTimer);
+  if(level===1){
+    answers.l2={
+      b1:document.getElementById('b1')?.value||'',
+      b2:document.getElementById('b2')?.value||'',
+      b3:document.getElementById('b3')?.value||'',
+      b4:document.getElementById('b4')?.value||'',
+      b5:document.getElementById('b5')?.value||'',
+    };
+  }
+  if(level===2){
+    ['شاشة LED','المفتاح المركزي','مفاتيح التنقل','المنافذ A-F'].forEach(name=>{
+      answers.l3[name]=document.getElementById('ans_'+name)?.value||'';
+    });
+    submitAll();return;
+  }
+  level++;
+  renderLevel();
+}
+
+async function submitAll(){
+  clearInterval(totalTimer);clearInterval(lvTimer);
+  let score=15;
+  const matchCount=Object.keys(answers.l1).length;
+  score+=Math.min(matchCount*2,10);
+  const blankCount=Object.values(answers.l2).filter(v=>v.trim().length>0).length;
+  score+=Math.min(blankCount*2,10);
+  if(Object.values(answers.l3).some(v=>v.length>10)) score+=5;
+  const timebonus=totalSec>300?5:totalSec>180?3:0;
+  score+=timebonus;
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  const data={name:student,score,l1:JSON.stringify(answers.l1),l2:JSON.stringify(answers.l2),l3:JSON.stringify(answers.l3),timestamp:Date.now()};
+  try{
+    await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});
+    await fetch(`${DB}/robots-lesson/scores/${key}/act4.json`,{method:'PUT',body:JSON.stringify(score)});
+    await fetch(`${DB}/robots-lesson/scores/${key}/name.json`,{method:'PUT',body:JSON.stringify(student)});
+  }catch(e){}
+  document.getElementById('finalScore').textContent=`+${score} نقطة! 🎉`;
+  showView('successView');
+}
+
+function toggleT(){document.getElementById('tPanel').classList.toggle('open');loadT();}
+async function loadT(){
+  try{
+    const r=await fetch(`${DB}/${PATH}.json`);
+    const data=await r.json()||{};
+    const done=Object.values(data);
+    document.getElementById('tStats').innerHTML=`<div>
+      <span class="t-stat" style="color:#8E54E9">✅ أكملن: ${done.length}</span>
+      <span class="t-stat" style="color:#ffa500">⏳ لم يكملن: ${STUDENTS.length-done.length}</span>
+    </div>`;
+    const names=done.map(d=>d.name);
+    const missing=STUDENTS.filter(s=>!names.includes(s));
+    let html=done.sort((a,b)=>(b.score||0)-(a.score||0)).map(d=>`
+    <div class="t-card done">
+      <div class="t-name">✅ ${d.name}</div>
+      <div class="t-row">النقاط: <span>${d.score}</span></div>
+    </div>`).join('');
+    html+=missing.map(n=>`<div class="t-card"><div class="t-name">⏳ ${n}</div><span class="t-status pend-s">لم تبدأ</span></div>`).join('');
+    document.getElementById('tCards').innerHTML=html;
+  }catch(e){document.getElementById('tCards').innerHTML='<p style="color:#aaa">خطأ في التحميل</p>';}
+}
+</script>
+</body>
+</html>

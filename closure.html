@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بطاقة الغلق | مقدمة إلى الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#F0F4FF;min-height:100vh}
+/* TOP BAR */
+.top-bar{padding:13px 22px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 15px rgba(0,0,0,0.18)}
+.top-bar h1{color:#fff;font-size:1.25em;font-weight:900}
+.top-bar .right-info{display:flex;gap:12px;align-items:center}
+.timer-box{background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);border-radius:12px;padding:7px 16px;color:#fff;font-size:1.5em;font-weight:900;min-width:76px;text-align:center}
+.timer-box.urgent{background:rgba(220,38,38,0.35);border-color:#dc2626;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.lvl-badge{background:rgba(255,255,255,0.3);border:2px solid rgba(255,255,255,0.6);border-radius:10px;padding:6px 14px;color:#fff;font-size:1em;font-weight:800}
+/* VIEWS */
+.view{display:none}.view.active{display:block}
+/* NAME SCREEN */
+.name-screen{max-width:600px;margin:50px auto;padding:20px}
+.name-card{background:#fff;border-radius:22px;padding:38px;box-shadow:0 10px 35px rgba(0,0,0,0.1);text-align:center}
+.name-card .ic{font-size:4.5em;margin-bottom:12px}
+.name-card h2{font-size:1.7em;font-weight:900;color:#1e3a5f;margin-bottom:6px}
+.name-card p{color:#888;margin-bottom:20px;font-size:1em}
+.obj-badge{display:inline-block;border-radius:14px;padding:8px 22px;font-size:1em;font-weight:800;margin-bottom:20px;border:2px solid transparent}
+.name-select{width:100%;padding:13px 16px;border:2px solid #ccc;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:1.05em;background:#fff;color:#333;margin-bottom:18px}
+.start-btn{color:#fff;border:none;border-radius:14px;padding:14px 36px;font-size:1.15em;font-family:'Tajawal',sans-serif;font-weight:800;cursor:pointer;width:100%;transition:transform .2s,box-shadow .2s}
+.start-btn:hover{transform:translateY(-2px)}
+/* LEVEL BAR */
+.level-bar{max-width:820px;margin:16px auto 0;padding:0 20px;display:flex;gap:10px}
+.lv-step{flex:1;padding:10px 0;border-radius:12px;text-align:center;font-size:0.95em;font-weight:700;border:2px solid transparent;transition:.3s}
+.lv-step.done{background:#d1fae5;border-color:#10b981;color:#065f46}
+.lv-step.active{color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+.lv-step.pending{background:#f0f0f0;color:#999}
+/* QUESTION CARD */
+.q-wrap{max-width:820px;margin:10px auto;padding:0 20px 30px}
+.q-card{background:#fff;border-radius:20px;padding:30px;box-shadow:0 8px 28px rgba(0,0,0,0.1)}
+.q-title{font-size:1.05em;font-weight:700;color:#555;margin-bottom:6px}
+.q-text{font-size:1.2em;font-weight:800;color:#1e3a5f;margin-bottom:22px;line-height:1.6}
+/* MCQ OPTIONS */
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{padding:13px 18px;border:2.5px solid #ddd;border-radius:14px;cursor:pointer;font-size:1.05em;font-weight:700;font-family:'Tajawal',sans-serif;background:#fff;transition:.2s;text-align:right;color:#333}
+.opt:hover{border-color:#7c3aed;background:#f5f0ff}
+.opt.chosen{background:#ede9fe;border-color:#7c3aed;color:#5b21b6}
+.opt.correct{background:#d1fae5;border-color:#10b981;color:#065f46}
+.opt.wrong{background:#fee2e2;border-color:#ef4444;color:#b91c1c}
+/* TEXT AREA */
+.ta{width:100%;min-height:90px;border:2.5px solid #ddd;border-radius:14px;padding:13px 16px;font-family:'Tajawal',sans-serif;font-size:1.05em;color:#333;resize:vertical}
+.ta:focus{outline:none;border-color:#7c3aed}
+/* SUBMIT BTN */
+.submit-btn{margin-top:18px;padding:13px 36px;border-radius:14px;border:none;font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:800;cursor:pointer;color:#fff;width:100%;transition:.2s}
+.submit-btn:hover{opacity:.9;transform:translateY(-1px)}
+/* FEEDBACK */
+.feedback{margin-top:14px;padding:14px 18px;border-radius:14px;font-size:1.05em;font-weight:700;display:none}
+.feedback.ok{background:#d1fae5;color:#065f46;border:1.5px solid #10b981}
+.feedback.err{background:#fee2e2;color:#b91c1c;border:1.5px solid #ef4444}
+/* SUCCESS SCREEN */
+.success-screen{max-width:620px;margin:60px auto;padding:20px;text-align:center}
+.success-card{background:#fff;border-radius:24px;padding:48px 36px;box-shadow:0 12px 40px rgba(0,0,0,0.12)}
+.success-card .star-row{font-size:3em;margin-bottom:16px}
+.success-card h2{font-size:2em;font-weight:900;margin-bottom:8px}
+.success-card .score-big{font-size:3em;font-weight:900;margin:16px 0}
+.success-card p{color:#666;font-size:1.05em;margin-bottom:24px}
+.home-btn{display:inline-block;padding:13px 32px;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:800;color:#fff;text-decoration:none;background:#6366f1}
+/* TEACHER PANEL */
+.t-toggle{position:fixed;bottom:20px;left:20px;z-index:999}
+.t-toggle button{background:#1e3a5f;color:#fff;border:none;border-radius:14px;padding:11px 20px;font-family:'Tajawal',sans-serif;font-size:1em;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.25)}
+.t-panel{position:fixed;bottom:70px;left:20px;width:340px;max-height:55vh;overflow-y:auto;background:#1a1a2e;border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,0.4);z-index:998;display:none}
+.t-panel.open{display:block}
+.t-panel h3{color:#fff;font-size:1.1em;font-weight:800;margin-bottom:12px}
+.t-stat{display:inline-block;margin:3px 6px;padding:4px 12px;border-radius:8px;background:#2a2a4e;font-size:.95em;font-weight:700}
+.t-card{background:#2a2a4e;border-radius:12px;padding:10px 14px;margin-bottom:8px}
+.t-card.done{border-right:4px solid #10b981}
+.t-name{color:#fff;font-weight:700;font-size:.95em}
+.t-row{color:#aaa;font-size:.85em;margin-top:3px}
+.t-row span{color:#ffd200;font-weight:700}
+.pend-s{color:#ffa500;font-size:.85em}
+</style>
+</head>
+<body>
+
+<div id="nameView" class="view active">
+  <div class="name-screen">
+    <div class="name-card">
+      <div class="ic">📝</div>
+      <h2 id="objTitle">بطاقة الغلق</h2>
+      <div id="objBadge" class="obj-badge"></div>
+      <p>اختاري اسمك ثم ابدئي التقييم الختامي</p>
+      <select id="nameSelect" class="name-select">
+        <option value="">-- اختاري اسمك --</option>
+        <option>أريام حميد الحبيني</option><option>أسيل موسى العوض</option>
+        <option>الجازي عبدالعزيز عبدالله محمد المنصورى</option><option>أمامه سليم علبي</option>
+        <option>أمنه هياب احمد عبدالرحمن</option><option>أنوار حمد العبيد</option>
+        <option>أنيسه نعمة الله</option><option>حبيبه علاء ابراهيم مشعل</option>
+        <option>حفصه احمد عبد المنعم عبد الغني</option><option>حلا أحمد محمد الباز عبدالعال</option>
+        <option>حنان محمد طاهر</option><option>حوريه نبيل احمد السيد الحفنى</option>
+        <option>داليا رمضان العلي</option><option>ذهب محمد طاهر</option>
+        <option>رغد نبي جول</option><option>رقية حمدى سعيد عباس خواجة</option>
+        <option>رنيم حسني عواد الخلايله</option><option>روقيه شعبان محمد هنداوي حسانين</option>
+        <option>رؤى بوكيوض</option><option>ريان محمود الحاج أمين نجار</option>
+        <option>ريتال حسني عواد الخلايله</option><option>شما عمر بشير عبدالقادر</option>
+        <option>فاطمه فخر الدين احمد الامين</option><option>قمر حازم عمر</option>
+        <option>ليا عبد الحاج اسماعيل</option><option>ماريا عبدالعليم الرزوق</option>
+        <option>مريم حافظ فاروق احمد احمد</option><option>ملاك عبدالله الدرويش</option>
+        <option>نداء حسين المحمد العبادي</option><option>نور أيهاب عبدالحميد عبدالسلام غمري</option>
+        <option>نورا عبدالعزيز عبدالله محمد المنصورى</option><option>نيللي أمير سعيد محمود الحداد</option>
+        <option>هنادي محمد عبدالله علي</option><option>هيلان</option>
+        <option>وعد مصطفى أحمد عثمان</option>
+      </select>
+      <button id="startBtn" class="start-btn" onclick="startClosure()">ابدئي التقييم ←</button>
+    </div>
+  </div>
+</div>
+
+<div id="mainView" class="view">
+  <div id="topBar" class="top-bar">
+    <h1 id="barTitle">بطاقة الغلق</h1>
+    <div class="right-info">
+      <div class="lvl-badge" id="lvlBadge">المستوى 1</div>
+      <div class="timer-box" id="lvTimer">01:00</div>
+    </div>
+  </div>
+  <div class="level-bar" id="levelBar">
+    <div class="lv-step active" id="lv1">⭐ المستوى 1</div>
+    <div class="lv-step pending" id="lv2">⭐⭐ المستوى 2</div>
+    <div class="lv-step active" id="lv3">⭐⭐⭐ المستوى 3</div>
+  </div>
+  <div class="q-wrap" id="qWrap"></div>
+</div>
+
+<div id="successView" class="view">
+  <div class="success-screen">
+    <div class="success-card">
+      <div class="star-row">🌟</div>
+      <h2 id="succName" style="color:#5b21b6"></h2>
+      <p>أتممتِ بطاقة الغلق بنجاح!</p>
+      <div class="score-big" id="succScore" style="color:#5b21b6"></div>
+      <p id="succMsg"></p>
+      <a href="index.html" class="home-btn">العودة للرئيسية 🏠</a>
+    </div>
+  </div>
+</div>
+
+<div class="t-toggle"><button onclick="toggleTeacher()">👩‍🏫 شاشة المعلمة</button></div>
+<div class="t-panel" id="tPanel">
+  <h3>📊 متابعة بطاقة الغلق</h3>
+  <div id="tStats"></div>
+  <div id="tCards" style="margin-top:10px"></div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const params=new URLSearchParams(location.search);
+const OBJ=parseInt(params.get('obj'))||1;
+
+/* ===== OBJECTIVE CONFIG ===== */
+const OBJ_CONFIG={
+  1:{
+    title:'غلق 1 - تعريف الروبوت',
+    color:'linear-gradient(135deg,#4361EE,#7209B7)',
+    badge:'الهدف 1: تعريف الروبوت 🤖',
+    badgeColor:'#4361EE',
+    totalMin:5,
+    path:'closure1',
+    scoreKey:'cl1',
+    levels:[
+      {
+        type:'mcq',
+        title:'🎯 المستوى الأول - اختار الإجابة الصحيحة',
+        q:'ما تعريف الروبوت؟',
+        opts:['آلة تتفاعل مع البيئة الخارجية وتُنفّذ مهاماً بالبرمجة','جهاز يعمل فقط بالإنترنت','حاسوب محمول متطور','أداة تعمل يدوياً فقط'],
+        correct:0,
+        fb:'✅ ممتاز! الروبوت هو آلة تتفاعل مع البيئة الخارجية وتنفّذ مهاماً معيّنة بالبرمجة.'
+      },
+      {
+        type:'fill',
+        title:'✏️ المستوى الثاني - أكملي الجملة',
+        q:'الروبوت هو آلة تتفاعل مع ______ الخارجية، ويتم تنفيذها لمهامها عن طريق ______.',
+        placeholder:'أكملي الفراغ: البيئة / البرمجة ...',
+      },
+      {
+        type:'open',
+        title:'💡 المستوى الثالث - التفكير الإبداعي',
+        q:'بكلماتك الخاصة: ما هو الروبوت؟ وما الذي يميّزه عن الأدوات العادية؟',
+        placeholder:'اكتبي إجابتك هنا...',
+      }
+    ]
+  },
+  2:{
+    title:'غلق 2 - ما الذي يمكن للروبوت عمله',
+    color:'linear-gradient(135deg,#11998e,#38ef7d)',
+    badge:'الهدف 2: وظائف الروبوت 🏭',
+    badgeColor:'#11998e',
+    totalMin:5,
+    path:'closure2',
+    scoreKey:'cl2',
+    levels:[
+      {
+        type:'mcq',
+        title:'🎯 المستوى الأول - صح أم خطأ',
+        q:'يمكن للروبوت أن يتخذ قرارات ذاتية بناءً على البرمجة المسبقة؟',
+        opts:['✅ صحيح','❌ خطأ'],
+        correct:0,
+        fb:'✅ صحيح! الروبوت يستطيع الاستجابة للبيئة واتخاذ قرارات ذاتية بناءً على البرمجة المسبقة.'
+      },
+      {
+        type:'fill',
+        title:'✏️ المستوى الثاني - أكملي',
+        q:'تُستخدم الروبوتات في مجالات متنوعة مثل ______ و ______ و ______.',
+        placeholder:'أذكري مجالات: المصانع، المستشفيات، استكشاف الفضاء...',
+      },
+      {
+        type:'open',
+        title:'💡 المستوى الثالث - الإبداع والتفكير النقدي',
+        q:'فكّري في مهمة خطرة أو صعبة يمكن للروبوت أداؤها بدلاً عن الإنسان، واشرحي لماذا هو أفضل للقيام بها.',
+        placeholder:'اكتبي فكرتك الإبداعية...',
+      }
+    ]
+  },
+  3:{
+    title:'غلق 3 - مكونات SPIKE PRIME',
+    color:'linear-gradient(135deg,#ee0979,#ff6a00)',
+    badge:'الهدف 3: مكونات SPIKE PRIME 🔧',
+    badgeColor:'#ee0979',
+    totalMin:5,
+    path:'closure3',
+    scoreKey:'cl3',
+    levels:[
+      {
+        type:'mcq',
+        title:'🎯 المستوى الأول - اختار الإجابة',
+        q:'كم عدد المكونات الرئيسية لروبوت LEGO SPIKE PRIME؟',
+        opts:['3 مكونات: Spike Hub، Motors، Sensors','2 مكونات فقط','4 مكونات','5 مكونات'],
+        correct:0,
+        fb:'✅ صحيح! يتكون LEGO SPIKE PRIME من 3 مكونات: وحدة التحكم Spike Hub والمحركات Motors والمستشعرات Sensors.'
+      },
+      {
+        type:'fill',
+        title:'✏️ المستوى الثاني - أكملي',
+        q:'المكونات الثلاثة لروبوت SPIKE PRIME هي:\n1. ______ (وحدة التحكم)\n2. ______ (تحرّك الروبوت)\n3. ______ (تستشعر البيئة)',
+        placeholder:'أكملي الأسماء بالإنجليزية والعربية...',
+      },
+      {
+        type:'open',
+        title:'💡 المستوى الثالث - ربط المعرفة',
+        q:'اشرحي بجملتين: كيف تعمل المكونات الثلاثة معاً لإنجاز مهمة للروبوت؟',
+        placeholder:'مثال: Spike Hub تُعطي الأوامر، Motors تتحرك، Sensors تحسّ...',
+      }
+    ]
+  },
+  4:{
+    title:'غلق 4 - مكونات وحدة التحكم',
+    color:'linear-gradient(135deg,#8E54E9,#4776E6)',
+    badge:'الهدف 4: وحدة التحكم Spike Hub 🎮',
+    badgeColor:'#8E54E9',
+    totalMin:4,
+    path:'closure4',
+    scoreKey:'cl4',
+    levels:[
+      {
+        type:'mcq',
+        title:'🎯 المستوى الأول - اختار الإجابة',
+        q:'ما وظيفة المفتاح المركزي (Center Button) في وحدة التحكم Spike Hub؟',
+        opts:['تشغيل الروبوت وإيقافه، وتشغيل البرنامج','التحكم في الإضاءة فقط','الاتصال بالإنترنت','التحكم في الصوت'],
+        correct:0,
+        fb:'✅ صحيح! المفتاح المركزي يُستخدم لتشغيل الروبوت وإيقافه، ويُستخدم أيضاً لتشغيل البرنامج وإيقافه.'
+      },
+      {
+        type:'fill',
+        title:'✏️ المستوى الثاني - أكملي',
+        q:'تتكون وحدة التحكم Spike Hub من: شاشة ضوئية، ومفتاح ______, ومفاتيح للتنقل، ومفتاح ______, ومنافذ A إلى F.',
+        placeholder:'أكملي: المركزي / البلوتوث...',
+      },
+      {
+        type:'open',
+        title:'💡 المستوى الثالث - التفكير النقدي',
+        q:'لماذا تحتاج وحدة التحكم Spike Hub إلى منافذ متعددة (A إلى F)؟ ما الفائدة من وجود أكثر من منفذ؟',
+        placeholder:'فكّري وأجيبي...',
+      }
+    ]
+  },
+  5:{
+    title:'غلق 5 - أنواع المحركات',
+    color:'linear-gradient(135deg,#F7971E,#FFD200)',
+    badge:'الهدف 5: أنواع المحركات ⚙️',
+    badgeColor:'#F7971E',
+    totalMin:4,
+    path:'closure5',
+    scoreKey:'cl5',
+    levels:[
+      {
+        type:'mcq',
+        title:'🎯 المستوى الأول - اختار الإجابة',
+        q:'كم عدد أنواع المحركات في SPIKE PRIME؟',
+        opts:['نوعان: Medium Motor و Large Motor','نوع واحد فقط','ثلاثة أنواع','أربعة أنواع'],
+        correct:0,
+        fb:'✅ صحيح! يوجد نوعان من المحركات: المحرك المتوسط Medium Motor والمحرك الكبير Large Motor.'
+      },
+      {
+        type:'fill',
+        title:'✏️ المستوى الثاني - أكملي',
+        q:'يوجد نوعان من المحركات:\n• المحرك المتوسط: ______\n• المحرك الكبير: يُستخدم للتحكم في ______ أو رفعه.',
+        placeholder:'أكملي وظيفة كل محرك...',
+      },
+      {
+        type:'open',
+        title:'💡 المستوى الثالث - المقارنة والتحليل',
+        q:'قارني بين المحرك المتوسط Medium Motor والمحرك الكبير Large Motor من حيث الحجم والاستخدام.',
+        placeholder:'اكتبي مقارنتك: الحجم / الاستخدام...',
+      }
+    ]
+  }
+};
+
+const cfg=OBJ_CONFIG[OBJ];
+let student='';
+let level=0; // 0-indexed
+let lvTimer=null,totalTimer=null;
+let lvSec=60,totalSec=cfg.totalMin*60;
+let scores={l1:0,l2:0,l3:0};
+let answers={l1:'',l2:'',l3:''};
+let answered=false;
+
+/* ===== SETUP ===== */
+window.onload=()=>{
+  document.getElementById('objTitle').textContent=cfg.title;
+  const badge=document.getElementById('objBadge');
+  badge.textContent=cfg.badge;
+  badge.style.background=cfg.badgeColor+'22';
+  badge.style.color=cfg.badgeColor;
+  badge.style.borderColor=cfg.badgeColor;
+  document.getElementById('startBtn').style.background=cfg.color;
+};
+
+function startClosure(){
+  student=document.getElementById('nameSelect').value;
+  if(!student){alert('من فضلك اختاري اسمك أولاً');return;}
+  document.getElementById('nameView').classList.remove('active');
+  document.getElementById('mainView').classList.add('active');
+  document.getElementById('barTitle').textContent=cfg.title;
+  document.getElementById('topBar').style.background=cfg.color;
+  renderLevelBar();
+  renderLevel();
+}
+
+function renderLevelBar(){
+  for(let i=1;i<=3;i++){
+    const el=document.getElementById('lv'+i);
+    if(i-1<level){el.className='lv-step done';}
+    else if(i-1===level){
+      el.className='lv-step active';
+      el.style.background=cfg.color.replace('linear-gradient(135deg,','').split(',')[0].replace(')','');
+    }else{el.className='lv-step pending';}
+  }
+  document.getElementById('lvlBadge').textContent='المستوى '+(level+1)+' من 3';
+}
+
+function renderLevel(){
+  answered=false;
+  const lv=cfg.levels[level];
+  let html='<div class="q-card"><div class="q-title">'+lv.title+'</div><div class="q-text">'+lv.q.replace(/\n/g,'<br>')+'</div>';
+  if(lv.type==='mcq'){
+    html+='<div class="options">';
+    lv.opts.forEach((o,i)=>{html+=`<button class="opt" id="opt${i}" onclick="chooseOpt(${i})">${o}</button>`;});
+    html+='</div>';
+    html+='<div class="feedback" id="fb"></div>';
+    html+=`<button class="submit-btn" id="nextBtn" style="display:none;background:${cfg.color}" onclick="nextLevel()">التالي ←</button>`;
+  } else {
+    html+=`<textarea class="ta" id="taInput" placeholder="${lv.placeholder||'اكتبي إجابتك...'}"></textarea>`;
+    html+=`<button class="submit-btn" style="background:${cfg.color}" onclick="submitText()">تأكيد وإرسال ✓</button>`;
+    html+='<div class="feedback" id="fb"></div>';
+  }
+  html+='</div>';
+  document.getElementById('qWrap').innerHTML=html;
+  startLvTimer();
+  renderLevelBar();
+}
+
+/* ===== TIMERS ===== */
+function startLvTimer(){
+  clearInterval(lvTimer);
+  lvSec=60;
+  updateLvTimerDisplay();
+  lvTimer=setInterval(()=>{
+    lvSec--;
+    updateLvTimerDisplay();
+    if(lvSec<=0){clearInterval(lvTimer);autoAdvance();}
+  },1000);
+}
+function updateLvTimerDisplay(){
+  const el=document.getElementById('lvTimer');
+  const m=Math.floor(lvSec/60),s=lvSec%60;
+  el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className='timer-box'+(lvSec<=15?' urgent':'');
+}
+function autoAdvance(){
+  if(!answered){
+    // Save empty answer and advance
+    const key='l'+(level+1);
+    if(cfg.levels[level].type==='mcq'){scores[key]=0;answers[key]='لم يُجب';}
+    else{const ta=document.getElementById('taInput');answers[key]=ta?ta.value:'';scores[key]=ta&&ta.value.trim().length>5?5:2;}
+  }
+  nextLevel();
+}
+
+/* ===== MCQ ===== */
+function chooseOpt(i){
+  if(answered)return;
+  answered=true;
+  clearInterval(lvTimer);
+  const lv=cfg.levels[level];
+  const fb=document.getElementById('fb');
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('chosen'));
+  document.getElementById('opt'+i).classList.add('chosen');
+  if(i===lv.correct){
+    document.getElementById('opt'+i).classList.add('correct');
+    scores['l'+(level+1)]=level===0?10:level===1?15:20;
+    answers['l'+(level+1)]='صحيح';
+    fb.textContent=lv.fb;fb.className='feedback ok';fb.style.display='block';
+  } else {
+    document.getElementById('opt'+i).classList.add('wrong');
+    document.getElementById('opt'+lv.correct).classList.add('correct');
+    scores['l'+(level+1)]=0;
+    answers['l'+(level+1)]='خطأ';
+    fb.textContent='❌ ليس هذا! '+lv.fb;fb.className='feedback err';fb.style.display='block';
+  }
+  document.getElementById('nextBtn').style.display='block';
+}
+
+/* ===== TEXT SUBMIT ===== */
+function submitText(){
+  const ta=document.getElementById('taInput');
+  const val=ta?ta.value.trim():'';
+  if(!val){alert('من فضلك اكتبي إجابتك أولاً');return;}
+  clearInterval(lvTimer);
+  answered=true;
+  answers['l'+(level+1)]=val;
+  const len=val.length;
+  scores['l'+(level+1)]=len>50?20:len>20?15:len>5?10:5;
+  const fb=document.getElementById('fb');
+  fb.textContent='✅ تم حفظ إجابتك!';fb.className='feedback ok';fb.style.display='block';
+  setTimeout(()=>nextLevel(),1200);
+}
+
+/* ===== NEXT LEVEL ===== */
+function nextLevel(){
+  clearInterval(lvTimer);
+  level++;
+  if(level>=3){submitAll();return;}
+  renderLevel();
+}
+
+/* ===== SUBMIT ===== */
+async function submitAll(){
+  clearInterval(lvTimer);
+  const total=scores.l1+scores.l2+scores.l3;
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  const data={name:student,score:total,l1:scores.l1,l2:scores.l2,l3:scores.l3,
+    a1:answers.l1,a2:answers.l2,a3:answers.l3,timestamp:Date.now()};
+  try{
+    await fetch(`${DB}/robots-lesson/${cfg.path}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});
+    await fetch(`${DB}/robots-lesson/scores/${key}/${cfg.scoreKey}.json`,{method:'PUT',body:JSON.stringify(total)});
+    await fetch(`${DB}/robots-lesson/scores/${key}/name.json`,{method:'PUT',body:JSON.stringify(student)});
+  }catch(e){}
+  document.getElementById('mainView').classList.remove('active');
+  document.getElementById('successView').classList.add('active');
+  document.getElementById('succName').textContent='أحسنتِ، '+student+'! 🌟';
+  document.getElementById('succScore').textContent='+'+total+' نقطة';
+  const msg=total>=40?'ممتاز! أثبتتِ تمكّناً رائعاً من الهدف!':total>=25?'جيد جداً! تابعي التعلم والتطور!':'حاولي مرة أخرى وستتحسنين!';
+  document.getElementById('succMsg').textContent=msg;
+}
+
+/* ===== TEACHER PANEL ===== */
+function toggleTeacher(){document.getElementById('tPanel').classList.toggle('open');loadTeacher();}
+async function loadTeacher(){
+  try{
+    const r=await fetch(`${DB}/robots-lesson/${cfg.path}.json`);
+    const data=await r.json()||{};
+    const students=Object.values(data);
+    const TOTAL=35;
+    document.getElementById('tStats').innerHTML=`
+      <span class="t-stat" style="color:#10b981">✅ أكملن: ${students.length}</span>
+      <span class="t-stat" style="color:#ffa500">⏳ لم يكملن: ${TOTAL-students.length}</span>`;
+    let html=students.sort((a,b)=>(b.score||0)-(a.score||0)).map(d=>`
+      <div class="t-card done">
+        <div class="t-name">✅ ${d.name}</div>
+        <div class="t-row">النقاط: <span>${d.score}</span> | م1:${d.l1||0} م2:${d.l2||0} م3:${d.l3||0}</div>
+      </div>`).join('');
+    document.getElementById('tCards').innerHTML=html||'<p style="color:#888">لا يوجد بيانات بعد</p>';
+  }catch(e){document.getElementById('tCards').innerHTML='<p style="color:#aaa">تعذّر التحميل</p>';}
+}
+</script>
+</body>
+</html>

@@ -1,163 +1,232 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نشاط 2 — المواقع المشبوهة</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 2 - وظائف الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a1628;--card:#1a1030;--border:#2a1a50;--pu:#7c4dff;--pu-l:#a67cff;--gold:#f0a500;--red:#e74c3c;--green:#27ae60;--white:#f0f4f8}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
-header{background:linear-gradient(135deg,#1a0a3a,#7c4dff22);border-bottom:2px solid var(--pu);padding:18px 28px;display:flex;align-items:center;gap:14px}
-.hi{font-size:2.2rem}.ht{font-size:1.5rem;font-weight:800;color:var(--pu-l)}.hs{font-size:.9rem;color:#8ab4cc;margin-top:2px}
-.badge{margin-right:auto;background:var(--pu);color:#fff;padding:5px 16px;border-radius:20px;font-weight:700;font-size:.88rem}
-main{max-width:800px;margin:0 auto;padding:26px 18px 60px}
-.slbl{display:flex;align-items:center;gap:10px;margin:28px 0 14px}
-.slbl .n{background:var(--pu);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.95rem;flex-shrink:0}
-.slbl h2{font-size:1.15rem;font-weight:700;color:var(--pu-l)}
-.intro{background:var(--card);border:1px solid var(--border);border-right:4px solid var(--pu-l);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:1rem;line-height:1.9}
-.nm{color:var(--pu-l);font-weight:800}
-.scene{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
-.scene.show{opacity:1;transform:translateY(0)}
-.sh{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#1a0a3a;border-bottom:1px solid var(--border)}
-.sn{background:var(--pu);color:#fff;font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:10px}
-.st{font-weight:700;color:#c4a0ff;font-size:.97rem}
-.sb{padding:14px 18px;font-size:.97rem;line-height:1.9;color:#d4e8f5}
-.btn{display:block;margin:16px auto 0;background:var(--pu);color:#fff;border:none;padding:9px 28px;border-radius:22px;font-family:'Tajawal',sans-serif;font-size:.97rem;font-weight:700;cursor:pointer;transition:background .2s}
-.btn:hover{background:var(--pu-l)}.btn:disabled{background:#2a1a4a;color:#6a5a9a;cursor:default}
-.qcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
-.qt{font-size:1rem;font-weight:700;margin-bottom:14px;color:var(--gold)}
-.opts{display:flex;flex-direction:column;gap:9px}
-.opt{display:flex;align-items:flex-start;gap:11px;background:#0e0a2a;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.95rem;line-height:1.7}
-.opt:hover{border-color:var(--pu);background:#1a0a3a}
-.opt input{margin-top:3px;accent-color:var(--pu);flex-shrink:0;width:15px;height:15px}
-.opt.ok{border-color:var(--green)!important;background:#0e3020!important}
-.opt.no{border-color:var(--red)!important;background:#2a1010!important}
-.fb{margin-top:10px;padding:9px 14px;border-radius:8px;font-size:.92rem;font-weight:600;display:none}
-.fb.show{display:block}.fb.g{background:#0e3020;color:#4fd37a;border:1px solid var(--green)}.fb.b{background:#2a1010;color:#f07070;border:1px solid var(--red)}
-.tips-box{display:none;background:#0e0a2a;border:1.5px solid var(--pu);border-radius:14px;padding:20px;animation:fi .6s ease}
-.tips-box.show{display:block}
-@keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.tip-unlock{background:#1a0a3a;border:1.5px solid var(--green);border-radius:12px;padding:13px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;font-size:.97rem;line-height:1.8}
-.tip-unlock:last-child{margin-bottom:0}
-.ticon{font-size:1.6rem;flex-shrink:0}
-.tlbl{font-size:.78rem;color:#8ab4cc;margin-bottom:3px;font-weight:700}
-.ttext{color:#4fd37a;font-weight:700}
-.send-box{display:none;background:var(--card);border:1.5px solid var(--gold);border-radius:12px;padding:20px;margin-top:8px;animation:fi .6s ease}
-.send-box.show{display:block}
-.sinp{width:100%;background:#0e0a2a;border:1.5px solid var(--border);border-radius:9px;color:var(--white);font-family:'Tajawal',sans-serif;font-size:1rem;padding:11px 14px;direction:rtl;margin-top:6px;transition:border-color .2s}
-.sinp:focus{outline:none;border-color:var(--pu)}
-.sbtn{display:block;width:100%;margin-top:14px;background:linear-gradient(135deg,var(--green),#1a7a3a);color:#fff;border:none;padding:14px;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s}
-.sbtn:hover{opacity:.9}.sbtn:disabled{background:#1a3a1a;color:#3a6a3a;cursor:default}
-.suc{display:none;margin-top:12px;background:#0e3020;border:1.5px solid var(--green);border-radius:11px;padding:16px;text-align:center;color:#4fd37a;font-size:1rem;font-weight:700;animation:fi .5s ease}
-.suc.show{display:block}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#FFF0F5;min-height:100vh}
+.top-bar{background:linear-gradient(135deg,#ee0979,#ff6a00);padding:12px 22px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 15px rgba(238,9,121,0.35)}
+.top-bar h1{color:#fff;font-size:1.25em;font-weight:900}
+.timer-box{background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);border-radius:12px;padding:7px 16px;color:#fff;font-size:1.5em;font-weight:900;min-width:76px;text-align:center}
+.timer-box.urgent{background:rgba(220,38,38,0.35);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.view{display:none}.view.active{display:block}
+.center-screen{max-width:650px;margin:50px auto;padding:20px}
+.card{background:#fff;border-radius:22px;padding:36px;box-shadow:0 10px 35px rgba(0,0,0,0.1);text-align:center}
+.card .icon{font-size:4em;margin-bottom:12px}
+select.name-sel{width:100%;padding:12px 16px;border:2px solid #ee0979;border-radius:12px;font-family:'Tajawal';font-size:1.05em;margin-bottom:16px}
+.go-btn{background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff;border:none;border-radius:12px;padding:13px 36px;font-size:1.15em;font-family:'Tajawal';font-weight:800;cursor:pointer;width:100%}
+.activity-area{max-width:1000px;margin:0 auto;padding:20px}
+.student-bar{background:linear-gradient(135deg,#ee0979,#ff6a00);border-radius:12px;padding:10px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+.levels-row{display:flex;gap:10px;margin-bottom:16px}
+.lv-dot{flex:1;background:#e0e0e0;border-radius:10px;height:8px;transition:background 0.5s}
+.lv-dot.done{background:#ee0979}.lv-dot.active{background:#ffd200;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+.level-panel{background:#fff;border-radius:20px;padding:24px;box-shadow:0 6px 22px rgba(0,0,0,0.08);min-height:300px}
+.level-title{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.badge{background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff;border-radius:10px;padding:6px 18px;font-weight:800;font-size:0.95em}
+.badge.l2{background:linear-gradient(135deg,#f7971e,#ffd200)}
+.badge.l3{background:linear-gradient(135deg,#4776E6,#8E54E9)}
+.level-title h3{font-size:1.1em;color:#1e3a5f;font-weight:800}
+/* Sorting columns */
+.sort-area{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.sort-col{border-radius:14px;padding:14px;min-height:200px}
+.sort-col.can{background:#E8FFF5;border:2px dashed #11998e}
+.sort-col.cant{background:#FFF0F0;border:2px dashed #dc2626}
+.sort-col h4{text-align:center;font-weight:800;margin-bottom:10px;font-size:1em}
+.sort-col.can h4{color:#11998e}.sort-col.cant h4{color:#dc2626}
+.task-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;padding:12px;background:#f9f9f9;border:2px dashed #ccc;border-radius:12px;min-height:60px}
+.task-chip{background:#fff;border:2px solid #ddd;border-radius:12px;padding:8px 14px;cursor:grab;font-size:0.9em;font-weight:600;color:#333;transition:transform 0.2s;user-select:none;direction:rtl}
+.task-chip:hover{transform:scale(1.03);box-shadow:0 3px 10px rgba(0,0,0,0.1)}
+.task-chip.placed-can{border-color:#11998e;background:#D1FAE5;color:#065f46;cursor:pointer}
+.task-chip.placed-cant{border-color:#dc2626;background:#FEE2E2;color:#7f1d1d;cursor:pointer}
+/* Level 2 */
+.list-area{min-height:120px}
+.list-input{width:100%;padding:12px;border:2px solid #ee0979;border-radius:10px;font-family:'Tajawal';font-size:1em;margin-bottom:10px;direction:rtl}
+.list-input:focus{outline:none;border-color:#ff6a00}
+/* Level 3 */
+.design-area{background:#FFF0F5;border:2px solid #ee0979;border-radius:14px;padding:20px}
+.design-textarea{width:100%;padding:12px;border:2px solid #ee0979;border-radius:10px;font-family:'Tajawal';font-size:1em;min-height:100px;resize:vertical;direction:rtl}
+.design-textarea:focus{outline:none}
+.action-row{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:12px}
+.next-btn{background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff;border:none;border-radius:12px;padding:12px 28px;font-size:1.05em;font-family:'Tajawal';font-weight:800;cursor:pointer;flex:1}
+.skip-btn{background:#f5f5f5;color:#888;border:none;border-radius:12px;padding:12px 18px;font-family:'Tajawal';font-weight:700;cursor:pointer}
+.success-area{max-width:540px;margin:60px auto;text-align:center;padding:20px}
+.success-card{background:#fff;border-radius:22px;padding:40px;box-shadow:0 10px 35px rgba(0,0,0,0.1)}
+.score-big{background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff;border-radius:14px;padding:14px 40px;font-size:1.5em;font-weight:900;display:inline-block;margin:14px 0}
+.teacher-toggle{position:fixed;bottom:20px;left:20px;background:#1a1a2e;color:#fff;border:2px solid #ee0979;border-radius:12px;padding:10px 18px;font-family:'Tajawal';cursor:pointer;font-weight:700;z-index:100}
+.t-panel{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.82);z-index:200;display:none;overflow-y:auto}
+.t-panel.open{display:block}
+.t-inner{background:#0f172a;min-height:100vh;padding:24px}
+.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
+.t-card{background:#16213e;border-radius:12px;padding:14px;border:1px solid #333}
+.t-card.done{border-color:#38ef7d}
+.t-name{color:#ffd200;font-weight:800;font-size:0.9em;margin-bottom:6px}
+.t-row{color:#aaa;font-size:0.8em;margin-bottom:3px}
+.t-row span{color:#ddd}
+.close-tp{background:#dc2626;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-family:'Tajawal';cursor:pointer;float:left;font-weight:700}
+.refresh-tp{background:#4776E6;color:#fff;border:none;border-radius:10px;padding:8px 16px;font-family:'Tajawal';cursor:pointer;font-weight:700;margin-right:10px}
 </style>
 </head>
 <body>
-<header>
-  <div class="hi">🌐</div>
-  <div><div class="ht">السيناريو 2 — المواقع المشبوهة</div><div class="hs">فريق الحماة | الصف السابع</div></div>
-  <div class="badge">المجموعة الثانية</div>
-</header>
-<main>
-  <div class="slbl"><div class="n">١</div><h2>اقرئي القصة</h2></div>
-  <div class="intro">تعرّف على <span class="nm">خالد 👦</span> — يجلس أمام حاسوبه يبحث عن فيلم كرتوني. ماذا سيحدث معه؟</div>
-  <div class="scene" id="s1">
-    <div class="sh"><span class="sn">المشهد الأول</span><span class="st">رابط مغرٍ! 🎬</span></div>
-    <div class="sb">يبحث خالد عن فيلم كرتوني، فيجد رابطًا: <strong>"شاهد أحدث الأفلام مجانًا وبدون إعلانات!"</strong><br>دون تفكير، يضغط على الرابط. 🖱️</div>
-  </div>
-  <div class="scene" id="s2">
-    <div class="sh"><span class="sn">المشهد الثاني</span><span class="st">تحذير غريب! ⚠️</span></div>
-    <div class="sb">يطلب الموقع <strong>تحميل برنامج</strong> لتشغيل الفيلم. يضغط خالد على "تحميل"، ويظهر <strong>تحذير غريب</strong>...<br>لكنه يتجاهله ويكمل التثبيت! 😬</div>
-  </div>
-  <div class="scene" id="s3">
-    <div class="sh"><span class="sn">المشهد الثالث</span><span class="st">الكارثة! 💀</span></div>
-    <div class="sb">بعد دقائق يبدأ الحاسوب بالتباطؤ، وتظهر نوافذ منبثقة مزعجة.<br>فجأة يتجمد الجهاز ويظهر: <strong>"تم اختراق جهازك!"</strong> 🚨</div>
-  </div>
-  <button class="btn" id="revBtn" onclick="revealNext()">▶ اضغطي لعرض المشاهد</button>
+<div class="top-bar">
+  <h1>⚙️ نشاط 2 - وظائف الروبوت | مجموعات</h1>
+  <div id="timerDisplay" class="timer-box">08:00</div>
+</div>
 
-  <div class="slbl"><div class="n">٢</div><h2>حللي وأجيبي</h2></div>
-  <div class="qcard">
-    <div class="qt">السؤال الأول: ما الخطأ الأول الذي ارتكبه خالد؟</div>
-    <div class="opts" id="q1">
-      <label class="opt"><input type="radio" name="q1" value="a" onchange="checkQ(1,'b')"><span>أ) بحث عن أفلام كرتونية</span></label>
-      <label class="opt"><input type="radio" name="q1" value="b" onchange="checkQ(1,'b')"><span>ب) ضغط على رابط مشبوه دون التحقق منه</span></label>
-      <label class="opt"><input type="radio" name="q1" value="c" onchange="checkQ(1,'b')"><span>ج) فتح الحاسوب في المساء</span></label>
-    </div>
-    <div class="fb" id="fb1"></div>
-  </div>
-  <div class="qcard">
-    <div class="qt">السؤال الثاني: ماذا كان يجب أن يفعل خالد حين ظهر التحذير؟</div>
-    <div class="opts" id="q2">
-      <label class="opt"><input type="radio" name="q2" value="a" onchange="checkQ(2,'a')"><span>أ) يغلق النافذة فورًا ولا يكمل التحميل</span></label>
-      <label class="opt"><input type="radio" name="q2" value="b" onchange="checkQ(2,'a')"><span>ب) يكتب اسمه وكلمة مروره</span></label>
-      <label class="opt"><input type="radio" name="q2" value="c" onchange="checkQ(2,'a')"><span>ج) يتجاهل التحذير ويكمل</span></label>
-    </div>
-    <div class="fb" id="fb2"></div>
-  </div>
-  <div class="qcard">
-    <div class="qt">السؤال الثالث: البرنامج الذي حمّله خالد وأضر بجهازه يُسمى:</div>
-    <div class="opts" id="q3">
-      <label class="opt"><input type="radio" name="q3" value="a" onchange="checkQ(3,'c')"><span>أ) برنامج مكافحة فيروسات</span></label>
-      <label class="opt"><input type="radio" name="q3" value="b" onchange="checkQ(3,'c')"><span>ب) برنامج تشغيل الأفلام</span></label>
-      <label class="opt"><input type="radio" name="q3" value="c" onchange="checkQ(3,'c')"><span>ج) برنامج خبيث (Malware)</span></label>
-    </div>
-    <div class="fb" id="fb3"></div>
-  </div>
+<div id="nameView" class="view active">
+  <div class="center-screen"><div class="card">
+    <div class="icon">⚙️</div>
+    <h2>نشاط اكتشاف الوظائف</h2>
+    <p>صنفي المهام واكتشفي ما الذي يمكن للروبوت عمله! نشاط مجموعات.</p>
+    <select id="nameSelect" class="name-sel"><option value="">-- اختاري اسمك --</option></select>
+    <button class="go-btn" onclick="startAct()">🚀 ابدئي</button>
+  </div></div>
+</div>
 
-  <div class="slbl"><div class="n">٣</div><h2>النصائح التي اكتشفتِها 🔓</h2></div>
-  <div class="tips-box" id="tipsBox">
-    <div style="color:var(--pu-l);font-size:1rem;font-weight:800;margin-bottom:14px">🛡️ مجموعتك اكتشفت هاتين النصيحتين!</div>
-    <div class="tip-unlock">
-      <span class="ticon">🔓</span>
-      <div><div class="tlbl">النصيحة الأولى</div><div class="ttext">لا تزوري مواقع الويب المشبوهة التي تطلب منكِ تزويدها بكلمة المرور أو تحميل برامج.</div></div>
+<div id="actView" class="view">
+  <div class="activity-area">
+    <div class="student-bar">
+      <span id="sName" style="font-weight:800"></span>
+      <span id="lvBadge" style="background:rgba(255,255,255,0.25);border-radius:8px;padding:3px 14px">المستوى 1</span>
     </div>
-    <div class="tip-unlock">
-      <span class="ticon">🔓</span>
-      <div><div class="tlbl">النصيحة الثانية</div><div class="ttext">تأكدي من تحديث برنامج مكافحة الفيروسات على حاسوبكِ باستمرار.</div></div>
+    <div class="levels-row">
+      <div class="lv-dot active" id="dot0"></div>
+      <div class="lv-dot" id="dot1"></div>
+      <div class="lv-dot" id="dot2"></div>
+    </div>
+    <div class="level-panel" id="levelPanel"></div>
+    <div class="action-row">
+      <span id="lvTimer" style="color:#888;font-size:0.9em">⏱ دقيقة للمستوى</span>
+      <button class="skip-btn" onclick="nextLevel()">تخطي ←</button>
+      <button class="next-btn" onclick="nextLevel()">التالي ←</button>
     </div>
   </div>
+</div>
 
-  <div class="slbl"><div class="n">٤</div><h2>أرسلي نصائحك للصفحة المشتركة 🌐</h2></div>
-  <div class="send-box" id="sendBox">
-    <div style="color:#a8d0e6;font-size:.97rem;margin-bottom:4px">اكتبي اسمكِ ثم أرسلي النصيحتين للصفحة المشتركة</div>
-    <input type="text" class="sinp" id="sname" placeholder="اكتبي اسمكِ الكامل...">
-    <button class="sbtn" id="sbtn" onclick="sendTips()">📤 أرسلي نصائحك للصفحة المشتركة</button>
-    <div class="suc" id="suc">✅ تم الإرسال! نصائحك تظهر الآن على الصفحة المشتركة 🎉</div>
+<div id="successView" class="view">
+  <div class="success-area"><div class="success-card">
+    <div style="font-size:3.5em;margin-bottom:12px">🎉</div>
+    <h2 style="color:#ee0979;font-size:1.8em;margin-bottom:8px">رائع!</h2>
+    <div class="score-big" id="finalScore">+20 نقطة!</div>
+    <p style="color:#555">انتظري النشاط التالي من المعلمة.</p>
+  </div></div>
+</div>
+
+<button class="teacher-toggle" onclick="toggleT()">🎓 شاشة المعلمة</button>
+<div class="t-panel" id="tPanel">
+  <div class="t-inner">
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+      <h2 style="color:#ee0979">🎓 نشاط 2 - متابعة الطالبات</h2>
+      <div><button class="refresh-tp" onclick="loadT()">🔄</button><button class="close-tp" onclick="toggleT()">✕</button></div>
+    </div>
+    <div id="tStats"></div>
+    <div id="tCards" class="t-grid"></div>
   </div>
-</main>
+</div>
+
 <script>
 const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
-const TIPS=['لا تزوري مواقع الويب المشبوهة التي تطلب منكِ تزويدها بكلمة المرور أو تحميل برامج.','تأكدي من تحديث برنامج مكافحة الفيروسات على حاسوبكِ باستمرار.'];
-let step=0,ans={1:false,2:false,3:false};
-window.onload=()=>setTimeout(()=>{document.getElementById('s1').classList.add('show');step=1;},300);
-function revealNext(){
-  const ids=['s1','s2','s3'];
-  if(step<ids.length){document.getElementById(ids[step]).classList.add('show');step++;}
-  if(step===ids.length){document.getElementById('revBtn').textContent='✅ تم عرض القصة';document.getElementById('revBtn').disabled=true;}
+const PATH='robots-lesson/activity2';
+const TOTAL=480,LV_TIME=60;
+const STUDENTS=["أريام حميد الحبيني","أسيل موسى العوض","الجازي عبدالعزيز عبدالله محمد المنصورى","أمامه سليم علبي","أمنه هياب احمد عبدالرحمن","أنوار حمد العبيد","أنيسه نعمة الله","حبيبه علاء ابراهيم مشعل","حفصه احمد عبد المنعم عبد الغني","حلا أحمد محمد الباز عبدالعال","حنان محمد طاهر","حوريه نبيل احمد السيد الحفنى","داليا رمضان العلي","ذهب محمد طاهر","رغد نبي جول","رقية حمدى سعيد عباس خواجة","رنيم حسني عواد الخلايله","روقيه شعبان محمد هنداوي حسانين","رؤى بوكيوض","ريان محمود الحاج أمين نجار","ريتال حسني عواد الخلايله","شما عمر بشير عبدالقادر","فاطمه فخر الدين احمد الامين","قمر حازم عمر","ليا عبد الحاج اسماعيل","ماريا عبدالعليم الرزوق","مريم حافظ فاروق احمد احمد","ملاك عبدالله الدرويش","نداء حسين المحمد العبادي","نور أيهاب عبدالحميد عبدالسلام غمري","نورا عبدالعزيز عبدالله محمد المنصورى","نيللي أمير سعيد محمود الحداد","هنادي محمد عبدالله علي","هيلان","وعد مصطفى أحمد عثمان"];
+
+const TASKS_CAN=['تسريع العمل في المصانع','القيام بمهام خطرة','حمل الأشياء الثقيلة','مهام متكررة وشاقة','الاستشعار بالبيئة المحيطة','رفع العقبات'];
+const TASKS_CANT=['كتابة الشعر الإبداعي','الشعور بالمشاعر','اتخاذ قرارات أخلاقية معقدة','الطهي بدون برمجة'];
+
+let student='',level=0,totalScore=0,totalTimer=null,lvTimer=null,lvSec=LV_TIME,totalSec=TOTAL;
+let canList=[],cantList=[];
+
+window.onload=()=>{const s=document.getElementById('nameSelect');STUDENTS.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});};
+
+function startAct(){const s=document.getElementById('nameSelect');if(!s.value){alert('اختاري اسمك');return;}student=s.value;document.getElementById('sName').textContent='👩‍🎓 '+student;showView('actView');renderLevel();startTotalTimer();}
+
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function startTotalTimer(){totalTimer=setInterval(()=>{totalSec--;const m=Math.floor(totalSec/60),s=totalSec%60;const d=document.getElementById('timerDisplay');d.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(totalSec<=60)d.classList.add('urgent');if(totalSec<=0){clearInterval(totalTimer);submitAll();}},1000);}
+
+function startLvTimer(){clearInterval(lvTimer);lvSec=LV_TIME;lvTimer=setInterval(()=>{lvSec--;document.getElementById('lvTimer').textContent='⏱ '+lvSec+'ث';if(lvSec<=0){clearInterval(lvTimer);if(level<2)nextLevel();}},1000);}
+
+function renderLevel(){
+  [0,1,2].forEach(i=>{const d=document.getElementById('dot'+i);d.className='lv-dot '+(i<level?'done':i===level?'active':'');});
+  document.getElementById('lvBadge').textContent=`المستوى ${level+1} ${'★'.repeat(level+1)}`;
+  const panel=document.getElementById('levelPanel');
+  if(level===0) panel.innerHTML=renderL1();
+  else if(level===1) panel.innerHTML=renderL2();
+  else panel.innerHTML=renderL3();
+  startLvTimer();
 }
-function checkQ(n,c){
-  const sel=document.querySelector(`input[name="q${n}"]:checked`);if(!sel)return;
-  document.querySelectorAll(`#q${n} .opt`).forEach(o=>{
-    o.classList.remove('ok','no');
-    if(o.querySelector('input').value===c)o.classList.add('ok');
-    else if(o.querySelector('input').checked)o.classList.add('no');
-  });
-  const fb=document.getElementById(`fb${n}`);
-  if(sel.value===c){fb.textContent='✅ إجابة صحيحة!';fb.className='fb show g';ans[n]=true;}
-  else{fb.textContent='❌ راجعي إجابتكِ — الجواب الصحيح باللون الأخضر.';fb.className='fb show b';}
-  if(Object.values(ans).every(v=>v)){document.getElementById('tipsBox').classList.add('show');document.getElementById('sendBox').classList.add('show');}
+
+function renderL1(){
+  const allTasks=[...TASKS_CAN,...TASKS_CANT].sort(()=>Math.random()-0.5);
+  const chips=allTasks.map((t,i)=>`<div class="task-chip" id="chip${i}" draggable="true" data-task="${t}" data-cat="${TASKS_CAN.includes(t)?'can':'cant'}" ondragstart="dStart(event)">${t}</div>`).join('');
+  return `<div class="level-title"><span class="badge">★ المستوى الأول</span><h3>صنفي المهام: ما يستطيعه الروبوت وما لا يستطيعه</h3></div>
+  <div class="task-bank" id="taskBank">${chips}</div>
+  <div class="sort-area">
+    <div class="sort-col can" ondragover="dOver(event)" ondrop="dropCan(event)"><h4>✅ يستطيع الروبوت</h4><div id="canZone"></div></div>
+    <div class="sort-col cant" ondragover="dOver(event)" ondrop="dropCant(event)"><h4>❌ لا يستطيع الروبوت</h4><div id="cantZone"></div></div>
+  </div>`;
 }
-async function sendTips(){
-  const name=document.getElementById('sname').value.trim();
-  if(!name){alert('من فضلكِ اكتبي اسمكِ أولاً');return;}
-  const btn=document.getElementById('sbtn');btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';
+
+function renderL2(){
+  return `<div class="level-title"><span class="badge l2">★★ المستوى الثاني</span><h3>اذكري ثلاث مجالات يُستخدم فيها الروبوت من الدرس</h3></div>
+  ${[1,2,3].map(i=>`<input class="list-input" id="t${i}" placeholder="المجال ${i}: ..."/>`).join('')}
+  <p style="color:#888;font-size:0.9em;margin-top:8px">💡 تلميح: فكري في المصانع، المهام الخطرة، المهام الشاقة</p>`;
+}
+
+function renderL3(){
+  return `<div class="level-title"><span class="badge l3">★★★ المستوى الثالث</span><h3>صممي مهمة لروبوت وبرري لماذا الروبوت هو الأنسب</h3></div>
+  <div class="design-area">
+    <p style="color:#555;margin-bottom:10px">تخيلي مصنعاً أو مكاناً يحتاج لروبوت. اكتبي:</p>
+    <textarea class="design-textarea" id="designT" placeholder="المهمة التي سيؤديها الروبوت:&#10;السبب في اختيار الروبوت بدلاً من الإنسان:&#10;المزايا:"></textarea>
+  </div>`;
+}
+
+let draggedTask=null,draggedCat=null;
+function dStart(e){draggedTask=e.target.dataset.task;draggedCat=e.target.dataset.cat;e.target.style.opacity='0.4';}
+function dOver(e){e.preventDefault();}
+function dropCan(e){e.preventDefault();if(draggedTask){canList.push({task:draggedTask,correct:draggedCat==='can'});const z=document.getElementById('canZone');z.innerHTML+=`<div class="task-chip placed-can">${draggedTask}</div>`;removeChip();}}
+function dropCant(e){e.preventDefault();if(draggedTask){cantList.push({task:draggedTask,correct:draggedCat==='cant'});const z=document.getElementById('cantZone');z.innerHTML+=`<div class="task-chip placed-cant">${draggedTask}</div>`;removeChip();}}
+function removeChip(){document.querySelectorAll(`[data-task="${draggedTask}"]`).forEach(c=>{if(c.parentElement?.id==='taskBank')c.remove();});draggedTask=null;}
+
+function scoreLevel(lv){
+  if(lv===0){const correct=canList.filter(i=>i.correct).length+cantList.filter(i=>i.correct).length;return correct>=6?15:correct>=4?10:5;}
+  if(lv===1){const t1=document.getElementById('t1')?.value||'',t2=document.getElementById('t2')?.value||'',t3=document.getElementById('t3')?.value||'';return([t1,t2,t3].filter(t=>t.trim().length>3).length>=2)?20:10;}
+  if(lv===2){const v=document.getElementById('designT')?.value||'';return v.length>50?30:v.length>20?15:5;}
+  return 0;
+}
+
+function nextLevel(){clearInterval(lvTimer);totalScore+=scoreLevel(level);level++;if(level>=3)submitAll();else renderLevel();}
+
+async function submitAll(){
+  clearInterval(totalTimer);clearInterval(lvTimer);
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  const data={name:student,score:totalScore,canList:JSON.stringify(canList),design:document.getElementById('designT')?.value||'',timestamp:Date.now()};
   try{
-    await fetch(`${DB}/tips/group2.json`,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,tip1:TIPS[0],tip2:TIPS[1],group:'المجموعة الثانية 🌐',scenario:'المواقع المشبوهة',time:new Date().toLocaleTimeString('ar-QA')})});
-    document.getElementById('suc').classList.add('show');btn.style.display='none';
-  }catch(e){btn.disabled=false;btn.textContent='📤 أرسلي نصائحك للصفحة المشتركة';alert('حدث خطأ، حاولي مرة أخرى');}
+    await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});
+    const sc=await fetch(`${DB}/robots-lesson/scores/${key}.json`).then(r=>r.json()).catch(()=>({}));
+    await fetch(`${DB}/robots-lesson/scores/${key}.json`,{method:'PATCH',body:JSON.stringify({name:student,total:(sc?.total||0)+totalScore,act2:totalScore})});
+  }catch(e){}
+  document.getElementById('finalScore').textContent=`+${totalScore} نقطة!`;
+  showView('successView');
+}
+
+function toggleT(){const p=document.getElementById('tPanel');p.classList.toggle('open');if(p.classList.contains('open'))loadT();}
+async function loadT(){
+  const cards=document.getElementById('tCards'),stats=document.getElementById('tStats');
+  cards.innerHTML='<p style="color:#888;text-align:center;padding:20px">⏳</p>';
+  const data=await fetch(`${DB}/${PATH}.json`).then(r=>r.json()).catch(()=>({}));
+  const submitted=Object.values(data||{});
+  const names=submitted.map(d=>d.name);
+  const pending=STUDENTS.filter(s=>!names.includes(s));
+  stats.innerHTML=`<span style="background:#16213e;border:1px solid #38ef7d;border-radius:10px;padding:7px 16px;color:#38ef7d;font-weight:800;margin-left:10px">✅ ${submitted.length}</span><span style="background:#16213e;border:1px solid #ffa500;border-radius:10px;padding:7px 16px;color:#ffa500;font-weight:800">⏳ ${pending.length}</span>`;
+  cards.innerHTML='';
+  submitted.sort((a,b)=>b.score-a.score).forEach((d,i)=>{
+    cards.innerHTML+=`<div class="t-card done"><div class="t-name">${['🥇','🥈','🥉'][i]||''} ${d.name}</div><div class="t-row">النقاط: <span>${d.score}</span></div><div class="t-row">التصميم: <span>${d.design?.slice(0,50)||'—'}</span></div></div>`;
+  });
+  pending.forEach(n=>{cards.innerHTML+=`<div class="t-card"><div class="t-name">${n} <span style="background:rgba(255,165,0,0.12);color:#ffa500;border-radius:8px;padding:2px 10px;font-size:0.75em">⏳</span></div></div>`;});
 }
 </script>
 </body>

@@ -1,164 +1,314 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نشاط 1 — الفخ الإلكتروني</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط 1 - تعريف الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a1628;--card:#112240;--border:#1e4976;--teal:#0e8f8f;--teal-l:#13b8b8;--gold:#f0a500;--red:#e74c3c;--green:#27ae60;--white:#f0f4f8}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;direction:rtl}
-header{background:linear-gradient(135deg,#0e2a4a,#0e8f8f22);border-bottom:2px solid var(--teal);padding:18px 28px;display:flex;align-items:center;gap:14px}
-.hi{font-size:2.2rem}.ht{font-size:1.5rem;font-weight:800;color:var(--teal-l)}.hs{font-size:.9rem;color:#8ab4cc;margin-top:2px}
-.badge{margin-right:auto;background:var(--teal);color:#fff;padding:5px 16px;border-radius:20px;font-weight:700;font-size:.88rem}
-main{max-width:800px;margin:0 auto;padding:26px 18px 60px}
-.slbl{display:flex;align-items:center;gap:10px;margin:28px 0 14px}
-.slbl .n{background:var(--teal);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.95rem;flex-shrink:0}
-.slbl h2{font-size:1.15rem;font-weight:700;color:var(--teal-l)}
-.intro{background:var(--card);border:1px solid var(--border);border-right:4px solid var(--gold);border-radius:12px;padding:18px 20px;margin-bottom:20px;font-size:1rem;line-height:1.9}
-.nm{color:var(--gold);font-weight:800}
-.scene{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
-.scene.show{opacity:1;transform:translateY(0)}
-.sh{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#0e2a4a;border-bottom:1px solid var(--border)}
-.sn{background:var(--teal);color:#fff;font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:10px}
-.st{font-weight:700;color:#a8d0e6;font-size:.97rem}
-.sb{padding:14px 18px;font-size:.97rem;line-height:1.9;color:#d4e8f5}
-.btn{display:block;margin:16px auto 0;background:var(--teal);color:#fff;border:none;padding:9px 28px;border-radius:22px;font-family:'Tajawal',sans-serif;font-size:.97rem;font-weight:700;cursor:pointer;transition:background .2s}
-.btn:hover{background:var(--teal-l)}.btn:disabled{background:#2a4a5a;color:#6a8a9a;cursor:default}
-.qcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
-.qt{font-size:1rem;font-weight:700;margin-bottom:14px;color:var(--gold)}
-.opts{display:flex;flex-direction:column;gap:9px}
-.opt{display:flex;align-items:flex-start;gap:11px;background:#0e2a4a;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.95rem;line-height:1.7}
-.opt:hover{border-color:var(--teal);background:#0e3050}
-.opt input{margin-top:3px;accent-color:var(--teal);flex-shrink:0;width:15px;height:15px}
-.opt.ok{border-color:var(--green)!important;background:#0e3020!important}
-.opt.no{border-color:var(--red)!important;background:#2a1010!important}
-.fb{margin-top:10px;padding:9px 14px;border-radius:8px;font-size:.92rem;font-weight:600;display:none}
-.fb.show{display:block}.fb.g{background:#0e3020;color:#4fd37a;border:1px solid var(--green)}.fb.b{background:#2a1010;color:#f07070;border:1px solid var(--red)}
-.tips-box{display:none;background:#071a2e;border:1.5px solid var(--teal);border-radius:14px;padding:20px;animation:fi .6s ease}
-.tips-box.show{display:block}
-@keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.tip-unlock{background:#0a2a1a;border:1.5px solid var(--green);border-radius:12px;padding:13px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;font-size:.97rem;line-height:1.8}
-.tip-unlock:last-child{margin-bottom:0}
-.ticon{font-size:1.6rem;flex-shrink:0}
-.tlbl{font-size:.78rem;color:#8ab4cc;margin-bottom:3px;font-weight:700}
-.ttext{color:#4fd37a;font-weight:700}
-.send-box{display:none;background:var(--card);border:1.5px solid var(--gold);border-radius:12px;padding:20px;margin-top:8px;animation:fi .6s ease}
-.send-box.show{display:block}
-.sinp{width:100%;background:#071a2e;border:1.5px solid var(--border);border-radius:9px;color:var(--white);font-family:'Tajawal',sans-serif;font-size:1rem;padding:11px 14px;direction:rtl;margin-top:6px;transition:border-color .2s}
-.sinp:focus{outline:none;border-color:var(--teal)}
-.sbtn{display:block;width:100%;margin-top:14px;background:linear-gradient(135deg,var(--green),#1a7a3a);color:#fff;border:none;padding:14px;border-radius:11px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:opacity .2s}
-.sbtn:hover{opacity:.9}.sbtn:disabled{background:#1a3a1a;color:#3a6a3a;cursor:default}
-.suc{display:none;margin-top:12px;background:#0e3020;border:1.5px solid var(--green);border-radius:11px;padding:16px;text-align:center;color:#4fd37a;font-size:1rem;font-weight:700;animation:fi .5s ease}
-.suc.show{display:block}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#F0FFF4;min-height:100vh}
+.top-bar{background:linear-gradient(135deg,#11998e,#38ef7d);padding:12px 22px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 15px rgba(17,153,142,0.4)}
+.top-bar h1{color:#fff;font-size:1.3em;font-weight:900}
+.timer-box{background:rgba(255,255,255,0.25);border:2px solid rgba(255,255,255,0.5);border-radius:12px;padding:7px 16px;color:#fff;font-size:1.5em;font-weight:900;min-width:76px;text-align:center}
+.timer-box.urgent{background:rgba(220,38,38,0.35);border-color:#dc2626;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.view{display:none}.view.active{display:block}
+/* Name screen */
+.center-screen{max-width:650px;margin:50px auto;padding:20px}
+.card{background:#fff;border-radius:22px;padding:36px;box-shadow:0 10px 35px rgba(0,0,0,0.1);text-align:center}
+.card .icon{font-size:4em;margin-bottom:12px}
+.card h2{font-size:1.7em;font-weight:900;color:#1e3a5f;margin-bottom:8px}
+.card p{color:#666;margin-bottom:20px}
+select.name-sel{width:100%;padding:12px 16px;border:2px solid #11998e;border-radius:12px;font-family:'Tajawal';font-size:1.05em;margin-bottom:16px}
+.go-btn{background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;border:none;border-radius:12px;padding:13px 36px;font-size:1.15em;font-family:'Tajawal';font-weight:800;cursor:pointer;width:100%}
+/* Activity area */
+.activity-area{max-width:1000px;margin:0 auto;padding:20px}
+.student-bar{background:linear-gradient(135deg,#11998e,#38ef7d);border-radius:12px;padding:10px 18px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+.student-bar .sname{font-weight:800;font-size:1.05em}
+.level-badge{background:rgba(255,255,255,0.25);border-radius:8px;padding:3px 14px;font-size:0.9em}
+/* Level indicators */
+.levels-row{display:flex;gap:10px;margin-bottom:16px}
+.lv-dot{flex:1;background:#e0e0e0;border-radius:10px;height:8px;transition:background 0.5s}
+.lv-dot.done{background:#11998e}
+.lv-dot.active{background:#ffd200;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+.level-panel{background:#fff;border-radius:20px;padding:24px;box-shadow:0 6px 22px rgba(0,0,0,0.08);min-height:300px}
+.level-title{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.level-title .badge{background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;border-radius:10px;padding:6px 18px;font-weight:800;font-size:0.95em}
+.level-title h3{font-size:1.15em;color:#1e3a5f;font-weight:800}
+/* Level 1: drag and drop words */
+.word-bank{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;padding:14px;background:#F0FFF4;border:2px dashed #11998e;border-radius:12px;min-height:60px}
+.word-chip{background:#11998e;color:#fff;border-radius:20px;padding:8px 18px;cursor:grab;font-weight:700;font-size:0.95em;user-select:none;transition:transform 0.2s,box-shadow 0.2s}
+.word-chip:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(17,153,142,0.4)}
+.word-chip.dragging{opacity:0.5}
+.def-drop-zone{border:2px dashed #ccc;border-radius:12px;padding:18px;min-height:80px;background:#fafafa;direction:rtl;font-size:1.1em;color:#333;line-height:2.2;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.def-drop-zone.drag-over{border-color:#11998e;background:#E8FFF5}
+.placed-word{background:#D1FAE5;border:2px solid #11998e;color:#065f46;border-radius:20px;padding:6px 14px;cursor:pointer;font-weight:700;display:inline-block}
+.static-text{color:#666;font-size:0.95em;display:inline}
+/* Level 2: fill blanks */
+.def-text{font-size:1.1em;line-height:2.6;color:#333;direction:rtl}
+.blank-input{border:none;border-bottom:2px solid #11998e;background:transparent;font-family:'Tajawal';font-size:1em;width:140px;text-align:center;color:#065f46;font-weight:700;padding:0 4px}
+.blank-input:focus{outline:none;border-bottom-color:#38ef7d}
+/* Level 3: open */
+.open-textarea{width:100%;padding:14px;border:2px solid #11998e;border-radius:12px;font-family:'Tajawal';font-size:1.05em;min-height:120px;resize:vertical;direction:rtl}
+.open-textarea:focus{outline:none;border-color:#38ef7d}
+.hint-box{background:#F0FFF4;border:1px solid #11998e;border-radius:10px;padding:10px 14px;margin-top:10px;color:#065f46;font-size:0.9em}
+/* Next level / submit */
+.action-row{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.next-btn{background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;border:none;border-radius:12px;padding:12px 30px;font-size:1.05em;font-family:'Tajawal';font-weight:800;cursor:pointer;flex:1}
+.skip-btn{background:#f5f5f5;color:#888;border:none;border-radius:12px;padding:12px 20px;font-family:'Tajawal';font-weight:700;cursor:pointer;font-size:0.95em}
+.level-timer{color:#888;font-size:0.9em}
+/* Success */
+.success-area{max-width:560px;margin:60px auto;text-align:center;padding:20px}
+.success-card{background:#fff;border-radius:22px;padding:40px;box-shadow:0 10px 35px rgba(0,0,0,0.1)}
+.score-big{background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;border-radius:14px;padding:14px 40px;font-size:1.5em;font-weight:900;display:inline-block;margin:14px 0}
+/* Teacher panel */
+.teacher-toggle{position:fixed;bottom:20px;left:20px;background:#1a1a2e;color:#fff;border:2px solid #38ef7d;border-radius:12px;padding:10px 18px;font-family:'Tajawal';cursor:pointer;font-weight:700;z-index:100}
+.t-panel{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.82);z-index:200;display:none;overflow-y:auto}
+.t-panel.open{display:block}
+.t-inner{background:#0f172a;min-height:100vh;padding:24px}
+.t-inner h2{color:#38ef7d;font-size:1.4em;margin-bottom:18px}
+.close-tp{background:#dc2626;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:'Tajawal';cursor:pointer;float:left;font-weight:700}
+.refresh-tp{background:#4776E6;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-family:'Tajawal';cursor:pointer;font-weight:700;margin-right:10px}
+.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
+.t-card{background:#16213e;border-radius:12px;padding:14px;border:1px solid #333}
+.t-card.done{border-color:#38ef7d}
+.t-name{color:#ffd200;font-weight:800;font-size:0.9em;margin-bottom:6px}
+.t-row{color:#aaa;font-size:0.8em;margin-bottom:3px}
+.t-row span{color:#ddd}
+.t-status{font-size:0.75em;padding:2px 10px;border-radius:8px;display:inline-block}
+.done-s{background:rgba(56,239,125,0.15);color:#38ef7d}
+.pend-s{background:rgba(255,165,0,0.12);color:#ffa500}
+.t-stat{background:#16213e;border-radius:10px;padding:8px 16px;font-weight:800;display:inline-block;margin-left:10px;margin-bottom:12px}
 </style>
 </head>
 <body>
-<header>
-  <div class="hi">🎣</div>
-  <div><div class="ht">السيناريو 1 — الفخ الإلكتروني</div><div class="hs">فريق الحماة | الصف السابع</div></div>
-  <div class="badge">المجموعة الأولى</div>
-</header>
-<main>
-  <div class="slbl"><div class="n">١</div><h2>اقرئي القصة</h2></div>
-  <div class="intro">تعرّف على <span class="nm">أحمد 👦</span> — يجلس على مكتبه ويتصفح بريده الإلكتروني. ماذا سيحدث معه اليوم؟</div>
-  <div class="scene" id="s1">
-    <div class="sh"><span class="sn">المشهد الأول</span><span class="st">رسالة مفاجئة 📧</span></div>
-    <div class="sb">يجلس أحمد يتصفح بريده، فيجد رسالة: <strong>"مبروك! لقد ربحت جائزة كبرى"</strong> 🎁<br>يتردد قليلاً... لكنه يفتحها بدافع الفضول.</div>
-  </div>
-  <div class="scene" id="s2">
-    <div class="sh"><span class="sn">المشهد الثاني</span><span class="st">طلب البيانات 📝</span></div>
-    <div class="sb">تطلب منه الرسالة إدخال <strong>بياناته الشخصية والبنكية</strong> لاستلام الجائزة.<br>دون تفكير، يملأ النموذج ويرسله. 💳</div>
-  </div>
-  <div class="scene" id="s3">
-    <div class="sh"><span class="sn">المشهد الثالث</span><span class="st">الصدمة! 😱</span></div>
-    <div class="sb">يتلقى اتصالاً من البنك: <strong>"تم سحب مبلغ كبير من حسابك!"</strong><br>يدرك أحمد أنه وقع ضحية <strong>احتيال إلكتروني</strong>. 🚨</div>
-  </div>
-  <button class="btn" id="revBtn" onclick="revealNext()">▶ اضغطي لعرض المشاهد</button>
+<div class="top-bar">
+  <h1>🤖 نشاط 1 - تعريف الروبوت | ثنائي</h1>
+  <div id="timerDisplay" class="timer-box">08:00</div>
+</div>
 
-  <div class="slbl"><div class="n">٢</div><h2>حللي وأجيبي</h2></div>
+<!-- Name View -->
+<div id="nameView" class="view active">
+  <div class="center-screen"><div class="card">
+    <div class="icon">🤖</div>
+    <h2>نشاط اكتشاف التعريف</h2>
+    <p>ستعملين مع شريكتك لاكتشاف تعريف الروبوت من خلال ثلاثة مستويات!</p>
+    <select id="nameSelect" class="name-sel"><option value="">-- اختاري اسمك --</option></select>
+    <button class="go-btn" onclick="startAct()">🚀 ابدئي النشاط</button>
+  </div></div>
+</div>
 
-  <div class="qcard">
-    <div class="qt">السؤال الأول: ما أول خطأ ارتكبه أحمد؟</div>
-    <div class="opts" id="q1">
-      <label class="opt"><input type="radio" name="q1" value="a" onchange="checkQ(1,'a')"><span>أ) فتح رسالة من مرسل مجهول بدون التحقق منها</span></label>
-      <label class="opt"><input type="radio" name="q1" value="b" onchange="checkQ(1,'a')"><span>ب) استخدم كلمة مرور ضعيفة</span></label>
-      <label class="opt"><input type="radio" name="q1" value="c" onchange="checkQ(1,'a')"><span>ج) زار موقعًا مشبوهًا</span></label>
+<!-- Activity View -->
+<div id="actView" class="view">
+  <div class="activity-area">
+    <div class="student-bar">
+      <span class="sname" id="sName"></span>
+      <span class="level-badge" id="lvBadge">المستوى 1 من 3</span>
     </div>
-    <div class="fb" id="fb1"></div>
-  </div>
-  <div class="qcard">
-    <div class="qt">السؤال الثاني: ما الخطأ الأكبر الذي أضرّ بأحمد؟</div>
-    <div class="opts" id="q2">
-      <label class="opt"><input type="radio" name="q2" value="a" onchange="checkQ(2,'b')"><span>أ) أخبر صديقه بالخبر</span></label>
-      <label class="opt"><input type="radio" name="q2" value="b" onchange="checkQ(2,'b')"><span>ب) أدخل بياناته البنكية في نموذج مجهول دون تفكير</span></label>
-      <label class="opt"><input type="radio" name="q2" value="c" onchange="checkQ(2,'b')"><span>ج) فتح الحاسوب في وقت متأخر</span></label>
+    <div class="levels-row">
+      <div class="lv-dot active" id="dot0"></div>
+      <div class="lv-dot" id="dot1"></div>
+      <div class="lv-dot" id="dot2"></div>
     </div>
-    <div class="fb" id="fb2"></div>
-  </div>
-  <div class="qcard">
-    <div class="qt">السؤال الثالث: هذا النوع من الاحتيال يُسمى:</div>
-    <div class="opts" id="q3">
-      <label class="opt"><input type="radio" name="q3" value="a" onchange="checkQ(3,'c')"><span>أ) برنامج تجسس</span></label>
-      <label class="opt"><input type="radio" name="q3" value="b" onchange="checkQ(3,'c')"><span>ب) هجوم بكلمة المرور</span></label>
-      <label class="opt"><input type="radio" name="q3" value="c" onchange="checkQ(3,'c')"><span>ج) تصيد إلكتروني (Phishing)</span></label>
+    <div class="level-panel" id="levelPanel"></div>
+    <div class="action-row">
+      <span class="level-timer" id="lvTimer">⏱ دقيقة للمستوى</span>
+      <button class="skip-btn" onclick="nextLevel()">تخطي ←</button>
+      <button class="next-btn" id="nextBtn" onclick="nextLevel()">التالي ←</button>
     </div>
-    <div class="fb" id="fb3"></div>
   </div>
+</div>
 
-  <div class="slbl"><div class="n">٣</div><h2>النصائح التي اكتشفتِها 🔓</h2></div>
-  <div class="tips-box" id="tipsBox">
-    <div style="color:var(--teal-l);font-size:1rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px">🛡️ مجموعتك اكتشفت هاتين النصيحتين!</div>
-    <div class="tip-unlock">
-      <span class="ticon">🔓</span>
-      <div><div class="tlbl">النصيحة الأولى</div><div class="ttext">لا تفتحي رسائل البريد الإلكتروني من مرسلين غير معروفين أو مواضيع مشبوهة.</div></div>
-    </div>
-    <div class="tip-unlock">
-      <span class="ticon">🔓</span>
-      <div><div class="tlbl">النصيحة الثانية</div><div class="ttext">لا تكشفي عن اسم المستخدم أو كلمة المرور الخاصتين بكِ لأي أحد.</div></div>
-    </div>
-  </div>
+<!-- Success -->
+<div id="successView" class="view">
+  <div class="success-area"><div class="success-card">
+    <div style="font-size:3.5em;margin-bottom:12px">🎉</div>
+    <h2 style="color:#11998e;font-size:1.8em;margin-bottom:8px">أحسنتِ!</h2>
+    <div class="score-big" id="finalScore">+20 نقطة!</div>
+    <p style="color:#555">تم حفظ إجاباتك. انتظري النشاط التالي من المعلمة.</p>
+  </div></div>
+</div>
 
-  <div class="slbl"><div class="n">٤</div><h2>أرسلي نصائحك للصفحة المشتركة 🌐</h2></div>
-  <div class="send-box" id="sendBox">
-    <div style="color:#a8d0e6;font-size:.97rem;margin-bottom:4px">اكتبي اسمكِ ثم أرسلي النصيحتين للصفحة المشتركة</div>
-    <input type="text" class="sinp" id="sname" placeholder="اكتبي اسمكِ الكامل...">
-    <button class="sbtn" id="sbtn" onclick="sendTips()">📤 أرسلي نصائحك للصفحة المشتركة</button>
-    <div class="suc" id="suc">✅ تم الإرسال! نصائحك تظهر الآن على الصفحة المشتركة 🎉</div>
+<button class="teacher-toggle" onclick="toggleT()">🎓 شاشة المعلمة</button>
+<div class="t-panel" id="tPanel">
+  <div class="t-inner">
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+      <h2>🎓 نشاط 1 - متابعة الطالبات</h2>
+      <div><button class="refresh-tp" onclick="loadT()">🔄</button><button class="close-tp" onclick="toggleT()">✕</button></div>
+    </div>
+    <div id="tStats"></div>
+    <div id="tCards" class="t-grid"></div>
   </div>
-</main>
+</div>
+
 <script>
 const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
-const TIPS=['لا تفتحي رسائل البريد الإلكتروني من مرسلين غير معروفين أو مواضيع مشبوهة.','لا تكشفي عن اسم المستخدم أو كلمة المرور الخاصتين بكِ لأي أحد.'];
-let step=0,ans={1:false,2:false,3:false};
-window.onload=()=>setTimeout(()=>{document.getElementById('s1').classList.add('show');step=1;},300);
-function revealNext(){
-  const ids=['s1','s2','s3'];
-  if(step<ids.length){document.getElementById(ids[step]).classList.add('show');step++;}
-  if(step===ids.length){document.getElementById('revBtn').textContent='✅ تم عرض القصة';document.getElementById('revBtn').disabled=true;}
+const PATH='robots-lesson/activity1';
+const TOTAL=480,LV_TIME=60;
+const STUDENTS=["أريام حميد الحبيني","أسيل موسى العوض","الجازي عبدالعزيز عبدالله محمد المنصورى","أمامه سليم علبي","أمنه هياب احمد عبدالرحمن","أنوار حمد العبيد","أنيسه نعمة الله","حبيبه علاء ابراهيم مشعل","حفصه احمد عبد المنعم عبد الغني","حلا أحمد محمد الباز عبدالعال","حنان محمد طاهر","حوريه نبيل احمد السيد الحفنى","داليا رمضان العلي","ذهب محمد طاهر","رغد نبي جول","رقية حمدى سعيد عباس خواجة","رنيم حسني عواد الخلايله","روقيه شعبان محمد هنداوي حسانين","رؤى بوكيوض","ريان محمود الحاج أمين نجار","ريتال حسني عواد الخلايله","شما عمر بشير عبدالقادر","فاطمه فخر الدين احمد الامين","قمر حازم عمر","ليا عبد الحاج اسماعيل","ماريا عبدالعليم الرزوق","مريم حافظ فاروق احمد احمد","ملاك عبدالله الدرويش","نداء حسين المحمد العبادي","نور أيهاب عبدالحميد عبدالسلام غمري","نورا عبدالعزيز عبدالله محمد المنصورى","نيللي أمير سعيد محمود الحداد","هنادي محمد عبدالله علي","هيلان","وعد مصطفى أحمد عثمان"];
+
+let student='',level=0,totalTimer=null,lvTimer=null,lvSec=LV_TIME,totalSec=TOTAL;
+let answers={l1:[],l2:[],l3:''};
+
+// Words for level 1
+const words=['آلة','تتفاعل','البيئة','برمجتها','مهام معينة','الحركة','حمل الأشياء'];
+const blanks={b1:'تتفاعل',b2:'برمجتها',b3:'مهام معينة'};
+
+window.onload=()=>{
+  const s=document.getElementById('nameSelect');
+  STUDENTS.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});
+};
+
+function startAct(){
+  const s=document.getElementById('nameSelect');
+  if(!s.value){alert('اختاري اسمك');return;}
+  student=s.value;
+  document.getElementById('sName').textContent='👩‍🎓 '+student;
+  showView('actView');
+  renderLevel();
+  startTotalTimer();
 }
-function checkQ(n,c){
-  const sel=document.querySelector(`input[name="q${n}"]:checked`);if(!sel)return;
-  document.querySelectorAll(`#q${n} .opt`).forEach(o=>{
-    o.classList.remove('ok','no');
-    const v=o.querySelector('input').value;
-    if(v===c)o.classList.add('ok');else if(o.querySelector('input').checked)o.classList.add('no');
+
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function startTotalTimer(){
+  totalTimer=setInterval(()=>{
+    totalSec--;
+    const m=Math.floor(totalSec/60),s=totalSec%60;
+    const d=document.getElementById('timerDisplay');
+    d.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(totalSec<=60)d.classList.add('urgent');
+    if(totalSec<=0){clearInterval(totalTimer);submitAll();}
+  },1000);
+}
+
+function startLvTimer(){
+  clearInterval(lvTimer);lvSec=LV_TIME;
+  lvTimer=setInterval(()=>{
+    lvSec--;
+    document.getElementById('lvTimer').textContent='⏱ دقيقة للمستوى: '+lvSec+'ث';
+    if(lvSec<=0){clearInterval(lvTimer);if(level<2)nextLevel();}
+  },1000);
+}
+
+function renderLevel(){
+  [0,1,2].forEach(i=>{
+    const d=document.getElementById('dot'+i);
+    d.className='lv-dot '+(i<level?'done':i===level?'active':'');
   });
-  const fb=document.getElementById(`fb${n}`);
-  if(sel.value===c){fb.textContent='✅ إجابة صحيحة!';fb.className='fb show g';ans[n]=true;}
-  else{fb.textContent='❌ راجعي إجابتكِ — الجواب الصحيح باللون الأخضر.';fb.className='fb show b';}
-  if(Object.values(ans).every(v=>v)){document.getElementById('tipsBox').classList.add('show');document.getElementById('sendBox').classList.add('show');}
+  document.getElementById('lvBadge').textContent=`المستوى ${level+1} من 3 ${'★'.repeat(level+1)}`;
+  const panel=document.getElementById('levelPanel');
+  if(level===0) panel.innerHTML=renderL1();
+  else if(level===1) panel.innerHTML=renderL2();
+  else panel.innerHTML=renderL3();
+  startLvTimer();
+  setupDragDrop();
 }
-async function sendTips(){
-  const name=document.getElementById('sname').value.trim();
-  if(!name){alert('من فضلكِ اكتبي اسمكِ أولاً');return;}
-  const btn=document.getElementById('sbtn');btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';
+
+function renderL1(){
+  const wordsHTML=words.map(w=>`<div class="word-chip" draggable="true" data-word="${w}" ondragstart="dragStart(event)">${w}</div>`).join('');
+  return `<div class="level-title"><span class="badge">★ المستوى الأول</span><h3>ابني تعريف الروبوت بترتيب الكلمات المفتاحية</h3></div>
+  <p style="color:#555;margin-bottom:10px">اسحبي الكلمات لمنطقة التعريف لبناء التعريف الصحيح:</p>
+  <div class="word-bank" id="wordBank">${wordsHTML}</div>
+  <p style="color:#888;font-size:0.9em;margin-bottom:6px">منطقة التعريف:</p>
+  <div class="def-drop-zone" id="dropZone" ondragover="dragOver(event)" ondrop="dropWord(event)">
+    <span class="static-text">الروبوت هو </span>
+  </div>`;
+}
+
+function renderL2(){
+  return `<div class="level-title"><span class="badge" style="background:linear-gradient(135deg,#f7971e,#ffd200)">★★ المستوى الثاني</span><h3>أكملي التعريف بالكلمات المناسبة</h3></div>
+  <div class="def-text">
+    الروبوت هو آلة <input class="blank-input" id="b1" placeholder="___"> مع البيئة الخارجية،
+    ويتم <input class="blank-input" id="b2" placeholder="___"> لتقوم بمهام <input class="blank-input" id="b3" placeholder="___">,
+    مثل الحركة، حمل الأشياء، أو المساعدة في الأعمال المنزلية.
+  </div>
+  <div class="hint-box">💡 تلميح: الكلمات المفتاحية هي: تتفاعل - برمجتها - معينة</div>`;
+}
+
+function renderL3(){
+  return `<div class="level-title"><span class="badge" style="background:linear-gradient(135deg,#ee0979,#ff6a00)">★★★ المستوى الثالث</span><h3>اكتبي تعريف الروبوت بكلماتك الخاصة</h3></div>
+  <p style="color:#555;margin-bottom:10px">بعد ما تعلمتِه، اكتبي تعريفاً خاصاً بك للروبوت. استخدمي الكلمات المفتاحية:</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    ${['آلة','تتفاعل','برمجة','مهام','البيئة'].map(w=>`<span style="background:#D1FAE5;color:#065f46;border-radius:8px;padding:4px 12px;font-weight:700">${w}</span>`).join('')}
+  </div>
+  <textarea id="openDef" class="open-textarea" placeholder="الروبوت هو ..."></textarea>
+  <div class="hint-box">💡 فكري: ما الذي يجعل الروبوت مختلفاً عن الأجهزة العادية؟</div>`;
+}
+
+function setupDragDrop(){} // Handled inline
+
+let draggedWord=null;
+function dragStart(e){draggedWord=e.target.dataset.word;e.target.classList.add('dragging');}
+function dragOver(e){e.preventDefault();document.getElementById('dropZone').classList.add('drag-over');}
+function dropWord(e){
+  e.preventDefault();
+  const zone=document.getElementById('dropZone');
+  zone.classList.remove('drag-over');
+  if(draggedWord){
+    const placed=document.createElement('span');
+    placed.className='placed-word';
+    placed.textContent=draggedWord;
+    placed.onclick=()=>{placed.remove();answers.l1=answers.l1.filter(w=>w!==draggedWord);}
+    zone.appendChild(placed);
+    answers.l1.push(draggedWord);
+    // Remove from word bank
+    document.querySelectorAll('.word-chip').forEach(c=>{if(c.dataset.word===draggedWord&&c.parentElement.id==='wordBank'){c.remove();}});
+    draggedWord=null;
+  }
+}
+
+function getL1Ans(){return answers.l1.join(' ');}
+function getL2Ans(){return{b1:document.getElementById('b1')?.value||'',b2:document.getElementById('b2')?.value||'',b3:document.getElementById('b3')?.value||};}
+function getL3Ans(){return document.getElementById('openDef')?.value||'';}
+
+function scoreLevel(lv){
+  if(lv===0){const ans=getL1Ans();answers.l1Saved=ans;return ans.includes('تتفاعل')&&ans.includes('برمجتها')?15:8;}
+  if(lv===1){const a=getL2Ans();answers.l2Saved=a;const s=(a.b1.trim()==='تتفاعل'?1:0)+(a.b2.trim()==='برمجتها'?1:0)+(a.b3.includes('معين')?1:0);return s>=2?20:10;}
+  if(lv===2){const v=getL3Ans();answers.l3=v;return v.length>30&&(v.includes('آلة')||v.includes('برمج')||v.includes('تتفاعل'))?30:15;}
+  return 0;
+}
+
+let totalScore=0;
+function nextLevel(){
+  clearInterval(lvTimer);
+  totalScore+=scoreLevel(level);
+  level++;
+  if(level>=3)submitAll();
+  else renderLevel();
+}
+
+async function submitAll(){
+  clearInterval(totalTimer);clearInterval(lvTimer);
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  const data={name:student,level:level,score:totalScore,l1:answers.l1Saved||'',l2:JSON.stringify(answers.l2Saved||{}),l3:answers.l3,timestamp:Date.now()};
   try{
-    await fetch(`${DB}/tips/group1.json`,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,tip1:TIPS[0],tip2:TIPS[1],group:'المجموعة الأولى 🎣',scenario:'الفخ الإلكتروني',time:new Date().toLocaleTimeString('ar-QA')})});
-    document.getElementById('suc').classList.add('show');btn.style.display='none';
-  }catch(e){btn.disabled=false;btn.textContent='📤 أرسلي نصائحك للصفحة المشتركة';alert('حدث خطأ، حاولي مرة أخرى');}
+    await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});
+    // Update total score
+    const sc=await fetch(`${DB}/robots-lesson/scores/${key}.json`).then(r=>r.json()).catch(()=>({}));
+    const newTotal=(sc?.total||0)+totalScore;
+    await fetch(`${DB}/robots-lesson/scores/${key}.json`,{method:'PATCH',body:JSON.stringify({name:student,total:newTotal,act1:totalScore})});
+  }catch(e){}
+  document.getElementById('finalScore').textContent=`+${totalScore} نقطة!`;
+  showView('successView');
+}
+
+function toggleT(){const p=document.getElementById('tPanel');p.classList.toggle('open');if(p.classList.contains('open'))loadT();}
+
+async function loadT(){
+  const cards=document.getElementById('tCards'),stats=document.getElementById('tStats');
+  cards.innerHTML='<p style="color:#888;padding:20px;text-align:center">⏳ تحميل...</p>';
+  const data=await fetch(`${DB}/${PATH}.json`).then(r=>r.json()).catch(()=>({}));
+  const submitted=Object.values(data||{});
+  const names=submitted.map(d=>d.name);
+  const pending=STUDENTS.filter(s=>!names.includes(s));
+  stats.innerHTML=`<span class="t-stat" style="color:#38ef7d;border:1px solid #38ef7d">✅ أرسلت: ${submitted.length}</span><span class="t-stat" style="color:#ffa500;border:1px solid #ffa500">⏳ بانتظار: ${pending.length}</span>`;
+  cards.innerHTML='';
+  submitted.sort((a,b)=>b.score-a.score).forEach((d,i)=>{
+    cards.innerHTML+=`<div class="t-card done"><div class="t-name">${i<3?['🥇','🥈','🥉'][i]:''} ${d.name} <span class="t-status done-s">✅</span></div><div class="t-row">النقاط: <span>${d.score}</span></div><div class="t-row">المستوى: <span>${d.level}</span></div><div class="t-row">إجابة م3: <span>${d.l3?.slice(0,40)||'—'}</span></div></div>`;
+  });
+  pending.forEach(n=>{cards.innerHTML+=`<div class="t-card"><div class="t-name">${n} <span class="t-status pend-s">⏳</span></div></div>`;});
 }
 </script>
 </body>
