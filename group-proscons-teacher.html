@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — نشاط المجموعات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;
+  --pos:#059669;--neg:#DC2626;--yellow:#FFD60A;--green:#06D6A0;
+  --text:#e6edf3;--muted:#8b949e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:linear-gradient(135deg,#059669,#0891B2);border-bottom:1px solid var(--border);
+  padding:16px 28px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:1.35em;font-weight:900;color:#fff}
+.header-sub{color:rgba(255,255,255,.7);font-size:.88em;margin-top:3px}
+.live-dot{display:inline-block;width:9px;height:9px;background:var(--green);border-radius:50%;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.btn-ref{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);
+  border-radius:10px;padding:9px 20px;font-family:'Tajawal',sans-serif;font-size:.95em;font-weight:800;cursor:pointer}
+.btn-ref:hover{background:rgba(255,255,255,.3)}
+
+/* TEAMS GRID */
+.teams-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding:20px 28px}
+.team-card{border-radius:20px;padding:20px;border:2px solid var(--border)}
+.team-card.pos-team{background:linear-gradient(135deg,#052e16,#064e3b);border-color:#065f46}
+.team-card.neg-team{background:linear-gradient(135deg,#450a0a,#7f1d1d);border-color:#991b1b}
+
+/* TEAM HEADER */
+.tc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.tc-name{font-size:1.1em;font-weight:900}
+.tc-type{border-radius:10px;padding:4px 14px;font-size:.85em;font-weight:800}
+.pos-type{background:var(--pos);color:#fff}
+.neg-type{background:var(--neg);color:#fff}
+
+/* LEADER */
+.tc-leader{font-size:.85em;color:#aaa;margin-bottom:12px}
+.tc-leader span{color:var(--yellow);font-weight:800}
+
+/* MEMBERS */
+.tc-members{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.mem-chip{border-radius:8px;padding:4px 10px;font-size:.8em;font-weight:700}
+.mem-done{background:#164e2a;color:#6ee7b7;border:1px solid #065f46}
+.mem-pend{background:#1c2128;color:var(--muted);border:1px solid var(--border)}
+.mem-leader{border-width:2px;border-color:var(--yellow)!important;color:var(--yellow)!important}
+
+/* SUBMISSION */
+.submission-box{border-radius:14px;padding:14px;border:1.5px solid var(--border);background:#0d1117}
+.sb-label{font-size:.82em;font-weight:800;color:var(--muted);margin-bottom:10px}
+.sb-items{display:flex;flex-direction:column;gap:6px}
+.sb-item{border-radius:10px;padding:8px 12px;font-size:.88em;font-weight:700;display:flex;align-items:center;gap:8px}
+.sb-item.correct{background:#052e16;color:#6ee7b7;border:1px solid #065f46}
+.sb-item.wrong{background:#450a0a;color:#fca5a5;border:1px solid #991b1b}
+.sb-item.pending{background:#1c2128;color:var(--muted);border:1px solid var(--border)}
+.score-chip{border-radius:8px;padding:4px 12px;font-size:.9em;font-weight:900}
+.score-chip.pos-t{background:var(--pos);color:#fff}
+.score-chip.neg-t{background:var(--neg);color:#fff}
+.no-sub{font-size:.88em;color:var(--muted);font-style:italic}
+
+/* STATUS ROW */
+.status-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.status-badge{border-radius:10px;padding:4px 12px;font-size:.82em;font-weight:800}
+.status-submitted{background:#064e3b;color:var(--green);border:1px solid var(--pos)}
+.status-waiting{background:#1c2128;color:var(--muted);border:1px solid var(--border)}
+
+/* COMPARE ROW */
+.compare-section{padding:0 28px 28px}
+.sec-title{font-size:1.1em;font-weight:800;color:var(--yellow);margin-bottom:14px}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cmp-card{border-radius:16px;padding:18px;border:1.5px solid var(--border)}
+.cmp-pos{background:#052e16;border-color:#065f46}
+.cmp-neg{background:#450a0a;border-color:#991b1b}
+.cmp-title{font-size:1em;font-weight:900;margin-bottom:10px}
+.cmp-pos .cmp-title{color:var(--green)}
+.cmp-neg .cmp-title{color:#fca5a5}
+.cmp-item{font-size:.88em;font-weight:700;padding:6px 10px;border-radius:8px;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.cmp-pos .cmp-item{background:#064e3b;color:#a7f3d0}
+.cmp-neg .cmp-item{background:#7f1d1d;color:#fecaca}
+
+/* RESET */
+.reset-btn{background:var(--neg);color:#fff;border:none;border-radius:10px;
+  padding:8px 18px;font-family:'Tajawal',sans-serif;font-size:.88em;font-weight:700;
+  cursor:pointer;margin-top:8px}
+
+.loading{text-align:center;padding:30px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>👥 شاشة المعلمة — نشاط المجموعات</h1>
+    <div class="header-sub"><span class="live-dot"></span> بيانات حية • تحديث كل 10 ثوانٍ</div>
+  </div>
+  <button class="btn-ref" onclick="loadData()">🔄 تحديث</button>
+</div>
+
+<!-- TEAMS GRID -->
+<div class="teams-grid" id="teamsGrid">
+  <div class="loading" style="grid-column:span 2">جارٍ التحميل...</div>
+</div>
+
+<!-- COMPARE ANSWER KEY -->
+<div class="compare-section">
+  <div class="sec-title">📖 الإجابات الصحيحة (للمعلمة)</div>
+  <div class="compare-grid">
+    <div class="cmp-card cmp-pos">
+      <div class="cmp-title">✅ الإيجابيات (5)</div>
+      <div class="cmp-item">💪 قادر على تأدية المهام التي لا يتمكن الإنسان منها</div>
+      <div class="cmp-item">🎯 يتميز بالدقة العالية</div>
+      <div class="cmp-item">⏰ يعمل باستمرار دون انقطاع</div>
+      <div class="cmp-item">🔧 يمكن إصلاحه</div>
+      <div class="cmp-item">⚡ يؤدي أعماله بسرعة فائقة</div>
+    </div>
+    <div class="cmp-card cmp-neg">
+      <div class="cmp-title">⚠️ التحديات (5)</div>
+      <div class="cmp-item">📡 قد يحدث فقدان للبيانات وانقطاع الاتصال</div>
+      <div class="cmp-item">🔋 يحتاج إلى بطارية أو مصدر طاقة</div>
+      <div class="cmp-item">💰 تكلفة تصنيع وتشغيل مرتفعة</div>
+      <div class="cmp-item">⏸️ قد يتوقف لفترات طويلة</div>
+      <div class="cmp-item">👤 يحل محل البشر في بعض المهن</div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">🗑️ مسح جميع بيانات النشاط</button>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const BASE = 'robots-lesson/group-proscons';
+const POS_IDS=['p1','p2','p3','p4','p5'];
+const NEG_IDS=['n1','n2','n3','n4','n5'];
+const TEAMS_CONFIG={
+  '1':{name:'المجموعة 1',type:'pos',leader:'عايشة عبدالله عامر بن ديه الكعبي'},
+  '2':{name:'المجموعة 2',type:'neg',leader:'تيما حازم عمر'},
+  '3':{name:'المجموعة 3',type:'pos',leader:'ريم احمد بخيت محمد عمر'},
+  '4':{name:'المجموعة 4',type:'neg',leader:'شهد وليد عبدالحكم محمد محمود'},
+};
+
+async function loadData(){
+  try{
+    const r=await fetch(`${DB}/${BASE}.json`);
+    const data=await r.json()||{};
+    renderTeams(data);
+  }catch(e){console.error(e);}
+}
+
+function renderTeams(data){
+  const grid=document.getElementById('teamsGrid');
+  grid.innerHTML=Object.entries(TEAMS_CONFIG).map(([tid,tcfg])=>{
+    const tdata=data['team'+tid]||{};
+    const members=Object.values(tdata.members||{});
+    const sub=tdata.submission;
+    const isPos=tcfg.type==='pos';
+    const correct=isPos?POS_IDS:NEG_IDS;
+
+    // Members chips
+    const mChips=members.map(m=>`
+      <div class="mem-chip ${m.count>0?'mem-done':'mem-pend'} ${m.isLeader?'mem-leader':''}">
+        ${m.isLeader?'👑 ':''} ${m.name.split(' ').slice(0,2).join(' ')}
+        ${m.count>0?' ('+m.count+')':''}
+      </div>`).join('');
+
+    // Submission
+    let subHtml='<div class="no-sub">⏳ لم يُرسل بعد...</div>';
+    if(sub){
+      const items=sub.selected||[];
+      const correctSel=items.filter(id=>correct.includes(id));
+      const wrongSel=items.filter(id=>!correct.includes(id));
+      const missed=correct.filter(id=>!items.includes(id));
+      const score=Math.round(correctSel.length/correct.length*100);
+      subHtml=`
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:.85em;color:#aaa">الإجابة النهائية</span>
+          <span class="score-chip ${isPos?'pos-t':'neg-t'}">${score}% صحيح</span>
+        </div>
+        ${correctSel.map(id=>`<div class="sb-item correct">✅ عبارة صحيحة</div>`).join('')}
+        ${wrongSel.map(id=>`<div class="sb-item wrong">❌ عبارة خاطئة (من الفئة الأخرى)</div>`).join('')}
+        ${missed.map(id=>`<div class="sb-item pending">⚪ فائتة (لم يختاروها)</div>`).join('')}
+      `;
+    }
+
+    return `<div class="team-card ${isPos?'pos-team':'neg-team'}">
+      <div class="tc-header">
+        <div class="tc-name">${tcfg.name}</div>
+        <div class="tc-type ${isPos?'pos-type':'neg-type'}">${isPos?'✅ إيجابيات':'⚠️ تحديات'}</div>
+      </div>
+      <div class="tc-leader">👑 القائدة: <span>${tcfg.leader.split(' ').slice(0,3).join(' ')}</span></div>
+      <div class="status-row">
+        <span style="font-size:.82em;color:#aaa">👥 ${members.length} طالبة انضممن</span>
+        <span class="status-badge ${sub?'status-submitted':'status-waiting'}">${sub?'✅ أُرسلت':'⏳ تنتظر'}</span>
+      </div>
+      <div class="tc-members">${mChips||'<span style="color:#666;font-size:.85em">لم ينضم أحد بعد</span>'}</div>
+      <div class="submission-box">
+        <div class="sb-label">📤 إجابة المجموعة</div>
+        ${subHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function resetAll(){
+  if(!confirm('مسح جميع بيانات نشاط المجموعات؟'))return;
+  await fetch(`${DB}/${BASE}.json`,{method:'DELETE'});
+  loadData();
+  alert('✅ تم المسح.');
+}
+
+loadData();
+setInterval(loadData,10000);
+</script>
+</body>
+</html>
