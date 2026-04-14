@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — تعريف الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--card:#161b22;--border:#30363d;
+  --blue:#4361EE;--green:#06D6A0;--yellow:#FFD60A;
+  --pink:#F72585;--purple:#7B2FBE;--text:#e6edf3;--muted:#8b949e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#161b22,#0d1117);
+  border-bottom:1px solid var(--border);
+  padding:16px 28px;display:flex;justify-content:space-between;align-items:center
+}
+.header h1{
+  font-size:1.4em;font-weight:900;
+  background:linear-gradient(90deg,var(--yellow),#ff9500);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent
+}
+.header-sub{color:var(--muted);font-size:.88em;margin-top:3px;display:flex;align-items:center;gap:8px}
+.live-dot{
+  display:inline-block;width:9px;height:9px;background:var(--green);
+  border-radius:50%;animation:blink 1.2s infinite
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.btn-refresh{
+  background:var(--blue);color:#fff;border:none;border-radius:10px;
+  padding:9px 20px;font-family:'Tajawal',sans-serif;font-size:.95em;font-weight:800;
+  cursor:pointer;transition:opacity .2s
+}
+.btn-refresh:hover{opacity:.85}
+
+/* SUMMARY */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:20px 28px}
+.s-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:18px;text-align:center
+}
+.s-num{font-size:2.4em;font-weight:900;line-height:1;margin-bottom:4px}
+.s-lbl{font-size:.85em;color:var(--muted);font-weight:600}
+
+/* PROGRESS BAR */
+.prog-section{padding:0 28px 20px}
+.prog-label{display:flex;justify-content:space-between;font-size:.88em;color:var(--muted);margin-bottom:8px}
+.prog-bar{background:#1c2128;border-radius:10px;height:14px;overflow:hidden}
+.prog-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .5s}
+
+/* PODIUM */
+.section{padding:0 28px 24px}
+.sec-title{font-size:1.1em;font-weight:800;color:var(--yellow);margin-bottom:14px}
+.podium{display:flex;gap:14px;flex-wrap:wrap}
+.pod{
+  flex:1;min-width:155px;border-radius:18px;padding:18px 14px;
+  text-align:center;border:1px solid var(--border)
+}
+.pod-1{background:linear-gradient(135deg,#3a2a00,#5a3e00);border-color:#b8860b}
+.pod-2{background:linear-gradient(135deg,#1a2a3a,#253545);border-color:#4a7fa0}
+.pod-3{background:linear-gradient(135deg,#2a1a2a,#3a2a3a);border-color:#7a5a8a}
+.pod .medal{font-size:2em;margin-bottom:6px}
+.pod .pname{font-weight:800;font-size:.9em;color:#fff;margin-bottom:6px}
+.pod .pscore{font-size:1.5em;font-weight:900;color:var(--yellow)}
+
+/* FILTER */
+.filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.ftab{
+  background:#1c2128;border:1px solid var(--border);border-radius:10px;
+  padding:6px 16px;color:var(--muted);font-family:'Tajawal',sans-serif;
+  font-size:.9em;font-weight:700;cursor:pointer
+}
+.ftab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* STUDENT GRID */
+.std-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.std-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:12px 14px;display:flex;align-items:center;gap:10px
+}
+.std-card.done{border-color:var(--green)}
+.std-card.pending{opacity:.5}
+.std-card .sicon{font-size:1.6em}
+.std-card .sinfo .sname{font-weight:700;font-size:.87em;color:var(--text);line-height:1.3}
+.std-card .sinfo .sscore{font-size:.82em;font-weight:800;margin-top:3px}
+.std-card.done .sscore{color:var(--yellow)}
+.std-card.pending .sscore{color:var(--muted)}
+
+/* SCORE BARS (per question analysis) */
+.analysis-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.an-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
+.an-card .an-q{font-size:.9em;font-weight:800;color:var(--text);margin-bottom:10px}
+.an-card .an-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.an-card .an-lbl{font-size:.82em;color:var(--muted)}
+.an-card .an-val{font-size:.9em;font-weight:800}
+.an-bar{background:#2a2a3e;border-radius:6px;height:7px;margin-top:3px;overflow:hidden}
+.an-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--blue),var(--purple));transition:.4s}
+.correct-pct.high{color:var(--green)}
+.correct-pct.mid{color:var(--yellow)}
+.correct-pct.low{color:var(--pink)}
+
+/* TABS */
+.tabs{display:flex;gap:10px;margin-bottom:18px}
+.tab{
+  background:#1c2128;border:1px solid var(--border);border-radius:10px;
+  padding:8px 18px;color:var(--muted);font-family:'Tajawal',sans-serif;
+  font-size:.92em;font-weight:700;cursor:pointer
+}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.tab-content{display:none}.tab-content.on{display:block}
+
+.loading{text-align:center;padding:40px;color:var(--muted)}
+
+/* DEFINITIONS GRID */
+.defs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.def-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px}
+.def-card.has-def{border-color:#4361EE66}
+.def-card .dc-name{font-size:.9em;font-weight:800;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.def-card .dc-text{
+  font-size:.95em;color:#cdd5e0;line-height:1.7;
+  background:#1c2128;border-radius:10px;padding:12px 14px;
+  border-right:3px solid var(--blue)
+}
+.def-card .dc-empty{font-size:.88em;color:var(--muted);font-style:italic}
+.defs-summary{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:14px 18px;margin-bottom:14px;display:flex;gap:20px;flex-wrap:wrap
+}
+.defs-summary span{font-size:.9em;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>📊 شاشة المعلمة — تعريف الروبوت</h1>
+    <div class="header-sub">
+      <span class="live-dot"></span> بيانات حية
+      &nbsp;•&nbsp; تحديث تلقائي كل 15 ث
+    </div>
+  </div>
+  <button class="btn-refresh" onclick="loadData()">🔄 تحديث</button>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary">
+  <div class="s-box">
+    <div class="s-num" style="color:var(--blue)">34</div>
+    <div class="s-lbl">الطالبات</div>
+  </div>
+  <div class="s-box">
+    <div class="s-num" id="numDone" style="color:var(--green)">—</div>
+    <div class="s-lbl">أكملن</div>
+  </div>
+  <div class="s-box">
+    <div class="s-num" id="avgScore" style="color:var(--yellow)">—</div>
+    <div class="s-lbl">متوسط النقاط</div>
+  </div>
+  <div class="s-box">
+    <div class="s-num" id="topScore" style="color:var(--pink)">—</div>
+    <div class="s-lbl">أعلى نقاط</div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-section">
+  <div class="prog-label">
+    <span>نسبة الإنجاز</span>
+    <span id="progPct">0%</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<!-- PODIUM -->
+<div class="section">
+  <div class="sec-title">🏆 المتصدرات</div>
+  <div class="podium" id="podiumRow"><div class="loading">جارٍ التحميل...</div></div>
+</div>
+
+<!-- TABS -->
+<div class="section">
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('students',this)">👩‍🎓 الطالبات</button>
+    <button class="tab" onclick="switchTab('analysis',this)">📈 تحليل الأسئلة</button>
+    <button class="tab" onclick="switchTab('defs',this)">✍️ إجابات المفهوم</button>
+  </div>
+
+  <!-- STUDENTS TAB -->
+  <div class="tab-content on" id="tab-students">
+    <div class="filter-row">
+      <button class="ftab on" onclick="setFilter('all',this)">الكل</button>
+      <button class="ftab" onclick="setFilter('done',this)">✅ أكملن</button>
+      <button class="ftab" onclick="setFilter('pending',this)">⏳ لم تكملن</button>
+    </div>
+    <div class="std-grid" id="stdGrid"><div class="loading">جارٍ التحميل...</div></div>
+  </div>
+
+  <!-- ANALYSIS TAB -->
+  <div class="tab-content" id="tab-analysis">
+    <div class="analysis-grid" id="analysisGrid"><div class="loading">جارٍ التحميل...</div></div>
+  </div>
+
+  <!-- DEFINITIONS TAB -->
+  <div class="tab-content" id="tab-defs">
+    <div class="defs-grid" id="defsGrid"><div class="loading">جارٍ التحميل...</div></div>
+  </div>
+</div>
+
+<script>
+const DB    = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH  = 'robots-lesson/activity-definition';
+const TOTAL = 34;
+const STUDENTS = ['ابتهاج حسين السالم','اسماء حسن العبادي','العنود عبدالباسط','امنه عبدالرحمان تنك ريز','ايمان احمد اليوسف','تيما حازم عمر','جنى جمعه محمدطه يسن عويس','جنى عبدالرزاق الابراهيم','جنى محمد عبدالفتاح على حبيب','جنى محمود على عبدالمعبود محمد','جويريه ولي محمد','حياة بلال حسين القلم المراحلي','رتاج عزو العلي','رزان محمد عثمان محمد ادم','رنا رزق محمد الفاخري','رؤى احمد العبد الطعمه','ريتاج حسين السالم','ريم احمد بخيت محمد عمر','ريما عمير راشد البطى الكعبى','ساره حكيم محمدي نزاد كادستانه','شروق عمرو النوبي عبدالله احمد','شهد اسماعيل','شهد وليد عبدالحكم محمد محمود','عايشة عبدالله عامر بن ديه الكعبي','فاطمه عبدالله الفاضل احمد','فاطمه عدنان زم','فاطمه محمد النوراني بشاره','فريدة محمد محمدى محمد العوضى','لمار بلال جبر رصرص','ماسه مصطفى هاشم يوسف عبدالمجيد','مروه صالح المجود','مليكه محمود معوض حسن عبدالمقصود','ميسم عبداللطيف علي الامين','نوره علم محمد حاجى خان'];
+
+const Q_NAMES = ['ذراع روبوتية','حاسوب محمول','مركبة المريخ','ساعة حائط','روبوت تنظيف','هاتف ذكي'];
+
+let filterMode = 'all';
+let cache = {};
+
+async function loadData() {
+  try {
+    const r = await fetch(`${DB}/${PATH}.json`);
+    cache = await r.json() || {};
+    render();
+  } catch(e) { console.error(e); }
+}
+
+function render() {
+  const done  = Object.values(cache).filter(d => d && d.name);
+  const doneNames = done.map(d => d.name);
+  const pending = STUDENTS.filter(n => !doneNames.includes(n));
+
+  // Summary
+  const avg  = done.length ? Math.round(done.reduce((s,d)=>s+(d.score||0),0)/done.length) : 0;
+  const top  = done.length ? Math.max(...done.map(d=>d.score||0)) : 0;
+  document.getElementById('numDone').textContent  = done.length;
+  document.getElementById('avgScore').textContent = avg;
+  document.getElementById('topScore').textContent = top;
+  const pct = Math.round(done.length/TOTAL*100);
+  document.getElementById('progPct').textContent  = pct+'%';
+  document.getElementById('progFill').style.width = pct+'%';
+
+  // Podium
+  const sorted = [...done].sort((a,b)=>(b.score||0)-(a.score||0));
+  const medals = ['🥇','🥈','🥉'];
+  const cls    = ['pod-1','pod-2','pod-3'];
+  const podHTML = sorted.slice(0,3).map((s,i)=>`
+    <div class="pod ${cls[i]}">
+      <div class="medal">${medals[i]}</div>
+      <div class="pname">${s.name}</div>
+      <div class="pscore">⭐ ${s.score}</div>
+    </div>`).join('');
+  document.getElementById('podiumRow').innerHTML = podHTML || '<p style="color:#666">لا توجد بيانات بعد</p>';
+
+  // Grid
+  renderGrid(done, pending);
+
+  // Analysis
+  renderAnalysis(done);
+}
+
+function renderGrid(done, pending) {
+  const doneList    = done.sort((a,b)=>b.score-a.score).map(d=>({...d, isDone:true}));
+  const pendingList = pending.map(n=>({name:n,score:0,isDone:false}));
+  let list = filterMode==='done'?doneList:filterMode==='pending'?pendingList:[...doneList,...pendingList];
+
+  document.getElementById('stdGrid').innerHTML = list.map(s=>`
+    <div class="std-card ${s.isDone?'done':'pending'}">
+      <div class="sicon">${s.isDone?'✅':'⏳'}</div>
+      <div class="sinfo">
+        <div class="sname">${s.name}</div>
+        <div class="sscore">${s.isDone?'⭐ '+s.score+' / 60':'لم تبدأ'}</div>
+      </div>
+    </div>`).join('') || '<p style="color:#666;padding:20px">لا توجد بيانات</p>';
+}
+
+function renderAnalysis(done) {
+  if (!done.length) {
+    document.getElementById('analysisGrid').innerHTML = '<p style="color:#666;padding:20px">لا توجد بيانات بعد</p>';
+    return;
+  }
+  // Per question: count correct
+  const counts = Q_NAMES.map((qn, qi) => {
+    const correct = done.filter(d => {
+      if (!d.results || !d.results[qi]) return false;
+      return d.results[qi].correct === true;
+    }).length;
+    return { name: qn, correct, total: done.length, pct: Math.round(correct/done.length*100) };
+  });
+
+  document.getElementById('analysisGrid').innerHTML = counts.map(c => {
+    const cls = c.pct>=70?'high':c.pct>=40?'mid':'low';
+    return `<div class="an-card">
+      <div class="an-q">🔹 ${c.name}</div>
+      <div class="an-row">
+        <div class="an-lbl">الإجابات الصحيحة</div>
+        <div class="an-val correct-pct ${cls}">${c.correct} / ${c.total} (${c.pct}%)</div>
+      </div>
+      <div class="an-bar"><div class="an-bar-fill" style="width:${c.pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function setFilter(mode, btn) {
+  filterMode = mode;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const done    = Object.values(cache).filter(d=>d&&d.name);
+  const doneNames = done.map(d=>d.name);
+  const pending = STUDENTS.filter(n=>!doneNames.includes(n));
+  renderGrid(done, pending);
+}
+
+function renderDefs() {
+  const done = Object.values(cache).filter(d => d && d.name);
+  const withDef = done.filter(d => d.definition && d.definition.trim().length > 0);
+
+  let html = `<div class="defs-summary">
+    <span style="color:var(--green)">✍️ أرسلن التعريف: ${withDef.length}</span>
+    <span style="color:var(--yellow)">⏳ لم يرسلن بعد: ${TOTAL - withDef.length}</span>
+  </div><div class="defs-grid">`;
+
+  // First show those who wrote definitions
+  withDef.sort((a,b) => a.name.localeCompare(b.name,'ar')).forEach(d => {
+    html += `<div class="def-card has-def">
+      <div class="dc-name"><span>✅</span>${d.name}</div>
+      <div class="dc-text">${d.definition}</div>
+    </div>`;
+  });
+
+  // Then those who haven't
+  const writtenNames = withDef.map(d => d.name);
+  STUDENTS.filter(n => !writtenNames.includes(n)).forEach(n => {
+    html += `<div class="def-card">
+      <div class="dc-name"><span>⏳</span>${n}</div>
+      <div class="dc-empty">لم ترسل بعد...</div>
+    </div>`;
+  });
+
+  html += '</div>';
+  document.getElementById('defsGrid').innerHTML = html;
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tab-'+id).classList.add('on');
+  if (id === 'defs') renderDefs();
+}
+
+loadData();
+setInterval(loadData, 15000);
+</script>
+</body>
+</html>
