@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — غلق إيجابيات وتحديات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;
+  --pos:#059669;--neg:#DC2626;--yellow:#FFD60A;--green:#06D6A0;
+  --text:#e6edf3;--muted:#8b949e;
+  --l1:#4361EE;--l2:#059669;--l3:#DC2626}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:linear-gradient(135deg,#4361EE,#059669);border-bottom:1px solid var(--border);
+  padding:15px 28px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:1.3em;font-weight:900;color:#fff}
+.header-sub{color:rgba(255,255,255,.7);font-size:.87em;margin-top:3px}
+.live-dot{display:inline-block;width:9px;height:9px;background:var(--green);border-radius:50%;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.btn-ref{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);
+  border-radius:10px;padding:8px 18px;font-family:'Tajawal',sans-serif;font-size:.9em;font-weight:800;cursor:pointer}
+
+/* SUMMARY */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:18px 28px}
+.s-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center}
+.s-num{font-size:2.2em;font-weight:900;line-height:1;margin-bottom:4px}
+.s-lbl{font-size:.82em;color:var(--muted);font-weight:600}
+
+/* PROG */
+.prog-sec{padding:0 28px 18px}
+.prog-lbl{display:flex;justify-content:space-between;font-size:.87em;color:var(--muted);margin-bottom:7px}
+.prog-bar{background:#1c2128;border-radius:10px;height:13px;overflow:hidden}
+.prog-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--l1),var(--l2),var(--l3));transition:width .5s}
+
+/* PODIUM */
+.section{padding:0 28px 22px}
+.sec-title{font-size:1.05em;font-weight:800;color:var(--yellow);margin-bottom:12px}
+.podium{display:flex;gap:12px;flex-wrap:wrap}
+.pod{flex:1;min-width:150px;border-radius:16px;padding:16px 12px;text-align:center;border:1px solid var(--border)}
+.pod-1{background:linear-gradient(135deg,#3a2a00,#5a3e00);border-color:#b8860b}
+.pod-2{background:linear-gradient(135deg,#1a1a3a,#252550);border-color:#6060c0}
+.pod-3{background:linear-gradient(135deg,#1a2a2a,#253535);border-color:#408080}
+.pod .medal{font-size:1.8em;margin-bottom:5px}
+.pod .pname{font-weight:800;font-size:.88em;color:#fff;margin-bottom:5px}
+.pod .pscore{font-size:1.4em;font-weight:900;color:var(--yellow)}
+
+/* TABS */
+.tabs{display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap}
+.tab{background:#1c2128;border:1px solid var(--border);border-radius:10px;padding:7px 16px;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-size:.9em;font-weight:700;cursor:pointer}
+.tab.on{background:var(--l1);border-color:var(--l1);color:#fff}
+.tab-content{display:none}.tab-content.on{display:block}
+
+/* FILTER */
+.filter-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.ftab{background:#1c2128;border:1px solid var(--border);border-radius:10px;padding:5px 14px;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-size:.88em;font-weight:700;cursor:pointer}
+.ftab.on{background:var(--l2);border-color:var(--l2);color:#fff}
+
+/* STD GRID */
+.std-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:9px}
+.std-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.std-card.done{border-color:var(--green)}
+.std-card.pend{opacity:.5}
+.sc-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.sc-icon{font-size:1.5em}
+.sc-name{font-weight:700;font-size:.86em;color:var(--text);line-height:1.3}
+.sc-score{font-size:.8em;font-weight:800;margin-top:2px;color:var(--yellow)}
+.lvl-dots{display:flex;gap:4px;margin-top:4px}
+.ldot{width:22px;height:7px;border-radius:4px}
+.ldot.l1d{background:var(--l1)}.ldot.l2d{background:var(--l2)}.ldot.l3d{background:var(--l3)}.ldot.off{background:#333}
+
+/* ANALYSIS */
+.an-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.an-box{border-radius:14px;padding:16px;border:1px solid var(--border)}
+.an-box h3{font-size:.95em;font-weight:800;margin-bottom:10px}
+.an-stat{display:flex;justify-content:space-between;margin-bottom:5px}
+.an-lbl{font-size:.8em;color:var(--muted)}
+.an-val{font-size:.87em;font-weight:800}
+.an-bar{background:#2a2a3e;border-radius:5px;height:6px;margin-top:3px;overflow:hidden}
+.an-fill{height:100%;border-radius:5px;transition:.4s}
+
+/* RESET */
+.reset-box{background:#1a0000;border:2px dashed var(--neg);border-radius:16px;
+  padding:32px;text-align:center;max-width:440px;margin:0 auto}
+.reset-box h3{font-size:1.2em;font-weight:900;color:#ef4444;margin-bottom:8px}
+.reset-box p{color:#aaa;font-size:.93em;line-height:1.7;margin-bottom:20px}
+.reset-btn{background:var(--neg);color:#fff;border:none;border-radius:12px;padding:12px 32px;
+  font-family:'Tajawal',sans-serif;font-size:1em;font-weight:900;cursor:pointer}
+.reset-btn:hover{background:#b91c1c}
+.loading{text-align:center;padding:36px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <h1>📊 شاشة المعلمة — غلق الإيجابيات والتحديات</h1>
+    <div class="header-sub"><span class="live-dot"></span> بيانات حية • تحديث كل 15 ثانية</div>
+  </div>
+  <button class="btn-ref" onclick="loadData()">🔄 تحديث</button>
+</div>
+
+<div class="summary">
+  <div class="s-box"><div class="s-num" style="color:var(--l1)">34</div><div class="s-lbl">الطالبات</div></div>
+  <div class="s-box"><div class="s-num" id="numDone" style="color:var(--green)">—</div><div class="s-lbl">أكملن</div></div>
+  <div class="s-box"><div class="s-num" id="avgScore" style="color:var(--yellow)">—</div><div class="s-lbl">متوسط النقاط</div></div>
+  <div class="s-box"><div class="s-num" id="topScore" style="color:#F72585">—</div><div class="s-lbl">أعلى نقاط</div></div>
+</div>
+
+<div class="prog-sec">
+  <div class="prog-lbl"><span>نسبة الإنجاز</span><span id="progPct">0%</span></div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<div class="section">
+  <div class="sec-title">🏆 المتصدرات</div>
+  <div class="podium" id="podiumRow"><div class="loading">جارٍ التحميل...</div></div>
+</div>
+
+<div class="section">
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('students',this)">👩‍🎓 الطالبات</button>
+    <button class="tab" onclick="switchTab('analysis',this)">📈 تحليل المستويات</button>
+    <button class="tab" style="border-color:var(--neg);color:var(--neg)" onclick="switchTab('reset',this)">🗑️ مسح</button>
+  </div>
+
+  <div class="tab-content on" id="tab-students">
+    <div class="filter-row">
+      <button class="ftab on" onclick="setFilter('all',this)">الكل</button>
+      <button class="ftab" onclick="setFilter('done',this)">✅ أكملن</button>
+      <button class="ftab" onclick="setFilter('pend',this)">⏳ لم تكملن</button>
+    </div>
+    <div class="std-grid" id="stdGrid"><div class="loading">جارٍ التحميل...</div></div>
+  </div>
+
+  <div class="tab-content" id="tab-analysis">
+    <div class="an-3" id="anGrid"><div class="loading" style="grid-column:span 3">جارٍ التحميل...</div></div>
+  </div>
+
+  <div class="tab-content" id="tab-reset">
+    <div class="reset-box">
+      <h3>⚠️ مسح نتائج هذا الغلق</h3>
+      <p>سيتم حذف جميع إجابات الطالبات في غلق الإيجابيات والتحديات.<br><strong>لا يمكن التراجع عن هذا الإجراء.</strong></p>
+      <button class="reset-btn" onclick="resetActivity()">🗑️ مسح جميع النتائج</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB='https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH='robots-lesson/closure-proscons';
+const TOTAL=34;
+const STUDENTS=['ابتهاج حسين السالم','اسماء حسن العبادي','العنود عبدالباسط','امنه عبدالرحمان تنك ريز','ايمان احمد اليوسف','تيما حازم عمر','جنى جمعه محمدطه يسن عويس','جنى عبدالرزاق الابراهيم','جنى محمد عبدالفتاح على حبيب','جنى محمود على عبدالمعبود محمد','جويريه ولي محمد','حياة بلال حسين القلم المراحلي','رتاج عزو العلي','رزان محمد عثمان محمد ادم','رنا رزق محمد الفاخري','رؤى احمد العبد الطعمه','ريتاج حسين السالم','ريم احمد بخيت محمد عمر','ريما عمير راشد البطى الكعبى','ساره حكيم محمدي نزاد كادستانه','شروق عمرو النوبي عبدالله احمد','شهد اسماعيل','شهد وليد عبدالحكم محمد محمود','عايشة عبدالله عامر بن ديه الكعبي','فاطمه عبدالله الفاضل احمد','فاطمه عدنان زم','فاطمه محمد النوراني بشاره','فريدة محمد محمدى محمد العوضى','لمار بلال جبر رصرص','ماسه مصطفى هاشم يوسف عبدالمجيد','مروه صالح المجود','مليكه محمود معوض حسن عبدالمقصود','ميسم عبداللطيف علي الامين','نوره علم محمد حاجى خان'];
+
+let fm='all',cache={};
+async function loadData(){
+  try{const r=await fetch(`${DB}/${PATH}.json`);cache=await r.json()||{};render();}catch(e){}
+}
+function render(){
+  const done=Object.values(cache).filter(d=>d&&d.name);
+  const names=done.map(d=>d.name);const pend=STUDENTS.filter(n=>!names.includes(n));
+  const avg=done.length?Math.round(done.reduce((s,d)=>s+(d.score||0),0)/done.length):0;
+  const top=done.length?Math.max(...done.map(d=>d.score||0)):0;
+  document.getElementById('numDone').textContent=done.length;
+  document.getElementById('avgScore').textContent=avg;
+  document.getElementById('topScore').textContent=top;
+  const pct=Math.round(done.length/TOTAL*100);
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('progFill').style.width=pct+'%';
+  const sorted=[...done].sort((a,b)=>(b.score||0)-(a.score||0));
+  const medals=['🥇','🥈','🥉'],cls=['pod-1','pod-2','pod-3'];
+  document.getElementById('podiumRow').innerHTML=sorted.slice(0,3).map((s,i)=>`
+    <div class="pod ${cls[i]}"><div class="medal">${medals[i]}</div>
+    <div class="pname">${s.name}</div><div class="pscore">⭐ ${s.score}</div></div>`).join('')||'<p style="color:#666">لا توجد بيانات</p>';
+  renderGrid(done,pend);renderAnalysis(done);
+}
+function renderGrid(done,pend){
+  const doneL=done.sort((a,b)=>b.score-a.score).map(d=>({...d,isDone:true}));
+  const pendL=pend.map(n=>({name:n,score:0,isDone:false,answered:{}}));
+  let list=fm==='done'?doneL:fm==='pend'?pendL:[...doneL,...pendL];
+  document.getElementById('stdGrid').innerHTML=list.map(s=>{
+    if(!s.isDone)return`<div class="std-card pend">
+      <div class="sc-top"><div class="sc-icon">⏳</div>
+      <div><div class="sc-name">${s.name}</div><div class="sc-score" style="color:var(--muted)">لم تبدأ</div></div></div>
+      <div class="lvl-dots"><div class="ldot off"></div><div class="ldot off"></div><div class="ldot off"></div></div>
+    </div>`;
+    const a=s.answered||{};
+    const l1=a.lv1&&Object.keys(a.lv1).length>0,l2=a.lv2&&Object.keys(a.lv2).length>0,l3=s.placement&&Object.keys(s.placement).length>0;
+    return`<div class="std-card done">
+      <div class="sc-top"><div class="sc-icon">✅</div>
+      <div><div class="sc-name">${s.name}</div><div class="sc-score">⭐ ${s.score} / 165</div></div></div>
+      <div class="lvl-dots">
+        <div class="ldot ${l1?'l1d':'off'}"></div>
+        <div class="ldot ${l2?'l2d':'off'}"></div>
+        <div class="ldot ${l3?'l3d':'off'}"></div>
+      </div>
+    </div>`;
+  }).join('')||'<p style="color:#666;padding:20px">لا توجد بيانات</p>';
+}
+function renderAnalysis(done){
+  if(!done.length){document.getElementById('anGrid').innerHTML='<p style="color:#666;padding:20px;grid-column:span 3">لا توجد بيانات</p>';return;}
+  const lvls=[
+    {label:'⭐ المستوى الأول',key:'lv1',color:'var(--l1)',bg:'#1a1a3a',max:3,pts:10},
+    {label:'⭐⭐ المستوى الثاني',key:'lv2',color:'var(--l2)',bg:'#052e16',max:3,pts:15},
+    {label:'⭐⭐⭐ المستوى الثالث',key:'placement',color:'var(--l3)',bg:'#450a0a',max:6,pts:20,isL3:true},
+  ];
+  document.getElementById('anGrid').innerHTML=lvls.map(lv=>{
+    const part=done.filter(d=>lv.isL3?d.placement&&Object.keys(d.placement).length>0:d.answered&&d.answered[lv.key]&&Object.keys(d.answered[lv.key]).length>0);
+    const pct=part.length?Math.round(part.length/done.length*100):0;
+    const c=pct>=70?'#06D6A0':pct>=40?'#FFD60A':'#EF233C';
+    return`<div class="an-box" style="background:${lv.bg};border-color:${lv.color}44">
+      <h3 style="color:${lv.color}">${lv.label}</h3>
+      <div class="an-stat"><div class="an-lbl">أكملن المستوى</div><div class="an-val" style="color:${c}">${part.length}/${done.length}</div></div>
+      <div class="an-bar"><div class="an-fill" style="width:${pct}%;background:${lv.color}"></div></div>
+    </div>`;
+  }).join('');
+}
+function setFilter(m,btn){fm=m;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const done=Object.values(cache).filter(d=>d&&d.name);const names=done.map(d=>d.name);renderGrid(done,STUDENTS.filter(n=>!names.includes(n)));}
+function switchTab(id,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');document.getElementById('tab-'+id).classList.add('on');}
+async function resetActivity(){
+  if(!confirm('مسح جميع نتائج هذا الغلق؟'))return;
+  await fetch(`${DB}/${PATH}.json`,{method:'DELETE'});cache={};render();alert('✅ تم المسح.');}
+loadData();setInterval(loadData,15000);
+</script>
+</body>
+</html>
