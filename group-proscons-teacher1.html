@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المعلمة — نشاط المجموعات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;
+  --pos:#059669;--neg:#DC2626;--yellow:#FFD60A;--green:#06D6A0;
+  --text:#e6edf3;--muted:#8b949e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#059669,#0891B2);padding:15px 28px;
+  display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:1.3em;font-weight:900;color:#fff}
+.hsub{color:rgba(255,255,255,.7);font-size:.86em;margin-top:3px;display:flex;align-items:center;gap:8px}
+.ldot{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.rbtn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;padding:8px 18px;font-family:'Tajawal',sans-serif;font-size:.9em;font-weight:800;cursor:pointer}
+.rbtn:hover{background:rgba(255,255,255,.28)}
+
+/* SUMMARY */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px 28px}
+.sb{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:16px;text-align:center}
+.sn{font-size:2.2em;font-weight:900;line-height:1;margin-bottom:3px}
+.sl{font-size:.82em;color:var(--muted);font-weight:600}
+
+/* PROG */
+.prog-sec{padding:0 28px 16px}
+.prog-lbl{display:flex;justify-content:space-between;font-size:.86em;color:var(--muted);margin-bottom:6px}
+.prog-bar{background:#1c2128;border-radius:10px;height:12px;overflow:hidden}
+.prog-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--pos),#0891B2);transition:width .5s}
+
+/* TEAMS GRID */
+.teams-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding:0 28px 28px}
+
+.team-card{border-radius:20px;padding:20px;border:2px solid var(--border)}
+.tc-pos{background:linear-gradient(135deg,#052e16,#064e3b);border-color:#065f46}
+.tc-neg{background:linear-gradient(135deg,#450a0a,#7f1d1d);border-color:#991b1b}
+
+/* TEAM HEADER */
+.tc-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.tc-name{font-size:1.05em;font-weight:900;color:#fff}
+.tc-type{border-radius:9px;padding:3px 12px;font-size:.82em;font-weight:800}
+.tp{background:var(--pos);color:#fff}.tn{background:var(--neg);color:#fff}
+
+/* LEADER */
+.tc-ldr{font-size:.83em;color:#aaa;margin-bottom:12px}
+.tc-ldr span{color:var(--yellow);font-weight:800}
+
+/* MEMBERS LIVE */
+.members-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.mc{border-radius:8px;padding:3px 10px;font-size:.8em;font-weight:700}
+.mc-done{background:#064e3b;color:#6ee7b7;border:1px solid var(--pos)}
+.mc-pend{background:#1c2128;color:var(--muted);border:1px solid var(--border)}
+.mc-ldr{border-color:var(--yellow)!important;color:var(--yellow)!important}
+
+/* STATUS */
+.status-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.stat-badge{border-radius:9px;padding:3px 12px;font-size:.8em;font-weight:800}
+.stat-sent{background:#064e3b;color:var(--green);border:1px solid var(--pos)}
+.stat-wait{background:#1c2128;color:var(--muted);border:1px solid var(--border)}
+
+/* SUBMISSION BOX */
+.sub-box{background:#0d1117;border-radius:13px;padding:14px;border:1px solid var(--border)}
+.sub-lbl{font-size:.8em;font-weight:800;color:var(--muted);margin-bottom:10px}
+.sub-items{display:flex;flex-direction:column;gap:6px}
+.sub-item{border-radius:10px;padding:9px 12px;font-size:.88em;font-weight:700;
+  display:flex;align-items:center;gap:8px}
+.sub-item.pos-item{background:#064e3b;color:#a7f3d0;border:1px solid var(--pos)}
+.sub-item.neg-item{background:#7f1d1d;color:#fecaca;border:1px solid var(--neg)}
+.no-sub{font-size:.86em;color:var(--muted);font-style:italic;text-align:center;padding:10px}
+
+/* RESET */
+.reset-sec{padding:0 28px 28px}
+.reset-box{background:#1a0000;border:2px dashed var(--neg);border-radius:15px;
+  padding:24px;text-align:center;max-width:400px;margin:0 auto}
+.reset-box h3{color:#ef4444;font-size:1.1em;font-weight:900;margin-bottom:8px}
+.reset-box p{color:#aaa;font-size:.9em;line-height:1.6;margin-bottom:16px}
+.reset-box p strong{color:#ef4444}
+.reset-btn{background:var(--neg);color:#fff;border:none;border-radius:11px;
+  padding:11px 28px;font-family:'Tajawal',sans-serif;font-size:1em;font-weight:900;cursor:pointer}
+.reset-btn:hover{background:#b91c1c}
+
+.tabs{display:flex;gap:9px;padding:0 28px 14px;flex-wrap:wrap}
+.tab{background:#1c2128;border:1px solid var(--border);border-radius:10px;padding:7px 16px;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-size:.9em;font-weight:700;cursor:pointer}
+.tab.on{background:var(--pos);border-color:var(--pos);color:#fff}
+.tc{display:none}.tc.on{display:block}
+
+.loading{text-align:center;padding:30px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>👥 شاشة المعلمة — نشاط المجموعات</h1>
+    <div class="hsub"><span class="ldot"></span> بيانات حية • تحديث كل 10 ثوانٍ</div>
+  </div>
+  <button class="rbtn" onclick="loadData()">🔄 تحديث</button>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary">
+  <div class="sb"><div class="sn" style="color:var(--pos)">4</div><div class="sl">المجموعات</div></div>
+  <div class="sb"><div class="sn" id="numSub" style="color:var(--green)">0</div><div class="sl">أرسلن إجابتهن</div></div>
+  <div class="sb"><div class="sn" id="numJoined" style="color:var(--yellow)">0</div><div class="sl">طالبة انضمّت</div></div>
+  <div class="sb"><div class="sn" id="numActive" style="color:#F72585">0</div><div class="sl">طالبة اختارت عبارات</div></div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-sec">
+  <div class="prog-lbl"><span>نسبة الإرسال</span><span id="progPct">0%</span></div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" onclick="switchTab('teams',this)">👥 إجابات المجموعات</button>
+  <button class="tab" onclick="switchTab('reset',this)" style="border-color:var(--neg);color:var(--neg)">🗑️ مسح</button>
+</div>
+
+<!-- TEAMS TAB -->
+<div class="tc on" id="tc-teams">
+  <div class="teams-grid" id="teamsGrid">
+    <div class="loading" style="grid-column:span 2">جارٍ التحميل...</div>
+  </div>
+</div>
+
+<!-- RESET TAB -->
+<div class="tc" id="tc-reset">
+  <div class="reset-sec">
+    <div class="reset-box">
+      <h3>⚠️ مسح نتائج النشاط</h3>
+      <p>سيتم حذف جميع بيانات المجموعات وإجاباتهن.<br><strong>لا يمكن التراجع عن هذا الإجراء.</strong></p>
+      <button class="reset-btn" onclick="resetAll()">🗑️ مسح جميع البيانات</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const BASE = 'robots-lesson/group-proscons';
+
+const TEAMS_CFG = {
+  '1':{name:'المجموعة 1',type:'pos',leader:'عايشة عبدالله عامر بن ديه الكعبي'},
+  '2':{name:'المجموعة 2',type:'neg',leader:'تيما حازم عمر'},
+  '3':{name:'المجموعة 3',type:'pos',leader:'ريم احمد بخيت محمد عمر'},
+  '4':{name:'المجموعة 4',type:'neg',leader:'شهد وليد عبدالحكم محمد محمود'},
+};
+
+let cache = {};
+
+async function loadData(){
+  try{
+    const r=await fetch(`${DB}/${BASE}.json`);
+    const d=await r.json();
+    cache = d||{};
+    render();
+  }catch(e){console.error('Firebase error:',e);}
+}
+
+function render(){
+  let totalJoined=0, totalActive=0, totalSub=0;
+
+  const grid=document.getElementById('teamsGrid');
+  grid.innerHTML=Object.entries(TEAMS_CFG).map(([tid,tc])=>{
+    const tdata=cache['team'+tid]||{};
+    const members=Object.values(tdata.members||{}).filter(m=>m&&m.name);
+    const sub=tdata.submission;
+    const isPos=tc.type==='pos';
+
+    totalJoined+=members.length;
+    totalActive+=members.filter(m=>(m.count||0)>0).length;
+    if(sub) totalSub++;
+
+    // Members chips
+    const chips=members.length>0
+      ? members.map(m=>`<div class="mc ${(m.count||0)>0?'mc-done':'mc-pend'} ${m.isLeader?'mc-ldr':''}">
+          ${m.isLeader?'👑 ':''}${m.name.split(' ').slice(0,2).join(' ')}${(m.count||0)>0?' ('+m.count+')':''}
+        </div>`).join('')
+      : '<span style="color:#666;font-size:.82em">لم ينضم أحد بعد</span>';
+
+    // Submission — show what the team submitted (no answer key shown)
+    let subHtml='<div class="no-sub">⏳ لم تُرسل إجابة بعد</div>';
+    if(sub && sub.selectedTexts && sub.selectedTexts.length>0){
+      subHtml=sub.selectedTexts.map(item=>`
+        <div class="sub-item ${isPos?'pos-item':'neg-item'}">
+          <span style="font-size:1.3em">${item.icon||'•'}</span>
+          <span>${item.text}</span>
+        </div>`).join('');
+    } else if(sub && sub.selected && sub.selected.length>0){
+      subHtml=`<div style="color:#aaa;font-size:.86em">تم الإرسال بـ ${sub.count||sub.selected.length} عبارة</div>`;
+    }
+
+    return `<div class="team-card ${isPos?'tc-pos':'tc-neg'}">
+      <div class="tc-hdr">
+        <div class="tc-name">${tc.name}</div>
+        <div class="tc-type ${isPos?'tp':'tn'}">${isPos?'✅ إيجابيات':'⚠️ تحديات'}</div>
+      </div>
+      <div class="tc-ldr">👑 القائدة: <span>${tc.leader.split(' ').slice(0,3).join(' ')}</span></div>
+      <div class="status-row">
+        <span style="font-size:.82em;color:#aaa">👥 ${members.length} طالبة</span>
+        <span class="stat-badge ${sub?'stat-sent':'stat-wait'}">${sub?'✅ أُرسلت':'⏳ تنتظر'}</span>
+      </div>
+      <div class="members-row">${chips}</div>
+      <div class="sub-box">
+        <div class="sub-lbl">📤 ما اكتشفته المجموعة</div>
+        <div class="sub-items">${subHtml}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Summary numbers
+  document.getElementById('numJoined').textContent=totalJoined;
+  document.getElementById('numActive').textContent=totalActive;
+  document.getElementById('numSub').textContent=totalSub;
+  const pct=Math.round(totalSub/4*100);
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('progFill').style.width=pct+'%';
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tc-'+id).classList.add('on');
+}
+
+async function resetAll(){
+  if(!confirm('مسح جميع بيانات نشاط المجموعات؟ لا يمكن التراجع!'))return;
+  try{
+    await fetch(`${DB}/${BASE}.json`,{method:'DELETE'});
+    cache={};render();
+    alert('✅ تم المسح بنجاح.');
+  }catch(e){alert('❌ خطأ في المسح.');}
+}
+
+loadData();
+setInterval(loadData,10000);
+</script>
+</body>
+</html>
