@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط المجموعات — إيجابيات وتحديات الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F7FF;
+  --pos:#059669; --pos-l:#dcfce7; --pos-b:#6ee7b7;
+  --neg:#DC2626; --neg-l:#fee2e2; --neg-b:#fca5a5;
+  --yellow:#FFD60A; --green:#06D6A0; --card:#fff;
+  --shadow:0 6px 24px rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+.header{padding:13px 20px;display:flex;justify-content:space-between;align-items:center;
+  position:relative;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.header h1{color:#fff;font-size:1.1em;font-weight:900}
+.hright{display:flex;gap:9px;align-items:center}
+.hbadge{background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.38);
+  border-radius:11px;padding:5px 13px;color:#fff;font-weight:900;font-size:.92em}
+.timer-b{min-width:66px;text-align:center;font-size:1.05em;display:none}
+.timer-b.urgent{background:rgba(220,38,38,.5)!important;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* VIEWS */
+.view{display:none;position:relative;z-index:1}.view.active{display:block}
+
+/* ─── NAME SCREEN ─── */
+.center-wrap{max-width:520px;margin:55px auto;padding:20px;text-align:center}
+.setup-card{background:var(--card);border-radius:26px;padding:42px 30px;
+  box-shadow:var(--shadow);border:2px solid rgba(5,150,105,.1)}
+.big-icon{font-size:6em;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.setup-card h2{font-size:1.7em;font-weight:900;color:#1a1a2e;margin-bottom:6px}
+.setup-card p{color:#888;font-size:1em;margin-bottom:22px;line-height:1.6}
+.sel{width:100%;padding:13px 16px;border:2.5px solid #e0e0e0;border-radius:14px;
+  font-family:'Tajawal',sans-serif;font-size:1.05em;color:#333;background:#fff;
+  margin-bottom:14px;cursor:pointer;appearance:none;transition:border-color .2s}
+.sel:focus{outline:none;border-color:var(--pos)}
+.team-preview{display:none;border-radius:13px;padding:11px 16px;margin-bottom:14px;
+  font-size:.96em;font-weight:700;border:2px solid transparent;text-align:right;
+  animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.go-btn{width:100%;padding:15px;border:none;border-radius:14px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.15em;font-weight:900;
+  cursor:pointer;transition:transform .2s}
+.go-btn:hover{transform:translateY(-2px)}
+
+/* ─── TASK SCREEN ─── */
+.task-wrap{max-width:860px;margin:0 auto;padding:14px 14px 28px}
+
+.task-banner{border-radius:18px;padding:16px 22px;margin-bottom:14px;text-align:center}
+.tb-title{font-size:1.35em;font-weight:900;margin-bottom:3px}
+.tb-sub{font-size:.95em;font-weight:700;opacity:.85}
+
+/* TEAM STRIP */
+.team-strip{background:var(--card);border-radius:13px;padding:11px 15px;
+  margin-bottom:13px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.ts-lbl{font-size:.8em;font-weight:800;color:#888;margin-bottom:7px}
+.ts-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ts-chip{border-radius:9px;padding:4px 11px;font-size:.83em;font-weight:700;
+  background:#f0f0f8;color:#444;border:1.5px solid #ddd}
+.ts-chip.me{background:#dbeafe;color:#1e40af;border-color:#93c5fd;font-weight:900}
+.ts-chip.ldr{border-color:var(--yellow);background:#fef9c3;color:#7a5a00}
+
+/* INSTRUCTION */
+.instruct{border-radius:13px;padding:11px 16px;margin-bottom:12px;
+  font-size:.95em;font-weight:700;text-align:center;border:2px solid transparent}
+
+/* ITEMS */
+.items-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
+.item-card{background:var(--card);border:2.5px solid #ddd;border-radius:15px;
+  padding:14px 15px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);transition:all .2s cubic-bezier(.36,1.56,.64,1)}
+.item-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(0,0,0,.1)}
+.item-card.sel-pos{background:var(--pos-l);border-color:var(--pos);transform:scale(1.02)}
+.item-card.sel-neg{background:var(--neg-l);border-color:var(--neg);transform:scale(1.02)}
+.ic-check{width:26px;height:26px;border-radius:50%;border:2.5px solid #ccc;
+  display:flex;align-items:center;justify-content:center;font-size:.9em;
+  flex-shrink:0;margin-top:2px;transition:.2s}
+.item-card.sel-pos .ic-check{background:var(--pos);border-color:var(--pos);color:#fff}
+.item-card.sel-neg .ic-check{background:var(--neg);border-color:var(--neg);color:#fff}
+.ic-icon{font-size:1.7em;margin-bottom:3px;display:block}
+.ic-txt{font-size:.93em;font-weight:700;color:#1a1a2e;line-height:1.45}
+
+.sel-count{text-align:center;font-size:.92em;font-weight:800;color:#555;margin-bottom:10px}
+.sel-count b{font-size:1.1em}
+
+/* LIVE PROGRESS */
+.live-box{background:var(--card);border-radius:12px;padding:11px 14px;
+  border:1px solid #e5e7eb;margin-bottom:12px}
+.live-lbl{font-size:.8em;font-weight:800;color:#888;margin-bottom:7px}
+.live-chips{display:flex;flex-wrap:wrap;gap:6px}
+.live-chip{border-radius:9px;padding:4px 11px;font-size:.82em;font-weight:700}
+.live-chip.done{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.live-chip.pend{background:#f3f4f6;color:#9ca3af;border:1px solid #e5e7eb}
+
+/* LEADER / MEMBER ZONES */
+.leader-zone{background:linear-gradient(135deg,#fef9c3,#fff7ed);border:2.5px solid var(--yellow);
+  border-radius:15px;padding:15px 18px;margin-bottom:10px;text-align:center;display:none}
+.lz-lbl{font-size:.88em;font-weight:800;color:#7a5a00;margin-bottom:10px}
+.sub-btn{padding:12px 30px;border:none;border-radius:13px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.05em;font-weight:900;
+  cursor:pointer;transition:transform .2s;box-shadow:0 5px 16px rgba(0,0,0,.2)}
+.sub-btn:hover{transform:translateY(-2px)}
+.sub-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.member-zone{background:#f0f4ff;border:2px solid #c7d2fe;border-radius:15px;
+  padding:13px 16px;margin-bottom:10px;text-align:center;display:none}
+.member-zone p{font-size:.93em;font-weight:700;color:#3730a3}
+
+/* SENT */
+.sent-ok{display:none;background:var(--pos-l);border:2.5px solid var(--pos);
+  border-radius:15px;padding:20px;text-align:center;animation:fadeIn .4s ease}
+.sent-ok.show{display:block}
+.sent-ok .so-icon{font-size:3em;margin-bottom:8px}
+.sent-ok .so-txt{font-size:1.1em;font-weight:900;color:var(--pos)}
+</style>
+</head>
+<body>
+
+<div class="header" id="mainHdr" style="background:linear-gradient(135deg,#059669,#0891B2)">
+  <h1>🤖 اكتشفي إيجابيات وتحديات الروبوت</h1>
+  <div class="hright">
+    <div class="hbadge" id="teamBadge"></div>
+    <div class="hbadge timer-b" id="timerBadge">05:00</div>
+  </div>
+</div>
+
+<!-- NAME VIEW -->
+<div class="view active" id="nameView">
+  <div class="center-wrap">
+    <div class="setup-card">
+      <span class="big-icon">👥</span>
+      <h2>نشاط المجموعات</h2>
+      <p>اختاري اسمكِ فقط — ستنضمين لمجموعتكِ تلقائياً</p>
+      <select id="nameSelect" class="sel" onchange="onNameChange()">
+        <option value="">— اختاري اسمكِ —</option>
+        <option>ابتهاج حسين السالم</option>
+        <option>اسماء حسن العبادي</option>
+        <option>العنود عبدالباسط</option>
+        <option>امنه عبدالرحمان تنك ريز</option>
+        <option>ايمان احمد اليوسف</option>
+        <option>تيما حازم عمر</option>
+        <option>جنى جمعه محمدطه يسن عويس</option>
+        <option>جنى عبدالرزاق الابراهيم</option>
+        <option>جنى محمد عبدالفتاح على حبيب</option>
+        <option>جنى محمود على عبدالمعبود محمد</option>
+        <option>جويريه ولي محمد</option>
+        <option>حياة بلال حسين القلم المراحلي</option>
+        <option>رتاج عزو العلي</option>
+        <option>رزان محمد عثمان محمد ادم</option>
+        <option>رنا رزق محمد الفاخري</option>
+        <option>رؤى احمد العبد الطعمه</option>
+        <option>ريتاج حسين السالم</option>
+        <option>ريم احمد بخيت محمد عمر</option>
+        <option>ريما عمير راشد البطى الكعبى</option>
+        <option>ساره حكيم محمدي نزاد كادستانه</option>
+        <option>شروق عمرو النوبي عبدالله احمد</option>
+        <option>شهد اسماعيل</option>
+        <option>شهد وليد عبدالحكم محمد محمود</option>
+        <option>عايشة عبدالله عامر بن ديه الكعبي</option>
+        <option>فاطمه عبدالله الفاضل احمد</option>
+        <option>فاطمه عدنان زم</option>
+        <option>فاطمه محمد النوراني بشاره</option>
+        <option>فريدة محمد محمدى محمد العوضى</option>
+        <option>لمار بلال جبر رصرص</option>
+        <option>ماسه مصطفى هاشم يوسف عبدالمجيد</option>
+        <option>مروه صالح المجود</option>
+        <option>مليكه محمود معوض حسن عبدالمقصود</option>
+        <option>ميسم عبداللطيف علي الامين</option>
+        <option>نوره علم محمد حاجى خان</option>
+      </select>
+      <div class="team-preview" id="teamPreview"></div>
+      <button class="go-btn" style="background:linear-gradient(135deg,#059669,#047857);box-shadow:0 5px 16px rgba(5,150,105,.35)" onclick="joinTeam()">انضمي للمجموعة 👥</button>
+    </div>
+  </div>
+</div>
+
+<!-- TASK VIEW -->
+<div class="view" id="taskView">
+  <div class="task-wrap">
+    <div class="task-banner" id="taskBanner">
+      <div class="tb-title" id="tbTitle"></div>
+      <div class="tb-sub" id="tbSub"></div>
+    </div>
+    <div class="team-strip">
+      <div class="ts-lbl">👥 أعضاء مجموعتكِ</div>
+      <div class="ts-chips" id="tsChips"></div>
+    </div>
+    <div class="instruct" id="instruct"></div>
+    <div class="items-grid" id="itemsGrid"></div>
+    <div class="sel-count" id="selCount">اخترتِ <b>0</b> عبارة</div>
+    <div class="live-box">
+      <div class="live-lbl">📡 تقدّم المجموعة</div>
+      <div class="live-chips" id="liveChips"></div>
+    </div>
+    <div class="leader-zone" id="leaderZone">
+      <div class="lz-lbl">👑 أنتِ قائدة المجموعة — بعد النقاش، أرسلي إجابة مجموعتكِ للمعلمة</div>
+      <button class="sub-btn" id="subBtn" style="background:linear-gradient(135deg,#059669,#047857)" onclick="submitAnswer()">📤 إرسال إجابة المجموعة</button>
+    </div>
+    <div class="member-zone" id="memberZone">
+      <p>✨ ناقشي مع مجموعتكِ — القائدة ستُرسل الإجابة النهائية للمعلمة</p>
+    </div>
+    <div class="sent-ok" id="sentOk">
+      <div class="so-icon">✅</div>
+      <div class="so-txt">تم إرسال إجابة مجموعتكِ للمعلمة!</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const BASE = 'robots-lesson/group-proscons';
+
+/* ─── PRE-ASSIGNED GROUPS ─── */
+const STUDENT_TEAM = {
+  'عايشة عبدالله عامر بن ديه الكعبي':'1','ابتهاج حسين السالم':'1',
+  'اسماء حسن العبادي':'1','العنود عبدالباسط':'1',
+  'امنه عبدالرحمان تنك ريز':'1','ايمان احمد اليوسف':'1',
+  'جنى جمعه محمدطه يسن عويس':'1','جنى عبدالرزاق الابراهيم':'1',
+  'تيما حازم عمر':'2','جنى محمد عبدالفتاح على حبيب':'2',
+  'جنى محمود على عبدالمعبود محمد':'2','جويريه ولي محمد':'2',
+  'حياة بلال حسين القلم المراحلي':'2','رتاج عزو العلي':'2',
+  'رزان محمد عثمان محمد ادم':'2','رنا رزق محمد الفاخري':'2',
+  'رؤى احمد العبد الطعمه':'2',
+  'ريم احمد بخيت محمد عمر':'3','ريتاج حسين السالم':'3',
+  'ريما عمير راشد البطى الكعبى':'3','ساره حكيم محمدي نزاد كادستانه':'3',
+  'شروق عمرو النوبي عبدالله احمد':'3','شهد اسماعيل':'3',
+  'فاطمه عبدالله الفاضل احمد':'3','فاطمه عدنان زم':'3',
+  'فاطمه محمد النوراني بشاره':'3',
+  'شهد وليد عبدالحكم محمد محمود':'4','فريدة محمد محمدى محمد العوضى':'4',
+  'لمار بلال جبر رصرص':'4','ماسه مصطفى هاشم يوسف عبدالمجيد':'4',
+  'مروه صالح المجود':'4','مليكه محمود معوض حسن عبدالمقصود':'4',
+  'ميسم عبداللطيف علي الامين':'4','نوره علم محمد حاجى خان':'4',
+};
+
+const TEAMS = {
+  '1':{name:'المجموعة 1',type:'pos',leader:'عايشة عبدالله عامر بن ديه الكعبي',bg:'linear-gradient(135deg,#059669,#047857)'},
+  '2':{name:'المجموعة 2',type:'neg',leader:'تيما حازم عمر',bg:'linear-gradient(135deg,#DC2626,#b91c1c)'},
+  '3':{name:'المجموعة 3',type:'pos',leader:'ريم احمد بخيت محمد عمر',bg:'linear-gradient(135deg,#16a34a,#059669)'},
+  '4':{name:'المجموعة 4',type:'neg',leader:'شهد وليد عبدالحكم محمد محمود',bg:'linear-gradient(135deg,#b91c1c,#991b1b)'},
+};
+
+/* ─── ITEMS DATA ─── (referenced by id only in onclick) */
+const ALL_ITEMS = {
+  p1:{id:'p1',icon:'💪',text:'قادر على تأدية المهام التي قد لا يتمكن الإنسان من تنفيذها',type:'pos'},
+  p2:{id:'p2',icon:'🎯',text:'يتميز بالدقة العالية',type:'pos'},
+  p3:{id:'p3',icon:'⏰',text:'يعمل باستمرار دون انقطاع',type:'pos'},
+  p4:{id:'p4',icon:'🔧',text:'يمكن إصلاحه',type:'pos'},
+  p5:{id:'p5',icon:'⚡',text:'يؤدي أعماله بسرعة فائقة',type:'pos'},
+  n1:{id:'n1',icon:'📡',text:'بسبب طبيعة الاتصال اللاسلكي فقد يحدث فقدان للبيانات وانقطاع الاتصال',type:'neg'},
+  n2:{id:'n2',icon:'🔋',text:'يحتاج إلى بطارية أو مصدر طاقة ليعمل',type:'neg'},
+  n3:{id:'n3',icon:'💰',text:'تكلفة تصنيع وتشغيل مرتفعة',type:'neg'},
+  n4:{id:'n4',icon:'⏸️',text:'قد يتوقف عن العمل لفترات طويلة تمتد لأيام أو لأشهر',type:'neg'},
+  n5:{id:'n5',icon:'👤',text:'يحل محل البشر في بعض المهن',type:'neg'},
+  d1:{id:'d1',icon:'🌙',text:'يحتاج إلى نوم ورعاية مثل الإنسان',type:'dis'},
+  d2:{id:'d2',icon:'🎭',text:'يشعر بالمشاعر والعواطف',type:'dis'},
+  d3:{id:'d3',icon:'🍕',text:'يحتاج إلى طعام وشراب ليعمل',type:'dis'},
+};
+
+let student='', teamId='', isLeader=false;
+let selected=new Set();
+let timerInt=null, timerSec=300;
+let submitted=false;
+let teamType='pos'; // 'pos' or 'neg'
+
+/* ─── NAME CHANGE ─── */
+function onNameChange(){
+  const name=document.getElementById('nameSelect').value;
+  const prev=document.getElementById('teamPreview');
+  if(!name){prev.style.display='none';return;}
+  const tid=STUDENT_TEAM[name];
+  if(!tid){prev.style.display='none';return;}
+  const t=TEAMS[tid];
+  const isPos=t.type==='pos';
+  prev.style.cssText=`display:block;background:${isPos?'#dcfce7':'#fee2e2'};border-color:${isPos?'#059669':'#DC2626'};color:${isPos?'#166534':'#991b1b'}`;
+  prev.innerHTML=`👥 <strong>${t.name}</strong> &nbsp;•&nbsp; القائدة: ${t.leader.split(' ').slice(0,3).join(' ')} &nbsp;•&nbsp; ${isPos?'✅ إيجابيات':'⚠️ تحديات'}`;
+}
+
+/* ─── JOIN ─── */
+async function joinTeam(){
+  student = document.getElementById('nameSelect').value.trim();
+  if(!student){alert('اختاري اسمكِ أولاً!');return;}
+  teamId = STUDENT_TEAM[student];
+  if(!teamId){alert('اسمكِ غير موجود، تواصلي مع المعلمة.');return;}
+
+  const team = TEAMS[teamId];
+  isLeader = (student === team.leader);
+  teamType = team.type;
+  const isPos = teamType==='pos';
+
+  // Header
+  document.getElementById('mainHdr').style.background = team.bg;
+  document.getElementById('teamBadge').textContent = team.name+(isLeader?' 👑':'');
+  document.getElementById('timerBadge').style.display = 'flex';
+
+  // Task banner
+  document.getElementById('taskBanner').style.background = isPos?'linear-gradient(135deg,#dcfce7,#d1fae5)':'linear-gradient(135deg,#fee2e2,#fecaca)';
+  document.getElementById('tbTitle').style.color = isPos?'#059669':'#DC2626';
+  document.getElementById('tbTitle').textContent = isPos?'✅ مجموعتكِ تكتشف: إيجابيات الروبوت':'⚠️ مجموعتكِ تكتشف: تحديات الروبوت';
+  document.getElementById('tbSub').textContent = isPos?'اختاري كل الإيجابيات من القائمة':'اختاري كل التحديات من القائمة';
+
+  // Instruction
+  const ins=document.getElementById('instruct');
+  Object.assign(ins.style,{background:isPos?'#dcfce7':'#fee2e2',borderColor:isPos?'#059669':'#DC2626',color:isPos?'#166534':'#991b1b',border:'2px solid'});
+  ins.textContent='👆 انقري على العبارات التي تعتقدين أنها '+(isPos?'إيجابيات ✅':'تحديات ⚠️')+' — ناقشي مع مجموعتكِ!';
+
+  // Build items list: correct category + distractors, shuffled
+  const correctIds = isPos?['p1','p2','p3','p4','p5']:['n1','n2','n3','n4','n5'];
+  const distractorIds = ['d1','d2','d3'];
+  const showIds = [...correctIds,...distractorIds].sort(()=>Math.random()-.5);
+  renderItems(showIds);
+
+  // Leader/member
+  document.getElementById(isLeader?'leaderZone':'memberZone').style.display='block';
+
+  // Register in Firebase
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  try{
+    await fetch(`${DB}/${BASE}/team${teamId}/members/${key}.json`,{
+      method:'PUT',
+      body:JSON.stringify({name:student,isLeader,count:0,joined:true,ts:Date.now()})
+    });
+  }catch(e){}
+
+  startTimer();
+  setInterval(loadLive,5000);
+  loadLive();
+  showView('taskView');
+}
+
+/* ─── RENDER ITEMS (no text in onclick!) ─── */
+function renderItems(ids){
+  const grid=document.getElementById('itemsGrid');
+  grid.innerHTML='';
+  ids.forEach(id=>{
+    const item=ALL_ITEMS[id];
+    const div=document.createElement('div');
+    div.className='item-card';
+    div.id='ic-'+id;
+    div.innerHTML=`<div class="ic-check" id="ck-${id}"></div>
+      <div><span class="ic-icon">${item.icon}</span>
+      <div class="ic-txt">${item.text}</div></div>`;
+    div.addEventListener('click',()=>toggleItem(id));
+    grid.appendChild(div);
+  });
+}
+
+/* ─── TOGGLE ─── */
+function toggleItem(id){
+  if(submitted)return;
+  const isPos=teamType==='pos';
+  const card=document.getElementById('ic-'+id);
+  const ck=document.getElementById('ck-'+id);
+  if(selected.has(id)){
+    selected.delete(id);
+    card.className='item-card';
+    ck.textContent='';
+  }else{
+    selected.add(id);
+    card.className='item-card '+(isPos?'sel-pos':'sel-neg');
+    ck.textContent='✓';
+  }
+  document.getElementById('selCount').innerHTML=`اخترتِ <b style="color:${isPos?'var(--pos)':'var(--neg)'}">${selected.size}</b> عبارة`;
+  saveMember();
+}
+
+/* ─── SAVE MEMBER ─── */
+async function saveMember(){
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  try{
+    await fetch(`${DB}/${BASE}/team${teamId}/members/${key}.json`,{
+      method:'PUT',
+      body:JSON.stringify({name:student,isLeader,count:selected.size,selected:Array.from(selected),ts:Date.now()})
+    });
+  }catch(e){}
+}
+
+/* ─── TIMER ─── */
+function startTimer(){
+  timerSec=300;updateTimer();
+  timerInt=setInterval(()=>{timerSec--;updateTimer();if(timerSec<=0){clearInterval(timerInt);if(isLeader&&!submitted)submitAnswer();}},1000);
+}
+function updateTimer(){
+  const el=document.getElementById('timerBadge');
+  const m=Math.floor(timerSec/60),s=timerSec%60;
+  el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className='hbadge timer-b'+(timerSec<=30?' urgent':'');
+}
+
+/* ─── LOAD LIVE ─── */
+async function loadLive(){
+  try{
+    const r=await fetch(`${DB}/${BASE}/team${teamId}/members.json`);
+    const d=await r.json()||{};
+    const members=Object.values(d).filter(x=>x&&x.name);
+
+    // Team strip
+    document.getElementById('tsChips').innerHTML=members.map(m=>`
+      <div class="ts-chip ${m.name===student?'me':''} ${m.isLeader?'ldr':''}">
+        ${m.isLeader?'👑 ':''}${m.name.split(' ').slice(0,2).join(' ')}</div>`).join('');
+
+    // Live progress
+    document.getElementById('liveChips').innerHTML=members.map(m=>`
+      <div class="live-chip ${(m.count||0)>0?'done':'pend'}">
+        ${(m.count||0)>0?'✅':'⏳'} ${m.name.split(' ')[0]} ${(m.count||0)>0?'('+m.count+')':''}</div>`).join('');
+  }catch(e){}
+}
+
+/* ─── SUBMIT ─── */
+async function submitAnswer(){
+  if(submitted||selected.size===0){if(selected.size===0){alert('اختاري عبارات أولاً!');return;}}
+  submitted=true;
+  clearInterval(timerInt);
+  const btn=document.getElementById('subBtn');
+  btn.disabled=true;btn.textContent='⏳ جارٍ الإرسال...';
+
+  // Get selected texts for teacher display
+  const selectedTexts=Array.from(selected).map(id=>({id,text:ALL_ITEMS[id].text,icon:ALL_ITEMS[id].icon}));
+
+  const data={
+    teamId,teamName:TEAMS[teamId].name,type:teamType,
+    leader:student,
+    selected:Array.from(selected),
+    selectedTexts,
+    count:selected.size,
+    ts:Date.now()
+  };
+  try{
+    await fetch(`${DB}/${BASE}/team${teamId}/submission.json`,{method:'PUT',body:JSON.stringify(data)});
+  }catch(e){}
+
+  document.getElementById('leaderZone').style.display='none';
+  document.getElementById('sentOk').className='sent-ok show';
+}
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
