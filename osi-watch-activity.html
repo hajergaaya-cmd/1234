@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط مشاهدة — طبقات OSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0614;--card:#130d22;--card2:#1c1535;--border:rgba(255,255,255,.07);
+  --q1:#9333ea;--q1l:rgba(147,51,234,.14);--q1b:rgba(147,51,234,.35);
+  --q2:#06b6d4;--q2l:rgba(6,182,212,.14); --q2b:rgba(6,182,212,.35);
+  --q3:#ec4899;--q3l:rgba(236,72,153,.14);--q3b:rgba(236,72,153,.35);
+  --q4:#f59e0b;--q4l:rgba(245,158,11,.14);--q4b:rgba(245,158,11,.35);
+  --green:#22c55e;--text:#f1f5f9;--muted:#94a3b8;
+  --shadow:0 16px 48px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 15% 20%,rgba(147,51,234,.1) 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 80%,rgba(6,182,212,.08) 0%,transparent 50%)}
+
+.header{background:rgba(10,6,20,.96);border-bottom:1px solid var(--border);
+  padding:12px 22px;display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+.hd-title{font-size:1.05em;font-weight:900;
+  background:linear-gradient(90deg,#c084fc,#22d3ee,#fb923c);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.teacher-link{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--border);
+  border-radius:20px;padding:6px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;
+  font-weight:700;cursor:pointer;text-decoration:none;transition:.2s}
+.teacher-link:hover{background:rgba(255,255,255,.12);color:var(--text)}
+
+.view{display:none;min-height:calc(100vh - 60px);padding:24px 16px 60px;position:relative;z-index:1}
+.view.active{display:block}
+.view.center{display:flex;align-items:center;justify-content:center;padding:20px}
+
+.card{background:var(--card);border-radius:24px;border:1px solid var(--border);box-shadow:var(--shadow)}
+@keyframes popIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes slideUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+/* ══ NAME ══ */
+.name-card{padding:46px 34px;width:100%;max-width:480px;text-align:center;animation:popIn .5s ease}
+.nc-icon{font-size:5em;display:block;margin-bottom:14px;animation:float 3s ease-in-out infinite}
+.name-card h1{font-size:1.75em;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(90deg,#c084fc,#22d3ee);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.name-card p{color:var(--muted);font-size:.97em;margin-bottom:28px;line-height:1.65}
+.n-input{width:100%;padding:14px 18px;background:var(--card2);border:2px solid var(--border);
+  border-radius:15px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.1em;text-align:center;margin-bottom:16px;transition:.2s}
+.n-input:focus{outline:none;border-color:var(--q1)}
+.n-input::placeholder{color:var(--muted)}
+.go-btn{width:100%;padding:16px;border:none;border-radius:15px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.15em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#9333ea,#06b6d4);
+  box-shadow:0 8px 26px rgba(147,51,234,.35);transition:transform .2s}
+.go-btn:hover{transform:translateY(-2px)}
+
+/* ══ QUESTION SCREEN ══ */
+.q-screen{max-width:680px;margin:0 auto;animation:popIn .5s ease}
+
+/* ASSIGNMENT REVEAL */
+.assign-reveal{text-align:center;margin-bottom:22px}
+.ar-label{font-size:.82em;font-weight:800;color:var(--muted);margin-bottom:8px;
+  letter-spacing:.5px;text-transform:uppercase}
+.ar-name{font-size:1.3em;font-weight:900;color:var(--text);margin-bottom:14px}
+.q-number-big{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:1.8em;font-weight:900;color:#fff;
+  margin:0 auto 14px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+
+/* QUESTION CARD */
+.q-card{border-radius:20px;padding:22px 26px;margin-bottom:20px;
+  border:2px solid transparent;position:relative;overflow:hidden}
+.q-card::before{content:'';position:absolute;inset:0;opacity:.05;
+  background:linear-gradient(135deg,#fff,transparent)}
+.q-label{font-size:.74em;font-weight:800;margin-bottom:8px;
+  letter-spacing:.5px;text-transform:uppercase}
+.q-text{font-size:1.2em;font-weight:900;line-height:1.65;color:var(--text)}
+
+/* VIDEO REMINDER */
+.vid-banner{background:rgba(255,255,255,.05);border:1.5px dashed rgba(255,255,255,.15);
+  border-radius:16px;padding:14px 18px;margin-bottom:20px;
+  display:flex;align-items:center;gap:12px}
+.vb-icon{font-size:2em;flex-shrink:0;animation:pulse-slow 2s infinite}
+@keyframes pulse-slow{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.vb-text{font-size:.95em;font-weight:700;color:var(--muted);line-height:1.6}
+.vb-text strong{color:var(--text)}
+
+/* ANSWER AREA */
+.ans-label{font-size:.82em;font-weight:800;color:var(--muted);margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;letter-spacing:.4px;text-transform:uppercase}
+.ans-area{width:100%;padding:16px 18px;background:var(--card2);
+  border:2px solid rgba(255,255,255,.1);border-radius:16px;
+  color:var(--text);font-family:'Tajawal',sans-serif;font-size:1em;font-weight:700;
+  line-height:1.75;resize:vertical;min-height:140px;margin-bottom:10px;transition:.2s}
+.ans-area:focus{outline:none}
+.char-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.char-cnt{font-size:.78em;color:var(--muted);font-weight:600}
+.min-hint{font-size:.76em;font-weight:700}
+.submit-btn{width:100%;padding:15px;border:none;border-radius:14px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;cursor:pointer;
+  transition:transform .2s}
+.submit-btn:hover{transform:translateY(-2px)}
+.submit-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* SUCCESS */
+.success-card{padding:50px 34px;width:100%;max-width:460px;text-align:center;animation:popIn .5s ease}
+.suc-icon{font-size:5em;display:block;margin-bottom:14px;animation:float 2s ease-in-out infinite}
+.success-card h2{font-size:1.9em;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(90deg,#c084fc,#22d3ee,#fb923c);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.suc-q-box{border-radius:14px;padding:13px 18px;margin:16px 0;
+  font-size:.9em;font-weight:700;color:var(--text);line-height:1.7;text-align:right}
+.suc-ans{background:var(--card2);border-radius:14px;padding:13px 18px;margin-bottom:14px;
+  font-size:.93em;font-weight:700;color:var(--text);line-height:1.7;font-style:italic;
+  border-right:3px solid transparent;text-align:right}
+.suc-note{color:var(--muted);font-size:.88em;line-height:1.7}
+
+/* ══ TEACHER VIEW ══ */
+.t-wrap{max-width:1160px;margin:0 auto}
+.t-card{overflow:hidden}
+.t-hdr{background:linear-gradient(135deg,#1a0a2e,#0a1a2e);padding:18px 28px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.t-hdr h2{font-size:1.15em;font-weight:900;
+  background:linear-gradient(90deg,#c084fc,#22d3ee,#fb923c);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.t-btns{display:flex;gap:9px}
+.tb-ref{background:rgba(6,182,212,.15);color:#67e8f9;border:1px solid rgba(6,182,212,.3);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:800;cursor:pointer}
+.tb-clr{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.25);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:800;cursor:pointer}
+.tb-back{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:700;cursor:pointer}
+.t-body{padding:22px}
+
+/* SUMMARY ROW */
+.t-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.ts-box{border-radius:14px;padding:14px 12px;text-align:center;border:1.5px solid transparent}
+.ts-n{font-size:2em;font-weight:900;line-height:1;margin-bottom:4px}
+.ts-l{font-size:.74em;font-weight:800;line-height:1.4}
+.ts-sub{font-size:.68em;opacity:.65;margin-top:2px}
+
+/* QUESTIONS GRID */
+.q-sections{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.q-section{border-radius:20px;border:1.5px solid transparent;overflow:hidden}
+.qs-header{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.qs-hd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.qs-num-badge{border-radius:20px;padding:3px 12px;font-size:.76em;font-weight:800;color:#fff}
+.qs-count{font-size:.76em;font-weight:700;color:var(--muted)}
+.qs-q-text{font-size:.9em;font-weight:800;line-height:1.55;color:var(--text)}
+.qs-answers{padding:12px 16px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+
+/* ANSWER CARD */
+.ans-card{background:rgba(255,255,255,.04);border-radius:13px;padding:13px 15px;
+  border:1px solid rgba(255,255,255,.07);animation:slideUp .4s ease}
+.ac-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.ac-name{font-size:.82em;font-weight:800;display:flex;align-items:center;gap:6px}
+.ac-time{font-size:.7em;color:var(--muted);font-weight:600}
+.ac-text{font-size:.88em;font-weight:700;color:rgba(255,255,255,.85);line-height:1.65;font-style:italic}
+.ac-text::before{content:'"';opacity:.4;margin-left:2px}
+.ac-text::after{content:'"';opacity:.4;margin-right:2px}
+.qs-empty{text-align:center;padding:22px;color:var(--muted);font-size:.85em;font-weight:700}
+
+/* SCROLLBAR */
+.qs-answers::-webkit-scrollbar{width:4px}
+.qs-answers::-webkit-scrollbar-track{background:transparent}
+.qs-answers::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.show{display:flex}
+.modal-box{background:var(--card);border-radius:22px;padding:32px;width:100%;max-width:290px;
+  text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);animation:popIn .35s ease}
+.modal-box h3{font-size:1.1em;font-weight:900;color:var(--text);margin-bottom:6px}
+.modal-box p{font-size:.82em;color:var(--muted);margin-bottom:14px}
+.m-pass{width:100%;padding:12px;background:var(--card2);border:2px solid var(--border);
+  border-radius:11px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.2em;text-align:center;letter-spacing:5px;margin-bottom:10px;transition:.2s}
+.m-pass:focus{outline:none;border-color:var(--q1)}
+.m-err{font-size:.78em;color:#fca5a5;font-weight:700;margin-bottom:10px;display:none}
+.m-err.show{display:block}
+.m-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.m-ok{padding:11px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,#9333ea,#06b6d4);color:#fff;
+  font-family:'Tajawal',sans-serif;font-weight:900;cursor:pointer}
+.m-cancel{padding:11px;border:1px solid var(--border);border-radius:10px;background:transparent;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-weight:700;cursor:pointer}
+
+/* CONF */
+.conf{position:fixed;border-radius:2px;pointer-events:none;z-index:9999;animation:fall 2.5s linear forwards}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+@media(max-width:700px){.q-sections{grid-template-columns:1fr}.t-summary{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="hd-title">🎥 نشاط المشاهدة — طبقات نموذج OSI</div>
+  <a href="#" class="teacher-link" id="teacherLink">🔒 شاشة المعلمة</a>
+</header>
+
+<!-- TEACHER MODAL -->
+<div class="modal-bg" id="teacherModal">
+  <div class="modal-box">
+    <h3>🔐 شاشة المعلمة</h3>
+    <p>أدخلي كلمة المرور</p>
+    <input type="password" class="m-pass" id="passInput" placeholder="••••" maxlength="6"/>
+    <div class="m-err" id="passErr">كلمة المرور خاطئة!</div>
+    <div class="m-btns">
+      <button class="m-ok" id="passOk">دخول</button>
+      <button class="m-cancel" id="passCancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAME VIEW -->
+<div class="view center active" id="nameView">
+  <div class="card name-card">
+    <span class="nc-icon">🎥</span>
+    <h1>نشاط المشاهدة</h1>
+    <p>اكتبي اسمكِ — سيتم تحديد سؤالكِ تلقائياً<br>شاهدي الفيديو ثم أجيبي على سؤالكِ</p>
+    <input type="text" class="n-input" id="nameInput" placeholder="اكتبي اسمكِ هنا ..." />
+    <button class="go-btn" id="goBtn">اكتشفي سؤالكِ 🎯</button>
+  </div>
+</div>
+
+<!-- QUESTION VIEW -->
+<div class="view" id="questionView">
+  <div class="q-screen" id="qScreen"></div>
+</div>
+
+<!-- SUCCESS VIEW -->
+<div class="view center" id="successView">
+  <div class="card success-card">
+    <span class="suc-icon">✅</span>
+    <h2>تم الإرسال!</h2>
+    <div class="suc-q-box" id="sucQBox"></div>
+    <div class="suc-ans" id="sucAns"></div>
+    <p class="suc-note">ظهرت إجابتكِ على شاشة المعلمة ✨<br>يمكنكِ الآن إغلاق الصفحة أو مراجعة إجابتكِ</p>
+  </div>
+</div>
+
+<!-- TEACHER VIEW -->
+<div class="view" id="teacherView">
+  <div class="t-wrap">
+    <div class="card t-card">
+      <div class="t-hdr">
+        <h2>📊 إجابات نشاط مشاهدة OSI</h2>
+        <div class="t-btns">
+          <button class="tb-ref" onclick="loadTeacher()">🔄 تحديث</button>
+          <button class="tb-clr" onclick="clearAll()">🗑️ مسح الكل</button>
+          <button class="tb-back" onclick="showView('nameView')">← خروج</button>
+        </div>
+      </div>
+      <div class="t-body">
+        <div class="t-summary" id="tSummary"></div>
+        <div class="q-sections" id="qSections"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH = 'osi-watch-activity';
+const PASS = '1234';
+
+/* ════ QUESTIONS CONFIG ════ */
+const QUESTIONS = [
+  {
+    id:1,
+    text:'اذكري طبقات نموذج OSI السبع بالترتيب.',
+    color:'var(--q1)', colorHex:'#9333ea',
+    light:'var(--q1l)', border:'var(--q1b)',
+    gradient:'linear-gradient(135deg,#4c1d95,#7c3aed)',
+    placeholder:'اكتبي طبقات نموذج OSI السبع بالترتيب من الأعلى للأسفل أو من الأسفل للأعلى...',
+    icon:'🏗️',
+  },
+  {
+    id:2,
+    text:'هل يمكن الاستغناء عن أحد طبقات نموذج الاتصال المفتوح OSI؟ ولماذا؟',
+    color:'var(--q2)', colorHex:'#06b6d4',
+    light:'var(--q2l)', border:'var(--q2b)',
+    gradient:'linear-gradient(135deg,#0c4a6e,#0891b2)',
+    placeholder:'اكتبي رأيكِ: هل يمكن الاستغناء عن أي طبقة؟ وما السبب؟',
+    icon:'🤔',
+  },
+  {
+    id:3,
+    text:'ما الفرق بين طبقة التطبيقات Application وطبقة التقديم Presentation؟',
+    color:'var(--q3)', colorHex:'#ec4899',
+    light:'var(--q3l)', border:'var(--q3b)',
+    gradient:'linear-gradient(135deg,#831843,#be185d)',
+    placeholder:'اكتبي الفرق بين الطبقتين من حيث الوظيفة والدور...',
+    icon:'⚖️',
+  },
+  {
+    id:4,
+    text:'اذكري أحد الأمثلة على تطبيقات Application layer.',
+    color:'var(--q4)', colorHex:'#f59e0b',
+    light:'var(--q4l)', border:'var(--q4b)',
+    gradient:'linear-gradient(135deg,#78350f,#d97706)',
+    placeholder:'اذكري مثالاً على تطبيق يعمل على طبقة Application واشرحي كيف يعمل...',
+    icon:'📱',
+  },
+];
+
+/* ════ STATE ════ */
+let student = '', assignedQ = null;
+
+/* ════ HELPERS ════ */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Assign question based on name hash — deterministic (same name = same question)
+function assignQuestion(name){
+  let hash=0;
+  for(let i=0;i<name.length;i++) hash=(hash*31+name.charCodeAt(i))&0xffffffff;
+  return QUESTIONS[Math.abs(hash)%4];
+}
+
+/* ════ JOIN ════ */
+document.getElementById('goBtn').addEventListener('click',()=>{
+  student=document.getElementById('nameInput').value.trim();
+  if(!student){alert('اكتبي اسمكِ أولاً!');return;}
+  assignedQ=assignQuestion(student);
+  renderQuestion();
+  showView('questionView');
+});
+document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter') document.getElementById('goBtn').click();});
+
+/* ════ RENDER QUESTION ════ */
+function renderQuestion(){
+  const q=assignedQ;
+  const wrap=document.getElementById('qScreen');
+  wrap.innerHTML=`
+    <!-- ASSIGN REVEAL -->
+    <div class="assign-reveal">
+      <div class="ar-label">سؤالكِ الخاص يا</div>
+      <div class="ar-name">${student}</div>
+      <div class="q-number-big" style="background:${q.gradient};box-shadow:0 6px 20px ${q.colorHex}55">${q.id}</div>
+    </div>
+
+    <!-- QUESTION CARD -->
+    <div class="q-card" style="background:${q.light};border-color:${q.border}">
+      <div class="q-label" style="color:${q.colorHex}">❓ سؤالكِ</div>
+      <div class="q-text">${q.icon} ${q.text}</div>
+    </div>
+
+    <!-- VIDEO REMINDER -->
+    <div class="vid-banner">
+      <div class="vb-icon">🎬</div>
+      <div class="vb-text"><strong>شاهدي الفيديو بتركيز</strong><br>ابحثي عن إجابة سؤالكِ أثناء المشاهدة — اكتبي إجابتكِ بعد الانتهاء</div>
+    </div>
+
+    <!-- ANSWER -->
+    <div class="ans-label" style="color:${q.colorHex}">
+      <span>✍️</span><span>إجابتكِ</span>
+    </div>
+    <textarea class="ans-area" id="ansArea"
+      style="border-color:${q.border}"
+      placeholder="${q.placeholder}"
+      oninput="updateChar()"></textarea>
+    <div class="char-row">
+      <div class="char-cnt" id="charCnt">0 حرف</div>
+      <div class="min-hint" style="color:${q.colorHex}">الحد الأدنى: 15 حرفاً</div>
+    </div>
+    <button class="submit-btn" id="submitBtn" disabled
+      style="background:${q.gradient};box-shadow:0 6px 20px ${q.colorHex}40"
+      onclick="submitAnswer()">
+      📤 إرسال الإجابة للمعلمة
+    </button>`;
+}
+
+function updateChar(){
+  const val=document.getElementById('ansArea').value;
+  document.getElementById('charCnt').textContent=val.length+' حرف';
+  document.getElementById('submitBtn').disabled=val.trim().length<15;
+  document.getElementById('ansArea').style.borderColor=
+    val.trim().length>=15?assignedQ.border:'rgba(255,255,255,.1)';
+}
+
+/* ════ SUBMIT ════ */
+async function submitAnswer(){
+  const ans=document.getElementById('ansArea').value.trim();
+  if(!ans||ans.length<15)return;
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('submitBtn').textContent='⏳ جارٍ الإرسال...';
+
+  const key=encodeURIComponent(student.replace(/\s+/g,'_')+'_'+Date.now());
+  const data={name:student,questionId:assignedQ.id,questionText:assignedQ.text,
+    answer:ans,ts:Date.now(),time:new Date().toLocaleTimeString('ar-SA')};
+  try{await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});}catch(e){}
+
+  // Success screen
+  document.getElementById('sucQBox').innerHTML=
+    `<span style="background:${assignedQ.light};border-radius:10px;padding:10px 14px;display:block;
+     border-right:3px solid ${assignedQ.colorHex}">
+     ${assignedQ.icon} ${assignedQ.text}</span>`;
+  document.getElementById('sucAns').style.borderRightColor=assignedQ.colorHex;
+  document.getElementById('sucAns').textContent=ans;
+  showView('successView');
+  spawnConf(20);
+}
+
+/* ════ TEACHER ════ */
+document.getElementById('teacherLink').addEventListener('click',e=>{
+  e.preventDefault();
+  document.getElementById('teacherModal').classList.add('show');
+  document.getElementById('passInput').value='';
+  document.getElementById('passErr').classList.remove('show');
+  setTimeout(()=>document.getElementById('passInput').focus(),100);
+});
+document.getElementById('passCancel').addEventListener('click',()=>document.getElementById('teacherModal').classList.remove('show'));
+document.getElementById('passOk').addEventListener('click',tryPass);
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter') tryPass();});
+
+function tryPass(){
+  if(document.getElementById('passInput').value===PASS){
+    document.getElementById('teacherModal').classList.remove('show');
+    loadTeacher();showView('teacherView');
+    setInterval(loadTeacher,12000);
+  } else {
+    document.getElementById('passInput').style.borderColor='#ef4444';
+    document.getElementById('passErr').classList.add('show');
+    setTimeout(()=>{document.getElementById('passInput').style.borderColor='';document.getElementById('passErr').classList.remove('show');},2000);
+  }
+}
+
+async function loadTeacher(){
+  try{
+    const r=await fetch(`${DB}/${PATH}.json`);
+    const d=await r.json()||{};
+    const entries=Object.values(d).filter(x=>x&&x.name).sort((a,b)=>b.ts-a.ts);
+    renderTeacher(entries);
+  }catch(e){renderTeacher([]);}
+}
+
+function renderTeacher(entries){
+  // Summary
+  const byQ={1:[],2:[],3:[],4:[]};
+  entries.forEach(e=>{ if(byQ[e.questionId]) byQ[e.questionId].push(e); });
+
+  document.getElementById('tSummary').innerHTML=QUESTIONS.map(q=>`
+    <div class="ts-box" style="background:${q.light};border-color:${q.border}">
+      <div class="ts-n" style="color:${q.colorHex}">${byQ[q.id].length}</div>
+      <div class="ts-l" style="color:${q.colorHex}">السؤال ${q.id}</div>
+      <div class="ts-sub">${q.icon}</div>
+    </div>`).join('')+
+    `<style>.t-summary{grid-template-columns:repeat(4,1fr)!important}</style>`;
+
+  // Sections
+  document.getElementById('qSections').innerHTML=QUESTIONS.map(q=>{
+    const answers=byQ[q.id];
+    const ansHtml=answers.length
+      ?answers.map(a=>`
+        <div class="ans-card">
+          <div class="ac-top">
+            <div class="ac-name" style="color:${q.colorHex}">
+              <span>👩‍🎓</span><span>${a.name}</span>
+            </div>
+            <div class="ac-time">${a.time||''}</div>
+          </div>
+          <div class="ac-text">${a.answer}</div>
+        </div>`).join('')
+      :'<div class="qs-empty">⏳ لا توجد إجابات بعد</div>';
+
+    return `<div class="q-section" style="background:${q.light};border-color:${q.border}">
+      <div class="qs-header" style="background:${q.gradient}22">
+        <div class="qs-hd-top">
+          <span class="qs-num-badge" style="background:${q.gradient}">السؤال ${q.id} ${q.icon}</span>
+          <span class="qs-count">${answers.length} إجابة</span>
+        </div>
+        <div class="qs-q-text">${q.text}</div>
+      </div>
+      <div class="qs-answers">${ansHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+async function clearAll(){
+  if(!confirm('⚠️ مسح جميع الإجابات؟'))return;
+  try{await fetch(`${DB}/${PATH}.json`,{method:'DELETE'});loadTeacher();alert('✅ تم المسح.');}
+  catch(e){alert('❌ خطأ.');}
+}
+
+function spawnConf(n=15){
+  const c=['#c084fc','#22d3ee','#fb923c','#86efac','#f472b6'];
+  for(let i=0;i<n;i++) setTimeout(()=>{
+    const el=document.createElement('div');el.className='conf';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${c[Math.floor(Math.random()*c.length)]};width:${5+Math.random()*8}px;height:${5+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*1.8}s;animation-delay:${Math.random()*.6}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4500);
+  },i*55);
+}
+</script>
+</body>
+</html>
