@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مراجعة الشبكات — الصف العاشر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f172a;
+  --card:#1e293b;
+  --card2:#263347;
+  --border:rgba(255,255,255,.08);
+  --teal:#14b8a6;--teal-d:#0d9488;--teal-l:rgba(20,184,166,.15);
+  --blue:#3b82f6;--blue-l:rgba(59,130,246,.15);
+  --purple:#a855f7;--purple-l:rgba(168,85,247,.15);
+  --green:#22c55e;--green-l:rgba(34,197,94,.15);
+  --red:#ef4444;--red-l:rgba(239,68,68,.15);
+  --yellow:#eab308;--yellow-l:rgba(234,179,8,.15);
+  --text:#f1f5f9;--muted:#94a3b8;
+  --shadow:0 12px 40px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* BG GLOW */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 15% 20%,rgba(20,184,166,.1) 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 80%,rgba(168,85,247,.08) 0%,transparent 50%)}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0f2a2a,#1a1040);border-bottom:1px solid var(--border);
+  padding:13px 22px;display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.hd-left{display:flex;align-items:center;gap:10px}
+.hd-icon{width:36px;height:36px;background:var(--teal-l);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.1em;border:1px solid rgba(20,184,166,.3)}
+.hd-title{font-size:1.05em;font-weight:900;background:linear-gradient(90deg,#5eead4,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.teacher-link{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);
+  border-radius:20px;padding:6px 14px;font-family:'Tajawal',sans-serif;font-size:.85em;
+  font-weight:700;cursor:pointer;transition:.2s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.teacher-link:hover{background:rgba(255,255,255,.12);color:var(--text)}
+
+/* VIEWS */
+.view{display:none;position:relative;z-index:1;min-height:calc(100vh - 60px);
+  align-items:flex-start;justify-content:center;padding:24px 16px 60px}
+.view.active{display:flex;flex-direction:column}
+.view.center-v{align-items:center;justify-content:center}
+
+/* ═══ NAME SCREEN ═══ */
+.name-card{background:var(--card);border-radius:28px;padding:46px 36px;width:100%;max-width:480px;
+  text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);
+  animation:popIn .5s cubic-bezier(.36,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+.nc-emoji{font-size:5em;display:block;margin-bottom:14px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.name-card h1{font-size:1.8em;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(90deg,#5eead4,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.name-card p{color:var(--muted);font-size:1em;margin-bottom:28px;line-height:1.65}
+.name-input{width:100%;padding:14px 18px;background:var(--card2);border:2px solid var(--border);
+  border-radius:15px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.1em;
+  text-align:center;margin-bottom:16px;transition:border-color .2s}
+.name-input:focus{outline:none;border-color:var(--teal)}
+.name-input::placeholder{color:var(--muted)}
+.go-btn{width:100%;padding:15px;border:none;border-radius:15px;
+  background:linear-gradient(135deg,var(--teal),var(--purple));
+  color:#fff;font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;
+  cursor:pointer;box-shadow:0 8px 24px rgba(20,184,166,.35);transition:transform .2s}
+.go-btn:hover{transform:translateY(-2px)}
+
+/* ═══ ACTIVITY WRAPPER ═══ */
+.activity-wrap{width:100%;max-width:860px;margin:0 auto}
+
+/* PROGRESS */
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.prog-info{font-size:.9em;font-weight:800;color:var(--muted)}
+.prog-info span{color:var(--teal)}
+.prog-bar{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:20px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--purple));border-radius:3px;transition:width .5s}
+
+/* QUESTION CARD */
+.q-card{background:var(--card);border-radius:22px;padding:28px 26px;
+  border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:16px;
+  animation:slideUp .4s ease}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.q-type-badge{display:inline-block;border-radius:8px;padding:4px 12px;font-size:.76em;
+  font-weight:800;margin-bottom:12px;letter-spacing:.5px;text-transform:uppercase}
+.badge-mcq{background:var(--blue-l);color:#93c5fd;border:1px solid rgba(59,130,246,.25)}
+.badge-tf{background:var(--yellow-l);color:#fde68a;border:1px solid rgba(234,179,8,.25)}
+.badge-match{background:var(--purple-l);color:#d8b4fe;border:1px solid rgba(168,85,247,.25)}
+.badge-scenario{background:var(--teal-l);color:#99f6e4;border:1px solid rgba(20,184,166,.25)}
+.q-text{font-size:1.1em;font-weight:800;color:var(--text);line-height:1.65;margin-bottom:20px}
+.q-sub{font-size:.9em;color:var(--muted);margin-bottom:16px;line-height:1.6}
+
+/* MCQ OPTIONS */
+.opts-col{display:flex;flex-direction:column;gap:10px}
+.opt{padding:14px 18px;border-radius:14px;border:2px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:1em;font-weight:700;
+  cursor:pointer;transition:all .2s;text-align:right;line-height:1.5}
+.opt:hover{border-color:rgba(20,184,166,.4);background:var(--teal-l);transform:translateX(-3px)}
+.opt.selected{border-color:var(--teal);background:var(--teal-l);color:#5eead4}
+.opt.correct{border-color:var(--green);background:var(--green-l);color:#86efac;animation:popIn .3s ease}
+.opt.wrong{border-color:var(--red);background:var(--red-l);color:#fca5a5}
+.opt.show-correct{border-color:var(--green);background:var(--green-l);color:#86efac;opacity:.7}
+.opt:disabled{cursor:not-allowed}
+
+/* T/F */
+.tf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tf-btn{padding:18px 12px;border-radius:16px;border:2.5px solid var(--border);
+  background:rgba(255,255,255,.04);
+  font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;
+  cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text)}
+.tf-btn.true-btn:hover{border-color:var(--green);background:var(--green-l)}
+.tf-btn.false-btn:hover{border-color:var(--red);background:var(--red-l)}
+.tf-btn.selected-t{border-color:var(--green);background:var(--green-l);color:#86efac}
+.tf-btn.selected-f{border-color:var(--red);background:var(--red-l);color:#fca5a5}
+.tf-btn.correct{border-color:var(--green)!important;background:var(--green-l)!important;color:#86efac!important;animation:popIn .3s ease}
+.tf-btn.wrong{border-color:var(--red)!important;background:var(--red-l)!important;color:#fca5a5!important}
+.tf-ico{font-size:2.2em}
+
+/* MATCH ACTIVITY */
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.match-col-title{font-size:.8em;font-weight:800;color:var(--muted);margin-bottom:10px;
+  letter-spacing:.5px;text-transform:uppercase}
+.match-item{padding:12px 16px;border-radius:12px;border:2px solid var(--border);
+  background:rgba(255,255,255,.04);font-size:.9em;font-weight:700;
+  cursor:pointer;transition:all .2s;color:var(--text);line-height:1.5;margin-bottom:8px}
+.match-item:hover{border-color:var(--purple);background:var(--purple-l)}
+.match-item.selected{border-color:var(--yellow);background:var(--yellow-l);color:#fde68a}
+.match-item.matched-ok{border-color:var(--green);background:var(--green-l);color:#86efac;cursor:default}
+.match-item.matched-err{border-color:var(--red);background:var(--red-l);color:#fca5a5}
+.match-item:disabled{cursor:default}
+
+/* FEEDBACK */
+.feedback{border-radius:14px;padding:13px 18px;margin-top:14px;
+  font-size:.93em;font-weight:700;display:none;animation:slideUp .3s ease}
+.feedback.show{display:flex;align-items:flex-start;gap:10px}
+.feedback.ok{background:var(--green-l);border:1.5px solid rgba(34,197,94,.3);color:#86efac}
+.feedback.err{background:var(--red-l);border:1.5px solid rgba(239,68,68,.3);color:#fca5a5}
+.fb-icon{font-size:1.4em;flex-shrink:0}
+.fb-body{flex:1}
+.fb-title{font-weight:900;margin-bottom:3px}
+.fb-desc{font-size:.88em;opacity:.85;line-height:1.55}
+
+/* NAV BUTTONS */
+.nav-wrap{display:flex;gap:12px;margin-top:16px}
+.next-btn{flex:1;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--teal),var(--purple));
+  color:#fff;font-family:'Tajawal',sans-serif;font-size:1.05em;font-weight:900;
+  cursor:pointer;box-shadow:0 6px 18px rgba(20,184,166,.3);transition:transform .2s;display:none}
+.next-btn:hover{transform:translateY(-1px)}
+.skip-btn{padding:14px 20px;border:1px solid var(--border);border-radius:14px;
+  background:transparent;color:var(--muted);font-family:'Tajawal',sans-serif;
+  font-size:.9em;font-weight:700;cursor:pointer;transition:.2s;display:none}
+.skip-btn:hover{background:rgba(255,255,255,.06);color:var(--text)}
+
+/* SCORE DISPLAY */
+.score-badge{background:var(--teal-l);border:1px solid rgba(20,184,166,.3);
+  border-radius:20px;padding:6px 16px;font-size:.9em;font-weight:900;color:#5eead4}
+
+/* ═══ FINAL SCREEN ═══ */
+.final-card{background:var(--card);border-radius:28px;padding:50px 36px;width:100%;max-width:560px;
+  text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);animation:popIn .5s ease}
+.final-trophy{font-size:5em;display:block;margin-bottom:16px;animation:float 2s ease-in-out infinite}
+.final-card h2{font-size:2em;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(90deg,#fbbf24,#f97316,#ec4899);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.final-name{font-size:1.3em;font-weight:900;color:#a5b4fc;margin:10px 0}
+.score-circle{width:110px;height:110px;border-radius:50%;
+  background:conic-gradient(var(--teal) 0%,rgba(255,255,255,.1) 0%);
+  display:flex;align-items:center;justify-content:center;margin:20px auto;
+  border:4px solid rgba(20,184,166,.3);position:relative}
+.score-circle::after{content:'';position:absolute;inset:8px;border-radius:50%;background:var(--card)}
+.score-inner{position:relative;z-index:1;text-align:center}
+.score-num{font-size:1.8em;font-weight:900;color:var(--teal)}
+.score-total{font-size:.8em;color:var(--muted);font-weight:700}
+.final-msg{color:var(--muted);font-size:1em;margin:16px 0 24px;line-height:1.7}
+.restart-btn{padding:12px 32px;background:rgba(255,255,255,.08);border:1px solid var(--border);
+  border-radius:12px;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:.95em;
+  font-weight:700;cursor:pointer;transition:.2s}
+.restart-btn:hover{background:rgba(255,255,255,.14);color:var(--text)}
+
+/* ═══ TEACHER VIEW ═══ */
+.t-page{width:100%;max-width:1000px;margin:0 auto}
+.t-header-bar{background:linear-gradient(135deg,#0f172a,#1e1040);
+  border-radius:20px 20px 0 0;padding:18px 26px;
+  display:flex;justify-content:space-between;align-items:center;
+  border:1px solid var(--border);border-bottom:none}
+.t-header-bar h2{font-size:1.2em;font-weight:900;color:var(--text)}
+.t-actions{display:flex;gap:10px}
+.t-refresh{background:rgba(20,184,166,.15);color:#5eead4;border:1px solid rgba(20,184,166,.3);
+  border-radius:10px;padding:8px 16px;font-family:'Tajawal',sans-serif;font-size:.88em;font-weight:800;cursor:pointer}
+.t-refresh:hover{background:rgba(20,184,166,.25)}
+.t-clear{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.25);
+  border-radius:10px;padding:8px 16px;font-family:'Tajawal',sans-serif;font-size:.88em;font-weight:800;cursor:pointer}
+.t-clear:hover{background:rgba(239,68,68,.22)}
+.t-back{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);
+  border-radius:10px;padding:8px 16px;font-family:'Tajawal',sans-serif;font-size:.88em;font-weight:700;cursor:pointer}
+.t-back:hover{background:rgba(255,255,255,.12);color:var(--text)}
+.t-body{background:var(--card);border-radius:0 0 20px 20px;
+  border:1px solid var(--border);border-top:none;overflow:hidden}
+
+/* STATS ROW */
+.t-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--border)}
+.t-stat{padding:16px;text-align:center;border-left:1px solid var(--border)}
+.t-stat:last-child{border-left:none}
+.ts-n{font-size:2em;font-weight:900;line-height:1;margin-bottom:3px}
+.ts-l{font-size:.76em;color:var(--muted);font-weight:700}
+
+/* STUDENT TABLE */
+.t-table-wrap{padding:20px;overflow-x:auto}
+.t-table{width:100%;border-collapse:collapse}
+.t-table th{padding:11px 14px;font-size:.78em;font-weight:800;color:var(--muted);
+  text-align:right;border-bottom:2px solid var(--border);letter-spacing:.4px;text-transform:uppercase}
+.t-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.t-table tr:hover td{background:rgba(255,255,255,.03)}
+.t-name{font-weight:800;font-size:.95em}
+.t-score{font-size:.88em;font-weight:800}
+.t-prog-wrap{display:flex;align-items:center;gap:8px}
+.t-prog-bar{flex:1;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;max-width:100px}
+.t-prog-fill{height:100%;border-radius:4px;transition:.4s}
+.t-done{background:var(--green-l);color:#86efac;border:1px solid rgba(34,197,94,.3);
+  border-radius:20px;padding:3px 12px;font-size:.74em;font-weight:800;display:inline-block}
+.t-ongoing{background:var(--yellow-l);color:#fde68a;border:1px solid rgba(234,179,8,.3);
+  border-radius:20px;padding:3px 12px;font-size:.74em;font-weight:800;display:inline-block}
+.t-empty{padding:50px;text-align:center;color:var(--muted);font-weight:700}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.show{display:flex}
+.modal-box{background:var(--card);border-radius:22px;padding:34px;width:100%;max-width:300px;
+  text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);animation:popIn .35s ease}
+.modal-box h3{font-size:1.2em;font-weight:900;color:var(--text);margin-bottom:6px}
+.modal-box p{font-size:.88em;color:var(--muted);margin-bottom:18px}
+.m-pass{width:100%;padding:13px;background:var(--card2);border:2px solid var(--border);
+  border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.2em;
+  text-align:center;letter-spacing:5px;margin-bottom:12px;transition:.2s}
+.m-pass:focus{outline:none;border-color:var(--teal)}
+.m-pass.err-border{border-color:var(--red)}
+.m-err{font-size:.8em;color:#fca5a5;font-weight:700;margin-bottom:12px;display:none}
+.m-err.show{display:block}
+.m-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.m-ok{padding:12px;border:none;border-radius:11px;background:var(--teal);color:#fff;
+  font-family:'Tajawal',sans-serif;font-weight:900;cursor:pointer;font-size:1em}
+.m-cancel{padding:12px;border:1px solid var(--border);border-radius:11px;background:transparent;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-weight:700;cursor:pointer;font-size:1em}
+
+/* CONFETTI */
+.conf{position:fixed;border-radius:2px;pointer-events:none;z-index:9999;animation:fall 2.5s linear forwards}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* MOBILE */
+@media(max-width:600px){
+  .match-wrap{grid-template-columns:1fr}
+  .t-stats{grid-template-columns:repeat(2,1fr)}
+  .code-compare{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="hd-left">
+    <div class="hd-icon">🌐</div>
+    <div class="hd-title">مراجعة الشبكات — الصف العاشر</div>
+  </div>
+  <a href="#" class="teacher-link" id="teacherLink">🔒 شاشة المعلمة</a>
+</header>
+
+<!-- TEACHER MODAL -->
+<div class="modal-bg" id="teacherModal">
+  <div class="modal-box">
+    <h3>🔐 منطقة المعلمة</h3>
+    <p>ادخلي كلمة المرور للوصول</p>
+    <input type="password" class="m-pass" id="passInput" placeholder="••••" maxlength="8"/>
+    <div class="m-err" id="passErr">كلمة المرور غير صحيحة!</div>
+    <div class="m-btns">
+      <button class="m-ok" id="passOk">دخول</button>
+      <button class="m-cancel" id="passCancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NAME VIEW ═══ -->
+<div class="view center-v active" id="nameView">
+  <div class="name-card">
+    <span class="nc-emoji">🌐</span>
+    <h1>مراجعة الشبكات</h1>
+    <p>اختبري معلوماتكِ عن أنواع الشبكات والمخططات<br>ثلاثة مستويات من الأسئلة التفاعلية</p>
+    <input type="text" class="name-input" id="studentName" placeholder="اكتبي اسمكِ هنا ..." />
+    <button class="go-btn" id="goBtn">ابدئي المراجعة 🚀</button>
+  </div>
+</div>
+
+<!-- ═══ ACTIVITY VIEW ═══ -->
+<div class="view" id="activityView">
+  <div class="activity-wrap">
+    <div class="prog-header">
+      <div class="prog-info">السؤال <span id="qNumDisplay">1</span> من <span id="qTotalDisplay">10</span></div>
+      <div class="score-badge" id="scoreDisplay">⭐ 0 نقطة</div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div id="questionArea"></div>
+  </div>
+</div>
+
+<!-- ═══ FINAL VIEW ═══ -->
+<div class="view center-v" id="finalView">
+  <div class="final-card">
+    <span class="final-trophy">🏆</span>
+    <h2>انتهيتِ!</h2>
+    <div class="final-name" id="finalName"></div>
+    <div class="score-circle" id="scoreCircle">
+      <div class="score-inner">
+        <div class="score-num" id="finalScoreNum"></div>
+        <div class="score-total" id="finalScoreTotal"></div>
+      </div>
+    </div>
+    <p class="final-msg" id="finalMsg"></p>
+    <button class="restart-btn" onclick="location.reload()">🔄 إعادة المحاولة</button>
+  </div>
+</div>
+
+<!-- ═══ TEACHER VIEW ═══ -->
+<div class="view" id="teacherView">
+  <div class="t-page">
+    <div class="t-header-bar">
+      <h2>📊 نتائج مراجعة الشبكات</h2>
+      <div class="t-actions">
+        <button class="t-refresh" onclick="loadTeacher()">🔄 تحديث</button>
+        <button class="t-clear" onclick="clearResults()">🗑️ مسح النتائج</button>
+        <button class="t-back" onclick="showView('nameView')">← خروج</button>
+      </div>
+    </div>
+    <div class="t-body">
+      <div class="t-stats" id="tStats">
+        <div class="t-stat"><div class="ts-n" style="color:var(--teal)" id="tTotal">0</div><div class="ts-l">إجمالي الطالبات</div></div>
+        <div class="t-stat"><div class="ts-n" style="color:var(--green)" id="tDone">0</div><div class="ts-l">أكملن</div></div>
+        <div class="t-stat"><div class="ts-n" style="color:var(--yellow)" id="tAvg">—</div><div class="ts-l">متوسط النقاط</div></div>
+        <div class="t-stat"><div class="ts-n" style="color:#f472b6" id="tTop">—</div><div class="ts-l">أعلى نقاط</div></div>
+      </div>
+      <div class="t-table-wrap">
+        <table class="t-table">
+          <thead><tr>
+            <th>اسم الطالبة</th>
+            <th style="text-align:center">النقاط</th>
+            <th style="text-align:center">التقدم</th>
+            <th style="text-align:center">الحالة</th>
+            <th style="text-align:center">الوقت</th>
+          </tr></thead>
+          <tbody id="tBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH = 'networks-review-g10';
+const PASS = '1234';
+
+/* ════════════════════════════════
+   QUESTIONS DATA
+════════════════════════════════ */
+const QUESTIONS = [
+  // ── MCQ ──
+  {
+    id:'q1', type:'mcq',
+    badge:'badge-mcq', badgeText:'اختيار من متعدد',
+    text:'في المخطط الخطي (Bus Topology)، ماذا يحدث عند إرسال جهاز لحزمة بيانات Packet؟',
+    opts:[
+      'تصل الحزمة مباشرة للجهاز المقصود فقط',
+      'تُفحص الحزمة من جميع الأجهزة ويستقبلها صاحب العنوان فقط',
+      'ترفض الشبكة الحزمة إذا كان الجهاز مشغولاً',
+      'تُرسل الحزمة لجميع الأجهزة وتُحفظ عند الجميع'
+    ],
+    correct: 1,
+    feedback:'✅ صحيح! عند الإرسال تفحص جميع الأجهزة الحزمة، ولكن يستقبلها فقط الجهاز الذي يملك عنوان الرسالة.'
+  },
+  {
+    id:'q2', type:'mcq',
+    badge:'badge-mcq', badgeText:'اختيار من متعدد',
+    text:'ما الذي يحدث في المخطط الخطي (Bus) إذا انقطع الناقل الرئيسي Bus؟',
+    opts:[
+      'تستمر الأجهزة في العمل بشكل طبيعي',
+      'تتعطل فقط الأجهزة القريبة من موضع الانقطاع',
+      'تتعطل كاملُ الشبكة',
+      'تنتقل البيانات عبر مسار احتياطي'
+    ],
+    correct: 2,
+    feedback:'✅ صحيح! في Bus Topology، انقطاع الناقل الرئيسي = تعطل الشبكة بالكامل. هذا أبرز عيوبها!'
+  },
+  // ── T/F ──
+  {
+    id:'q3', type:'tf',
+    badge:'badge-tf', badgeText:'صح أم خطأ',
+    text:'في المخطط الحلقي (Ring Topology) تسري البيانات في اتجاهين (ذهاب وإياب) مما يزيد من تصادم البيانات Collisions.',
+    correct: false,
+    feedbackOk:'✅ صحيح! البيانات تسري باتجاه واحد فقط، مما يُقلّل من التصادمات وهذه من مميزاته.',
+    feedbackErr:'❌ خطأ! البيانات في Ring Topology تسري باتجاه واحد فقط، مما يُقلّل التصادمات — وهذه ميزة!'
+  },
+  {
+    id:'q4', type:'tf',
+    badge:'badge-tf', badgeText:'صح أم خطأ',
+    text:'الشبكة المحلية LAN تتميز بسرعات اتصال عالية مقارنةً بالشبكات الأوسع نطاقاً.',
+    correct: true,
+    feedbackOk:'✅ صحيح! LAN تعمل في نطاق جغرافي ضيق مما يتيح سرعات اتصال عالية جداً.',
+    feedbackErr:'❌ خطأ! LAN تتميز فعلاً بسرعات اتصال عالية بسبب صغر نطاقها الجغرافي.'
+  },
+  // ── MCQ SCENARIO ──
+  {
+    id:'q5', type:'mcq',
+    badge:'badge-scenario', badgeText:'موقف عملي',
+    text:'مدرسة تريد ربط أجهزة الحاسوب في مختبريها الثلاثة داخل المبنى بشبكة واحدة. ما النوع المناسب؟',
+    opts:[
+      'WAN — لأن لديها أكثر من مختبر',
+      'LAN — لأنها في نطاق جغرافي ضيق داخل مبنى واحد',
+      'MAN — لأن المدرسة مؤسسة تعليمية كبيرة',
+      'الإنترنت — لأنه الأسرع والأشمل'
+    ],
+    correct: 1,
+    feedback:'✅ ممتاز! المدرسة في مبنى واحد = نطاق ضيق = LAN. تحقق سرعة عالية ومشاركة الموارد كالطابعات.'
+  },
+  // ── MATCH ──
+  {
+    id:'q6', type:'match',
+    badge:'badge-match', badgeText:'مطابقة',
+    text:'طابقي كل نوع شبكة مع وصفه الصحيح:',
+    pairs:[
+      {left:'LAN', right:'شبكة محلية داخل مبنى أو شركة — سرعات عالية'},
+      {left:'MAN', right:'تربط شبكات LAN عدة في نفس المدينة'},
+      {left:'WAN', right:'تمتد عبر دول وقارات — الإنترنت أكبر مثال لها'},
+    ]
+  },
+  // ── MCQ ──
+  {
+    id:'q7', type:'mcq',
+    badge:'badge-mcq', badgeText:'اختيار من متعدد',
+    text:'ما أبرز عيب في المخطط الحلقي (Ring Topology)؟',
+    opts:[
+      'يحدث تصادم Collision دائمًا لأن البيانات تسير في اتجاهين',
+      'إذا تعطّل أي جهاز في الحلقة تتعطل الشبكة بالكامل',
+      'لا يمكن استخدامه مع الشبكات الصغيرة',
+      'تكلفته مرتفعة جداً وتحتاج أجهزة خاصة'
+    ],
+    correct: 1,
+    feedback:'✅ صحيح! Ring Topology تعتمد على حلقة متصلة — أي عطل في جهاز يكسر الحلقة ويعطّل الشبكة كلها.'
+  },
+  // ── T/F ──
+  {
+    id:'q8', type:'tf',
+    badge:'badge-tf', badgeText:'صح أم خطأ',
+    text:'في Ring Topology يمكن لأكثر من جهاز الإرسال في نفس الوقت دون مشاكل.',
+    correct: false,
+    feedbackOk:'✅ صحيح! هذا خطأ — Ring لا تسمح إلا لجهاز واحد بالإرسال في نفس الوقت.',
+    feedbackErr:'❌ خطأ! Ring Topology لا تسمح إلا لجهاز واحد فقط بالإرسال في وقت واحد — هذا من عيوبها.'
+  },
+  // ── SCENARIO ──
+  {
+    id:'q9', type:'mcq',
+    badge:'badge-scenario', badgeText:'موقف عملي',
+    text:'بنك دولي لديه فروع في قطر والسعودية وأمريكا ويريد ربطها بشبكة واحدة. ما النوع المناسب؟',
+    opts:[
+      'LAN — لأن جميع الفروع للبنك نفسه',
+      'MAN — لأنها شبكة متوسطة المجال',
+      'WAN — لأنها تمتد عبر دول متعددة وغير مقيدة بموقع جغرافي',
+      'Ring Topology — لأن البيانات تسير باتجاه واحد'
+    ],
+    correct: 2,
+    feedback:'✅ ممتاز! WAN هي الخيار الصحيح — تربط شبكات ومواقع في دول مختلفة. البنك الدولي مثال كلاسيكي!'
+  },
+  // ── FINAL MCQ ──
+  {
+    id:'q10', type:'mcq',
+    badge:'badge-mcq', badgeText:'اختيار من متعدد',
+    text:'ما الميزة المشتركة بين Bus Topology و Ring Topology؟',
+    opts:[
+      'كلاهما تتوقف فيه الشبكة إذا انقطع الناقل الرئيسي',
+      'كلاهما مناسب للشبكات الصغيرة وذات التكلفة المنخفضة',
+      'كلاهما يسمح لجميع الأجهزة بالإرسال في نفس الوقت',
+      'كلاهما يستخدم ناقلاً رئيسياً Bus واحداً'
+    ],
+    correct: 1,
+    feedback:'✅ صحيح! كلا المخططين مناسبان للشبكات الصغيرة وذات التكلفة المنخفضة — وهذه من أبرز مزاياهما المشتركة.'
+  },
+];
+
+/* ════ STATE ════ */
+let student = '';
+let current = 0;
+let score   = 0;
+let answered = false;
+// Match state
+let matchSelected = null;
+let matchDone = 0;
+
+/* ════ ROUTING ════ */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>{v.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+}
+
+/* ════ NAME ════ */
+document.getElementById('goBtn').addEventListener('click',()=>{
+  student = document.getElementById('studentName').value.trim();
+  if(!student){alert('اكتبي اسمكِ أولاً!');return;}
+  saveProgress(0,false);
+  loadQuestion(0);
+  showView('activityView');
+});
+document.getElementById('studentName').addEventListener('keydown',e=>{
+  if(e.key==='Enter') document.getElementById('goBtn').click();
+});
+
+/* ════ TEACHER LINK ════ */
+document.getElementById('teacherLink').addEventListener('click',e=>{
+  e.preventDefault();
+  document.getElementById('teacherModal').classList.add('show');
+  document.getElementById('passInput').value='';
+  document.getElementById('passErr').classList.remove('show');
+  document.getElementById('passInput').className='m-pass';
+  setTimeout(()=>document.getElementById('passInput').focus(),100);
+});
+document.getElementById('passCancel').addEventListener('click',()=>{
+  document.getElementById('teacherModal').classList.remove('show');
+});
+document.getElementById('passOk').addEventListener('click',tryTeacherPass);
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter') tryTeacherPass();});
+
+function tryTeacherPass(){
+  const v=document.getElementById('passInput').value;
+  if(v===PASS){
+    document.getElementById('teacherModal').classList.remove('show');
+    loadTeacher();
+    showView('teacherView');
+  } else {
+    document.getElementById('passInput').className='m-pass err-border';
+    document.getElementById('passErr').classList.add('show');
+    setTimeout(()=>{
+      document.getElementById('passInput').className='m-pass';
+      document.getElementById('passErr').classList.remove('show');
+    },2000);
+  }
+}
+
+/* ════ LOAD QUESTION ════ */
+function loadQuestion(idx){
+  current = idx;
+  answered = false;
+  matchSelected = null;
+  matchDone = 0;
+
+  const q = QUESTIONS[idx];
+  const total = QUESTIONS.length;
+
+  document.getElementById('qNumDisplay').textContent = idx+1;
+  document.getElementById('qTotalDisplay').textContent = total;
+  document.getElementById('progFill').style.width = ((idx/total)*100)+'%';
+  document.getElementById('scoreDisplay').textContent = '⭐ '+score+' نقطة';
+
+  const area = document.getElementById('questionArea');
+  area.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'q-card';
+
+  let html = `<div class="q-type-badge ${q.badge}">${q.badgeText}</div>
+    <div class="q-text">${q.text}</div>`;
+
+  if(q.type==='mcq'){
+    html += '<div class="opts-col">';
+    q.opts.forEach((opt,i)=>{
+      html += `<button class="opt" data-idx="${i}" onclick="answerMCQ(${i})">${opt}</button>`;
+    });
+    html += '</div>';
+  } else if(q.type==='tf'){
+    html += `<div class="tf-row">
+      <button class="tf-btn true-btn" id="tfTrue" onclick="answerTF(true)">
+        <span class="tf-ico">✅</span><span>صح</span>
+      </button>
+      <button class="tf-btn false-btn" id="tfFalse" onclick="answerTF(false)">
+        <span class="tf-ico">❌</span><span>خطأ</span>
+      </button>
+    </div>`;
+  } else if(q.type==='match'){
+    html += buildMatchHTML(q);
+  }
+
+  html += `<div class="feedback" id="feedback"></div>
+    <div class="nav-wrap">
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        ${idx < QUESTIONS.length-1 ? 'السؤال التالي ←' : 'أرى نتيجتي 🏆'}
+      </button>
+    </div>`;
+
+  card.innerHTML = html;
+  area.appendChild(card);
+}
+
+/* ════ MCQ ════ */
+function answerMCQ(idx){
+  if(answered) return;
+  answered = true;
+  const q = QUESTIONS[current];
+  const isOk = idx === q.correct;
+  if(isOk){ score += 10; spawnMini(); }
+
+  document.querySelectorAll('.opt').forEach((btn,i)=>{
+    btn.disabled = true;
+    if(i===q.correct) btn.classList.add('correct');
+    else if(i===idx&&!isOk) btn.classList.add('wrong');
+  });
+
+  showFeedback(isOk, isOk ? q.feedback : '❌ إجابة خاطئة! '+q.feedback);
+  document.getElementById('scoreDisplay').textContent = '⭐ '+score+' نقطة';
+  document.getElementById('nextBtn').style.display = 'block';
+  saveProgress(current+1, current===QUESTIONS.length-1);
+}
+
+/* ════ T/F ════ */
+function answerTF(val){
+  if(answered) return;
+  answered = true;
+  const q = QUESTIONS[current];
+  const isOk = val === q.correct;
+  if(isOk){ score += 10; spawnMini(); }
+
+  document.getElementById('tfTrue').disabled = true;
+  document.getElementById('tfFalse').disabled = true;
+  document.getElementById(val?'tfTrue':'tfFalse').classList.add(isOk?'correct':'wrong');
+  if(!isOk){
+    document.getElementById(q.correct?'tfTrue':'tfFalse').classList.add('correct');
+  }
+
+  showFeedback(isOk, isOk ? q.feedbackOk : q.feedbackErr);
+  document.getElementById('scoreDisplay').textContent = '⭐ '+score+' نقطة';
+  document.getElementById('nextBtn').style.display = 'block';
+  saveProgress(current+1, current===QUESTIONS.length-1);
+}
+
+/* ════ MATCH ════ */
+function buildMatchHTML(q){
+  const shuffledRight = [...q.pairs].sort(()=>Math.random()-.5);
+  return `<div class="match-wrap">
+    <div>
+      <div class="match-col-title">النوع</div>
+      ${q.pairs.map((p,i)=>`<div class="match-item" id="left-${i}" data-i="${i}" onclick="selectLeft(${i})">${p.left}</div>`).join('')}
+    </div>
+    <div>
+      <div class="match-col-title">الوصف</div>
+      ${shuffledRight.map((p,i)=>`<div class="match-item" id="right-${i}" data-orig="${q.pairs.indexOf(p)}" onclick="selectRight(${i})">${p.right}</div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function selectLeft(i){
+  if(answered) return;
+  document.querySelectorAll('.match-item[id^="left-"]').forEach(el=>{
+    if(!el.classList.contains('matched-ok')) el.classList.remove('selected');
+  });
+  const el=document.getElementById('left-'+i);
+  if(el.classList.contains('matched-ok')) return;
+  el.classList.add('selected');
+  matchSelected={side:'left',idx:i};
+  checkMatchPair();
+}
+
+function selectRight(i){
+  if(answered) return;
+  document.querySelectorAll('.match-item[id^="right-"]').forEach(el=>{
+    if(!el.classList.contains('matched-ok')) el.classList.remove('selected');
+  });
+  const el=document.getElementById('right-'+i);
+  if(el.classList.contains('matched-ok')) return;
+  el.classList.add('selected');
+  if(matchSelected&&matchSelected.side==='left'){
+    const leftIdx=matchSelected.idx;
+    const rightEl=document.getElementById('right-'+i);
+    const origIdx=parseInt(rightEl.dataset.orig);
+    const isOk=(origIdx===leftIdx);
+    document.getElementById('left-'+leftIdx).classList.remove('selected');
+    document.getElementById('left-'+leftIdx).classList.add(isOk?'matched-ok':'matched-err');
+    rightEl.classList.remove('selected');
+    rightEl.classList.add(isOk?'matched-ok':'matched-err');
+    if(isOk){
+      matchDone++;score+=4;spawnMini();
+      document.getElementById('scoreDisplay').textContent='⭐ '+score+' نقطة';
+    } else {
+      setTimeout(()=>{
+        document.getElementById('left-'+leftIdx).classList.remove('matched-err');
+        rightEl.classList.remove('matched-err');
+      },900);
+    }
+    matchSelected=null;
+    if(matchDone===QUESTIONS[current].pairs.length){
+      answered=true;
+      showFeedback(true,'✅ ممتاز! طابقتِ جميع الأزواج بشكل صحيح.');
+      document.getElementById('nextBtn').style.display='block';
+      saveProgress(current+1, current===QUESTIONS.length-1);
+    }
+  } else {
+    matchSelected={side:'right',idx:i};
+  }
+}
+
+/* ════ FEEDBACK ════ */
+function showFeedback(ok, msg){
+  const fb=document.getElementById('feedback');
+  fb.className='feedback show '+(ok?'ok':'err');
+  fb.innerHTML=`<div class="fb-icon">${ok?'🎉':'💡'}</div>
+    <div class="fb-body"><div class="fb-desc">${msg}</div></div>`;
+}
+
+/* ════ NEXT ════ */
+function nextQuestion(){
+  if(current < QUESTIONS.length-1){
+    loadQuestion(current+1);
+  } else {
+    showFinal();
+  }
+}
+
+/* ════ FINAL ════ */
+function showFinal(){
+  const total = QUESTIONS.length*10;
+  const pct = Math.round(score/total*100);
+  document.getElementById('finalName').textContent='أحسنتِ، '+student+'!';
+  document.getElementById('finalScoreNum').textContent=score;
+  document.getElementById('finalScoreTotal').textContent='من '+total;
+
+  const msgs=[
+    ['🌟','ممتازة! إتقانٌ تام للمادة.','#22c55e'],
+    ['👍','جيد جداً! راجعي النقاط المفقودة.','#3b82f6'],
+    ['💡','مقبول — ركّزي على المفاهيم الأساسية.','#eab308'],
+  ];
+  const [icon,txt,color]=score>=total*.8?msgs[0]:score>=total*.5?msgs[1]:msgs[2];
+  document.getElementById('finalMsg').innerHTML=`${icon} ${txt}`;
+  document.getElementById('scoreCircle').style.background=
+    `conic-gradient(${color} ${pct*3.6}deg, rgba(255,255,255,.08) 0deg)`;
+
+  saveProgress(QUESTIONS.length, true, score);
+  showView('finalView');
+  if(pct>=80) spawnConfetti(30);
+}
+
+/* ════ FIREBASE ════ */
+async function saveProgress(questionNum, isCompleted, finalScore){
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  const data={name:student, score:finalScore||score, questionNum,
+    isCompleted, total:QUESTIONS.length,
+    lastUpdate:new Date().toLocaleTimeString('ar-SA'), ts:Date.now()};
+  try{ await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)}); }catch(e){}
+}
+
+async function loadTeacher(){
+  try{
+    const r=await fetch(`${DB}/${PATH}.json`);
+    const d=await r.json()||{};
+    const entries=Object.values(d).filter(x=>x&&x.name).sort((a,b)=>b.ts-a.ts);
+    renderTeacher(entries);
+  }catch(e){renderTeacher([]);}
+}
+
+function renderTeacher(entries){
+  const maxScore=QUESTIONS.length*10;
+  const done=entries.filter(e=>e.isCompleted);
+  const avg=done.length?Math.round(done.reduce((s,e)=>s+(e.score||0),0)/done.length):0;
+  const top=done.length?Math.max(...done.map(e=>e.score||0)):0;
+  document.getElementById('tTotal').textContent=entries.length;
+  document.getElementById('tDone').textContent=done.length;
+  document.getElementById('tAvg').textContent=avg||'—';
+  document.getElementById('tTop').textContent=top||'—';
+
+  const tbody=document.getElementById('tBody');
+  if(!entries.length){
+    tbody.innerHTML='<tr><td colspan="5" class="t-empty">لا توجد بيانات بعد 🌐</td></tr>';
+    return;
+  }
+  tbody.innerHTML=entries.map(e=>{
+    const pct=Math.round((e.score||0)/maxScore*100);
+    const fillColor=pct>=80?'#22c55e':pct>=50?'#3b82f6':'#eab308';
+    return `<tr>
+      <td class="t-name" style="color:var(--teal)">${e.name}</td>
+      <td class="t-score" style="text-align:center;color:${fillColor}">${e.score||0} / ${maxScore}</td>
+      <td style="text-align:center">
+        <div class="t-prog-wrap" style="justify-content:center">
+          <div class="t-prog-bar"><div class="t-prog-fill" style="width:${pct}%;background:${fillColor}"></div></div>
+          <span style="font-size:.78em;color:var(--muted)">${pct}%</span>
+        </div>
+      </td>
+      <td style="text-align:center">
+        ${e.isCompleted?'<span class="t-done">مكتمل ✅</span>':'<span class="t-ongoing">جارٍ ⏳</span>'}
+      </td>
+      <td style="text-align:center;font-size:.78em;color:var(--muted)">${e.lastUpdate||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function clearResults(){
+  if(!confirm('⚠️ هل أنتِ متأكدة من مسح جميع النتائج؟ لا يمكن التراجع!')) return;
+  try{
+    await fetch(`${DB}/${PATH}.json`,{method:'DELETE'});
+    loadTeacher();
+    alert('✅ تم مسح جميع النتائج.');
+  }catch(e){alert('❌ خطأ في المسح.');}
+}
+
+/* ════ EFFECTS ════ */
+function spawnMini(){
+  for(let i=0;i<5;i++) setTimeout(()=>{
+    const el=document.createElement('div');el.className='conf';
+    const cols=['#14b8a6','#a855f7','#fbbf24','#22c55e','#3b82f6'];
+    el.style.cssText=`left:${30+Math.random()*40}vw;top:30vh;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      width:7px;height:7px;border-radius:50%;
+      animation-duration:.8s;animation-delay:${i*.08}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),1500);
+  },i*40);
+}
+function spawnConfetti(n=20){
+  const cols=['#14b8a6','#a855f7','#fbbf24','#22c55e','#3b82f6','#ec4899'];
+  for(let i=0;i<n;i++) setTimeout(()=>{
+    const el=document.createElement('div');el.className='conf';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      width:${5+Math.random()*9}px;height:${5+Math.random()*9}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*.8}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),5000);
+  },i*60);
+}
+</script>
+</body>
+</html>
