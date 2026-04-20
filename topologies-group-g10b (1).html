@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اكتشاف مخططات الشبكات — الصف العاشر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d1a;
+  --card:#111827;--card2:#1a2235;
+  --border:rgba(255,255,255,.07);
+  --t1:#f59e0b;   --t1l:rgba(245,158,11,.13);  --t1b:rgba(245,158,11,.3);
+  --t2:#8b5cf6;   --t2l:rgba(139,92,246,.13);   --t2b:rgba(139,92,246,.3);
+  --green:#22c55e;--greenl:rgba(34,197,94,.13);
+  --red:#ef4444;  --redl:rgba(239,68,68,.13);
+  --yellow:#fbbf24;
+  --text:#f1f5f9;--muted:#94a3b8;
+  --shadow:0 16px 48px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 20% 25%,rgba(245,158,11,.08) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 75%,rgba(139,92,246,.08) 0%,transparent 50%)}
+
+/* ── HEADER ── */
+.header{background:rgba(8,13,26,.95);border-bottom:1px solid var(--border);
+  padding:13px 22px;display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(10px)}
+.hd-title{font-size:1.05em;font-weight:900;
+  background:linear-gradient(90deg,#fbbf24,#a78bfa,#67e8f9);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.teacher-link{background:rgba(255,255,255,.07);color:var(--muted);
+  border:1px solid var(--border);border-radius:20px;padding:6px 14px;
+  font-family:'Tajawal',sans-serif;font-size:.83em;font-weight:700;
+  cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.2s}
+.teacher-link:hover{background:rgba(255,255,255,.12);color:var(--text)}
+
+/* ── VIEWS ── */
+.view{display:none;min-height:calc(100vh - 60px);padding:24px 16px 60px;position:relative;z-index:1}
+.view.active{display:block}
+.view.center{display:flex;align-items:center;justify-content:center;padding:20px}
+
+/* ── CARD BASE ── */
+.card{background:var(--card);border-radius:22px;border:1px solid var(--border);box-shadow:var(--shadow)}
+@keyframes popIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes slideUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+/* ══════ JOIN SCREEN ══════ */
+.join-card{padding:44px 32px;width:100%;max-width:480px;text-align:center;animation:popIn .5s ease}
+.jc-icon{font-size:5em;display:block;margin-bottom:14px;animation:float 3s ease-in-out infinite}
+.join-card h1{font-size:1.75em;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(90deg,#fbbf24,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.join-card p{color:var(--muted);font-size:1em;margin-bottom:26px;line-height:1.65}
+.name-sel{width:100%;padding:13px 16px;background:var(--card2);border:2px solid var(--border);
+  border-radius:14px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.05em;margin-bottom:16px;cursor:pointer;appearance:none;transition:.2s}
+.name-sel:focus{outline:none;border-color:var(--yellow)}
+.name-sel option{background:#1a2235}
+.go-btn{width:100%;padding:15px;border:none;border-radius:14px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#f59e0b,#8b5cf6);
+  box-shadow:0 8px 24px rgba(245,158,11,.3);transition:transform .2s}
+.go-btn:hover{transform:translateY(-2px)}
+
+/* ══════ ACTIVITY SCREEN ══════ */
+.act-wrap{max-width:760px;margin:0 auto}
+
+/* TEAM HEADER */
+.team-hdr{border-radius:18px;padding:14px 20px;margin-bottom:16px;
+  display:flex;justify-content:space-between;align-items:center;border:1.5px solid transparent;flex-wrap:wrap;gap:10px}
+.th-left{display:flex;align-items:center;gap:10px}
+.th-badge{border-radius:10px;padding:4px 14px;color:#fff;font-size:.8em;font-weight:900}
+.th-name{font-size:.95em;font-weight:800}
+.th-leader{font-size:.78em;color:var(--yellow);font-weight:700;display:flex;align-items:center;gap:4px}
+
+/* LIVE MEMBERS */
+.live-bar{background:var(--card2);border-radius:12px;padding:10px 14px;
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:1px solid var(--border)}
+.lb-label{font-size:.76em;font-weight:800;color:var(--muted);flex-shrink:0}
+.lb-chips{display:flex;flex-wrap:wrap;gap:5px}
+.lchip{border-radius:8px;padding:3px 10px;font-size:.74em;font-weight:700}
+.lchip-done{background:var(--greenl);color:#86efac;border:1px solid rgba(34,197,94,.25)}
+.lchip-pend{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border)}
+
+/* PROGRESS */
+.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-label{font-size:.85em;font-weight:800;color:var(--muted)}
+.prog-label span{color:var(--yellow)}
+.score-badge{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);
+  border-radius:20px;padding:4px 14px;font-size:.85em;font-weight:900;color:#fde68a}
+.prog-track{height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#f59e0b,#8b5cf6);transition:width .5s}
+
+/* SCENARIO CARD */
+.sc-card{padding:26px;margin-bottom:14px;animation:slideUp .4s ease}
+.sc-badge{display:inline-block;border-radius:8px;padding:4px 12px;font-size:.74em;font-weight:800;
+  margin-bottom:12px;letter-spacing:.4px}
+.sc-badge-pro{background:var(--t1l);color:#fde68a;border:1px solid var(--t1b)}
+.sc-badge-prob{background:rgba(99,102,241,.15);color:#a5b4fc;border:1px solid rgba(99,102,241,.3)}
+.sc-num{font-size:.76em;font-weight:800;color:var(--muted);margin-bottom:8px;letter-spacing:.4px;text-transform:uppercase}
+.sc-story{background:var(--card2);border-radius:14px;padding:16px 18px;
+  font-size:1em;font-weight:700;color:var(--text);line-height:1.75;margin-bottom:18px;
+  border-right:3px solid transparent}
+.sc-question{font-size:1.05em;font-weight:800;color:var(--text);margin-bottom:16px;line-height:1.65}
+
+/* OPTIONS */
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{padding:13px 17px;border-radius:13px;border:2px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:.97em;font-weight:700;
+  cursor:pointer;text-align:right;transition:all .2s cubic-bezier(.36,1.56,.64,1);line-height:1.5}
+.opt:hover{border-color:rgba(245,158,11,.4);background:var(--t1l);transform:translateX(-3px)}
+.opt.selected{border-color:var(--yellow);background:var(--t1l);color:#fde68a}
+.opt.correct{border-color:var(--green)!important;background:var(--greenl)!important;color:#86efac!important}
+.opt.wrong{border-color:var(--red)!important;background:var(--redl)!important;color:#fca5a5!important}
+.opt.show-correct{border-color:var(--green);background:var(--greenl);color:#86efac;opacity:.65}
+.opt:disabled{cursor:not-allowed}
+
+/* FEEDBACK */
+.fb-bar{border-radius:12px;padding:12px 16px;margin-top:12px;
+  font-size:.88em;font-weight:700;display:none;animation:slideUp .3s ease;line-height:1.55}
+.fb-bar.show{display:flex;align-items:flex-start;gap:9px}
+.fb-bar.ok{background:var(--greenl);border:1.5px solid rgba(34,197,94,.3);color:#86efac}
+.fb-bar.err{background:var(--redl);border:1.5px solid rgba(239,68,68,.3);color:#fca5a5}
+
+.next-btn{width:100%;padding:14px;border:none;border-radius:13px;color:#fff;margin-top:14px;
+  font-family:'Tajawal',sans-serif;font-size:1.05em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#f59e0b,#8b5cf6);
+  box-shadow:0 5px 16px rgba(245,158,11,.25);transition:transform .2s;display:none}
+.next-btn:hover{transform:translateY(-1px)}
+
+/* DONE BANNER */
+.done-banner{border-radius:18px;padding:22px;text-align:center;display:none;animation:popIn .4s ease}
+.done-banner.show{display:block}
+
+/* LEADER BUTTON */
+.leader-btn{width:100%;margin-top:14px;padding:14px;border:none;border-radius:13px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.05em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#7c3aed,#4f46e5);
+  box-shadow:0 5px 16px rgba(124,58,237,.3);transition:transform .2s}
+.leader-btn:hover{transform:translateY(-1px)}
+
+/* ══════ LEADER DASHBOARD ══════ */
+.ld-wrap{max-width:900px;margin:0 auto}
+.ld-header{padding:18px 22px;border-radius:18px 18px 0 0;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  border-bottom:1px solid var(--border)}
+.ld-header h2{font-size:1.15em;font-weight:900}
+.ld-back{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.85em;font-weight:700;cursor:pointer}
+
+/* MEMBER RESPONSES */
+.responses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:20px}
+.resp-card{background:var(--card2);border-radius:14px;padding:14px;border:1px solid var(--border)}
+.resp-name{font-size:.85em;font-weight:800;color:var(--text);margin-bottom:10px;
+  display:flex;align-items:center;gap:7px}
+.resp-item{border-radius:10px;padding:9px 12px;margin-bottom:7px;font-size:.82em;font-weight:700;line-height:1.5}
+.resp-item.type-pro{background:var(--greenl);color:#86efac;border:1px solid rgba(34,197,94,.2)}
+.resp-item.type-con{background:var(--redl);color:#fca5a5;border:1px solid rgba(239,68,68,.2)}
+.resp-no{font-size:.82em;color:var(--muted);font-style:italic;text-align:center;padding:10px}
+
+/* COLLECTIVE VIEW */
+.collective-wrap{padding:0 20px 20px}
+.coll-title{font-size:.85em;font-weight:800;color:var(--muted);margin-bottom:12px;letter-spacing:.4px;text-transform:uppercase}
+.sc-summary{background:var(--card2);border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid var(--border)}
+.sc-s-title{font-size:.82em;font-weight:800;color:var(--yellow);margin-bottom:8px}
+.sc-s-results{display:flex;flex-wrap:wrap;gap:6px}
+.vote-chip{border-radius:9px;padding:5px 12px;font-size:.78em;font-weight:700;cursor:pointer;transition:.2s;border:1.5px solid transparent}
+.vote-chip:hover{transform:scale(1.04)}
+.vote-chip.type-pro{background:var(--greenl);color:#86efac;border-color:rgba(34,197,94,.25)}
+.vote-chip.type-con{background:var(--redl);color:#fca5a5;border-color:rgba(239,68,68,.2)}
+.vote-chip.approved{border-color:var(--green)!important;box-shadow:0 0 0 2px rgba(34,197,94,.25)}
+.vote-chip.rejected{opacity:.3;text-decoration:line-through}
+.vote-count{font-size:.72em;background:rgba(255,255,255,.1);border-radius:6px;padding:1px 6px;margin-right:5px}
+
+/* SUBMIT LEADER */
+.ld-submit-zone{padding:0 20px 20px}
+.ld-submit-note{font-size:.88em;font-weight:700;color:#fde68a;margin-bottom:12px;
+  background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);
+  border-radius:12px;padding:12px 16px;text-align:center}
+.ld-submit-btn{width:100%;padding:15px;border:none;border-radius:13px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  box-shadow:0 6px 20px rgba(34,197,94,.3);transition:transform .2s}
+.ld-submit-btn:hover{transform:translateY(-1px)}
+.ld-submit-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.ld-sent{background:var(--greenl);border:2px solid rgba(34,197,94,.3);
+  border-radius:14px;padding:18px;text-align:center;display:none;animation:popIn .4s ease}
+.ld-sent.show{display:block}
+
+/* ══════ TEACHER SCREEN ══════ */
+.t-wrap{max-width:980px;margin:0 auto}
+.t-card{overflow:hidden}
+.t-hdr{background:linear-gradient(135deg,#0d1020,#1a0f35);padding:18px 26px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.t-hdr h2{font-size:1.15em;font-weight:900;
+  background:linear-gradient(90deg,#fbbf24,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.t-btns{display:flex;gap:9px;flex-wrap:wrap}
+.t-ref{background:rgba(20,184,166,.15);color:#5eead4;border:1px solid rgba(20,184,166,.3);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:800;cursor:pointer}
+.t-clr{background:var(--redl);color:#fca5a5;border:1px solid rgba(239,68,68,.25);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:800;cursor:pointer}
+.t-back{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:700;cursor:pointer}
+.t-body{padding:22px}
+.t-groups{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.tg-card{border-radius:18px;padding:20px;border:1.5px solid transparent}
+.tg1{background:var(--t1l);border-color:var(--t1b)}
+.tg2{background:var(--t2l);border-color:var(--t2b)}
+.tg-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.tg-title{font-size:1em;font-weight:900}
+.tg-stat{border-radius:20px;padding:3px 12px;font-size:.74em;font-weight:800}
+.tg-sent{background:var(--greenl);color:#86efac;border:1px solid rgba(34,197,94,.3)}
+.tg-wait{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border)}
+.tg-leader{font-size:.76em;color:var(--muted);margin-bottom:10px}
+.tg-members-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.tg-mc{border-radius:7px;padding:2px 8px;font-size:.72em;font-weight:700;
+  background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--border)}
+.result-section{background:rgba(0,0,0,.25);border-radius:12px;padding:14px;margin-top:8px}
+.rs-title{font-size:.74em;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.rs-item{border-radius:9px;padding:7px 11px;margin-bottom:6px;font-size:.82em;font-weight:700;line-height:1.45}
+.rs-pro{background:var(--greenl);color:#86efac}
+.rs-con{background:var(--redl);color:#fca5a5}
+.rs-empty{font-size:.8em;color:var(--muted);font-style:italic;text-align:center;padding:8px}
+
+/* STATS */
+.t-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.ts-box{background:var(--card2);border-radius:14px;padding:14px;text-align:center;border:1px solid var(--border)}
+.ts-n{font-size:2em;font-weight:900;line-height:1;margin-bottom:3px}
+.ts-l{font-size:.76em;color:var(--muted);font-weight:700}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.show{display:flex}
+.modal-box{background:var(--card);border-radius:22px;padding:32px;width:100%;max-width:290px;
+  text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);animation:popIn .35s ease}
+.modal-box h3{font-size:1.1em;font-weight:900;color:var(--text);margin-bottom:6px}
+.modal-box p{font-size:.83em;color:var(--muted);margin-bottom:14px}
+.m-pass{width:100%;padding:12px;background:var(--card2);border:2px solid var(--border);
+  border-radius:11px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.2em;text-align:center;letter-spacing:5px;margin-bottom:10px;transition:.2s}
+.m-pass:focus{outline:none;border-color:var(--yellow)}
+.m-err{font-size:.78em;color:#fca5a5;font-weight:700;margin-bottom:10px;display:none}
+.m-err.show{display:block}
+.m-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.m-ok{padding:11px;border:none;border-radius:10px;background:var(--yellow);color:#1a1000;
+  font-family:'Tajawal',sans-serif;font-weight:900;cursor:pointer}
+.m-cancel{padding:11px;border:1px solid var(--border);border-radius:10px;background:transparent;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-weight:700;cursor:pointer}
+
+/* CONF */
+.conf{position:fixed;border-radius:2px;pointer-events:none;z-index:9999;animation:fall 2.5s linear forwards}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+@media(max-width:640px){.t-groups{grid-template-columns:1fr}.t-stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="hd-title">🌐 اكتشاف مخططات الشبكات</div>
+  <a href="#" class="teacher-link" id="teacherLink">🔒 شاشة المعلمة</a>
+</header>
+
+<!-- TEACHER MODAL -->
+<div class="modal-bg" id="teacherModal">
+  <div class="modal-box">
+    <h3>🔐 شاشة المعلمة</h3>
+    <p>أدخلي كلمة المرور</p>
+    <input type="password" class="m-pass" id="passInput" placeholder="••••" maxlength="6"/>
+    <div class="m-err" id="passErr">كلمة المرور خاطئة!</div>
+    <div class="m-btns">
+      <button class="m-ok" id="passOk">دخول</button>
+      <button class="m-cancel" id="passCancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- JOIN VIEW -->
+<div class="view center active" id="joinView">
+  <div class="card join-card">
+    <span class="jc-icon">🌐</span>
+    <h1>اكتشفي مخططك</h1>
+    <p>اختاري اسمكِ — ستتم إضافتكِ لمجموعتكِ تلقائياً<br>واكتشفي الإيجابيات والسلبيات من خلال مواقف حقيقية</p>
+    <select id="nameSelect" class="name-sel">
+      <option value="">— اختاري اسمكِ —</option>
+      <option>اسراء مصطفى سليم عبدالرحمن حسن</option>
+      <option>اسيل ايمن يوسف حسن الحورانى</option>
+      <option>انفال سيف ناصر الدرعى الكعبى</option>
+      <option>ايه امير خيرى بابكر خيرى</option>
+      <option>بانا زكريا خلف بني هاني</option>
+      <option>جنى تميم المقداد</option>
+      <option>حبيبه عمرو نور الدين هاشم</option>
+      <option>حنين اشرف عبدالقادر محمد شاهين</option>
+      <option>دعاء غزوان الحمدان</option>
+      <option>روفيده محمد عبدالظاهر محمد مهنى</option>
+      <option>رويدا محمد عبدالظاهر محمد مهنى</option>
+      <option>ريناد امجد شعبان عطيه</option>
+      <option>سارة المتولى برهام حسن السيد</option>
+      <option>سجى يونس سعيد شجراوي</option>
+      <option>سلمى محمد زكريا محمد محمود</option>
+      <option>عائشة احمد محمد حامد محمد</option>
+      <option>عائشه عادل محمد على البلوشى</option>
+      <option>فاطمه عوض الله عباس الحسين</option>
+      <option>كريمه عزو العلى</option>
+      <option>كنانه فؤاد حسين اللحام</option>
+      <option>ليلى محمد النوراني بشاره</option>
+      <option>ملاك يحيى الاحمدالعبدالموسى</option>
+      <option>منار حمد العبيد</option>
+      <option>منة الله محمد محمود على فايد</option>
+      <option>ندى السيد محمد محمد زياده</option>
+      <option>ندى احمد بخيت محمد عمر</option>
+      <option>نور الهدى سعيد العوض</option>
+      <option>نور محمود محمد محمد عرمان</option>
+      <option>نورهان محمود محمد عبدالعال حسن</option>
+      <option>هيفاء حسين المحمد العبادي</option>
+      <option>وهج كاظم حسن العابدي</option>
+    </select>
+    <button class="go-btn" id="goBtn">ابدئي الاكتشاف 🔍</button>
+  </div>
+</div>
+
+<!-- ACTIVITY VIEW (regular member) -->
+<div class="view" id="activityView">
+  <div class="act-wrap">
+    <div class="team-hdr" id="teamHdr"></div>
+    <div class="live-bar">
+      <span class="lb-label">👥 المجموعة:</span>
+      <div class="lb-chips" id="liveChips"></div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label">الموقف <span id="scNum">1</span> من <span id="scTotal">5</span></div>
+      <div class="score-badge" id="scoreBadge">⭐ 0 نقطة</div>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div id="scenarioArea"></div>
+    <div class="done-banner card" id="doneBanner">
+      <div style="font-size:3em;margin-bottom:10px">🎉</div>
+      <div style="font-size:1.2em;font-weight:900;color:#86efac;margin-bottom:6px">أكملتِ جميع المواقف!</div>
+      <div style="font-size:.9em;color:var(--muted);margin-bottom:16px;line-height:1.6">تم إرسال إجاباتكِ للقائدة<br>في انتظار إرسال القائدة النتائج للمعلمة</div>
+    </div>
+    <button class="leader-btn" id="leaderDashBtn" style="display:none" onclick="showView('leaderView')">
+      👑 فتح لوحة القائدة — مراجعة إجابات المجموعة
+    </button>
+  </div>
+</div>
+
+<!-- LEADER DASHBOARD -->
+<div class="view" id="leaderView">
+  <div class="ld-wrap">
+    <div class="card">
+      <div class="ld-header" id="ldHeader">
+        <h2>👑 لوحة القائدة</h2>
+        <button class="ld-back" onclick="showView('activityView')">← العودة</button>
+      </div>
+
+      <!-- COLLECTIVE ANALYSIS -->
+      <div class="collective-wrap">
+        <div class="coll-title">📊 إجابات المجموعة — اختاري ما تريدين إرساله للمعلمة</div>
+        <div id="collectiveContent"></div>
+      </div>
+
+      <!-- SUBMIT ZONE -->
+      <div class="ld-submit-zone">
+        <div class="ld-submit-note">
+          👑 راجعي الإجابات أعلاه ← انقري على الإجابات التي تريدين الاحتفاظ بها (ستبقى واضحة) وإلغاء ما هو خاطئ ← ثم أرسلي للمعلمة
+        </div>
+        <button class="ld-submit-btn" id="ldSubmitBtn" onclick="submitLeader()">📤 إرسال النتائج للمعلمة</button>
+        <div class="ld-sent" id="ldSent">
+          <div style="font-size:2.5em;margin-bottom:8px">✅</div>
+          <div style="font-size:1.1em;font-weight:900;color:#86efac">تم الإرسال بنجاح للمعلمة!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEACHER VIEW -->
+<div class="view" id="teacherView">
+  <div class="t-wrap">
+    <div class="card t-card">
+      <div class="t-hdr">
+        <h2>📊 نتائج اكتشاف مخططات الشبكات</h2>
+        <div class="t-btns">
+          <button class="t-ref" onclick="loadTeacher()">🔄 تحديث</button>
+          <button class="t-clr" onclick="clearAll()">🗑️ مسح الكل</button>
+          <button class="t-back" onclick="showView('joinView')">← خروج</button>
+        </div>
+      </div>
+      <div class="t-body">
+        <div class="t-stats" id="tStats">
+          <div class="ts-box"><div class="ts-n" style="color:var(--t1)" id="ts1">0</div><div class="ts-l">م1 — Mesh</div></div>
+          <div class="ts-box"><div class="ts-n" style="color:var(--t2)" id="ts2">0</div><div class="ts-l">م2 — Hybrid</div></div>
+          <div class="ts-box"><div class="ts-n" style="color:var(--green)" id="tsDone">0</div><div class="ts-l">مجموعة أرسلت</div></div>
+          <div class="ts-box"><div class="ts-n" style="color:#f472b6" id="tsTotal">0</div><div class="ts-l">إجمالي الطالبات</div></div>
+        </div>
+        <div class="t-groups" id="tGroups">
+          <div style="grid-column:span 2;text-align:center;padding:40px;color:var(--muted);font-weight:700">جارٍ التحميل...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const BASE = 'nets-topologies-g10b';
+const PASS = '1234';
+
+/* ══ STUDENT → GROUP MAP ══ */
+const STUDENT_GROUP = {
+  // ── Group 1: Star Topology ── Leader: نور محمود
+  'نور محمود محمد محمد عرمان':1,
+  'اسراء مصطفى سليم عبدالرحمن حسن':1,
+  'اسيل ايمن يوسف حسن الحورانى':1,
+  'انفال سيف ناصر الدرعى الكعبى':1,
+  'ايه امير خيرى بابكر خيرى':1,
+  'بانا زكريا خلف بني هاني':1,
+  'جنى تميم المقداد':1,
+  'حبيبه عمرو نور الدين هاشم':1,
+  'حنين اشرف عبدالقادر محمد شاهين':1,
+  'دعاء غزوان الحمدان':1,
+  'روفيده محمد عبدالظاهر محمد مهنى':1,
+  'ريناد امجد شعبان عطيه':1,
+  'سارة المتولى برهام حسن السيد':1,
+  'سجى يونس سعيد شجراوي':1,
+  'سلمى محمد زكريا محمد محمود':1,
+  'نورهان محمود محمد عبدالعال حسن':1,
+  // ── Group 2: Mesh Topology ── Leader: رويدا
+  'رويدا محمد عبدالظاهر محمد مهنى':2,
+  'عائشة احمد محمد حامد محمد':2,
+  'عائشه عادل محمد على البلوشى':2,
+  'فاطمه عوض الله عباس الحسين':2,
+  'كريمه عزو العلى':2,
+  'كنانه فؤاد حسين اللحام':2,
+  'ليلى محمد النوراني بشاره':2,
+  'ملاك يحيى الاحمدالعبدالموسى':2,
+  'منار حمد العبيد':2,
+  'منة الله محمد محمود على فايد':2,
+  'ندى السيد محمد محمد زياده':2,
+  'ندى احمد بخيت محمد عمر':2,
+  'نور الهدى سعيد العوض':2,
+  'هيفاء حسين المحمد العبادي':2,
+  'وهج كاظم حسن العابدي':2,
+};
+const LEADERS={1:'نور محمود محمد محمد عرمان',2:'رويدا محمد عبدالظاهر محمد مهنى'};
+const GROUP_INFO={
+  1:{name:'المجموعة 1',topology:'Mesh Topology — المخطط المتشابك',emoji:'🔮',color:'var(--t1)',colorHex:'#f59e0b',bg:'var(--t1l)',border:'var(--t1b)'},
+  2:{name:'المجموعة 2',topology:'Hybrid Topology — المخطط المختلط',emoji:'🔀',color:'var(--t2)',colorHex:'#8b5cf6',bg:'var(--t2l)',border:'var(--t2b)'}
+};
+
+/* ══ SCENARIOS DATA ══ */
+const SCENARIOS = {
+  1:[ // Mesh Topology
+    {id:'m1',
+     story:'شركة تقنية مهمة تعتمد على Mesh Network. في منتصف ليلة عمل مهمة، انقطع الكابل الرابط بين جهازين. لكن البيانات وجدت طريقاً بديلاً عبر 3 أجهزة وصلت لوجهتها!',
+     question:'ما الميزة التي يكشفها هذا الموقف عن المخطط المتشابك؟',
+     opts:['سلبية: البيانات تسلك مسارات متعددة وتتأخر','إيجابية: يوجد دائماً مسار بديل لتدفق البيانات عند انقطاع الاتصال','سلبية: الشبكة تعمل بشكل عشوائي','إيجابية: لا تحتاج كابلات على الإطلاق'],
+     correct:1, type:'pro', insight:'إيجابية: يوجد دائماً مسار بديل لتدفق البيانات'},
+    {id:'m2',
+     story:'مستشفى كبير قرر تركيب Mesh Network لـ 8 أجهزة فقط. فاجأ الفريق الهندسي الإدارة: يحتاجون 28 كابلاً مختلفاً، وأسبوعاً كاملاً للتركيب، وميزانية ضخمة جداً!',
+     question:'ماذا يكشف هذا الموقف عن عيب المخطط المتشابك؟',
+     opts:['إيجابية: التركيب سهل ورخيص','سلبية: التكلفة العالية بسبب الحاجة لتوصيلات متكررة بين كل الأجهزة','إيجابية: يحتاج عدداً أقل من الكابلات','سلبية: لا يناسب المستشفيات'],
+     correct:1, type:'con', insight:'سلبية: التكلفة العالية بسبب الحاجة لتوصيلات متكررة بين كل الأجهزة'},
+    {id:'m3',
+     story:'مركز بيانات حيوي يعمل 24/7. تعطّلت 3 أجهزة بسبب حرارة شديدة. لكن باقي الأجهزة استمرت في تبادل البيانات بشكل مثالي — ولم يلاحظ العملاء أي انقطاع!',
+     question:'ما الميزة التي يُبرزها هذا الموقف؟',
+     opts:['سلبية: الشبكة تعمل حتى مع الحرارة الشديدة وهذا خطر','سلبية: الأجهزة المتعطلة تسبب بطئاً عاماً','إيجابية: موثوقية عالية — عطل أجهزة متعددة لا يؤثر على الشبكة','إيجابية: لا تحتاج تبريداً خاصاً'],
+     correct:2, type:'pro', insight:'إيجابية: موثوقية عالية — عطل الأجهزة لا يؤثر على عمل بقية الشبكة'},
+    {id:'m4',
+     story:'مطعم صغير فيه 5 أجهزة أراد تركيب Mesh Network. عندما عرف صاحبه أن 5 أجهزة تحتاج 10 كابلات منفصلة قرر الاستغناء عنها واختار نوعاً أرخص!',
+     question:'ماذا يكشف هذا الموقف؟',
+     opts:['إيجابية: مناسبة للأماكن الصغيرة','إيجابية: لا تحتاج كابلات كثيرة','سلبية: التكلفة المرتفعة تجعلها غير مناسبة للشبكات الصغيرة','سلبية: لا تعمل مع 5 أجهزة'],
+     correct:2, type:'con', insight:'سلبية: التكلفة المرتفعة تجعلها غير مناسبة للشبكات الصغيرة'},
+    {id:'m5',
+     story:'شركة اتصالات ضخمة تستخدم Mesh Network لربط أبراجها. عندما حدث زلزال وأتلف عدة كابلات، ظلت المكالمات والإنترنت يعملان دون انقطاع للمشتركين!',
+     question:'ما الذي تكشفه هذه الحادثة عن Mesh Topology؟',
+     opts:['سلبية: الشبكة لا تتأثر بالكوارث الطبيعية لأنها لاسلكية','إيجابية: تدفق البيانات يستمر عبر مسارات بديلة حتى عند تلف عدة كابلات','سلبية: الزلزال يعطّل الشبكة بالكامل','إيجابية: لا تحتاج كابلات أرضية'],
+     correct:1, type:'pro', insight:'إيجابية: يوجد دائماً مسار بديل — تدفق البيانات لا يتوقف حتى عند تلف عدة وصلات'}
+  ],
+  2:[ // Hybrid Topology
+    {id:'h1',
+     story:'أرادت مؤسسة حكومية ربط 3 مبانٍ مختلفة في المدينة بشبكة واحدة. كل مبنى له تصميمه الخاص (نجمي، حلقي، خطي). استدعت مزوّد الشبكات فقال: "لا مشكلة — سنربطها بـ Hybrid Topology!"',
+     question:'ما الذي يكشفه هذا الموقف عن Hybrid Topology؟',
+     opts:['سلبية: لا يمكن ربط شبكات مختلفة التصميم','إيجابية: يجمع أكثر من تصميم هيكلي معاً ويُستخدم لربط الشبكات بين المؤسسات','سلبية: يحتاج تصميم موحد لجميع المباني','إيجابية: يستبدل جميع التصاميم القديمة بتصميم واحد'],
+     correct:1, type:'pro', insight:'إيجابية: يجمع أكثر من تصميم هيكلي ويُستخدم لربط شبكات المؤسسات المختلفة'},
+    {id:'h2',
+     story:'شركة تقنية تستخدم Hybrid Topology. احتاجت إضافة 15 جهازاً جديداً لقسم التطوير. أضاف مهندس الشبكة الأجهزة في ساعة واحدة — دون إيقاف الشبكة ودون أي انقطاع للخدمة!',
+     question:'ما الميزة التي يكشفها هذا الموقف؟',
+     opts:['سلبية: إضافة الأجهزة تستغرق وقتاً طويلاً','سلبية: يجب إيقاف الشبكة عند التوسعة','إيجابية: قابل للتحديث والتطوير وإضافة أجهزة دون التأثير على الشبكة','إيجابية: لا يحتاج مهندساً متخصصاً'],
+     correct:2, type:'pro', insight:'إيجابية: قابل للتحديث — إضافة أجهزة جديدة دون التأثير على أداء الشبكة'},
+    {id:'h3',
+     story:'شركة عالمية لديها فروع في 5 دول. كل فرع يستخدم مخططاً مختلفاً (Star، Ring، Bus). طلب المدير من مهندس الشبكة توصيلها جميعاً وضبط أداء كل منها بشكل مستقل.',
+     question:'ما الميزة التي توفرها Hybrid Topology في هذا الموقف؟',
+     opts:['سلبية: لا يمكن التحكم في شبكات مختلفة التصميم','إيجابية: سهولة التحكم وضبط أي نوع من التصاميم المستخدمة للحصول على أفضل أداء','سلبية: يجب توحيد تصميم جميع الفروع أولاً','سلبية: يستغرق وقتاً طويلاً لضبط كل فرع'],
+     correct:1, type:'pro', insight:'إيجابية: سهولة التحكم وضبط أي تصميم من التصاميم المستخدمة للحصول على أفضل أداء'},
+    {id:'h4',
+     story:'مدرسة أرادت تركيب Hybrid Topology لربط 4 مبانٍ. عندما طلبت عرض السعر فوجئت: تحتاج كابلات لأنواع مختلفة + نواقل متعددة + أنظمة توصيل مختلفة لكل مبنى. الميزانية ضخمة!',
+     question:'ما العيب الذي يكشفه هذا الموقف؟',
+     opts:['إيجابية: التكلفة مناسبة للمدارس','إيجابية: لا يحتاج كابلات كثيرة','سلبية: التكلفة العالية — تحتاج كابلات ونواقل وأنظمة مختلفة لكل شبكة','سلبية: لا يناسب المدارس بشكل عام'],
+     correct:2, type:'con', insight:'سلبية: مكلفة — تتطلب عدداً كبيراً من الأسلاك والنواقل وأنظمة ربط مختلفة'},
+    {id:'h5',
+     story:'وزارة الاتصالات أرادت ربط شبكات محلية (LAN) في 20 مؤسسة حكومية. لكن كل مؤسسة تستخدم تصميماً مختلفاً. قال المهندس: "سنستخدم Hybrid — لكن الأمر سيكون معقداً بعض الشيء!"',
+     question:'ماذا يكشف هذا الموقف عن Hybrid Topology؟',
+     opts:['إيجابية: التصميم بسيط وسهل الإدارة','إيجابية: لا يحتاج أنظمة توصيل مختلفة','سلبية: تعقيد التركيب والإدارة بسبب الحاجة لأنظمة ربط مختلفة بين الشبكات','سلبية: لا يستطيع ربط أكثر من 10 مؤسسات'],
+     correct:2, type:'con', insight:'سلبية: تعقيد التركيب والإدارة بسبب الحاجة لأنظمة مختلفة للربط بين الشبكات'}
+  ]
+};
+
+/* ══ STATE ══ */
+let student='', groupId=0, isLeader=false;
+let current=0, score=0, answered=false;
+let leaderApproved={}; // {scenarioId: true/false}
+let liveInt=null;
+
+/* ══ HELPERS ══ */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function spawnConf(n=10){
+  const c=['#f59e0b','#8b5cf6','#22c55e','#ec4899','#06b6d4'];
+  for(let i=0;i<n;i++) setTimeout(()=>{
+    const el=document.createElement('div');el.className='conf';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;
+      background:${c[Math.floor(Math.random()*c.length)]};
+      width:${5+Math.random()*8}px;height:${5+Math.random()*8}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${2+Math.random()*1.5}s;animation-delay:${Math.random()*.5}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);
+  },i*60);
+}
+
+/* ══ JOIN ══ */
+document.getElementById('goBtn').addEventListener('click',async()=>{
+  student=document.getElementById('nameSelect').value;
+  if(!student){alert('اختاري اسمكِ أولاً!');return;}
+  groupId=STUDENT_GROUP[student];
+  if(!groupId){alert('اسمكِ غير موجود في القائمة.');return;}
+  isLeader=(student===LEADERS[groupId]);
+
+  // Register
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  try{await fetch(`${DB}/${BASE}/team${groupId}/members/${key}.json`,
+    {method:'PUT',body:JSON.stringify({name:student,isLeader,joined:true,ts:Date.now()})});}catch(e){}
+
+  buildTeamHeader();
+  loadScenario(0);
+  showView('activityView');
+  if(isLeader) document.getElementById('leaderDashBtn').style.display='block';
+  loadLive();
+  liveInt=setInterval(loadLive,5000);
+});
+document.getElementById('nameSelect').addEventListener('keydown',e=>{if(e.key==='Enter') document.getElementById('goBtn').click();});
+
+/* ══ TEAM HEADER ══ */
+function buildTeamHeader(){
+  const g=GROUP_INFO[groupId];
+  const hdr=document.getElementById('teamHdr');
+  hdr.style.background=g.bg;hdr.style.borderColor=g.border;
+  hdr.innerHTML=`<div class="th-left">
+    <span style="font-size:1.8em">${g.emoji}</span>
+    <div>
+      <span class="th-badge" style="background:${g.colorHex}">${g.name}</span>
+      <div class="th-name" style="color:${g.color};margin-top:4px">${g.topology}</div>
+    </div>
+  </div>
+  ${isLeader?'<div class="th-leader">👑 أنتِ قائدة المجموعة</div>':''}`;
+}
+
+/* ══ LOAD SCENARIO ══ */
+function loadScenario(idx){
+  current=idx;answered=false;
+  const scenarios=SCENARIOS[groupId];
+  const total=scenarios.length;
+  const sc=scenarios[idx];
+
+  document.getElementById('scNum').textContent=idx+1;
+  document.getElementById('scTotal').textContent=total;
+  document.getElementById('progFill').style.width=((idx/total)*100)+'%';
+  document.getElementById('scoreBadge').textContent='⭐ '+score+' نقطة';
+
+  const area=document.getElementById('scenarioArea');
+  area.innerHTML='';
+  const card=document.createElement('div');
+  card.className='sc-card card';
+  card.innerHTML=`
+    <div class="sc-num">الموقف ${idx+1} من ${total}</div>
+    <div class="sc-story" style="border-right-color:${GROUP_INFO[groupId].colorHex}">📖 ${sc.story}</div>
+    <div class="sc-question">${sc.question}</div>
+    <div class="opts" id="opts">
+      ${sc.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="pickOpt(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="fb-bar" id="fb"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextSc()">
+      ${idx<total-1?'الموقف التالي ←':'عرض النتائج 🏁'}
+    </button>`;
+  area.appendChild(card);
+}
+
+/* ══ PICK OPTION ══ */
+async function pickOpt(i){
+  if(answered)return;
+  answered=true;
+  const sc=SCENARIOS[groupId][current];
+  const isOk=i===sc.correct;
+  if(isOk){score+=10;spawnConf(6);}
+  document.getElementById('scoreBadge').textContent='⭐ '+score+' نقطة';
+
+  document.querySelectorAll('.opt').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===sc.correct) b.classList.add('correct');
+    else if(j===i&&!isOk) b.classList.add('wrong');
+  });
+
+  const fb=document.getElementById('fb');
+  fb.className='fb-bar show '+(isOk?'ok':'err');
+  fb.innerHTML=`<span>${isOk?'🎉':'💡'}</span>
+    <span><strong>${isOk?'صحيح!':'خطأ!'}</strong> هذا الموقف يكشف عن: <strong>${sc.insight}</strong></span>`;
+
+  document.getElementById('nextBtn').style.display='block';
+
+  // Save answer to Firebase
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  try{await fetch(`${DB}/${BASE}/team${groupId}/responses/${key}/${sc.id}.json`,
+    {method:'PUT',body:JSON.stringify({student,scId:sc.id,answer:sc.opts[i],
+      insight:sc.insight,type:sc.type,correct:isOk,ts:Date.now()})});}catch(e){}
+}
+
+/* ══ NEXT ══ */
+function nextSc(){
+  const total=SCENARIOS[groupId].length;
+  if(current<total-1){loadScenario(current+1);}
+  else{
+    document.getElementById('scenarioArea').innerHTML='';
+    document.getElementById('doneBanner').className='done-banner card show';
+    document.getElementById('progFill').style.width='100%';
+    if(isLeader){
+      document.getElementById('leaderDashBtn').style.display='block';
+      loadLeaderDash();
+    }
+  }
+}
+
+/* ══ LIVE MEMBERS ══ */
+async function loadLive(){
+  try{
+    const r=await fetch(`${DB}/${BASE}/team${groupId}/members.json`);
+    const d=await r.json()||{};
+    const members=Object.values(d).filter(m=>m&&m.name);
+    // Check who has responses
+    const respR=await fetch(`${DB}/${BASE}/team${groupId}/responses.json`);
+    const respD=await respR.json()||{};
+    const respondedKeys=Object.keys(respD);
+    document.getElementById('liveChips').innerHTML=members.map(m=>{
+      const k=encodeURIComponent(m.name.replace(/\s+/g,'_'));
+      const done=respondedKeys.includes(k);
+      return `<div class="lchip ${done?'lchip-done':'lchip-pend'}">${done?'✅ ':''} ${m.name.split(' ').slice(0,2).join(' ')}</div>`;
+    }).join('');
+  }catch(e){}
+}
+
+/* ══ LEADER DASHBOARD ══ */
+async function loadLeaderDash(){
+  const g=GROUP_INFO[groupId];
+  document.getElementById('ldHeader').style.background=
+    `linear-gradient(135deg,rgba(0,0,0,.3),${g.colorHex}22)`;
+
+  try{
+    const respR=await fetch(`${DB}/${BASE}/team${groupId}/responses.json`);
+    const respD=await respR.json()||{};
+    const scenarios=SCENARIOS[groupId];
+
+    // Aggregate by scenario
+    const byScenario={};
+    scenarios.forEach(sc=>{byScenario[sc.id]={sc,answers:[]};});
+    Object.entries(respD).forEach(([memberKey,scAnswers])=>{
+      Object.entries(scAnswers||{}).forEach(([scId,ans])=>{
+        if(byScenario[scId]) byScenario[scId].answers.push(ans);
+      });
+    });
+
+    // Initialize approved
+    scenarios.forEach(sc=>{if(leaderApproved[sc.id]===undefined) leaderApproved[sc.id]=true;});
+
+    const container=document.getElementById('collectiveContent');
+    container.innerHTML='';
+    scenarios.forEach((sc,i)=>{
+      const data=byScenario[sc.id];
+      const answers=data.answers;
+      // Count votes
+      const votes={};
+      answers.forEach(a=>{
+        const k=a.insight||a.answer||'';
+        votes[k]=(votes[k]||0)+1;
+      });
+
+      const div=document.createElement('div');
+      div.className='sc-summary';
+      div.innerHTML=`<div class="sc-s-title">📖 الموقف ${i+1}: ${sc.story.substring(0,60)}...</div>
+        <div class="sc-s-results" id="votes-${sc.id}">
+          ${answers.length===0?'<span style="color:var(--muted);font-size:.8em;font-style:italic">لم تردّ أي طالبة بعد</span>':''}
+          ${Object.entries(votes).map(([insight,count])=>`
+            <div class="vote-chip ${sc.type==='pro'?'type-pro':'type-con'} ${leaderApproved[sc.id]?'approved':''}"
+              id="vc-${sc.id}" onclick="toggleApproval('${sc.id}')">
+              <span class="vote-count">${count}</span>${insight}
+            </div>`).join('')}
+        </div>`;
+      container.appendChild(div);
+    });
+  }catch(e){document.getElementById('collectiveContent').innerHTML='<p style="color:var(--muted);padding:20px;text-align:center">لا توجد بيانات بعد — انتظري استجابات المجموعة</p>';}
+}
+
+function toggleApproval(scId){
+  leaderApproved[scId]=!leaderApproved[scId];
+  const el=document.getElementById('vc-'+scId);
+  if(el){
+    if(leaderApproved[scId]){el.classList.add('approved');el.classList.remove('rejected');}
+    else{el.classList.remove('approved');el.classList.add('rejected');}
+  }
+}
+
+/* ══ SUBMIT LEADER ══ */
+async function submitLeader(){
+  document.getElementById('ldSubmitBtn').disabled=true;
+  document.getElementById('ldSubmitBtn').textContent='⏳ جارٍ الإرسال...';
+
+  const scenarios=SCENARIOS[groupId];
+  const pros=[],cons=[];
+  scenarios.forEach(sc=>{
+    if(leaderApproved[sc.id]!==false){
+      if(sc.type==='pro') pros.push(sc.insight);
+      else cons.push(sc.insight);
+    }
+  });
+  const g=GROUP_INFO[groupId];
+  const data={leader:student,topology:g.topology,pros,cons,ts:Date.now()};
+  try{
+    await fetch(`${DB}/${BASE}/team${groupId}/submission.json`,{method:'PUT',body:JSON.stringify(data)});
+  }catch(e){}
+
+  document.getElementById('ldSubmitBtn').style.display='none';
+  document.getElementById('ldSent').className='ld-sent show';
+  spawnConf(20);
+}
+
+/* ══ TEACHER ══ */
+document.getElementById('teacherLink').addEventListener('click',e=>{
+  e.preventDefault();
+  document.getElementById('teacherModal').classList.add('show');
+  document.getElementById('passInput').value='';
+  document.getElementById('passErr').classList.remove('show');
+  document.getElementById('passInput').className='m-pass';
+  setTimeout(()=>document.getElementById('passInput').focus(),100);
+});
+document.getElementById('passCancel').addEventListener('click',()=>document.getElementById('teacherModal').classList.remove('show'));
+document.getElementById('passOk').addEventListener('click',tryPass);
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter') tryPass();});
+
+function tryPass(){
+  if(document.getElementById('passInput').value===PASS){
+    document.getElementById('teacherModal').classList.remove('show');
+    clearInterval(liveInt);
+    loadTeacher();
+    showView('teacherView');
+    setInterval(loadTeacher,15000);
+  } else {
+    document.getElementById('passInput').className='m-pass';void document.getElementById('passInput').offsetWidth;
+    document.getElementById('passInput').className='m-pass';
+    document.getElementById('passErr').classList.add('show');
+    document.getElementById('passInput').style.borderColor='var(--red)';
+    setTimeout(()=>{document.getElementById('passInput').style.borderColor='';document.getElementById('passErr').classList.remove('show');},2000);
+  }
+}
+
+async function loadTeacher(){
+  try{
+    const r=await fetch(`${DB}/${BASE}.json`);
+    const d=await r.json()||{};
+    renderTeacher(d);
+  }catch(e){renderTeacher({});}
+}
+
+function renderTeacher(d){
+  let t1=0,t2=0,done=0,total=0;
+  const groups=document.getElementById('tGroups');
+  groups.innerHTML=Object.entries(GROUP_INFO).map(([gid,g])=>{
+    const tdata=d['team'+gid]||{};
+    const members=Object.values(tdata.members||{}).filter(m=>m&&m.name);
+    const sub=tdata.submission;
+    if(gid==='1') t1=members.length; else t2=members.length;
+    total+=members.length;
+    if(sub) done++;
+
+    const chips=members.map(m=>`<div class="tg-mc">${m.name.split(' ').slice(0,2).join(' ')}</div>`).join('');
+    let subHtml=`<div class="result-section"><div class="rs-empty">⏳ القائدة لم ترسل بعد</div></div>`;
+    if(sub){
+      const pros=(sub.pros||[]).map(t=>`<div class="rs-item rs-pro">✅ ${t}</div>`).join('');
+      const cons=(sub.cons||[]).map(t=>`<div class="rs-item rs-con">⚠️ ${t}</div>`).join('');
+      subHtml=`
+        <div class="result-section">
+          <div class="rs-title" style="color:#86efac">الإيجابيات</div>${pros||'<div class="rs-empty">لا شيء</div>'}
+        </div>
+        <div class="result-section" style="margin-top:8px">
+          <div class="rs-title" style="color:#fca5a5">السلبيات</div>${cons||'<div class="rs-empty">لا شيء</div>'}
+        </div>`;
+    }
+    return `<div class="tg-card tg${gid}">
+      <div class="tg-header">
+        <div>
+          <div class="tg-title" style="color:${g.colorHex}">${g.emoji} ${g.name}</div>
+          <div style="font-size:.78em;color:${g.colorHex};margin-top:2px;font-weight:700">${g.topology}</div>
+        </div>
+        <span class="tg-stat ${sub?'tg-sent':'tg-wait'}">${sub?'✅ أُرسلت':'⏳'}</span>
+      </div>
+      <div class="tg-leader" style="margin-bottom:6px">👑 القائدة: ${LEADERS[parseInt(gid)].split(' ').slice(0,3).join(' ')}</div>
+      <div class="tg-members-row">${chips}</div>
+      ${subHtml}
+    </div>`;
+  }).join('');
+  document.getElementById('ts1').textContent=t1;
+  document.getElementById('ts2').textContent=t2;
+  document.getElementById('tsDone').textContent=done;
+  document.getElementById('tsTotal').textContent=total;
+}
+
+async function clearAll(){
+  if(!confirm('⚠️ مسح جميع بيانات النشاط؟'))return;
+  try{await fetch(`${DB}/${BASE}.json`,{method:'DELETE'});loadTeacher();alert('✅ تم المسح.');}
+  catch(e){alert('❌ خطأ.');}
+}
+</script>
+</body>
+</html>
