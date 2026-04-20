@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>غلق الهدف — Mesh & Hybrid Topology</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080d1a; --card:#111827; --card2:#1a2235; --border:rgba(255,255,255,.07);
+  --mesh:#f59e0b; --meshl:rgba(245,158,11,.13); --meshb:rgba(245,158,11,.3);
+  --hybrid:#8b5cf6; --hybridl:rgba(139,92,246,.13); --hybridb:rgba(139,92,246,.3);
+  --l1:#3b82f6; --l2:#06b6d4; --l3:#ec4899;
+  --green:#22c55e; --greenl:rgba(34,197,94,.13);
+  --red:#ef4444;   --redl:rgba(239,68,68,.13);
+  --yellow:#fbbf24;
+  --text:#f1f5f9; --muted:#94a3b8;
+  --shadow:0 16px 48px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 15% 25%,rgba(245,158,11,.07) 0%,transparent 50%),
+    radial-gradient(ellipse at 85% 75%,rgba(139,92,246,.07) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 10%,rgba(59,130,246,.05) 0%,transparent 40%)}
+
+/* ── HEADER ── */
+.header{background:rgba(8,13,26,.96);border-bottom:1px solid var(--border);
+  padding:12px 22px;display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(10px)}
+.hd-left{display:flex;align-items:center;gap:10px}
+.hd-title{font-size:1.05em;font-weight:900;
+  background:linear-gradient(90deg,#fbbf24,#a78bfa,#67e8f9);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hright{display:flex;gap:8px;align-items:center}
+.hbadge{background:rgba(255,255,255,.07);border:1px solid var(--border);
+  border-radius:12px;padding:5px 14px;font-weight:900;font-size:.9em;color:var(--text)}
+.timer-b{min-width:60px;text-align:center}
+.timer-b.urgent{background:rgba(239,68,68,.3)!important;border-color:var(--red)!important;animation:pulse .9s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.teacher-link{background:rgba(255,255,255,.06);color:var(--muted);
+  border:1px solid var(--border);border-radius:20px;padding:5px 13px;
+  font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:700;
+  cursor:pointer;text-decoration:none;transition:.2s}
+.teacher-link:hover{background:rgba(255,255,255,.12);color:var(--text)}
+
+/* STEP BAR */
+.step-bar{height:5px;display:flex;gap:2px;position:relative;z-index:10}
+.step-seg{flex:1;transition:background .4s}
+
+/* VIEWS */
+.view{display:none;min-height:calc(100vh - 65px);padding:24px 16px 60px;position:relative;z-index:1}
+.view.active{display:block}
+.view.center{display:flex;align-items:center;justify-content:center;padding:20px}
+
+/* ── CARD ── */
+.card{background:var(--card);border-radius:22px;border:1px solid var(--border);box-shadow:var(--shadow)}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes slideUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+/* ══ NAME SCREEN ══ */
+.name-card{padding:44px 32px;width:100%;max-width:460px;text-align:center;animation:popIn .5s ease}
+.nc-icon{font-size:5em;display:block;margin-bottom:14px;animation:float 3s ease-in-out infinite}
+.name-card h1{font-size:1.7em;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(90deg,#fbbf24,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.name-card p{color:var(--muted);font-size:.97em;margin-bottom:26px;line-height:1.65}
+.name-input{width:100%;padding:13px 16px;background:var(--card2);border:2px solid var(--border);
+  border-radius:14px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.05em;text-align:center;margin-bottom:16px;transition:.2s}
+.name-input:focus{outline:none;border-color:var(--yellow)}
+.name-input::placeholder{color:var(--muted)}
+.go-btn{width:100%;padding:15px;border:none;border-radius:14px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#f59e0b,#8b5cf6);
+  box-shadow:0 8px 24px rgba(245,158,11,.3);transition:transform .2s}
+.go-btn:hover{transform:translateY(-2px)}
+
+/* ══ LEVEL INTRO ══ */
+.intro-card{padding:46px 34px;width:100%;max-width:500px;text-align:center;animation:popIn .5s ease}
+.intro-icon{font-size:5em;display:block;margin-bottom:14px;animation:float 2.5s ease-in-out infinite}
+.intro-card h2{font-size:1.7em;font-weight:900;margin-bottom:8px}
+.intro-card p{color:var(--muted);font-size:1em;margin-bottom:28px;line-height:1.65}
+.intro-btn{width:100%;padding:15px;border:none;border-radius:14px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;cursor:pointer;transition:transform .2s}
+.intro-btn:hover{transform:translateY(-2px)}
+
+/* ══ QUESTION AREA ══ */
+.q-wrap{max-width:800px;margin:0 auto}
+
+/* PROGRESS ROW */
+.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-lbl{font-size:.85em;font-weight:800;color:var(--muted)}
+.prog-lbl span{color:var(--yellow)}
+.score-b{border-radius:20px;padding:5px 15px;font-size:.85em;font-weight:900;
+  background:var(--meshl);border:1px solid var(--meshb);color:#fde68a}
+.prog-track{height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#f59e0b,#8b5cf6);transition:width .5s}
+
+/* QUESTION CARD */
+.q-card{padding:26px;margin-bottom:14px;animation:slideUp .4s ease}
+.q-badge{display:inline-block;border-radius:8px;padding:4px 12px;font-size:.74em;font-weight:800;
+  margin-bottom:12px;letter-spacing:.4px;text-transform:uppercase}
+.b-tf{background:rgba(234,179,8,.12);color:#fde68a;border:1px solid rgba(234,179,8,.25)}
+.b-mc{background:rgba(59,130,246,.12);color:#93c5fd;border:1px solid rgba(59,130,246,.25)}
+.b-cl{background:rgba(236,72,153,.12);color:#f9a8d4;border:1px solid rgba(236,72,153,.25)}
+.q-text{font-size:1.1em;font-weight:800;color:var(--text);line-height:1.65;margin-bottom:18px}
+
+/* T/F */
+.tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tf-btn{padding:20px 14px;border-radius:16px;border:2.5px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:1.05em;font-weight:900;
+  cursor:pointer;transition:all .2s cubic-bezier(.36,1.56,.64,1);
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+.tf-btn.t-btn:hover{border-color:var(--green);background:var(--greenl)}
+.tf-btn.f-btn:hover{border-color:var(--red);background:var(--redl)}
+.tf-btn.correct{border-color:var(--green)!important;background:var(--greenl)!important;color:#86efac!important;animation:popIn .3s ease}
+.tf-btn.wrong{border-color:var(--red)!important;background:var(--redl)!important;color:#fca5a5!important}
+.tf-btn.show-ok{border-color:var(--green);background:var(--greenl);color:#86efac;opacity:.6}
+.tf-btn:disabled{cursor:not-allowed}
+.tf-ico{font-size:2.2em}
+
+/* MCQ */
+.opts-col{display:flex;flex-direction:column;gap:9px}
+.opt{padding:13px 17px;border-radius:13px;border:2px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:.97em;font-weight:700;
+  cursor:pointer;text-align:right;transition:all .2s;line-height:1.5}
+.opt:hover{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.1);transform:translateX(-3px)}
+.opt.correct{border-color:var(--green)!important;background:var(--greenl)!important;color:#86efac!important}
+.opt.wrong{border-color:var(--red)!important;background:var(--redl)!important;color:#fca5a5!important}
+.opt.show-ok{border-color:var(--green);background:var(--greenl);color:#86efac;opacity:.6}
+.opt:disabled{cursor:not-allowed}
+
+/* CLASSIFY L3 */
+.cl-pool{display:flex;flex-wrap:wrap;gap:8px;padding:14px;
+  background:rgba(255,255,255,.03);border-radius:14px;
+  border:1.5px dashed rgba(255,255,255,.1);margin-bottom:14px}
+.cl-chip{padding:8px 15px;border-radius:12px;font-size:.88em;font-weight:700;
+  cursor:pointer;transition:all .2s cubic-bezier(.36,1.56,.64,1);
+  background:var(--card2);color:var(--text);border:1.5px solid var(--border)}
+.cl-chip:hover{transform:scale(1.05)}
+.cl-chip.sel-mesh{background:var(--meshl);border-color:var(--mesh);color:#fde68a}
+.cl-chip.sel-hybrid{background:var(--hybridl);border-color:var(--hybrid);color:#d8b4fe}
+.cl-chip.placed{opacity:.3;cursor:default;transform:none}
+.cl-hint{text-align:center;font-size:.82em;font-weight:700;color:var(--muted);
+  padding:8px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:12px;transition:.2s}
+.cl-hint.active{background:rgba(234,179,8,.1);color:#fde68a;border:1px solid rgba(234,179,8,.2)}
+.cl-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px}
+.drop-col{border-radius:16px;padding:13px;min-height:100px;
+  border:2px dashed transparent;cursor:pointer;transition:all .2s}
+.drop-col.mesh-col{background:var(--meshl);border-color:var(--meshb)}
+.drop-col.hybrid-col{background:var(--hybridl);border-color:var(--hybridb)}
+.drop-col:hover{border-style:solid;transform:scale(1.01)}
+.drop-col.mesh-col:hover{border-color:var(--mesh)}
+.drop-col.hybrid-col:hover{border-color:var(--hybrid)}
+.drop-col.hl{border-style:solid}
+.drop-col.mesh-col.hl{border-color:var(--mesh)}
+.drop-col.hybrid-col.hl{border-color:var(--hybrid)}
+.col-hd{font-size:.82em;font-weight:900;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.mesh-col .col-hd{color:var(--mesh)} .hybrid-col .col-hd{color:var(--hybrid)}
+.placed-chip{border-radius:9px;padding:7px 11px;margin-bottom:6px;font-size:.82em;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:7px;animation:popIn .25s ease;line-height:1.4}
+.placed-chip:hover{opacity:.75}
+.mesh-col .placed-chip{background:rgba(245,158,11,.2);color:#fde68a;border:1px solid rgba(245,158,11,.2)}
+.hybrid-col .placed-chip{background:rgba(139,92,246,.2);color:#d8b4fe;border:1px solid rgba(139,92,246,.2)}
+.placed-chip.correct{border-color:var(--green)!important;background:var(--greenl)!important;color:#86efac!important;cursor:default}
+.placed-chip.wrong{border-color:var(--red)!important;background:var(--redl)!important;color:#fca5a5!important;cursor:default}
+
+/* FEEDBACK */
+.fb{border-radius:12px;padding:12px 16px;margin-top:12px;
+  font-size:.9em;font-weight:700;display:none;animation:slideUp .3s ease;line-height:1.55}
+.fb.show{display:flex;align-items:flex-start;gap:9px}
+.fb.ok{background:var(--greenl);border:1.5px solid rgba(34,197,94,.3);color:#86efac}
+.fb.err{background:var(--redl);border:1.5px solid rgba(239,68,68,.3);color:#fca5a5}
+
+/* NAV BTNS */
+.nav-row{display:flex;gap:10px;margin-top:14px}
+.next-btn{flex:1;padding:14px;border:none;border-radius:13px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.05em;font-weight:900;cursor:pointer;
+  box-shadow:0 5px 16px rgba(0,0,0,.2);transition:transform .2s;display:none}
+.next-btn:hover{transform:translateY(-1px)}
+.check-btn{flex:1;padding:14px;border:none;border-radius:13px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.05em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  box-shadow:0 5px 16px rgba(34,197,94,.25);transition:transform .2s}
+.check-btn:hover{transform:translateY(-1px)}
+
+/* ══ FINAL ══ */
+.final-card{padding:50px 34px;width:100%;max-width:560px;text-align:center;animation:popIn .6s ease}
+.final-trophy{font-size:5.5em;display:block;margin-bottom:16px;animation:float 2s ease-in-out infinite}
+.final-card h2{font-size:2em;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(90deg,#fbbf24,#f97316,#ec4899);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.final-name{font-size:1.3em;font-weight:900;color:#a5b4fc;margin:10px 0}
+.score-ring{width:110px;height:110px;border-radius:50%;position:relative;margin:18px auto;
+  background:conic-gradient(#22c55e 0deg, rgba(255,255,255,.08) 0deg);
+  border:3px solid rgba(34,197,94,.25)}
+.score-ring::after{content:'';position:absolute;inset:8px;border-radius:50%;background:var(--card)}
+.ring-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:1}
+.ring-num{font-size:1.7em;font-weight:900;color:var(--green)}
+.ring-lbl{font-size:.75em;color:var(--muted);font-weight:700}
+.final-msg{color:var(--muted);font-size:.97em;margin:14px 0 22px;line-height:1.7}
+.lvl-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.lv-box{border-radius:14px;padding:14px 10px;text-align:center}
+.lv-box .lv-sc{font-size:1.5em;font-weight:900;margin-bottom:4px}
+.lv-box .lv-nm{font-size:.78em;font-weight:800;color:var(--muted)}
+.replay-btn{padding:12px 28px;background:rgba(255,255,255,.07);border:1px solid var(--border);
+  border-radius:12px;color:var(--muted);font-family:'Tajawal',sans-serif;
+  font-size:.93em;font-weight:700;cursor:pointer;transition:.2s}
+.replay-btn:hover{background:rgba(255,255,255,.13);color:var(--text)}
+
+/* ══ TEACHER ══ */
+.t-wrap{max-width:1000px;margin:0 auto}
+.t-card{overflow:hidden}
+.t-hdr{background:linear-gradient(135deg,#0d1020,#1a0f35);padding:18px 26px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.t-hdr h2{font-size:1.15em;font-weight:900;
+  background:linear-gradient(90deg,#fbbf24,#a78bfa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.t-btns{display:flex;gap:9px}
+.t-ref{background:rgba(20,184,166,.15);color:#5eead4;border:1px solid rgba(20,184,166,.3);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:800;cursor:pointer}
+.t-clr{background:var(--redl);color:#fca5a5;border:1px solid rgba(239,68,68,.25);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:800;cursor:pointer}
+.t-back{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);
+  border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:700;cursor:pointer}
+.t-body{padding:22px}
+.t-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.ts-box{background:var(--card2);border-radius:14px;padding:14px;text-align:center;border:1px solid var(--border)}
+.ts-n{font-size:2em;font-weight:900;line-height:1;margin-bottom:3px}
+.ts-l{font-size:.76em;color:var(--muted);font-weight:700}
+/* PROG BARS */
+.prog-sec{padding:0 0 18px}
+.pb-row{display:flex;justify-content:space-between;font-size:.84em;color:var(--muted);margin-bottom:5px}
+.pb-track{height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;margin-bottom:14px}
+.pb-fill{height:100%;border-radius:5px;transition:width .6s}
+/* PODIUM */
+.podium{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.pod{flex:1;min-width:140px;border-radius:16px;padding:16px 12px;text-align:center;border:1px solid var(--border)}
+.p1{background:linear-gradient(135deg,#3a2a00,#4a3500);border-color:#b8860b}
+.p2{background:linear-gradient(135deg,#1a1040,#2d1b69);border-color:#6040c0}
+.p3{background:linear-gradient(135deg,#0a2030,#0e3040);border-color:#206080}
+.pod .pm{font-size:1.8em;margin-bottom:5px}
+.pod .pn{font-weight:800;font-size:.85em;color:#fff;margin-bottom:5px}
+.pod .ps{font-size:1.4em;font-weight:900;color:var(--yellow)}
+/* STUDENT GRID */
+.t-filter{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.ftab{border-radius:10px;padding:5px 14px;font-family:'Tajawal',sans-serif;font-size:.84em;
+  font-weight:700;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--muted)}
+.ftab.on{background:rgba(139,92,246,.2);border-color:var(--hybrid);color:#d8b4fe}
+.std-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px}
+.std-card{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:13px 14px}
+.std-card.done{border-color:rgba(34,197,94,.3)}
+.std-card.pend{opacity:.4}
+.sc-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.sc-ico{font-size:1.5em}
+.sc-name{font-weight:700;font-size:.85em;color:var(--text);line-height:1.3}
+.sc-score{font-size:.78em;font-weight:800;margin-top:2px;color:var(--yellow)}
+.lvl-dots{display:flex;gap:4px;margin-top:5px}
+.ldot{width:24px;height:7px;border-radius:4px}
+.ldot.l1d{background:var(--l1)}.ldot.l2d{background:var(--l2)}.ldot.l3d{background:var(--l3)}.ldot.off{background:rgba(255,255,255,.08)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.show{display:flex}
+.modal-box{background:var(--card);border-radius:22px;padding:32px;width:100%;max-width:290px;
+  text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);animation:popIn .35s ease}
+.modal-box h3{font-size:1.1em;font-weight:900;color:var(--text);margin-bottom:6px}
+.modal-box p{font-size:.83em;color:var(--muted);margin-bottom:14px}
+.m-pass{width:100%;padding:12px;background:var(--card2);border:2px solid var(--border);
+  border-radius:11px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.2em;text-align:center;letter-spacing:5px;margin-bottom:10px;transition:.2s}
+.m-pass:focus{outline:none;border-color:var(--yellow)}
+.m-err{font-size:.78em;color:#fca5a5;font-weight:700;margin-bottom:10px;display:none}
+.m-err.show{display:block}
+.m-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.m-ok{padding:11px;border:none;border-radius:10px;background:var(--yellow);color:#1a1000;
+  font-family:'Tajawal',sans-serif;font-weight:900;cursor:pointer}
+.m-cancel{padding:11px;border:1px solid var(--border);border-radius:10px;background:transparent;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-weight:700;cursor:pointer}
+
+/* CONF */
+.conf{position:fixed;border-radius:2px;pointer-events:none;z-index:9999;animation:fall 2.5s linear forwards}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@media(max-width:640px){.tf-grid{grid-template-columns:1fr}.cl-cols{grid-template-columns:1fr}.t-stats{grid-template-columns:repeat(2,1fr)}.lvl-summary{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="hd-left">
+    <div class="hd-title">🔁 غلق الهدف — Mesh & Hybrid</div>
+  </div>
+  <div class="hright">
+    <div class="hbadge" id="lvlBadge" style="display:none">م 1/3</div>
+    <div class="hbadge" id="scoreBadge" style="display:none">⭐ 0</div>
+    <div class="hbadge timer-b" id="timerBadge" style="display:none">01:00</div>
+    <a href="#" class="teacher-link" id="teacherLink">🔒 المعلمة</a>
+  </div>
+</header>
+<div class="step-bar" id="stepBar">
+  <div class="step-seg" id="ss1" style="background:rgba(255,255,255,.08)"></div>
+  <div class="step-seg" id="ss2" style="background:rgba(255,255,255,.08)"></div>
+  <div class="step-seg" id="ss3" style="background:rgba(255,255,255,.08)"></div>
+</div>
+
+<!-- TEACHER MODAL -->
+<div class="modal-bg" id="teacherModal">
+  <div class="modal-box">
+    <h3>🔐 شاشة المعلمة</h3>
+    <p>أدخلي كلمة المرور</p>
+    <input type="password" class="m-pass" id="passInput" placeholder="••••" maxlength="6"/>
+    <div class="m-err" id="passErr">كلمة المرور خاطئة!</div>
+    <div class="m-btns">
+      <button class="m-ok" id="passOk">دخول</button>
+      <button class="m-cancel" id="passCancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAME VIEW -->
+<div class="view center active" id="nameView">
+  <div class="card name-card">
+    <span class="nc-icon">🌐</span>
+    <h1>غلق الهدف</h1>
+    <p>اختبري ما تعلّمتِه عن<br>
+      <strong style="color:var(--mesh)">Mesh</strong> و
+      <strong style="color:var(--hybrid)">Hybrid Topology</strong><br>
+      ثلاثة مستويات — دقيقة لكل مستوى</p>
+    <input type="text" class="name-input" id="nameInput" placeholder="اكتبي اسمكِ هنا ..." />
+    <button class="go-btn" id="goBtn">ابدئي ⭐</button>
+  </div>
+</div>
+
+<!-- LEVEL INTROS -->
+<div class="view center" id="intro1">
+  <div class="card intro-card">
+    <span class="intro-icon">✔️</span>
+    <h2 style="color:var(--l1)">المستوى الأول ⭐</h2>
+    <p>ثلاثة أسئلة صح أو خطأ<br>حول Mesh وHybrid Topology</p>
+    <button class="intro-btn" style="background:linear-gradient(135deg,var(--l1),#1d4ed8);box-shadow:0 5px 18px rgba(59,130,246,.3)" onclick="startLevel(1)">ابدئي ←</button>
+  </div>
+</div>
+<div class="view center" id="intro2">
+  <div class="card intro-card">
+    <span class="intro-icon">🎯</span>
+    <h2 style="color:var(--l2)">المستوى الثاني ⭐⭐</h2>
+    <p>ثلاثة أسئلة اختيار من متعدد<br>فكّري جيداً قبل الإجابة</p>
+    <button class="intro-btn" style="background:linear-gradient(135deg,var(--l2),#0e7490);box-shadow:0 5px 18px rgba(6,182,212,.3)" onclick="startLevel(2)">ابدئي ←</button>
+  </div>
+</div>
+<div class="view center" id="intro3">
+  <div class="card intro-card">
+    <span class="intro-icon">🧩</span>
+    <h2 style="color:var(--l3)">المستوى الثالث ⭐⭐⭐</h2>
+    <p>صنّفي 6 عبارات:<br>هل هي عن <strong style="color:var(--mesh)">Mesh</strong> أم <strong style="color:var(--hybrid)">Hybrid</strong>؟</p>
+    <button class="intro-btn" style="background:linear-gradient(135deg,var(--l3),#be185d);box-shadow:0 5px 18px rgba(236,72,153,.3)" onclick="startLevel(3)">ابدئي ←</button>
+  </div>
+</div>
+
+<!-- QUESTION VIEW -->
+<div class="view" id="qView">
+  <div class="q-wrap">
+    <div class="prog-row">
+      <div class="prog-lbl">سؤال <span id="qNum">1</span> من <span id="qTotal">3</span></div>
+      <div class="score-b" id="scoreDisp">⭐ 0</div>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="qProg" style="width:0%"></div></div>
+    <div id="qArea"></div>
+  </div>
+</div>
+
+<!-- FINAL VIEW -->
+<div class="view center" id="finalView">
+  <div class="card final-card">
+    <span class="final-trophy">🏆</span>
+    <h2>أحسنتِ!</h2>
+    <div class="final-name" id="finalName"></div>
+    <div class="score-ring" id="scoreRing">
+      <div class="ring-inner">
+        <div class="ring-num" id="ringNum"></div>
+        <div class="ring-lbl" id="ringLbl"></div>
+      </div>
+    </div>
+    <div class="lvl-summary" id="lvlSummary"></div>
+    <p class="final-msg" id="finalMsg"></p>
+    <button class="replay-btn" onclick="location.reload()">🔄 إعادة المحاولة</button>
+  </div>
+</div>
+
+<!-- TEACHER VIEW -->
+<div class="view" id="teacherView">
+  <div class="t-wrap">
+    <div class="card t-card">
+      <div class="t-hdr">
+        <h2>📊 نتائج غلق Mesh & Hybrid</h2>
+        <div class="t-btns">
+          <button class="t-ref" onclick="loadTeacher()">🔄 تحديث</button>
+          <button class="t-clr" onclick="clearResults()">🗑️ مسح</button>
+          <button class="t-back" onclick="showView('nameView')">← خروج</button>
+        </div>
+      </div>
+      <div class="t-body">
+        <div class="t-stats">
+          <div class="ts-box"><div class="ts-n" style="color:var(--hybrid)" id="tTotal">0</div><div class="ts-l">الطالبات</div></div>
+          <div class="ts-box"><div class="ts-n" style="color:var(--green)" id="tDone">0</div><div class="ts-l">أكملن</div></div>
+          <div class="ts-box"><div class="ts-n" style="color:var(--yellow)" id="tAvg">—</div><div class="ts-l">متوسط النقاط</div></div>
+          <div class="ts-box"><div class="ts-n" style="color:#f472b6" id="tTop">—</div><div class="ts-l">أعلى نقاط</div></div>
+        </div>
+        <div class="prog-sec">
+          <div class="pb-row"><span>⭐ نسبة الإنجاز</span><span id="pct">0%</span></div>
+          <div class="pb-track"><div class="pb-fill" id="pctFill" style="width:0%;background:linear-gradient(90deg,var(--mesh),var(--hybrid))"></div></div>
+          <div class="pb-row"><span>📊 متوسط دقة م1 (صح/خطأ)</span><span id="acc1">—</span></div>
+          <div class="pb-track"><div class="pb-fill" id="acc1Fill" style="width:0%;background:var(--l1)"></div></div>
+          <div class="pb-row"><span>📊 متوسط دقة م2 (اختيار متعدد)</span><span id="acc2">—</span></div>
+          <div class="pb-track"><div class="pb-fill" id="acc2Fill" style="width:0%;background:var(--l2)"></div></div>
+          <div class="pb-row"><span>📊 متوسط دقة م3 (تصنيف)</span><span id="acc3">—</span></div>
+          <div class="pb-track"><div class="pb-fill" id="acc3Fill" style="width:0%;background:var(--l3)"></div></div>
+        </div>
+        <div class="t-filter">
+          <button class="ftab on" onclick="setFilter('all',this)">الكل</button>
+          <button class="ftab" onclick="setFilter('done',this)">✅ أكملن</button>
+          <button class="ftab" onclick="setFilter('pend',this)">⏳ لم تكملن</button>
+        </div>
+        <div class="podium" id="podium"></div>
+        <div class="std-grid" id="stdGrid"><div style="grid-column:span 3;text-align:center;padding:40px;color:var(--muted);font-weight:700">جارٍ التحميل...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH = 'closure-mesh-hybrid-g10';
+const PASS = '1234';
+const MAX_SCORE = 90; // 3*10 + 3*15 + 6*10
+
+/* ════ QUESTIONS ════ */
+const L1 = [ // True/False - 10 pts each
+  {text:'في Mesh Topology، إذا انقطع الكابل بين جهازين تنقطع الشبكة بالكامل ولا تجد البيانات طريقاً آخر.',
+   correct:false, fb:'❌ خطأ! Mesh توفّر دائماً مساراً بديلاً — البيانات تجد طريقاً آخر عبر الأجهزة الأخرى.'},
+  {text:'Hybrid Topology تجمع أكثر من تصميم هيكلي للشبكات (خطي – نجمي – حلقي – متشابك) معاً.',
+   correct:true,  fb:'✅ صحيح! هذا هو تعريف Hybrid — يدمج تصاميم متعددة في شبكة واحدة.'},
+  {text:'التكلفة المرتفعة هي عيب مشترك بين Mesh Topology وHybrid Topology.',
+   correct:true,  fb:'✅ صحيح! كلاهما يتطلب توصيلات ومعدات كثيرة مما يرفع التكلفة.'},
+];
+const L2 = [ // MCQ - 15 pts each
+  {text:'ما الميزة الأساسية لـ Mesh Topology التي تجعلها مناسبة للشبكات الحيوية؟',
+   opts:['سهولة إضافة الأجهزة الجديدة',
+         'يوجد دائماً مسار بديل لتدفق البيانات عند انقطاع أي اتصال',
+         'الاعتماد على جهاز مركزي واحد للتحكم',
+         'التكلفة المنخفضة مقارنة بالتصاميم الأخرى'],
+   correct:1, fb:'✅ صحيح! الميزة الأساسية هي المسار البديل الذي يضمن استمرارية الشبكة دائماً.'},
+  {text:'ما الذي يجعل Hybrid Topology الخيار الأمثل لربط شبكات المؤسسات المختلفة؟',
+   opts:['لأنه يعتمد على جهاز مركزي واحد يتحكم بالكل',
+         'لأنه الأرخص بين جميع تصاميم الشبكات',
+         'لأنه يجمع أكثر من تصميم هيكلي مما يمنح مرونة في ربط أنواع مختلفة',
+         'لأنه لا يحتاج إلى كابلات أو نواقل إضافية'],
+   correct:2, fb:'✅ ممتاز! مرونة Hybrid في دمج التصاميم تجعله مثالياً لربط شبكات المؤسسات المختلفة.'},
+  {text:'شركة تحتاج شبكة يمكن التوسع فيها وإضافة أجهزة جديدة بسهولة دون التأثير على الأداء. أي التصاميم مناسب؟',
+   opts:['Mesh Topology فقط لأنه الأموثق','Hybrid Topology لأنه قابل للتحديث والتطوير بسهولة',
+         'Bus Topology لأنه الأبسط','Ring Topology لأن البيانات تسير باتجاه واحد'],
+   correct:1, fb:'✅ صحيح! Hybrid مصمّم للمرونة — إضافة أجهزة أو تغيير التصميم دون التأثير على الشبكة.'},
+];
+const L3_ITEMS = [ // Classify - 10 pts each
+  {id:'c1', text:'يوجد دائماً مسار بديل لتدفق البيانات عند انقطاع أي اتصال', type:'mesh'},
+  {id:'c2', text:'يجمع أكثر من تصميم هيكلي للشبكات معاً', type:'hybrid'},
+  {id:'c3', text:'التكلفة العالية بسبب الحاجة لتوصيلات متكررة بين كل الأجهزة', type:'mesh'},
+  {id:'c4', text:'يُستخدم لربط الشبكات بين المؤسسات المختلفة', type:'hybrid'},
+  {id:'c5', text:'موثوقية عالية — عطل الأجهزة لا يوقف الشبكة', type:'mesh'},
+  {id:'c6', text:'قابل للتحديث والتوسع دون التأثير على الشبكة', type:'hybrid'},
+];
+
+/* ════ STATE ════ */
+let student='', level=0, totalScore=0;
+let levelScores={1:0,2:0,3:0};
+let timerInt=null, timerSec=60;
+let answered=false;
+let qIdx=0;
+// L3 state
+let selectedChip=null, placement={}, l3Checked=false;
+
+/* ════ ROUTING ════ */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function updateStepBar(lv){
+  const cols={1:'var(--l1)',2:'var(--l2)',3:'var(--l3)'};
+  for(let i=1;i<=3;i++){
+    const s=document.getElementById('ss'+i);
+    s.style.background=i<=lv?cols[lv]:'rgba(255,255,255,.08)';
+  }
+}
+
+/* ════ START ════ */
+document.getElementById('goBtn').addEventListener('click',()=>{
+  student=document.getElementById('nameInput').value.trim();
+  if(!student){alert('اكتبي اسمكِ أولاً!');return;}
+  showHeader();
+  showView('intro1');
+  updateStepBar(1);
+  setLvlBadge(1);
+});
+document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter') document.getElementById('goBtn').click();});
+
+function showHeader(){
+  ['lvlBadge','scoreBadge','timerBadge'].forEach(id=>document.getElementById(id).style.display='');
+}
+function setLvlBadge(lv){
+  document.getElementById('lvlBadge').textContent='م '+lv+'/3';
+}
+
+/* ════ TIMER ════ */
+function startTimer(secs=60){
+  clearInterval(timerInt);
+  timerSec=secs;updateTimer();
+  timerInt=setInterval(()=>{timerSec--;updateTimer();if(timerSec<=0){clearInterval(timerInt);autoEnd();}},1000);
+}
+function updateTimer(){
+  const el=document.getElementById('timerBadge');
+  el.textContent='00:'+String(timerSec).padStart(2,'0');
+  el.className='hbadge timer-b'+(timerSec<=15?' urgent':'');
+}
+function autoEnd(){
+  if(level===1||level===2){if(!answered){showNextBtn();}}
+  else if(level===3){if(!l3Checked) checkL3();}
+}
+
+/* ════ START LEVEL ════ */
+function startLevel(lv){
+  level=lv;qIdx=0;answered=false;
+  updateStepBar(lv);setLvlBadge(lv);
+  startTimer(60);
+  if(lv===1) loadTFQ(0);
+  else if(lv===2) loadMCQ(0);
+  else renderL3();
+  showView('qView');
+}
+
+/* ════ LEVEL 1 — T/F ════ */
+function loadTFQ(idx){
+  qIdx=idx;answered=false;
+  const q=L1[idx];
+  document.getElementById('qNum').textContent=idx+1;
+  document.getElementById('qTotal').textContent=L1.length;
+  document.getElementById('qProg').style.width=((idx/L1.length)*100)+'%';
+  document.getElementById('scoreDisp').textContent='⭐ '+totalScore;
+
+  const area=document.getElementById('qArea');
+  area.innerHTML='';
+  const card=document.createElement('div');
+  card.className='q-card card';
+  card.innerHTML=`
+    <div class="q-badge b-tf">صح أم خطأ</div>
+    <div class="q-text">${q.text}</div>
+    <div class="tf-grid">
+      <button class="tf-btn t-btn" id="tfT" onclick="answerTF(true)"><span class="tf-ico">✅</span><span>صح</span></button>
+      <button class="tf-btn f-btn" id="tfF" onclick="answerTF(false)"><span class="tf-ico">❌</span><span>خطأ</span></button>
+    </div>
+    <div class="fb" id="fb"></div>
+    <div class="nav-row">
+      <button class="next-btn" id="nextBtn" style="background:linear-gradient(135deg,var(--l1),#1d4ed8);display:none" onclick="nextQ(1)">${idx<L1.length-1?'التالي ←':'المستوى الثاني ⭐⭐ →'}</button>
+    </div>`;
+  area.appendChild(card);
+}
+
+function answerTF(val){
+  if(answered)return;answered=true;
+  const q=L1[qIdx];const ok=(val===q.correct);
+  if(ok){totalScore+=10;levelScores[1]+=10;spawnMini();}
+  document.getElementById('scoreBadge').textContent='⭐ '+totalScore;
+  document.getElementById('tfT').disabled=document.getElementById('tfF').disabled=true;
+  document.getElementById(val?'tfT':'tfF').classList.add(ok?'correct':'wrong');
+  if(!ok) document.getElementById(q.correct?'tfT':'tfF').classList.add('show-ok');
+  showFB(ok,q.fb);showNextBtn();
+}
+
+/* ════ LEVEL 2 — MCQ ════ */
+function loadMCQ(idx){
+  qIdx=idx;answered=false;
+  const q=L2[idx];
+  document.getElementById('qNum').textContent=idx+1;
+  document.getElementById('qTotal').textContent=L2.length;
+  document.getElementById('qProg').style.width=((idx/L2.length)*100)+'%';
+  document.getElementById('scoreDisp').textContent='⭐ '+totalScore;
+
+  const area=document.getElementById('qArea');area.innerHTML='';
+  const card=document.createElement('div');card.className='q-card card';
+  card.innerHTML=`
+    <div class="q-badge b-mc">اختيار من متعدد</div>
+    <div class="q-text">${q.text}</div>
+    <div class="opts-col">
+      ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="answerMCQ(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="fb" id="fb"></div>
+    <div class="nav-row">
+      <button class="next-btn" id="nextBtn" style="background:linear-gradient(135deg,var(--l2),#0e7490);display:none" onclick="nextQ(2)">${idx<L2.length-1?'التالي ←':'المستوى الثالث ⭐⭐⭐ →'}</button>
+    </div>`;
+  area.appendChild(card);
+}
+
+function answerMCQ(i){
+  if(answered)return;answered=true;
+  const q=L2[qIdx];const ok=(i===q.correct);
+  if(ok){totalScore+=15;levelScores[2]+=15;spawnMini();}
+  document.getElementById('scoreBadge').textContent='⭐ '+totalScore;
+  document.querySelectorAll('.opt').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===q.correct) b.classList.add('correct');
+    else if(j===i&&!ok) b.classList.add('wrong');
+  });
+  showFB(ok,q.fb);showNextBtn();
+}
+
+function nextQ(lv){
+  const list=lv===1?L1:L2;
+  if(qIdx<list.length-1){
+    if(lv===1) loadTFQ(qIdx+1);
+    else loadMCQ(qIdx+1);
+  } else {
+    clearInterval(timerInt);
+    if(lv===1){updateStepBar(2);setLvlBadge(2);showView('intro2');}
+    else{updateStepBar(3);setLvlBadge(3);showView('intro3');}
+  }
+}
+
+/* ════ LEVEL 3 — CLASSIFY ════ */
+function renderL3(){
+  l3Checked=false;selectedChip=null;placement={};
+  const shuffled=[...L3_ITEMS].sort(()=>Math.random()-.5);
+  document.getElementById('qNum').textContent='تصنيف';
+  document.getElementById('qTotal').textContent='6 عبارات';
+  document.getElementById('qProg').style.width='66%';
+  document.getElementById('scoreDisp').textContent='⭐ '+totalScore;
+
+  const area=document.getElementById('qArea');area.innerHTML='';
+  const card=document.createElement('div');card.className='q-card card';
+  card.innerHTML=`
+    <div class="q-badge b-cl">تصنيف</div>
+    <div class="q-text">صنّفي كل عبارة: هل هي عن Mesh أم Hybrid Topology؟</div>
+    <div class="cl-pool" id="clPool">
+      ${shuffled.map(item=>`<div class="cl-chip" id="chip-${item.id}" onclick="pickChip('${item.id}')">${item.text}</div>`).join('')}
+    </div>
+    <div class="cl-hint" id="clHint">👆 انقري على عبارة ثم انقري على العمود المناسب</div>
+    <div class="cl-cols">
+      <div class="drop-col mesh-col" id="meshCol" onclick="dropTo('mesh')">
+        <div class="col-hd" style="color:var(--mesh)">🔮 Mesh Topology</div>
+        <div id="meshItems"></div>
+      </div>
+      <div class="drop-col hybrid-col" id="hybridCol" onclick="dropTo('hybrid')">
+        <div class="col-hd" style="color:var(--hybrid)">🔀 Hybrid Topology</div>
+        <div id="hybridItems"></div>
+      </div>
+    </div>
+    <div class="fb" id="fb"></div>
+    <div class="nav-row">
+      <button class="check-btn" id="checkBtn" onclick="checkL3()">✅ تحقّقي من الإجابات</button>
+      <button class="next-btn" id="nextBtn" style="background:linear-gradient(135deg,var(--l3),#be185d);display:none" onclick="finishAll()">عرض النتيجة 🏆</button>
+    </div>`;
+  area.appendChild(card);
+}
+
+function pickChip(id){
+  if(l3Checked||placement[id])return;
+  if(selectedChip){const prev=document.getElementById('chip-'+selectedChip);if(prev) prev.classList.remove('sel-mesh','sel-hybrid');}
+  if(selectedChip===id){selectedChip=null;updateHint(false);return;}
+  selectedChip=id;
+  const item=L3_ITEMS.find(x=>x.id===id);
+  document.getElementById('chip-'+id).classList.add(item.type==='mesh'?'sel-mesh':'sel-hybrid');
+  updateHint(true);
+  document.getElementById('meshCol').classList.add('hl');
+  document.getElementById('hybridCol').classList.add('hl');
+}
+
+function updateHint(sel){
+  const h=document.getElementById('clHint');
+  if(sel){h.textContent='👆 الآن انقري على العمود المناسب لوضع العبارة فيه';h.className='cl-hint active';}
+  else{h.textContent='👆 انقري على عبارة ثم انقري على العمود المناسب';h.className='cl-hint';}
+}
+
+function dropTo(col){
+  if(l3Checked||!selectedChip)return;
+  const id=selectedChip;
+  // Remove from old placement if exists
+  if(placement[id]){
+    const old=document.getElementById('placed-'+id);if(old)old.remove();
+  }
+  placement[id]=col;
+  const chip=document.getElementById('chip-'+id);
+  chip.classList.add('placed');chip.classList.remove('sel-mesh','sel-hybrid');
+  const item=L3_ITEMS.find(x=>x.id===id);
+  const colDiv=document.getElementById(col==='mesh'?'meshItems':'hybridItems');
+  const el=document.createElement('div');el.className='placed-chip';el.id='placed-'+id;
+  el.innerHTML=`<span>${col==='mesh'?'🔮':'🔀'}</span><span>${item.text}</span>`;
+  el.addEventListener('click',()=>removeChip(id));
+  colDiv.appendChild(el);
+  selectedChip=null;
+  updateHint(false);
+  document.getElementById('meshCol').classList.remove('hl');
+  document.getElementById('hybridCol').classList.remove('hl');
+  if(Object.keys(placement).length===L3_ITEMS.length){
+    document.getElementById('checkBtn').style.background='linear-gradient(135deg,#22c55e,#16a34a)';
+  }
+}
+
+function removeChip(id){
+  if(l3Checked)return;
+  delete placement[id];
+  const pl=document.getElementById('placed-'+id);if(pl)pl.remove();
+  const chip=document.getElementById('chip-'+id);if(chip)chip.classList.remove('placed');
+}
+
+function checkL3(){
+  if(Object.keys(placement).length<L3_ITEMS.length){alert('وزّعي جميع العبارات أولاً!');return;}
+  l3Checked=true;clearInterval(timerInt);
+  document.getElementById('checkBtn').style.display='none';
+  let correct=0;
+  L3_ITEMS.forEach(item=>{
+    const pl=document.getElementById('placed-'+item.id);if(!pl)return;
+    const ok=placement[item.id]===item.type;
+    pl.classList.add(ok?'correct':'wrong');
+    if(ok){correct++;totalScore+=10;levelScores[3]+=10;spawnMini();}
+  });
+  document.getElementById('scoreBadge').textContent='⭐ '+totalScore;
+  const pct=Math.round(correct/L3_ITEMS.length*100);
+  showFB(pct>=60,pct===100?'🎉 ممتاز! جميع العبارات في مكانها الصحيح!':`${correct} من ${L3_ITEMS.length} صحيح — الإجابات الخاطئة باللون الأحمر.`);
+  document.getElementById('nextBtn').style.display='block';
+  if(pct===100) spawnConf(20);
+}
+
+/* ════ SHOW HELPERS ════ */
+function showFB(ok,msg){
+  const fb=document.getElementById('fb');
+  fb.className='fb show '+(ok?'ok':'err');
+  fb.innerHTML=`<span>${ok?'🎉':'💡'}</span><span>${msg}</span>`;
+}
+function showNextBtn(){
+  const nb=document.getElementById('nextBtn');
+  if(nb) nb.style.display='block';
+}
+
+/* ════ FINISH ════ */
+async function finishAll(){
+  clearInterval(timerInt);
+  const pct=Math.round(totalScore/MAX_SCORE*100);
+  document.getElementById('finalName').textContent='أحسنتِ، '+student+'!';
+  document.getElementById('ringNum').textContent=totalScore;
+  document.getElementById('ringLbl').textContent='من '+MAX_SCORE;
+  document.getElementById('scoreRing').style.background=
+    `conic-gradient(${pct>=80?'#22c55e':pct>=50?'#3b82f6':'#f59e0b'} ${pct*3.6}deg, rgba(255,255,255,.08) 0deg)`;
+  const LVLS=[{n:1,max:30,name:'صح أم خطأ',c:'var(--l1)'},{n:2,max:45,name:'اختيار متعدد',c:'var(--l2)'},{n:3,max:60,name:'تصنيف',c:'var(--l3)'}];
+  document.getElementById('lvlSummary').innerHTML=LVLS.map(lv=>`
+    <div class="lv-box" style="background:rgba(255,255,255,.05);border:1px solid var(--border)">
+      <div class="lv-sc" style="color:${lv.c}">${levelScores[lv.n]}</div>
+      <div class="lv-nm">${lv.name}<br><span style="font-size:.85em;color:var(--muted)">/ ${lv.max}</span></div>
+    </div>`).join('');
+  const msgs=[
+    [80,'🌟 إتقان تام! أنتِ خبيرة في Mesh وHybrid.'],
+    [60,'👍 جيد جداً! راجعي النقاط المفقودة.'],
+    [0,'💡 تحتاجين مراجعة المفاهيم الأساسية.']
+  ];
+  document.getElementById('finalMsg').textContent=msgs.find(([th])=>pct>=th)[1];
+  // Save
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  const data={name:student,score:totalScore,levelScores,pct,isCompleted:true,ts:Date.now(),lastUpdate:new Date().toLocaleTimeString('ar-SA')};
+  try{await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});}catch(e){}
+  showView('finalView');
+  if(pct>=80) spawnConf(30);
+}
+
+/* ════ TEACHER ════ */
+document.getElementById('teacherLink').addEventListener('click',e=>{
+  e.preventDefault();
+  document.getElementById('teacherModal').classList.add('show');
+  document.getElementById('passInput').value='';
+  document.getElementById('passErr').classList.remove('show');
+  setTimeout(()=>document.getElementById('passInput').focus(),100);
+});
+document.getElementById('passCancel').addEventListener('click',()=>document.getElementById('teacherModal').classList.remove('show'));
+document.getElementById('passOk').addEventListener('click',tryPass);
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter') tryPass();});
+
+function tryPass(){
+  if(document.getElementById('passInput').value===PASS){
+    document.getElementById('teacherModal').classList.remove('show');
+    loadTeacher();showView('teacherView');
+    setInterval(loadTeacher,15000);
+  } else {
+    document.getElementById('passInput').style.borderColor='var(--red)';
+    document.getElementById('passErr').classList.add('show');
+    setTimeout(()=>{document.getElementById('passInput').style.borderColor='';document.getElementById('passErr').classList.remove('show');},2000);
+  }
+}
+
+let tFilter='all', tCache=[];
+async function loadTeacher(){
+  try{
+    const r=await fetch(`${DB}/${PATH}.json`);
+    const d=await r.json()||{};
+    tCache=Object.values(d).filter(x=>x&&x.name).sort((a,b)=>b.ts-a.ts);
+    renderTeacher();
+  }catch(e){renderTeacher();}
+}
+
+function renderTeacher(){
+  const done=tCache.filter(s=>s.isCompleted);
+  const avg=done.length?Math.round(done.reduce((s,d)=>s+(d.score||0),0)/done.length):0;
+  const top=done.length?Math.max(...done.map(d=>d.score||0)):0;
+  document.getElementById('tTotal').textContent=tCache.length;
+  document.getElementById('tDone').textContent=done.length;
+  document.getElementById('tAvg').textContent=avg||'—';
+  document.getElementById('tTop').textContent=top||'—';
+  const pct=tCache.length?Math.round(done.length/tCache.length*100):0;
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('pctFill').style.width=pct+'%';
+  // Level accuracies
+  const lvlAcc=(lv,maxPts)=>{
+    const p=done.filter(s=>s.levelScores&&s.levelScores[lv]!==undefined);
+    if(!p.length)return[0,0];
+    const avgPts=p.reduce((s,d)=>s+(d.levelScores[lv]||0),0)/p.length;
+    return[Math.round(avgPts/maxPts*100),Math.round(avgPts)];
+  };
+  [[1,30,'acc1'],[2,45,'acc2'],[3,60,'acc3']].forEach(([lv,max,id])=>{
+    const [p,a]=lvlAcc(lv,max);
+    document.getElementById(id).textContent=p+'%';
+    document.getElementById(id+'Fill').style.width=p+'%';
+  });
+  // Podium
+  const sorted=[...done].sort((a,b)=>b.score-a.score);
+  const medals=['🥇','🥈','🥉'],pcls=['p1','p2','p3'];
+  document.getElementById('podium').innerHTML=sorted.slice(0,3).map((s,i)=>`
+    <div class="pod ${pcls[i]}"><div class="pm">${medals[i]}</div>
+    <div class="pn">${s.name.split(' ').slice(0,2).join(' ')}</div>
+    <div class="ps">⭐${s.score}</div></div>`).join('')||'<p style="color:var(--muted)">لا توجد بيانات بعد</p>';
+  // Grid
+  let list=tFilter==='done'?done:tFilter==='pend'?tCache.filter(s=>!s.isCompleted):tCache;
+  document.getElementById('stdGrid').innerHTML=list.map(s=>{
+    if(!s.isCompleted) return `<div class="std-card pend">
+      <div class="sc-top"><div class="sc-ico">⏳</div>
+      <div><div class="sc-name">${s.name}</div><div class="sc-score" style="color:var(--muted)">لم تكمل</div></div></div>
+      <div class="lvl-dots"><div class="ldot off"></div><div class="ldot off"></div><div class="ldot off"></div></div>
+    </div>`;
+    const ls=s.levelScores||{};const col=s.pct>=80?'#22c55e':s.pct>=50?'#3b82f6':'#f59e0b';
+    return `<div class="std-card done">
+      <div class="sc-top"><div class="sc-ico">✅</div>
+      <div><div class="sc-name">${s.name.split(' ').slice(0,2).join(' ')}</div>
+      <div class="sc-score" style="color:${col}">⭐ ${s.score} / ${MAX_SCORE} (${s.pct||0}%)</div></div></div>
+      <div class="lvl-dots">
+        <div class="ldot ${(ls[1]||0)>0?'l1d':'off'}"></div>
+        <div class="ldot ${(ls[2]||0)>0?'l2d':'off'}"></div>
+        <div class="ldot ${(ls[3]||0)>0?'l3d':'off'}"></div>
+      </div>
+    </div>`;
+  }).join('')||'<div style="grid-column:span 3;text-align:center;padding:30px;color:var(--muted);font-weight:700">لا توجد بيانات</div>';
+}
+
+function setFilter(m,btn){tFilter=m;document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTeacher();}
+async function clearResults(){
+  if(!confirm('⚠️ مسح جميع النتائج؟'))return;
+  try{await fetch(`${DB}/${PATH}.json`,{method:'DELETE'});tCache=[];renderTeacher();alert('✅ تم المسح.');}catch(e){alert('❌ خطأ.');}
+}
+
+/* ════ EFFECTS ════ */
+function spawnMini(){
+  const c=['#f59e0b','#8b5cf6','#22c55e'];
+  for(let i=0;i<5;i++) setTimeout(()=>{
+    const el=document.createElement('div');el.className='conf';
+    el.style.cssText=`left:${30+Math.random()*40}vw;top:25vh;background:${c[Math.floor(Math.random()*c.length)]};width:7px;height:7px;border-radius:50%;animation-duration:.9s;animation-delay:${i*.07}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),1500);
+  },i*40);
+}
+function spawnConf(n=15){
+  const c=['#f59e0b','#8b5cf6','#22c55e','#ec4899','#06b6d4','#fbbf24'];
+  for(let i=0;i<n;i++) setTimeout(()=>{
+    const el=document.createElement('div');el.className='conf';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${c[Math.floor(Math.random()*c.length)]};width:${5+Math.random()*8}px;height:${5+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*.7}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4000);
+  },i*55);
+}
+</script>
+</body>
+</html>
