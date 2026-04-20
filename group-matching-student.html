@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط المجموعات — مكونات الروبوت والجسم البشري</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F0F4FF;
+  --c1:#6D28D9; --c2:#0891B2; --c3:#059669; --c4:#DC2626;
+  --yellow:#FFD60A; --green:#10B981; --card:#fff;
+  --shadow:0 6px 24px rgba(67,97,238,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 10% 10%,rgba(109,40,217,.06) 0%,transparent 50%),
+             radial-gradient(circle at 90% 90%,rgba(8,145,178,.06) 0%,transparent 50%)}
+
+/* HEADER */
+.header{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;
+  position:relative;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.header h1{color:#fff;font-size:1.05em;font-weight:900}
+.hright{display:flex;gap:9px;align-items:center}
+.hbadge{background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.38);
+  border-radius:11px;padding:5px 13px;color:#fff;font-weight:900;font-size:.9em}
+.timer-b{min-width:66px;text-align:center;font-size:1.05em;display:none}
+.timer-b.urgent{background:rgba(220,38,38,.45)!important;animation:pulse .9s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* VIEWS */
+.view{display:none;position:relative;z-index:1}.view.active{display:block}
+
+/* ═══ NAME SCREEN ═══ */
+.center-wrap{max-width:520px;margin:50px auto;padding:20px;text-align:center}
+.name-card{background:var(--card);border-radius:26px;padding:42px 30px;box-shadow:var(--shadow)}
+.nc-icon{font-size:5.5em;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.name-card h2{font-size:1.7em;font-weight:900;color:#1a1a2e;margin-bottom:6px}
+.name-card p{color:#888;font-size:.98em;margin-bottom:22px;line-height:1.65}
+.sel{width:100%;padding:13px 16px;border:2.5px solid #e0e0e0;border-radius:14px;
+  font-family:'Tajawal',sans-serif;font-size:1.05em;color:#333;background:#fff;
+  margin-bottom:12px;cursor:pointer;appearance:none;transition:border-color .2s}
+.sel:focus{outline:none;border-color:var(--c1)}
+.team-preview{display:none;border-radius:13px;padding:11px 16px;margin-bottom:14px;
+  font-size:.95em;font-weight:700;border:2px solid transparent;text-align:center}
+.go-btn{width:100%;padding:15px;border:none;border-radius:14px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;cursor:pointer;transition:transform .2s}
+.go-btn:hover{transform:translateY(-2px)}
+
+/* ═══ TASK SCREEN ═══ */
+.task-wrap{max-width:980px;margin:0 auto;padding:12px 14px 28px}
+
+/* TEAM STRIP */
+.team-strip{background:var(--card);border-radius:13px;padding:10px 15px;
+  margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ts-name{font-size:.9em;font-weight:900;flex-shrink:0}
+.ts-chips{display:flex;flex-wrap:wrap;gap:5px}
+.ts-chip{border-radius:8px;padding:3px 10px;font-size:.8em;font-weight:700;background:#f0f0f8;color:#444;border:1.5px solid #ddd}
+.ts-chip.me{background:#dbeafe;color:#1e40af;border-color:#93c5fd;font-weight:900}
+.ts-chip.ldr{border-color:var(--yellow);background:#fef9c3;color:#7a5a00}
+.ts-live{margin-right:auto;font-size:.82em;color:#888}
+
+/* CARD BANKS */
+.banks-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.bank{background:var(--card);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow)}
+.bank-title{font-size:.82em;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.bank-cards{display:flex;flex-wrap:wrap;gap:7px;min-height:42px}
+
+/* BANK CARD */
+.bcard{
+  border-radius:11px;padding:7px 13px;font-size:.85em;font-weight:700;
+  cursor:pointer;transition:all .2s cubic-bezier(.36,1.56,.64,1);
+  border:2px solid transparent;user-select:none;color:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.12)
+}
+.bcard:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 5px 14px rgba(0,0,0,.18)}
+.bcard.selected{outline:3px solid var(--yellow);outline-offset:2px;transform:scale(1.06)}
+.bcard.placed{opacity:.3;cursor:default;transform:none}
+
+/* TABLE */
+.match-table{width:100%;border-collapse:separate;border-spacing:0 6px;margin-bottom:14px}
+.match-table thead th{
+  padding:10px 12px;font-size:.85em;font-weight:800;color:#fff;text-align:center
+}
+.match-table thead th:first-child{border-radius:12px 0 0 12px}
+.match-table thead th:last-child{border-radius:0 12px 12px 0}
+.match-table tbody tr td{
+  background:var(--card);padding:10px 12px;vertical-align:middle;
+  border-top:1.5px solid #f0f0f0;border-bottom:1.5px solid #f0f0f0
+}
+.match-table tbody tr td:first-child{border-right:1.5px solid #f0f0f0;border-radius:12px 0 0 12px}
+.match-table tbody tr td:last-child{border-left:1.5px solid #f0f0f0;border-radius:0 12px 12px 0}
+
+/* COMPONENT CELL (fixed) */
+.comp-cell{display:flex;align-items:center;gap:8px}
+.comp-emoji{font-size:1.6em;flex-shrink:0}
+.comp-name{font-size:.9em;font-weight:800;color:#1a1a2e;line-height:1.35}
+.comp-en{font-size:.74em;font-weight:700;color:#888}
+
+/* DROP CELL */
+.drop-cell{
+  min-height:42px;border-radius:10px;border:2px dashed #cbd5e1;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:6px 10px;background:#f8faff
+}
+.drop-cell:hover{border-color:#6D28D9;background:#f3e8ff}
+.drop-cell.has-card{border-style:solid;cursor:pointer}
+.drop-cell.correct{background:#d1fae5;border-color:var(--green)!important}
+.drop-cell.wrong{background:#fee2e2;border-color:#ef4444!important}
+.drop-cell .dc-text{font-size:.83em;font-weight:700;color:#1a1a2e;line-height:1.4}
+.drop-cell .dc-placeholder{font-size:.8em;color:#aaa;font-weight:600}
+
+/* ACTION AREA */
+.action-wrap{display:flex;gap:12px;margin-bottom:12px}
+.check-btn,.sub-btn{padding:12px 24px;border:none;border-radius:13px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1em;font-weight:900;cursor:pointer;
+  transition:transform .2s;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.check-btn{background:linear-gradient(135deg,#6D28D9,#0891B2);flex:1}
+.check-btn:hover{transform:translateY(-1px)}
+.sub-btn{background:linear-gradient(135deg,#059669,#047857);flex:1;display:none}
+.sub-btn:hover{transform:translateY(-1px)}
+.sub-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* RESULT BAR */
+.result-bar{border-radius:14px;padding:14px 18px;text-align:center;
+  margin-bottom:12px;display:none;animation:popIn .4s ease}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.result-bar.show{display:block}
+.result-bar.all-ok{background:#d1fae5;border:2.5px solid var(--green)}
+.result-bar.partial{background:#fef9c3;border:2.5px solid #f59e0b}
+.rb-icon{font-size:2em;margin-bottom:5px}
+.rb-title{font-size:1.05em;font-weight:900;color:#1a1a2e;margin-bottom:3px}
+.rb-sub{font-size:.88em;color:#555}
+
+/* MEMBER ZONE */
+.member-zone{background:#f0f4ff;border:2px solid #c7d2fe;border-radius:14px;
+  padding:12px 16px;margin-bottom:10px;text-align:center;display:none}
+.member-zone p{font-size:.9em;font-weight:700;color:#3730a3}
+
+/* SENT */
+.sent-ok{display:none;background:#d1fae5;border:2.5px solid var(--green);
+  border-radius:15px;padding:20px;text-align:center;animation:popIn .4s ease}
+.sent-ok.show{display:block}
+.sent-ok .so-icon{font-size:3em;margin-bottom:8px}
+.sent-ok .so-txt{font-size:1.1em;font-weight:900;color:#065f46}
+</style>
+</head>
+<body>
+
+<div class="header" id="mainHdr" style="background:linear-gradient(135deg,#6D28D9,#0891B2)">
+  <h1>🤖 مكونات الروبوت والجسم البشري — نشاط جماعي</h1>
+  <div class="hright">
+    <div class="hbadge" id="teamBadge"></div>
+    <div class="hbadge timer-b" id="timerBadge">05:00</div>
+  </div>
+</div>
+
+<!-- NAME VIEW -->
+<div class="view active" id="nameView">
+  <div class="center-wrap">
+    <div class="name-card">
+      <span class="nc-icon">🧩</span>
+      <h2>نشاط جماعي</h2>
+      <p>طابقي كل مكوّن من مكونات الروبوت<br>بالحاسة المناظِرة له عند الإنسان ووظيفتها</p>
+      <select id="nameSelect" class="sel" onchange="onNameChange()">
+        <option value="">— اختاري اسمكِ —</option>
+        <option>أريام حميد الحبيني</option><option>اسيل موسى العوض</option>
+        <option>الجازي عبدالعزيز عبدالله محمد المنصورى</option><option>امامه سليم علبي</option>
+        <option>امنه هياب احمد عبدالرحمن</option><option>انوار حمد العبيد</option>
+        <option>انيسه نعمة الله</option><option>حبيبه علاء ابراهيم مشعل</option>
+        <option>حفصه احمد عبد المنعم عبد الغني</option><option>حلا أحمد محمد الباز عبدالعال</option>
+        <option>حنان محمد طاهر</option><option>داليا رمضان العلي</option>
+        <option>ذهب محمد طاهر</option><option>رغد نبي جول</option>
+        <option>رقية حمدى سعيد عباس خواجة</option><option>رنيم حسني عواد الخلايله</option>
+        <option>روقيه شعبان محمد هنداوي حسانين</option><option>رؤى بوكيوض</option>
+        <option>ريان محمود الحاج أمين نجار</option><option>ريتال حسني عواد الخلايله</option>
+        <option>شما عمر بشير عبدالقادر</option><option>فاطمه فخر الدين احمد الامين</option>
+        <option>قمر حازم عمر</option><option>ليا عبد الحاج اسماعيل</option>
+        <option>ماريا عبدالعليم الرزوق</option><option>مريم حافظ فاروق احمد احمد</option>
+        <option>ملاك عبدالله الدرويش</option><option>نداء حسين المحمد العبادي</option>
+        <option>نور أيهاب عبدالحميد عبدالسلام غمري</option><option>نورا عبدالعزيز عبدالله محمد المنصورى</option>
+        <option>نيللي أمير سعيد محمود الحداد</option><option>هنادي محمد عبدالله علي هيلان</option>
+        <option>وعد مصطفى أحمد عثمان</option>
+      </select>
+      <div class="team-preview" id="teamPreview"></div>
+      <button class="go-btn" id="goBtn" style="background:linear-gradient(135deg,#6D28D9,#0891B2);box-shadow:0 5px 16px rgba(109,40,217,.35)">
+        انضمي للمجموعة 🧩
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TASK VIEW -->
+<div class="view" id="taskView">
+  <div class="task-wrap">
+
+    <!-- TEAM STRIP -->
+    <div class="team-strip">
+      <span class="ts-name" id="tsName"></span>
+      <div class="ts-chips" id="tsChips"></div>
+      <span class="ts-live" id="tsLive"></span>
+    </div>
+
+    <!-- CARD BANKS -->
+    <div class="banks-wrap">
+      <div class="bank">
+        <div class="bank-title" style="color:#6D28D9">🧠 الحاسة عند الإنسان <span style="font-size:.8em;color:#aaa;font-weight:600">(انقري لتحديد)</span></div>
+        <div class="bank-cards" id="bankSense"></div>
+      </div>
+      <div class="bank">
+        <div class="bank-title" style="color:#0891B2">⚙️ وجه الشبه — الوظيفة <span style="font-size:.8em;color:#aaa;font-weight:600">(انقري لتحديد)</span></div>
+        <div class="bank-cards" id="bankFunc"></div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <table class="match-table" id="matchTable">
+      <thead>
+        <tr>
+          <th style="background:#1e293b;width:28%">مكوّن الروبوت</th>
+          <th style="background:#6D28D9;width:22%">الحاسة عند الإنسان</th>
+          <th style="background:#0891B2;width:50%">وجه الشبه — الوظيفة</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <!-- ACTION AREA -->
+    <div class="action-wrap">
+      <button class="check-btn" id="checkBtn" onclick="checkAnswers()">✅ تحقّقي من الإجابات</button>
+      <button class="sub-btn" id="subBtn" onclick="submitAnswers()">📤 إرسال إجابة المجموعة</button>
+    </div>
+
+    <!-- RESULT BAR -->
+    <div class="result-bar" id="resultBar">
+      <div class="rb-icon" id="rbIcon"></div>
+      <div class="rb-title" id="rbTitle"></div>
+      <div class="rb-sub" id="rbSub"></div>
+    </div>
+
+    <!-- MEMBER ZONE -->
+    <div class="member-zone" id="memberZone">
+      <p>✨ ناقشي مع مجموعتكِ — القائدة ستُرسل الإجابة النهائية</p>
+    </div>
+
+    <!-- SENT -->
+    <div class="sent-ok" id="sentOk">
+      <div class="so-icon">✅</div>
+      <div class="so-txt">تم إرسال إجابة مجموعتكِ للمعلمة!</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const BASE = 'robots-lesson/group-matching';
+
+/* ─── DATA ─── */
+const ROWS = [
+  {
+    id:'r1',
+    comp:{emoji:'🎨', ar:'مستشعر الألوان', en:'Color Sensor'},
+    sense:{id:'s1', text:'العين (البصر)', color:'#EC4899'},
+    func:{id:'f1',  text:'يكتشف الألوان ويقيس شدة الأضواء مثلما تقوم العين البشرية برؤية الألوان'}
+  },
+  {
+    id:'r2',
+    comp:{emoji:'✊', ar:'مستشعر القوة', en:'Force Sensor'},
+    sense:{id:'s2', text:'الجلد (اللمس)', color:'#F59E0B'},
+    func:{id:'f2',  text:'يستشعر ويقيس قوة الضغط مثلما يقوم الجلد بالشعور باللمس'}
+  },
+  {
+    id:'r3',
+    comp:{emoji:'📏', ar:'مستشعر المسافة', en:'Distance Sensor'},
+    sense:{id:'s3', text:'الأذن (السمع)', color:'#06B6D4'},
+    func:{id:'f3',  text:'يكتشف العقبات مثلما تقوم الأذن بتحديد المسافات من خلال الصوت'}
+  },
+  {
+    id:'r4',
+    comp:{emoji:'🌀', ar:'مستشعر الدوران', en:'Built in Gyro Sensor'},
+    sense:{id:'s4', text:'الأذن الداخلية (التوازن)', color:'#8B5CF6'},
+    func:{id:'f4',  text:'يقيس زاوية استدارة الروبوت مثلما تقوم الأذن الداخلية بالحفاظ على التوازن وتحديد الاتجاهات'}
+  },
+  {
+    id:'r5',
+    comp:{emoji:'🧠', ar:'وحدة التحكم', en:'Spike Hub'},
+    sense:{id:'s5', text:'الدماغ', color:'#10B981'},
+    func:{id:'f5',  text:'تقوم بإدارة وتشغيل الروبوت مثلما يقوم الدماغ بإدارة وتشغيل الجسم'}
+  },
+  {
+    id:'r6',
+    comp:{emoji:'⚙️', ar:'المحرك الأوسط', en:'Medium Motor'},
+    sense:{id:'s6', text:'عضلة صغيرة', color:'#0891B2'},
+    func:{id:'f6',  text:'يتميز بحجمه المتوسط ويتحكم في حركة الروبوت بدقة'}
+  },
+  {
+    id:'r7',
+    comp:{emoji:'💪', ar:'المحرك الكبير', en:'Large Motor'},
+    sense:{id:'s7', text:'عضلة كبيرة قوية', color:'#DC2626'},
+    func:{id:'f7',  text:'يتميز بقوة عالية وحجمه الكبير، لذلك يستخدم في التحكم في ذراع أو رافعة للروبوت'}
+  },
+];
+
+const TEAMS = {
+  '1':{name:'المجموعة 1',leader:'أريام حميد الحبيني',       color:'#6D28D9',bg:'linear-gradient(135deg,#6D28D9,#4C1D95)'},
+  '2':{name:'المجموعة 2',leader:'رنيم حسني عواد الخلايله',  color:'#059669',bg:'linear-gradient(135deg,#059669,#047857)'},
+  '3':{name:'المجموعة 3',leader:'فاطمه فخر الدين احمد الامين',color:'#0891B2',bg:'linear-gradient(135deg,#0891B2,#0e6f94)'},
+  '4':{name:'المجموعة 4',leader:'نداء حسين المحمد العبادي', color:'#DC2626',bg:'linear-gradient(135deg,#DC2626,#b91c1c)'},
+};
+
+const STUDENT_TEAM = {
+  'أريام حميد الحبيني':'1','اسيل موسى العوض':'1','الجازي عبدالعزيز عبدالله محمد المنصورى':'1',
+  'امامه سليم علبي':'1','امنه هياب احمد عبدالرحمن':'1','انوار حمد العبيد':'1',
+  'انيسه نعمة الله':'1','حبيبه علاء ابراهيم مشعل':'1',
+  'رنيم حسني عواد الخلايله':'2','روقيه شعبان محمد هنداوي حسانين':'2','رؤى بوكيوض':'2',
+  'حفصه احمد عبد المنعم عبد الغني':'2','حلا أحمد محمد الباز عبدالعال':'2',
+  'حنان محمد طاهر':'2','داليا رمضان العلي':'2','ذهب محمد طاهر':'2',
+  'فاطمه فخر الدين احمد الامين':'3','قمر حازم عمر':'3','ليا عبد الحاج اسماعيل':'3',
+  'ماريا عبدالعليم الرزوق':'3','مريم حافظ فاروق احمد احمد':'3','ملاك عبدالله الدرويش':'3',
+  'رغد نبي جول':'3','رقية حمدى سعيد عباس خواجة':'3',
+  'نداء حسين المحمد العبادي':'4','نور أيهاب عبدالحميد عبدالسلام غمري':'4',
+  'نورا عبدالعزيز عبدالله محمد المنصورى':'4','نيللي أمير سعيد محمود الحداد':'4',
+  'هنادي محمد عبدالله علي هيلان':'4','وعد مصطفى أحمد عثمان':'4',
+  'ريان محمود الحاج أمين نجار':'4','ريتال حسني عواد الخلايله':'4',
+  'شما عمر بشير عبدالقادر':'4',
+};
+
+/* ─── STATE ─── */
+let student='', teamId='', isLeader=false;
+let selectedCard=null; // {type:'sense'|'func', id:String}
+let placements={}; // {rowId: {sense:id, func:id}}
+let checked=false, submitted=false;
+let timerInt=null, timerSec=300;
+
+/* ─── NAME CHANGE ─── */
+function onNameChange(){
+  const name=document.getElementById('nameSelect').value;
+  const prev=document.getElementById('teamPreview');
+  if(!name){prev.style.display='none';return;}
+  const tid=STUDENT_TEAM[name];
+  if(!tid){prev.style.display='none';return;}
+  const t=TEAMS[tid];
+  prev.style.cssText=`display:block;background:${t.color}18;border-color:${t.color}66;color:${t.color}`;
+  prev.innerHTML=`👥 <strong>${t.name}</strong> &nbsp;•&nbsp; القائدة: ${t.leader.split(' ').slice(0,3).join(' ')}`;
+}
+
+/* ─── JOIN ─── */
+document.getElementById('goBtn').addEventListener('click', async ()=>{
+  student = document.getElementById('nameSelect').value;
+  if(!student){alert('اختاري اسمكِ أولاً!');return;}
+  teamId = STUDENT_TEAM[student];
+  if(!teamId){alert('اسمكِ غير موجود في القائمة.');return;}
+  const team=TEAMS[teamId];
+  isLeader=(student===team.leader);
+
+  document.getElementById('mainHdr').style.background=team.bg;
+  document.getElementById('teamBadge').textContent=team.name+(isLeader?' 👑':'');
+  document.getElementById('timerBadge').style.display='flex';
+  document.getElementById('tsName').innerHTML=`<span style="color:${team.color};font-size:.95em">${team.name}</span>`;
+
+  // Register
+  const key=encodeURIComponent(student.replace(/\s+/g,'_'));
+  try{ await fetch(`${DB}/${BASE}/team${teamId}/members/${key}.json`,
+    {method:'PUT',body:JSON.stringify({name:student,isLeader,joined:true,ts:Date.now()})}); }catch(e){}
+
+  renderBanks();
+  renderTable();
+  if(!isLeader) document.getElementById('memberZone').style.display='block';
+
+  startTimer();
+  setInterval(loadLive,6000);
+  loadLive();
+  showView('taskView');
+});
+
+/* ─── BANKS ─── */
+function renderBanks(){
+  const shuffledSenses=[...ROWS].sort(()=>Math.random()-.5);
+  const shuffledFuncs=[...ROWS].sort(()=>Math.random()-.5);
+
+  const bankS=document.getElementById('bankSense');
+  bankS.innerHTML='';
+  shuffledSenses.forEach(row=>{
+    const btn=document.createElement('div');
+    btn.className='bcard';
+    btn.id='sc-'+row.sense.id;
+    btn.textContent=row.sense.text;
+    btn.style.background=row.sense.color;
+    btn.addEventListener('click',()=>selectCard('sense',row.sense.id));
+    bankS.appendChild(btn);
+  });
+
+  const bankF=document.getElementById('bankFunc');
+  bankF.innerHTML='';
+  shuffledFuncs.forEach(row=>{
+    const btn=document.createElement('div');
+    btn.className='bcard';
+    btn.id='fc-'+row.func.id;
+    btn.style.background='#1e3a5f';
+    btn.style.fontSize='.78em';
+    btn.style.maxWidth='240px';
+    btn.style.lineHeight='1.4';
+    btn.textContent=row.func.text;
+    btn.addEventListener('click',()=>selectCard('func',row.func.id));
+    bankF.appendChild(btn);
+  });
+}
+
+/* ─── SELECT CARD ─── */
+function selectCard(type, id){
+  if(checked)return;
+  // Deselect previous
+  if(selectedCard){
+    const prev=document.getElementById((selectedCard.type==='sense'?'sc-':'fc-')+selectedCard.id);
+    if(prev&&!prev.classList.contains('placed')) prev.classList.remove('selected');
+  }
+  // If clicking already placed card - deselect
+  const el=document.getElementById((type==='sense'?'sc-':'fc-')+id);
+  if(el&&el.classList.contains('placed')){selectedCard=null;return;}
+
+  selectedCard={type,id};
+  if(el) el.classList.add('selected');
+}
+
+/* ─── TABLE ─── */
+function renderTable(){
+  const tbody=document.getElementById('tableBody');
+  tbody.innerHTML='';
+  ROWS.forEach(row=>{
+    const tr=document.createElement('tr');
+    // Component cell
+    const tc=document.createElement('td');
+    tc.innerHTML=`<div class="comp-cell">
+      <span class="comp-emoji">${row.comp.emoji}</span>
+      <div><div class="comp-name">${row.comp.ar}</div><div class="comp-en">${row.comp.en}</div></div>
+    </div>`;
+
+    // Sense drop
+    const ts=document.createElement('td');
+    const dsense=document.createElement('div');
+    dsense.className='drop-cell';
+    dsense.id='ds-'+row.id;
+    dsense.innerHTML='<span class="dc-placeholder">انقري هنا</span>';
+    dsense.addEventListener('click',()=>dropOnCell(row.id,'sense'));
+    ts.appendChild(dsense);
+
+    // Func drop
+    const tf=document.createElement('td');
+    const dfunc=document.createElement('div');
+    dfunc.className='drop-cell';
+    dfunc.id='df-'+row.id;
+    dfunc.innerHTML='<span class="dc-placeholder">انقري هنا</span>';
+    dfunc.addEventListener('click',()=>dropOnCell(row.id,'func'));
+    tf.appendChild(dfunc);
+
+    tr.appendChild(tc);tr.appendChild(ts);tr.appendChild(tf);
+    tbody.appendChild(tr);
+  });
+}
+
+/* ─── DROP ─── */
+function dropOnCell(rowId, colType){
+  if(checked||!selectedCard||selectedCard.type!==colType)return;
+  const cardId=selectedCard.id;
+
+  // Remove from previous row if placed elsewhere
+  ROWS.forEach(r=>{
+    if(placements[r.id]&&placements[r.id][colType]===cardId){
+      delete placements[r.id][colType];
+      const prevCell=document.getElementById((colType==='sense'?'ds-':'df-')+r.id);
+      if(prevCell){prevCell.className='drop-cell';prevCell.innerHTML='<span class="dc-placeholder">انقري هنا</span>';}
+      // un-place card in bank
+      const bankEl=document.getElementById((colType==='sense'?'sc-':'fc-')+cardId);
+      if(bankEl) bankEl.classList.remove('placed');
+    }
+  });
+
+  // Place in new cell
+  if(!placements[rowId]) placements[rowId]={};
+  placements[rowId][colType]=cardId;
+
+  const cell=document.getElementById((colType==='sense'?'ds-':'df-')+rowId);
+  // Find text
+  const row=ROWS.find(r=>r.id===rowId);
+  const textEl=colType==='sense'
+    ? ROWS.find(r=>r.sense.id===cardId)?.sense.text
+    : ROWS.find(r=>r.func.id===cardId)?.func.text;
+  const color=colType==='sense'? ROWS.find(r=>r.sense.id===cardId)?.sense.color:'#1e3a5f';
+
+  cell.className='drop-cell has-card';
+  cell.style.background=color+'22';
+  cell.style.borderColor=color;
+  cell.innerHTML=`<span class="dc-text">${textEl||''}</span>`;
+
+  // Mark bank card as placed
+  const bankEl=document.getElementById((colType==='sense'?'sc-':'fc-')+cardId);
+  if(bankEl){bankEl.classList.remove('selected');bankEl.classList.add('placed');}
+  selectedCard=null;
+
+  // Check if check button should show
+  const totalPlaced=ROWS.filter(r=>placements[r.id]?.sense&&placements[r.id]?.func).length;
+  if(totalPlaced===ROWS.length) document.getElementById('checkBtn').style.background='linear-gradient(135deg,#059669,#047857)';
+}
+
+/* ─── CHECK ─── */
+function checkAnswers(){
+  if(checked)return;
+  checked=true;
+  let correct=0;
+  ROWS.forEach(row=>{
+    const p=placements[row.id]||{};
+    const sOk=p.sense===row.sense.id;
+    const fOk=p.func===row.func.id;
+    const both=sOk&&fOk;
+    if(both) correct++;
+
+    const ds=document.getElementById('ds-'+row.id);
+    const df=document.getElementById('df-'+row.id);
+    if(ds) ds.classList.add(sOk?'correct':'wrong');
+    if(df) df.classList.add(fOk?'correct':'wrong');
+  });
+
+  const rb=document.getElementById('resultBar');
+  const pct=Math.round(correct/ROWS.length*100);
+  document.getElementById('rbIcon').textContent=pct===100?'🎉':pct>=60?'👍':'💡';
+  document.getElementById('rbTitle').textContent=pct===100?`رائع! كل الإجابات صحيحة ✨`:`${correct} من ${ROWS.length} صفوف صحيحة`;
+  document.getElementById('rbSub').textContent='الإجابات الصحيحة باللون الأخضر 🟢 والخاطئة باللون الأحمر 🔴';
+  rb.className='result-bar show '+(pct>=60?'all-ok':'partial');
+
+  document.getElementById('checkBtn').style.display='none';
+  if(isLeader) document.getElementById('subBtn').style.display='block';
+}
+
+/* ─── SUBMIT ─── */
+async function submitAnswers(){
+  if(submitted)return;
+  submitted=true;
+  clearInterval(timerInt);
+  document.getElementById('subBtn').disabled=true;
+  document.getElementById('subBtn').textContent='⏳ جارٍ الإرسال...';
+
+  // Build readable result
+  const rows=ROWS.map(row=>{
+    const p=placements[row.id]||{};
+    const sText=ROWS.find(r=>r.sense.id===p.sense)?.sense.text||'—';
+    const fText=ROWS.find(r=>r.func.id===p.func)?.func.text||'—';
+    return {comp:row.comp.ar, sense:sText, func:fText,
+      sOk:p.sense===row.sense.id, fOk:p.func===row.func.id};
+  });
+  const correct=rows.filter(r=>r.sOk&&r.fOk).length;
+
+  try{
+    await fetch(`${DB}/${BASE}/team${teamId}/submission.json`,{
+      method:'PUT',
+      body:JSON.stringify({teamId,teamName:TEAMS[teamId].name,leader:student,rows,correct,total:ROWS.length,ts:Date.now()})
+    });
+  }catch(e){}
+  document.getElementById('subBtn').style.display='none';
+  document.getElementById('sentOk').className='sent-ok show';
+}
+
+/* ─── TIMER ─── */
+function startTimer(){
+  timerSec=300;updateTimer();
+  timerInt=setInterval(()=>{timerSec--;updateTimer();
+    if(timerSec<=0){clearInterval(timerInt);if(isLeader&&!checked){checkAnswers();}}},1000);
+}
+function updateTimer(){
+  const m=Math.floor(timerSec/60),s=timerSec%60;
+  const el=document.getElementById('timerBadge');
+  el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className='hbadge timer-b'+(timerSec<=30?' urgent':'');
+}
+
+/* ─── LIVE ─── */
+async function loadLive(){
+  try{
+    const r=await fetch(`${DB}/${BASE}/team${teamId}/members.json`);
+    const d=await r.json()||{};
+    const members=Object.values(d).filter(m=>m&&m.name);
+    document.getElementById('tsChips').innerHTML=members.map(m=>`
+      <div class="ts-chip ${m.name===student?'me':''} ${m.isLeader?'ldr':''}">
+        ${m.isLeader?'👑 ':''}${m.name.split(' ').slice(0,2).join(' ')}</div>`).join('');
+    document.getElementById('tsLive').textContent=`👥 ${members.length} انضممن`;
+  }catch(e){}
+}
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
