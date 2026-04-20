@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اكتشاف نموذج OSI — رحلة الرسالة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0614; --card:#130d22; --card2:#1c1535;
+  --purple:#9333ea; --pink:#ec4899; --teal:#14b8a6; --amber:#f59e0b;
+  --blue:#3b82f6; --green:#22c55e;
+  --purpl:rgba(147,51,234,.15); --pinkl:rgba(236,72,153,.12);
+  --text:#f1f5f9; --muted:#94a3b8;
+  --border:rgba(255,255,255,.07);
+  --shadow:0 20px 60px rgba(0,0,0,.6);
+  --glow:0 0 40px rgba(147,51,234,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 10% 20%,rgba(147,51,234,.12) 0%,transparent 55%),
+    radial-gradient(ellipse at 90% 80%,rgba(236,72,153,.1) 0%,transparent 55%),
+    radial-gradient(ellipse at 50% 50%,rgba(20,184,166,.06) 0%,transparent 50%)}
+
+/* HEADER */
+.header{background:rgba(10,6,20,.95);border-bottom:1px solid var(--border);
+  padding:12px 22px;display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+.hd-title{font-size:1.05em;font-weight:900;
+  background:linear-gradient(90deg,#c084fc,#f472b6,#5eead4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.teacher-link{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--border);
+  border-radius:20px;padding:6px 14px;font-family:'Tajawal',sans-serif;font-size:.82em;
+  font-weight:700;cursor:pointer;text-decoration:none;transition:.2s}
+.teacher-link:hover{background:rgba(255,255,255,.12);color:var(--text)}
+
+/* VIEWS */
+.view{display:none;min-height:calc(100vh - 60px);padding:24px 16px 60px;position:relative;z-index:1}
+.view.active{display:block}
+.view.center{display:flex;align-items:center;justify-content:center;padding:20px}
+
+/* CARD */
+.card{background:var(--card);border-radius:24px;border:1px solid var(--border);box-shadow:var(--shadow)}
+@keyframes popIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes slideUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes shimmer{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ══ NAME SCREEN ══ */
+.name-card{padding:48px 34px;width:100%;max-width:500px;text-align:center;animation:popIn .5s ease}
+.nc-big{font-size:5em;display:block;margin-bottom:14px;animation:float 3s ease-in-out infinite}
+.name-card h1{font-size:1.8em;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(90deg,#c084fc,#f472b6,#5eead4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.name-card p{color:var(--muted);font-size:1em;margin-bottom:28px;line-height:1.7}
+.n-input{width:100%;padding:14px 18px;background:var(--card2);border:2px solid var(--border);
+  border-radius:15px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.1em;
+  text-align:center;margin-bottom:16px;transition:.2s}
+.n-input:focus{outline:none;border-color:var(--purple)}
+.n-input::placeholder{color:var(--muted)}
+.go-btn{width:100%;padding:16px;border:none;border-radius:15px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.15em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#9333ea,#ec4899);
+  box-shadow:0 8px 28px rgba(147,51,234,.4);transition:transform .2s}
+.go-btn:hover{transform:translateY(-2px)}
+
+/* ══ STORY SCREEN ══ */
+.story-wrap{max-width:820px;margin:0 auto}
+
+/* STORY PROGRESS */
+.story-prog{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.sp-step{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.8em;font-weight:800;border:2px solid transparent;transition:.4s;flex-shrink:0;cursor:pointer}
+.sp-line{flex:1;height:2px;background:rgba(255,255,255,.08);border-radius:1px;transition:.4s}
+
+/* STORY CARD */
+.story-card{padding:0;overflow:hidden;margin-bottom:16px;animation:slideUp .45s ease}
+.sc-banner{padding:18px 24px;display:flex;align-items:center;gap:12px}
+.sc-banner-icon{font-size:2.2em;flex-shrink:0}
+.sc-banner-text{flex:1}
+.sc-stage{font-size:.74em;font-weight:800;letter-spacing:.5px;text-transform:uppercase;opacity:.75;margin-bottom:3px}
+.sc-title{font-size:1.1em;font-weight:900}
+.story-body{padding:22px 26px}
+
+/* NARRATIVE */
+.narrative{font-size:1.02em;font-weight:700;line-height:2;color:var(--text);margin-bottom:18px;position:relative}
+.narrative .hl{border-radius:5px;padding:1px 6px;font-weight:900}
+.hl-purple{background:rgba(147,51,234,.2);color:#d8b4fe}
+.hl-pink{background:rgba(236,72,153,.2);color:#f9a8d4}
+.hl-teal{background:rgba(20,184,166,.2);color:#99f6e4}
+.hl-amber{background:rgba(245,158,11,.2);color:#fde68a}
+.hl-blue{background:rgba(59,130,246,.2);color:#93c5fd}
+.hl-green{background:rgba(34,197,94,.2);color:#86efac}
+
+/* LAYER REVEAL */
+.layer-reveal{border-radius:16px;padding:14px 18px;margin-bottom:14px;
+  display:flex;align-items:center;gap:14px;border:1.5px solid transparent;
+  animation:slideUp .4s ease}
+.lr-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.1em;font-weight:900;color:#fff;flex-shrink:0}
+.lr-content{flex:1}
+.lr-ar{font-size:.88em;font-weight:900;margin-bottom:2px}
+.lr-en{font-size:.76em;font-weight:700;opacity:.65}
+
+/* OSI VISUALIZER */
+.osi-visual{display:flex;flex-direction:column;gap:4px;margin-bottom:18px}
+.osi-layer{border-radius:10px;padding:9px 16px;display:flex;align-items:center;gap:10px;
+  transition:all .3s;cursor:default;border:1px solid transparent}
+.osi-layer.lit{transform:translateX(-6px);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.osi-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.82em;font-weight:900;color:#fff;flex-shrink:0}
+.osi-ar{font-size:.88em;font-weight:800;flex:1}
+.osi-en{font-size:.74em;font-weight:700;opacity:.6}
+
+/* CLUE BOX */
+.clue-box{border-radius:14px;padding:14px 18px;margin-bottom:16px;
+  border:1.5px solid transparent;animation:slideUp .4s ease;position:relative;overflow:hidden}
+.clue-box::before{content:'';position:absolute;inset:0;opacity:.05;
+  background:linear-gradient(135deg,#fff,transparent)}
+.cb-icon{font-size:1.8em;margin-bottom:6px;display:block}
+.cb-text{font-size:.97em;font-weight:700;line-height:1.65;color:var(--text)}
+.cb-text strong{color:#d8b4fe}
+
+/* QUIZ BOX */
+.quiz-box{background:var(--card2);border-radius:16px;padding:18px 20px;margin-bottom:16px;
+  border:1.5px solid rgba(147,51,234,.25)}
+.qb-label{font-size:.82em;font-weight:800;color:#c084fc;margin-bottom:10px;display:flex;align-items:center;gap:6px;letter-spacing:.4px;text-transform:uppercase}
+.qb-q{font-size:1em;font-weight:800;color:var(--text);margin-bottom:14px;line-height:1.6}
+.qb-opts{display:flex;flex-direction:column;gap:8px}
+.qb-opt{padding:12px 16px;border-radius:12px;border:2px solid var(--border);
+  background:rgba(255,255,255,.04);color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:.95em;font-weight:700;cursor:pointer;text-align:right;transition:.2s;line-height:1.45}
+.qb-opt:hover{border-color:rgba(147,51,234,.4);background:var(--purpl)}
+.qb-opt.correct{border-color:var(--green)!important;background:rgba(34,197,94,.15)!important;color:#86efac!important}
+.qb-opt.wrong{border-color:#ef4444!important;background:rgba(239,68,68,.12)!important;color:#fca5a5!important}
+.qb-opt:disabled{cursor:not-allowed}
+.qb-fb{border-radius:11px;padding:11px 14px;margin-top:10px;font-size:.88em;font-weight:700;
+  display:none;animation:slideUp .3s ease;line-height:1.55}
+.qb-fb.show{display:flex;align-items:flex-start;gap:8px}
+.qb-fb.ok{background:rgba(34,197,94,.13);border:1.5px solid rgba(34,197,94,.3);color:#86efac}
+.qb-fb.err{background:rgba(239,68,68,.12);border:1.5px solid rgba(239,68,68,.25);color:#fca5a5}
+
+/* NEXT / CONTINUE BTN */
+.cont-btn{width:100%;padding:14px;border:none;border-radius:14px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.05em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#9333ea,#ec4899);
+  box-shadow:0 5px 18px rgba(147,51,234,.3);transition:transform .2s;margin-top:10px}
+.cont-btn:hover{transform:translateY(-1px)}
+.cont-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ══ WRITE DEFINITION ══ */
+.write-wrap{max-width:700px;margin:0 auto}
+.write-card{padding:36px;animation:popIn .5s ease}
+.write-icon{font-size:4em;display:block;text-align:center;margin-bottom:16px;animation:float 2.5s ease-in-out infinite}
+.write-card h2{font-size:1.6em;font-weight:900;text-align:center;margin-bottom:8px;
+  background:linear-gradient(90deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.write-card p{color:var(--muted);font-size:.97em;text-align:center;margin-bottom:24px;line-height:1.65}
+/* SCAFFOLDED PROMPT */
+.scaffold{background:var(--card2);border-radius:16px;padding:18px 20px;margin-bottom:20px;border:1.5px solid rgba(147,51,234,.2)}
+.sc-label{font-size:.78em;font-weight:800;color:#c084fc;margin-bottom:8px;letter-spacing:.4px;text-transform:uppercase}
+.sc-text{font-size:.97em;font-weight:700;color:var(--text);line-height:1.8}
+.sc-blank{display:inline-block;border-bottom:2px solid #9333ea;min-width:80px;
+  padding:0 6px;color:#d8b4fe;font-style:italic}
+.def-area{width:100%;padding:16px 18px;background:var(--card2);border:2px solid rgba(147,51,234,.3);
+  border-radius:16px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1em;font-weight:700;
+  line-height:1.75;resize:vertical;min-height:130px;margin-bottom:16px;transition:.2s}
+.def-area:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(147,51,234,.12)}
+.def-area::placeholder{color:var(--muted);font-weight:400}
+.char-counter{font-size:.78em;color:var(--muted);text-align:left;margin-bottom:14px;font-weight:600}
+.submit-btn{width:100%;padding:16px;border:none;border-radius:15px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1em;font-weight:900;cursor:pointer;
+  background:linear-gradient(135deg,#9333ea,#14b8a6);
+  box-shadow:0 8px 24px rgba(147,51,234,.35);transition:transform .2s}
+.submit-btn:hover{transform:translateY(-2px)}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ══ SUCCESS ══ */
+.success-card{padding:52px 36px;max-width:480px;width:100%;text-align:center;animation:popIn .5s ease}
+.suc-icon{font-size:5.5em;display:block;margin-bottom:16px;animation:float 2s ease-in-out infinite}
+.success-card h2{font-size:2em;font-weight:900;margin-bottom:10px;
+  background:linear-gradient(90deg,#c084fc,#f472b6,#5eead4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.suc-quote{background:var(--card2);border-radius:16px;padding:16px 20px;margin:16px 0;
+  border-right:4px solid var(--purple);font-size:.97em;font-weight:700;color:#d8b4fe;
+  font-style:italic;line-height:1.7;text-align:right}
+.suc-note{color:var(--muted);font-size:.9em;line-height:1.65}
+
+/* ══ TEACHER WALL ══ */
+.wall-wrap{max-width:1100px;margin:0 auto}
+.wall-card{overflow:hidden}
+.wall-hdr{background:linear-gradient(135deg,#1a0a2e,#2d0a35);padding:20px 28px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.wall-hdr h2{font-size:1.2em;font-weight:900;
+  background:linear-gradient(90deg,#c084fc,#f472b6,#5eead4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.wall-btns{display:flex;gap:9px}
+.wb-ref{background:rgba(147,51,234,.2);color:#d8b4fe;border:1px solid rgba(147,51,234,.3);
+  border-radius:10px;padding:7px 16px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:800;cursor:pointer}
+.wb-clr{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.25);
+  border-radius:10px;padding:7px 16px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:800;cursor:pointer}
+.wb-back{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--border);
+  border-radius:10px;padding:7px 16px;font-family:'Tajawal',sans-serif;font-size:.82em;font-weight:700;cursor:pointer}
+.wall-stats{display:flex;gap:12px;padding:18px 28px;flex-wrap:wrap}
+.ws-box{background:var(--card2);border-radius:12px;padding:12px 18px;
+  border:1px solid var(--border);text-align:center;flex:1;min-width:120px}
+.ws-n{font-size:1.9em;font-weight:900;line-height:1;margin-bottom:3px}
+.ws-l{font-size:.76em;color:var(--muted);font-weight:700}
+
+/* THE WALL */
+.wall-body{padding:20px 28px}
+.wall-title{font-size:.85em;font-weight:800;color:var(--muted);margin-bottom:16px;
+  letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.wall-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+
+/* STICKY NOTE */
+.sticky{border-radius:4px 18px 18px 18px;padding:20px;position:relative;overflow:hidden;
+  animation:popIn .4s cubic-bezier(.36,1.56,.64,1)}
+.sticky::before{content:'';position:absolute;top:0;right:0;
+  width:36px;height:36px;background:rgba(0,0,0,.12);
+  clip-path:polygon(100% 0,0 0,100% 100%)}
+.sticky-pin{position:absolute;top:10px;right:10px;font-size:1.2em;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.sticky-name{font-size:.85em;font-weight:900;margin-bottom:10px;padding-bottom:8px;
+  border-bottom:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;gap:6px}
+.sticky-name .sn-icon{font-size:1em}
+.sticky-def{font-size:.92em;font-weight:700;line-height:1.75;color:rgba(255,255,255,.9);
+  font-style:italic}
+.sticky-def::before{content:'"';font-size:1.5em;opacity:.4;margin-left:2px;line-height:0;vertical-align:-4px}
+.sticky-def::after{content:'"';font-size:1.5em;opacity:.4;margin-right:2px;line-height:0;vertical-align:-4px}
+.sticky-time{font-size:.7em;opacity:.5;margin-top:10px;text-align:left;font-weight:600}
+.wall-empty{grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);
+  font-weight:700;border:2px dashed rgba(255,255,255,.07);border-radius:20px}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-bg.show{display:flex}
+.modal-box{background:var(--card);border-radius:22px;padding:32px;width:100%;max-width:290px;
+  text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);animation:popIn .35s ease}
+.modal-box h3{font-size:1.1em;font-weight:900;color:var(--text);margin-bottom:6px}
+.modal-box p{font-size:.83em;color:var(--muted);margin-bottom:14px}
+.m-pass{width:100%;padding:12px;background:var(--card2);border:2px solid var(--border);
+  border-radius:11px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.2em;text-align:center;letter-spacing:5px;margin-bottom:10px;transition:.2s}
+.m-pass:focus{outline:none;border-color:var(--purple)}
+.m-err{font-size:.78em;color:#fca5a5;font-weight:700;margin-bottom:10px;display:none}
+.m-err.show{display:block}
+.m-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.m-ok{padding:11px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,#9333ea,#ec4899);color:#fff;
+  font-family:'Tajawal',sans-serif;font-weight:900;cursor:pointer}
+.m-cancel{padding:11px;border:1px solid var(--border);border-radius:10px;background:transparent;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-weight:700;cursor:pointer}
+
+/* CONF */
+.conf{position:fixed;border-radius:2px;pointer-events:none;z-index:9999;animation:fall 2.5s linear forwards}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@media(max-width:600px){.wall-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="hd-title">📡 اكتشاف نموذج OSI — رحلة الرسالة</div>
+  <a href="#" class="teacher-link" id="teacherLink">🔒 جدارية المعلمة</a>
+</header>
+
+<!-- TEACHER MODAL -->
+<div class="modal-bg" id="teacherModal">
+  <div class="modal-box">
+    <h3>🔐 شاشة المعلمة</h3>
+    <p>أدخلي كلمة المرور</p>
+    <input type="password" class="m-pass" id="passInput" placeholder="••••" maxlength="6"/>
+    <div class="m-err" id="passErr">كلمة المرور خاطئة!</div>
+    <div class="m-btns">
+      <button class="m-ok" id="passOk">دخول</button>
+      <button class="m-cancel" id="passCancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAME VIEW -->
+<div class="view center active" id="nameView">
+  <div class="card name-card">
+    <span class="nc-big">📡</span>
+    <h1>رحلة الرسالة</h1>
+    <p>اتبعي رحلة رسالة بين حاسوبين<br>واكتشفي ما هو نموذج <strong style="color:#c084fc">OSI</strong></p>
+    <input type="text" class="n-input" id="nameInput" placeholder="اكتبي اسمكِ هنا ..." />
+    <button class="go-btn" id="goBtn">ابدئي الرحلة 🚀</button>
+  </div>
+</div>
+
+<!-- STORY VIEW -->
+<div class="view" id="storyView">
+  <div class="story-wrap" id="storyWrap"></div>
+</div>
+
+<!-- WRITE VIEW -->
+<div class="view center" id="writeView">
+  <div class="write-wrap">
+    <div class="card write-card">
+      <span class="write-icon">✍️</span>
+      <h2>اكتشفتِ المفهوم!</h2>
+      <p>الآن اكتبي بأسلوبكِ الخاص: <strong style="color:#c084fc">ما هو نموذج OSI؟</strong></p>
+      <div class="scaffold">
+        <div class="sc-label">💡 مساعدة للصياغة</div>
+        <div class="sc-text">
+          نموذج OSI هو <span class="sc-blank">نموذج مرجعي</span> يُستخدم لـ
+          <span class="sc-blank">تبادل البيانات</span> بين الحواسيب في بيئة الشبكات،
+          ويتكون من <span class="sc-blank">7 طبقات</span> كل منها تؤدي وظيفة مستقلة.
+        </div>
+      </div>
+      <textarea class="def-area" id="defArea" placeholder="اكتبي مفهوم نموذج OSI بكلماتكِ الخاصة..."
+        oninput="updateCounter()"></textarea>
+      <div class="char-counter" id="charCounter">0 / 300 حرف</div>
+      <button class="submit-btn" id="submitBtn" disabled onclick="submitDef()">
+        📌 إرسال تعريفكِ إلى الجدارية
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS VIEW -->
+<div class="view center" id="successView">
+  <div class="card success-card">
+    <span class="suc-icon">🌟</span>
+    <h2>أحسنتِ!</h2>
+    <div class="suc-quote" id="sucQuote"></div>
+    <p class="suc-note">ظهر تعريفكِ على جدارية المعلمة ✨<br>لقد اكتشفتِ نموذج OSI بنفسكِ!</p>
+  </div>
+</div>
+
+<!-- TEACHER / WALL VIEW -->
+<div class="view" id="wallView">
+  <div class="wall-wrap">
+    <div class="card wall-card">
+      <div class="wall-hdr">
+        <h2>🎨 جدارية الاكتشاف — نموذج OSI</h2>
+        <div class="wall-btns">
+          <button class="wb-ref" onclick="loadWall()">🔄 تحديث</button>
+          <button class="wb-clr" onclick="clearWall()">🗑️ مسح</button>
+          <button class="wb-back" onclick="showView('nameView')">← خروج</button>
+        </div>
+      </div>
+      <div class="wall-stats">
+        <div class="ws-box"><div class="ws-n" style="color:#c084fc" id="wTotal">0</div><div class="ws-l">تعريفاً</div></div>
+        <div class="ws-box"><div class="ws-n" style="color:var(--teal)" id="wAvgLen">—</div><div class="ws-l">متوسط الكلمات</div></div>
+        <div class="ws-box"><div class="ws-n" style="color:var(--amber)" id="wRecent">—</div><div class="ws-l">آخر إضافة</div></div>
+      </div>
+      <div class="wall-body">
+        <div class="wall-title">
+          <span>📌</span><span>تعريفات الطالبات لنموذج OSI</span>
+        </div>
+        <div class="wall-grid" id="wallGrid">
+          <div class="wall-empty">🎨 لا توجد إضافات بعد — انتظري الطالبات</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+const PATH = 'osi-discovery-g10';
+const PASS = '1234';
+
+/* ════ STORY STAGES ════ */
+const STAGES = [
+  {
+    id:1,
+    banner:{icon:'💬', color:'linear-gradient(135deg,#4c1d95,#7c3aed)', stage:'التمهيد', title:'رسالة من سارة إلى ليلى'},
+    content:`<div class="narrative">
+      تجلس <span class="hl hl-purple">سارة</span> أمام حاسوبها وتريد إرسال رسالة إلى صديقتها <span class="hl hl-pink">ليلى</span> التي تسكن في مدينة أخرى.
+      تفتح تطبيق المراسلة وتكتب: <em>"مرحباً ليلى! كيف حالكِ؟"</em><br><br>
+      لكن هل فكّرتِ يوماً كيف تنتقل هذه الكلمات من حاسوب سارة إلى حاسوب ليلى؟
+      ما الذي يحدث خلف الكواليس؟ 🤔
+    </div>
+    <div class="clue-box" style="background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.25)">
+      <span class="cb-icon">💡</span>
+      <div class="cb-text">لإجابة هذا السؤال، وضع العلماء نموذجاً يشرح كيف تنتقل البيانات عبر الشبكة.
+      هذا النموذج يُسمى <strong>OSI</strong> — ستكتشفينه خطوة بخطوة.</div>
+    </div>`,
+    btn:'التالي: رحلة الرسالة ←'
+  },
+  {
+    id:2,
+    banner:{icon:'🏗️', color:'linear-gradient(135deg,#1e3a5f,#1d4ed8)', stage:'المرحلة 1 — الطبقات العليا', title:'الرسالة تبدأ رحلتها...'},
+    content:`<div class="narrative">
+      عندما تكتب سارة رسالتها، تمر بـ <span class="hl hl-blue">طبقات متعددة</span> قبل أن تصل لليلى.
+      فكّري في الأمر كأنه مطعم: هناك طاهٍ يُحضّر الطعام، ونادل يقدّمه، وسائق يوصله — كلٌّ له دور!
+    </div>
+    <div class="osi-visual">
+      <div class="osi-layer lit" style="background:rgba(147,51,234,.2);border-color:rgba(147,51,234,.3)">
+        <div class="osi-num" style="background:#9333ea">7</div>
+        <div class="osi-ar">طبقة التطبيق</div><div class="osi-en">Application</div>
+      </div>
+      <div class="osi-layer lit" style="background:rgba(236,72,153,.18);border-color:rgba(236,72,153,.3)">
+        <div class="osi-num" style="background:#ec4899">6</div>
+        <div class="osi-ar">طبقة التقديم</div><div class="osi-en">Presentation</div>
+      </div>
+      <div class="osi-layer lit" style="background:rgba(20,184,166,.15);border-color:rgba(20,184,166,.28)">
+        <div class="osi-num" style="background:#14b8a6">5</div>
+        <div class="osi-ar">طبقة الجلسة</div><div class="osi-en">Session</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">4</div>
+        <div class="osi-ar" style="color:var(--muted)">طبقة النقل</div><div class="osi-en" style="color:var(--muted)">...</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">3</div>
+        <div class="osi-ar" style="color:var(--muted)">...</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">2</div>
+        <div class="osi-ar" style="color:var(--muted)">...</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">1</div>
+        <div class="osi-ar" style="color:var(--muted)">...</div>
+      </div>
+    </div>
+    <div class="clue-box" style="background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.25)">
+      <span class="cb-icon">🔍</span>
+      <div class="cb-text">الطبقات العليا تهتم بـ <strong>المحتوى</strong>: ما هي الرسالة؟ وكيف تُعرض؟ ومتى تبدأ الجلسة وتنتهي؟</div>
+    </div>`,
+    btn:'التالي: الطبقات الوسطى ←'
+  },
+  {
+    id:3,
+    banner:{icon:'🗺️', color:'linear-gradient(135deg,#064e3b,#0d9488)', stage:'المرحلة 2 — الطبقات الوسطى', title:'أين تذهب الرسالة؟'},
+    content:`<div class="narrative">
+      الآن الرسالة مُحضَّرة — لكن كيف تصل؟
+      مثل البريد تماماً: نحتاج عنواناً <span class="hl hl-teal">للجهاز المرسِل والمستقبِل</span>، وطريقاً <span class="hl hl-amber">بين المدن</span>، وسيارة <span class="hl hl-green">توصل الرسالة</span>!
+    </div>
+    <div class="osi-visual">
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">7</div><div class="osi-ar" style="color:var(--muted)">التطبيق ✓</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">6</div><div class="osi-ar" style="color:var(--muted)">التقديم ✓</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">5</div><div class="osi-ar" style="color:var(--muted)">الجلسة ✓</div>
+      </div>
+      <div class="osi-layer lit" style="background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.3)">
+        <div class="osi-num" style="background:#f59e0b">4</div>
+        <div class="osi-ar">طبقة النقل</div><div class="osi-en">Transport — تقسّم الرسالة لأجزاء صغيرة</div>
+      </div>
+      <div class="osi-layer lit" style="background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3)">
+        <div class="osi-num" style="background:#3b82f6">3</div>
+        <div class="osi-ar">طبقة الشبكة</div><div class="osi-en">Network — تُحدد المسار والعنوان IP</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">2</div><div class="osi-ar" style="color:var(--muted)">...</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">1</div><div class="osi-ar" style="color:var(--muted)">...</div>
+      </div>
+    </div>`,
+    btn:'التالي: الطبقات الدنيا ←',
+  },
+  {
+    id:4,
+    banner:{icon:'⚡', color:'linear-gradient(135deg,#1c1035,#581c87)', stage:'المرحلة 3 — الطبقات الدنيا', title:'الرسالة على الأسلاك!'},
+    content:`<div class="narrative">
+      وصلنا للمرحلة الأخيرة! الرسالة الآن تتحول إلى
+      <span class="hl hl-purple">إشارات كهربائية أو ضوئية</span>
+      وتسير عبر الكابلات والهواء حتى تصل لحاسوب ليلى.
+    </div>
+    <div class="osi-visual">
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">7-5</div><div class="osi-ar" style="color:var(--muted)">الطبقات العليا ✓</div>
+      </div>
+      <div class="osi-layer" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)">
+        <div class="osi-num" style="background:#475569">4-3</div><div class="osi-ar" style="color:var(--muted)">الطبقات الوسطى ✓</div>
+      </div>
+      <div class="osi-layer lit" style="background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3)">
+        <div class="osi-num" style="background:#22c55e">2</div>
+        <div class="osi-ar">طبقة وصلة البيانات</div><div class="osi-en">Data Link — تنظّم نقل البيانات بين الأجهزة</div>
+      </div>
+      <div class="osi-layer lit" style="background:rgba(236,72,153,.15);border-color:rgba(236,72,153,.3)">
+        <div class="osi-num" style="background:#ec4899">1</div>
+        <div class="osi-ar">الطبقة المادية</div><div class="osi-en">Physical — الأسلاك والإشارات الكهربائية</div>
+      </div>
+    </div>
+    <div class="clue-box" style="background:rgba(147,51,234,.12);border-color:rgba(147,51,234,.3)">
+      <span class="cb-icon">✨</span>
+      <div class="cb-text">الآن عندما تصل الإشارة لحاسوب ليلى، ترتفع من الطبقة 1 إلى الطبقة 7 — الرحلة معكوسة! وتظهر رسالة سارة أمام ليلى. <strong>كل طبقة أدّت دورها دون التأثير على الأخريات.</strong></div>
+    </div>`,
+    btn:'سؤال الاكتشاف 🎯'
+  },
+  {
+    id:5,
+    banner:{icon:'🎯', color:'linear-gradient(135deg,#7c2d12,#c2410c)', stage:'سؤال الاكتشاف', title:'ماذا اكتشفتِ؟'},
+    content:`<div class="quiz-box">
+      <div class="qb-label">💡 سؤال الاكتشاف</div>
+      <div class="qb-q">بناءً على رحلة الرسالة التي تابعتيها — ما الوصف الأدق لنموذج OSI؟</div>
+      <div class="qb-opts" id="discovOpts">
+        <button class="qb-opt" data-i="0" onclick="answerDiscov(0)">هو برنامج يُثبَّت على الحاسوب لحماية الشبكة من الهجمات.</button>
+        <button class="qb-opt" data-i="1" onclick="answerDiscov(1)">هو نموذج مرجعي يُقسّم عملية تبادل البيانات إلى 7 طبقات، كلٌّ منها تؤدي وظيفة مستقلة.</button>
+        <button class="qb-opt" data-i="2" onclick="answerDiscov(2)">هو جهاز مادي يوصّل الأجهزة بعضها ببعض داخل الشبكة.</button>
+        <button class="qb-opt" data-i="3" onclick="answerDiscov(3)">هو بروتوكول اتصال خاص بالشبكات اللاسلكية فقط.</button>
+      </div>
+      <div class="qb-fb" id="discovFb"></div>
+    </div>`,
+    btn:'اكتبي تعريفكِ ✍️',
+    isDiscov:true
+  }
+];
+
+/* ════ STATE ════ */
+let student='', currentStage=0, discovAnswered=false;
+
+/* ════ VIEWS ════ */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ════ NAME ════ */
+document.getElementById('goBtn').addEventListener('click',()=>{
+  student=document.getElementById('nameInput').value.trim();
+  if(!student){alert('اكتبي اسمكِ أولاً!');return;}
+  currentStage=0;
+  renderStage(0);
+  showView('storyView');
+});
+document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter') document.getElementById('goBtn').click();});
+
+/* ════ RENDER STAGE ════ */
+function renderStage(idx){
+  currentStage=idx;
+  const st=STAGES[idx];
+  const wrap=document.getElementById('storyWrap');
+  wrap.innerHTML='';
+
+  // PROGRESS
+  let progHtml='<div class="story-prog">';
+  STAGES.forEach((s,i)=>{
+    const done=i<idx, active=i===idx;
+    progHtml+=`<div class="sp-step" style="
+      background:${done?'var(--green)':active?'var(--purple)':'rgba(255,255,255,.07)'};
+      border-color:${done?'var(--green)':active?'var(--purple)':'transparent'};
+      color:${done||active?'#fff':'var(--muted)'}
+      " onclick="${done?'renderStage('+i+')':(active?'':'')}">${done?'✓':(i+1)}</div>`;
+    if(i<STAGES.length-1) progHtml+=`<div class="sp-line" style="background:${done?'var(--green)':'rgba(255,255,255,.08)'}"></div>`;
+  });
+  progHtml+='</div>';
+
+  // STORY CARD
+  const card=document.createElement('div');card.className='card story-card';
+  card.innerHTML=`
+    <div class="sc-banner" style="background:${st.banner.color}">
+      <div class="sc-banner-icon">${st.banner.icon}</div>
+      <div class="sc-banner-text">
+        <div class="sc-stage">${st.banner.stage}</div>
+        <div class="sc-title">${st.banner.title}</div>
+      </div>
+    </div>
+    <div class="story-body">
+      ${st.content}
+      <button class="cont-btn" id="contBtn" ${st.isDiscov?'style="display:none"':''} onclick="goNext(${idx})">${st.btn}</button>
+    </div>`;
+
+  wrap.innerHTML=progHtml;
+  wrap.appendChild(card);
+  wrap.scrollIntoView({behavior:'smooth'});
+}
+
+function goNext(idx){
+  if(idx<STAGES.length-1) renderStage(idx+1);
+  else goWrite();
+}
+
+/* ════ DISCOVERY ANSWER ════ */
+function answerDiscov(i){
+  if(discovAnswered)return;
+  discovAnswered=true;
+  const ok=(i===1);
+  document.querySelectorAll('.qb-opt').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===1) b.classList.add('correct');
+    else if(j===i&&!ok) b.classList.add('wrong');
+  });
+  const fb=document.getElementById('discovFb');
+  fb.className='qb-fb show '+(ok?'ok':'err');
+  fb.innerHTML=ok
+    ?'<span>🎉</span><span>ممتاز! هذا هو جوهر نموذج OSI — نموذج مرجعي بـ 7 طبقات مستقلة لتبادل البيانات.</span>'
+    :'<span>💡</span><span>الإجابة الصحيحة: نموذج OSI هو <strong>نموذج مرجعي</strong> يُقسّم عملية تبادل البيانات إلى 7 طبقات مستقلة.</span>';
+  document.getElementById('contBtn').style.display='block';
+}
+
+/* ════ WRITE ════ */
+function goWrite(){
+  discovAnswered=false;
+  showView('writeView');
+}
+
+function updateCounter(){
+  const val=document.getElementById('defArea').value;
+  document.getElementById('charCounter').textContent=val.length+' / 300 حرف';
+  document.getElementById('submitBtn').disabled=val.trim().length<15;
+}
+
+async function submitDef(){
+  const def=document.getElementById('defArea').value.trim();
+  if(!def||def.length<15)return;
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('submitBtn').textContent='⏳ جارٍ الإرسال...';
+  const key=encodeURIComponent(student.replace(/\s+/g,'_')+'_'+Date.now());
+  const data={name:student,definition:def,ts:Date.now(),time:new Date().toLocaleTimeString('ar-SA')};
+  try{await fetch(`${DB}/${PATH}/${key}.json`,{method:'PUT',body:JSON.stringify(data)});}catch(e){}
+  document.getElementById('sucQuote').textContent=def;
+  showView('successView');
+  spawnConf(25);
+}
+
+/* ════ TEACHER WALL ════ */
+document.getElementById('teacherLink').addEventListener('click',e=>{
+  e.preventDefault();
+  document.getElementById('teacherModal').classList.add('show');
+  document.getElementById('passInput').value='';
+  document.getElementById('passErr').classList.remove('show');
+  setTimeout(()=>document.getElementById('passInput').focus(),100);
+});
+document.getElementById('passCancel').addEventListener('click',()=>document.getElementById('teacherModal').classList.remove('show'));
+document.getElementById('passOk').addEventListener('click',tryPass);
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter') tryPass();});
+
+function tryPass(){
+  if(document.getElementById('passInput').value===PASS){
+    document.getElementById('teacherModal').classList.remove('show');
+    loadWall();showView('wallView');
+    setInterval(loadWall,15000);
+  } else {
+    document.getElementById('passInput').style.borderColor='var(--red)';
+    document.getElementById('passErr').classList.add('show');
+    setTimeout(()=>{document.getElementById('passInput').style.borderColor='';document.getElementById('passErr').classList.remove('show');},2000);
+  }
+}
+
+const WALL_COLORS=[
+  {bg:'linear-gradient(135deg,#4c1d95,#7c3aed)',text:'#fff',pin:'📌'},
+  {bg:'linear-gradient(135deg,#831843,#be185d)',text:'#fff',pin:'📎'},
+  {bg:'linear-gradient(135deg,#064e3b,#0d9488)',text:'#fff',pin:'🖊️'},
+  {bg:'linear-gradient(135deg,#1e3a5f,#1d4ed8)',text:'#fff',pin:'📍'},
+  {bg:'linear-gradient(135deg,#78350f,#d97706)',text:'#fff',pin:'✏️'},
+  {bg:'linear-gradient(135deg,#1c1035,#6d28d9)',text:'#fff',pin:'🗂️'},
+  {bg:'linear-gradient(135deg,#0f2a2a,#0e7490)',text:'#fff',pin:'📋'},
+  {bg:'linear-gradient(135deg,#3b0764,#7c3aed)',text:'#fff',pin:'🔖'},
+];
+
+async function loadWall(){
+  try{
+    const r=await fetch(`${DB}/${PATH}.json`);
+    const d=await r.json()||{};
+    const entries=Object.values(d).filter(x=>x&&x.name).sort((a,b)=>b.ts-a.ts);
+    renderWall(entries);
+  }catch(e){renderWall([]);}
+}
+
+function renderWall(entries){
+  document.getElementById('wTotal').textContent=entries.length;
+  const avgLen=entries.length?Math.round(entries.reduce((s,e)=>s+(e.definition||'').split(' ').length,0)/entries.length):0;
+  document.getElementById('wAvgLen').textContent=avgLen||'—';
+  document.getElementById('wRecent').textContent=entries.length?entries[0].time||'—':'—';
+
+  const grid=document.getElementById('wallGrid');
+  if(!entries.length){grid.innerHTML='<div class="wall-empty">🎨 لا توجد إضافات بعد — انتظري الطالبات</div>';return;}
+  grid.innerHTML=entries.map((e,i)=>{
+    const col=WALL_COLORS[i%WALL_COLORS.length];
+    return `<div class="sticky" style="background:${col.bg}">
+      <span class="sticky-pin">${col.pin}</span>
+      <div class="sticky-name">
+        <span class="sn-icon">👩‍🎓</span>
+        <span>${e.name}</span>
+      </div>
+      <div class="sticky-def">${e.definition}</div>
+      <div class="sticky-time">${e.time||''}</div>
+    </div>`;
+  }).join('');
+}
+
+async function clearWall(){
+  if(!confirm('⚠️ مسح جميع التعريفات من الجدارية؟'))return;
+  try{await fetch(`${DB}/${PATH}.json`,{method:'DELETE'});loadWall();alert('✅ تم المسح.');}
+  catch(e){alert('❌ خطأ.');}
+}
+
+/* EFFECTS */
+function spawnConf(n=15){
+  const c=['#c084fc','#f472b6','#5eead4','#fbbf24','#86efac','#9333ea'];
+  for(let i=0;i<n;i++) setTimeout(()=>{
+    const el=document.createElement('div');el.className='conf';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${c[Math.floor(Math.random()*c.length)]};width:${5+Math.random()*8}px;height:${5+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*.7}s`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),5000);
+  },i*55);
+}
+</script>
+</body>
+</html>
