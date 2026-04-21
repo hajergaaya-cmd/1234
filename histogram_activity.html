@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تحليل تمثيل البيانات — المدرج التكراري</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0b1e3d;
+  --navy2: #122747;
+  --navy3: #1a3460;
+  --blue: #2a6fc8;
+  --blue2: #3d85e0;
+  --teal: #1ec8a0;
+  --teal2: #0aa880;
+  --gold: #f5c842;
+  --red: #e8455a;
+  --green: #27c97a;
+  --text: #e8f0ff;
+  --muted: #7a95c4;
+  --card: rgba(26,52,96,0.7);
+  --card-b: rgba(61,133,224,0.15);
+  --border: rgba(61,133,224,0.2);
+  --white: #ffffff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Tajawal',sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  min-height:100vh;
+  direction:rtl;
+  overflow-x:hidden;
+}
+
+/* ── BG MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 0%, rgba(30,200,160,0.12) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 60% at 90% 100%, rgba(42,111,200,0.18) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(245,200,66,0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+/* ── GRID LINES ── */
+body::after{
+  content:'';
+  position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(61,133,224,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61,133,224,0.04) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+}
+
+/* ══════════════════════════
+   PAGES
+══════════════════════════ */
+.page{position:relative;z-index:1;display:none;min-height:100vh;animation:fadeUp .45s ease both;}
+.page.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px 60px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════
+   TOP BAR (quiz only)
+══════════════════════════ */
+#topBar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:none;
+  background: rgba(11,30,61,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:10px 20px;
+  align-items:center; justify-content:space-between;
+  gap:12px;
+}
+#topBar .lesson-tag{
+  background: linear-gradient(135deg,var(--blue),var(--teal));
+  color:#fff;font-size:.7rem;font-weight:800;
+  padding:4px 12px;border-radius:20px;
+  letter-spacing:.05em;
+}
+#topBar .student-name-tag{
+  color:var(--gold);font-weight:700;font-size:.85rem;
+}
+.progress-wrap{flex:1;max-width:200px;}
+.prog-bar{height:5px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:4px;transition:width .4s ease;}
+.prog-label{font-size:.65rem;color:var(--muted);margin-top:3px;text-align:center;}
+
+/* ══════════════════════════
+   WELCOME SCREEN
+══════════════════════════ */
+.welcome-wrap{
+  text-align:center;max-width:540px;width:100%;
+}
+.subject-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(30,200,160,.15),rgba(42,111,200,.15));
+  border:1px solid rgba(30,200,160,.3);
+  border-radius:50px;padding:7px 20px;
+  font-size:.8rem;font-weight:700;color:var(--teal);
+  margin-bottom:28px;
+}
+.welcome-title{
+  font-size:clamp(1.8rem,6vw,3rem);
+  font-weight:900;line-height:1.2;
+  margin-bottom:8px;
+}
+.welcome-title span{color:var(--gold);}
+.welcome-subtitle{
+  font-size:clamp(.9rem,2.5vw,1.1rem);
+  color:var(--muted);margin-bottom:36px;line-height:1.7;
+}
+.input-wrap{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:28px;
+  margin-bottom:24px;
+  text-align:right;
+}
+.input-label{font-size:.8rem;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.name-input{
+  width:100%;background:rgba(11,30,61,.8);
+  border:1.5px solid var(--border);
+  border-radius:12px;padding:14px 16px;
+  font-family:'Tajawal',sans-serif;
+  font-size:1rem;color:var(--text);
+  outline:none;transition:border-color .25s;
+  direction:rtl;
+}
+.name-input:focus{border-color:var(--teal);}
+.name-input::placeholder{color:var(--muted);}
+.meta-row{
+  display:flex;gap:10px;justify-content:center;
+  flex-wrap:wrap;margin-bottom:28px;
+}
+.meta-chip{
+  background:rgba(42,111,200,.12);
+  border:1px solid var(--border);
+  border-radius:50px;padding:6px 16px;
+  font-size:.78rem;color:var(--muted);
+}
+.meta-chip span{color:var(--blue2);font-weight:700;}
+
+/* ══════════════════════════
+   BUTTONS
+══════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 38px;border-radius:50px;
+  font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;
+  cursor:pointer;border:none;transition:all .22s;
+  position:relative;overflow:hidden;
+}
+.btn::after{content:'';position:absolute;inset:0;opacity:0;background:rgba(255,255,255,.15);transition:opacity .2s;}
+.btn:hover::after{opacity:1;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:linear-gradient(135deg,var(--teal),var(--blue));color:#fff;box-shadow:0 8px 28px rgba(30,200,160,.3);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#e0a500);color:#1a0800;box-shadow:0 8px 28px rgba(245,200,66,.3);}
+.btn-red{background:linear-gradient(135deg,#e8455a,#c01030);color:#fff;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-outline:hover{border-color:var(--teal);color:var(--teal);}
+.btn-sm{padding:10px 24px;font-size:.85rem;}
+
+/* ══════════════════════════
+   QUESTION CARD
+══════════════════════════ */
+.q-card{
+  background:var(--card);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:28px 24px;
+  max-width:680px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.q-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  color:#fff;font-size:.75rem;font-weight:800;
+  padding:5px 14px;border-radius:20px;margin-bottom:16px;
+}
+.q-text{
+  font-size:clamp(1rem,3vw,1.2rem);
+  font-weight:700;line-height:1.7;
+  margin-bottom:20px;
+  color:var(--white);
+}
+/* Histogram visual in question */
+.mini-hist{
+  background:rgba(11,30,61,.6);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:18px;
+  text-align:center;
+}
+.hist-svg{width:100%;max-width:360px;height:140px;}
+
+/* Options */
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(11,30,61,.5);
+  border:1.5px solid var(--border);
+  border-radius:13px;padding:13px 16px;
+  cursor:pointer;transition:all .2s;
+  text-align:right;
+}
+.opt:hover:not(.disabled){
+  border-color:var(--blue2);
+  background:rgba(42,111,200,.12);
+  transform:translateX(-3px);
+}
+.opt.selected.correct{border-color:var(--green);background:rgba(39,201,122,.12);}
+.opt.selected.wrong{border-color:var(--red);background:rgba(232,69,90,.1);}
+.opt.reveal-correct{border-color:var(--green);background:rgba(39,201,122,.08);}
+.opt.disabled{cursor:default;}
+.opt-letter{
+  min-width:30px;height:30px;
+  border-radius:50%;
+  background:rgba(61,133,224,.15);
+  border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.75rem;
+  color:var(--muted);transition:all .2s;
+  flex-shrink:0;
+}
+.opt.selected.correct .opt-letter{background:var(--green);color:#fff;border-color:var(--green);}
+.opt.selected.wrong .opt-letter{background:var(--red);color:#fff;border-color:var(--red);}
+.opt.reveal-correct .opt-letter{background:var(--green);color:#fff;border-color:var(--green);}
+.opt-text{font-size:.93rem;font-weight:500;line-height:1.5;}
+
+/* Feedback */
+.feedback{
+  margin-top:14px;padding:12px 16px;
+  border-radius:12px;font-size:.88rem;font-weight:600;
+  display:none;line-height:1.6;
+}
+.feedback.correct{background:rgba(39,201,122,.12);border:1px solid rgba(39,201,122,.3);color:#4ade80;display:block;}
+.feedback.wrong{background:rgba(232,69,90,.1);border:1px solid rgba(232,69,90,.3);color:#fb7185;display:block;}
+
+/* Nav */
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;}
+
+/* ══════════════════════════
+   RESULT SCREEN
+══════════════════════════ */
+.result-wrap{
+  text-align:center;max-width:600px;width:100%;
+}
+.score-circle{
+  width:130px;height:130px;border-radius:50%;
+  background:conic-gradient(var(--teal) 0% var(--score-pct,0%), rgba(255,255,255,.06) 0%);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+  position:relative;
+  box-shadow:0 0 40px rgba(30,200,160,.3);
+}
+.score-circle::before{
+  content:'';position:absolute;inset:10px;
+  border-radius:50%;background:var(--navy);
+}
+.score-inner{position:relative;z-index:1;text-align:center;}
+.score-num{font-size:2.2rem;font-weight:900;color:var(--white);}
+.score-denom{font-size:.75rem;color:var(--muted);}
+.grade-label{
+  font-size:1.6rem;font-weight:900;margin-bottom:6px;
+}
+.grade-msg{font-size:.95rem;color:var(--muted);margin-bottom:28px;line-height:1.7;}
+.result-details{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:20px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  margin-bottom:24px;text-align:center;
+}
+.rd-item .rd-val{font-size:1.4rem;font-weight:900;}
+.rd-item .rd-lbl{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.rd-item.green .rd-val{color:var(--green);}
+.rd-item.red .rd-val{color:var(--red);}
+.rd-item.blue .rd-val{color:var(--blue2);}
+
+/* ══════════════════════════
+   TEACHER MODAL
+══════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+  display:none;
+}
+.modal-overlay.open{display:flex;animation:fadeUp .3s ease;}
+.modal{
+  background:var(--navy2);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:32px;
+  max-width:520px;width:100%;
+  max-height:90vh;overflow-y:auto;
+  position:relative;
+}
+.modal-close{
+  position:absolute;top:16px;left:16px;
+  background:rgba(255,255,255,.08);border:none;
+  color:var(--muted);width:32px;height:32px;border-radius:50%;
+  cursor:pointer;font-size:1rem;transition:all .2s;
+}
+.modal-close:hover{background:rgba(232,69,90,.2);color:var(--red);}
+.modal-title{font-size:1.3rem;font-weight:800;margin-bottom:20px;text-align:center;}
+/* Password modal */
+#pwModal .pw-icon{font-size:50px;text-align:center;margin-bottom:12px;}
+.pw-input{
+  width:100%;background:rgba(11,30,61,.8);
+  border:1.5px solid var(--border);border-radius:12px;
+  padding:13px 16px;font-family:'Tajawal',sans-serif;
+  font-size:1rem;color:var(--text);outline:none;
+  transition:border-color .25s;direction:ltr;text-align:center;
+  letter-spacing:.2em;margin-bottom:14px;
+}
+.pw-input:focus{border-color:var(--gold);}
+.pw-error{color:var(--red);font-size:.82rem;text-align:center;min-height:20px;margin-bottom:10px;}
+
+/* Teacher dashboard */
+#teacherModal .dash-header{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  margin-bottom:24px;
+}
+.dash-stat{
+  background:rgba(42,111,200,.1);border:1px solid var(--border);
+  border-radius:14px;padding:14px;text-align:center;
+}
+.dash-stat .dv{font-size:1.6rem;font-weight:900;}
+.dash-stat .dl{font-size:.7rem;color:var(--muted);margin-top:2px;}
+.dash-stat.t .dv{color:var(--blue2);}
+.dash-stat.g .dv{color:var(--green);}
+.dash-stat.a .dv{color:var(--gold);}
+.students-table{width:100%;border-collapse:collapse;}
+.students-table th{
+  background:rgba(42,111,200,.15);
+  padding:10px 12px;font-size:.75rem;color:var(--muted);
+  font-weight:700;text-align:center;
+  border-bottom:1px solid var(--border);
+}
+.students-table td{
+  padding:11px 12px;font-size:.85rem;text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.students-table tr:hover td{background:rgba(42,111,200,.06);}
+.grade-badge{
+  display:inline-block;padding:3px 12px;
+  border-radius:20px;font-size:.72rem;font-weight:700;
+}
+.grade-A{background:rgba(39,201,122,.15);color:#4ade80;border:1px solid rgba(39,201,122,.3);}
+.grade-B{background:rgba(42,111,200,.15);color:var(--blue2);border:1px solid var(--border);}
+.grade-C{background:rgba(245,200,66,.15);color:var(--gold);border:1px solid rgba(245,200,66,.3);}
+.grade-D{background:rgba(232,69,90,.12);color:#fb7185;border:1px solid rgba(232,69,90,.3);}
+.no-data{text-align:center;color:var(--muted);padding:30px;font-size:.9rem;}
+.teacher-btn-wrap{
+  position:fixed;bottom:20px;right:20px;z-index:50;
+}
+.teacher-fab{
+  width:50px;height:50px;border-radius:50%;
+  background:linear-gradient(135deg,var(--navy3),var(--navy2));
+  border:1.5px solid var(--border);
+  color:var(--muted);font-size:1.1rem;
+  cursor:pointer;transition:all .25s;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);
+}
+.teacher-fab:hover{border-color:var(--gold);color:var(--gold);}
+.table-wrap{max-height:320px;overflow-y:auto;}
+.table-wrap::-webkit-scrollbar{width:4px;}
+.table-wrap::-webkit-scrollbar-track{background:transparent;}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.clear-btn{
+  width:100%;margin-top:12px;
+  background:rgba(232,69,90,.1);border:1px solid rgba(232,69,90,.25);
+  color:#fb7185;font-family:'Tajawal',sans-serif;font-size:.8rem;
+  font-weight:700;border-radius:10px;padding:9px;cursor:pointer;
+  transition:all .2s;
+}
+.clear-btn:hover{background:rgba(232,69,90,.2);}
+
+/* ══ MISC ══ */
+.section-title{
+  font-size:clamp(1.3rem,4vw,2rem);font-weight:900;
+  text-align:center;margin-bottom:6px;
+}
+.section-sub{font-size:.9rem;color:var(--muted);text-align:center;margin-bottom:28px;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     PAGE 0 — WELCOME
+══════════════════════════════════════ -->
+<div class="page active" id="pageWelcome">
+  <div class="welcome-wrap">
+    <div class="subject-badge">
+      <span>📊</span>
+      الدرس 1-5 · رياضيات
+    </div>
+    <h1 class="welcome-title">
+      تحليل تمثيل<br><span>البيانات</span>
+    </h1>
+    <p class="welcome-subtitle">
+      المدرج التكراري — اختبر فهمك من خلال أسئلة تفاعلية
+    </p>
+
+    <div class="input-wrap">
+      <div class="input-label">أدخل اسمك الكامل للبدء</div>
+      <input class="name-input" id="studentName" type="text"
+             placeholder="مثال: محمد عبدالله"
+             onkeydown="if(event.key==='Enter') startQuiz()">
+    </div>
+
+    <div class="meta-row">
+      <div class="meta-chip">🔢 <span>10</span> أسئلة</div>
+      <div class="meta-chip">⏱ <span>~8</span> دقائق</div>
+      <div class="meta-chip">📈 المدرج التكراري</div>
+    </div>
+
+    <button class="btn btn-primary" onclick="startQuiz()">
+      ابدأ الاختبار ←
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — QUIZ
+══════════════════════════════════════ -->
+<div class="page" id="pageQuiz">
+
+  <!-- TOP BAR -->
+  <div id="topBar">
+    <div class="lesson-tag">المدرج التكراري</div>
+    <div class="progress-wrap">
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-label" id="progLabel"></div>
+    </div>
+    <div class="student-name-tag" id="nameTag"></div>
+  </div>
+
+  <!-- Q CARD -->
+  <div class="q-card" id="qCard" style="margin-top:70px;">
+    <div class="q-num" id="qNum"></div>
+    <div class="q-text" id="qText"></div>
+    <div id="histContainer"></div>
+    <div class="options" id="optionsWrap"></div>
+    <div class="feedback" id="feedbackBox"></div>
+    <div class="q-nav">
+      <div style="font-size:.8rem;color:var(--muted);" id="scoreTrack"></div>
+      <button class="btn btn-primary btn-sm" id="nextBtn" onclick="nextQ()" style="display:none;">
+        التالي ←
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — RESULT
+══════════════════════════════════════ -->
+<div class="page" id="pageResult">
+  <div class="result-wrap">
+    <h2 class="section-title">انتهى الاختبار! 🎉</h2>
+    <p class="section-sub" id="resultNameLabel"></p>
+
+    <div class="score-circle" id="scoreCircle">
+      <div class="score-inner">
+        <div class="score-num" id="scoreNum"></div>
+        <div class="score-denom" id="scoreDenom"></div>
+      </div>
+    </div>
+
+    <div class="grade-label" id="gradeLabel"></div>
+    <div class="grade-msg" id="gradeMsg"></div>
+
+    <div class="result-details">
+      <div class="rd-item green">
+        <div class="rd-val" id="correctCount"></div>
+        <div class="rd-lbl">✅ صحيح</div>
+      </div>
+      <div class="rd-item red">
+        <div class="rd-val" id="wrongCount"></div>
+        <div class="rd-lbl">❌ خطأ</div>
+      </div>
+      <div class="rd-item blue">
+        <div class="rd-val" id="pctVal"></div>
+        <div class="rd-lbl">📊 النسبة</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-outline btn-sm" onclick="retryQuiz()">🔄 إعادة المحاولة</button>
+      <button class="btn btn-gold btn-sm" onclick="showReview()">🔍 مراجعة الإجابات</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 3 — REVIEW
+══════════════════════════════════════ -->
+<div class="page" id="pageReview" style="padding-bottom:80px;">
+  <h2 class="section-title" style="margin-bottom:4px;">مراجعة الإجابات</h2>
+  <p class="section-sub" style="margin-bottom:20px;">كل الأسئلة مع الإجابات الصحيحة</p>
+  <div id="reviewWrap" style="max-width:680px;width:100%;display:flex;flex-direction:column;gap:20px;"></div>
+  <div style="margin-top:28px;">
+    <button class="btn btn-outline btn-sm" onclick="goPage('pageResult')">← رجوع للنتيجة</button>
+  </div>
+</div>
+
+<!-- TEACHER FAB -->
+<div class="teacher-btn-wrap">
+  <button class="teacher-fab" onclick="openPwModal()" title="لوحة المعلم">🔐</button>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL: PASSWORD
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="pwModalOverlay">
+  <div class="modal" id="pwModal" style="max-width:380px;">
+    <button class="modal-close" onclick="closePwModal()">✕</button>
+    <div class="pw-icon">🏫</div>
+    <div class="modal-title">لوحة المعلم</div>
+    <p style="text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:18px;">أدخل كلمة المرور للوصول إلى نتائج الطلاب</p>
+    <input class="pw-input" id="pwInput" type="password"
+           placeholder="● ● ● ● ● ●"
+           onkeydown="if(event.key==='Enter') checkPassword()">
+    <div class="pw-error" id="pwError"></div>
+    <button class="btn btn-gold" style="width:100%;" onclick="checkPassword()">دخول ←</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL: TEACHER DASHBOARD
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="teacherModalOverlay">
+  <div class="modal" id="teacherModal">
+    <button class="modal-close" onclick="closeTeacherModal()">✕</button>
+    <div class="modal-title">📊 لوحة نتائج الطلاب</div>
+
+    <div class="dash-header">
+      <div class="dash-stat t">
+        <div class="dv" id="dTotalStudents">0</div>
+        <div class="dl">إجمالي الطلاب</div>
+      </div>
+      <div class="dash-stat g">
+        <div class="dv" id="dAvgScore">—</div>
+        <div class="dl">متوسط الدرجات</div>
+      </div>
+      <div class="dash-stat a">
+        <div class="dv" id="dPassRate">—</div>
+        <div class="dl">نسبة النجاح</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="students-table" id="studentsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>اسم الطالب</th>
+            <th>الدرجة</th>
+            <th>النسبة</th>
+            <th>التقدير</th>
+            <th>الوقت</th>
+          </tr>
+        </thead>
+        <tbody id="studentsBody">
+          <tr><td colspan="6"><div class="no-data">لا توجد نتائج بعد</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="clear-btn" onclick="clearAllResults()">🗑 حذف جميع النتائج</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════
+const TEACHER_PASSWORD = "1234";
+const TOTAL_Q = 10;
+
+// Histogram data from the book
+const HIST = { labels:['6–7','8–9','10–11','12–13'], vals:[2,3,5,3] };
+
+const QUESTIONS = [
+  {
+    text: "ما الذي يُظهره المدرج التكراري عن البيانات؟",
+    opts: [
+      "القيم المنفردة لكل عنصر بدقة",
+      "شكل البيانات بوضوح ضمن فترات",
+      "أسماء عناصر البيانات",
+      "المتوسط الحسابي فقط"
+    ],
+    correct: 1,
+    feedback: "✅ المدرج التكراري لا يعرض القيم المنفردة، لكنه يُظهر شكل البيانات بوضوح عبر تنظيمها ضمن فترات."
+  },
+  {
+    text: "بالنظر إلى المدرج التكراري أدناه — أيّ فترة تمثل أعلى تكرار؟",
+    showHist: true,
+    opts: ["6–7", "8–9", "10–11", "12–13"],
+    correct: 2,
+    feedback: "✅ الفترة 10–11 لها أعلى عمود بتكرار يساوي 5، وهو الأكبر في المخطط."
+  },
+  {
+    text: "كم عدد مرات تكرار قيم الفترة 8–9 في المخطط؟",
+    showHist: true,
+    opts: ["2", "3", "4", "5"],
+    correct: 1,
+    feedback: "✅ يُشير عمود الفترة 8–9 إلى تكرار يساوي 3."
+  },
+  {
+    text: "ماذا تمثل الأعمدة في المدرج التكراري؟",
+    opts: [
+      "أسماء أفراد العينة",
+      "التكرارات (عدد مرات تكرار قيم الفترة)",
+      "المتوسطات الحسابية",
+      "الألوان المختلفة للبيانات"
+    ],
+    correct: 1,
+    feedback: "✅ ارتفاع كل عمود يمثل التكرار، أي عدد مرات وقوع قيم ضمن تلك الفترة."
+  },
+  {
+    text: "ما مجموع جميع التكرارات في المخطط التكراري المعروض؟",
+    showHist: true,
+    opts: ["10", "11", "13", "15"],
+    correct: 2,
+    feedback: "✅ مجموع التكرارات = 2 + 3 + 5 + 3 = 13"
+  },
+  {
+    text: "أيّ فترة لها تكرار يساوي 2؟",
+    showHist: true,
+    opts: ["6–7", "8–9", "10–11", "12–13"],
+    correct: 0,
+    feedback: "✅ الفترة 6–7 هي أقل الأعمدة ارتفاعاً بتكرار يساوي 2."
+  },
+  {
+    text: "كيف تُنظَّم البيانات في المدرج التكراري؟",
+    opts: [
+      "ترتيب عشوائي",
+      "حسب الترتيب الأبجدي",
+      "ضمن فترات متساوية",
+      "حسب الألوان"
+    ],
+    correct: 2,
+    feedback: "✅ البيانات تُنظَّم ضمن فترات، وهذا ما يُميّز المدرج التكراري عن غيره من المخططات."
+  },
+  {
+    text: "ما عنوان المحور الأفقي في المخطط التكراري الموضح؟",
+    showHist: true,
+    opts: [
+      "التكرار",
+      "عدد المنشورات يومياً",
+      "أيام الأسبوع",
+      "النسبة المئوية"
+    ],
+    correct: 1,
+    feedback: "✅ يمثل المحور الأفقي 'عدد المنشورات يومياً' وهو المتغير الذي يتم قياسه."
+  },
+  {
+    text: "أيٌّ من الفترات التالية لها التكرار نفسه (3 مرات)؟",
+    showHist: true,
+    opts: [
+      "6–7 و 10–11",
+      "6–7 و 8–9",
+      "8–9 و 12–13",
+      "10–11 و 12–13"
+    ],
+    correct: 2,
+    feedback: "✅ الفترتان 8–9 و 12–13 لكلٍّ منهما تكرار يساوي 3."
+  },
+  {
+    text: "ما الفرق الرئيسي بين المدرج التكراري والمخطط العمودي العادي؟",
+    opts: [
+      "لا فرق بينهما على الإطلاق",
+      "المدرج يستخدم دوائر بدلاً من أعمدة",
+      "المدرج لا يعرض القيم المنفردة بل يُظهر شكل البيانات ضمن فترات",
+      "المدرج يُستخدم فقط للبيانات النصية"
+    ],
+    correct: 2,
+    feedback: "✅ المدرج التكراري يُنظّم البيانات في فترات ويُظهر شكلها العام، بينما المخطط العمودي يعرض قيماً منفردة محددة."
+  }
+];
+
+// ══════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════
+let currentQ = 0;
+let answers = [];  // {chosen, correct}
+let studentName = "";
+let quizStartTime = 0;
+
+// ══════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  const inQuiz = id==='pageQuiz';
+  document.getElementById('topBar').style.display = inQuiz ? 'flex' : 'none';
+}
+
+// ══════════════════════════════════════
+//  START
+// ══════════════════════════════════════
+function startQuiz(){
+  const n = document.getElementById('studentName').value.trim();
+  if(!n){ document.getElementById('studentName').style.borderColor='var(--red)'; return; }
+  studentName = n;
+  currentQ = 0;
+  answers = [];
+  quizStartTime = Date.now();
+  document.getElementById('nameTag').textContent = '👤 ' + studentName;
+  goPage('pageQuiz');
+  renderQ();
+}
+
+// ══════════════════════════════════════
+//  HISTOGRAM SVG
+// ══════════════════════════════════════
+function buildHistSVG(){
+  const W=340,H=130,padL=28,padB=30,padT=10,padR=10;
+  const chartW=W-padL-padR, chartH=H-padB-padT;
+  const maxV=6, barW=chartW/HIST.vals.length;
+  const colors=['#f5c842','#3d85e0','#1ec8a0','#e05aff'];
+  let bars='';
+  HIST.vals.forEach((v,i)=>{
+    const bh=(v/maxV)*chartH;
+    const x=padL+i*barW+2;
+    const y=padT+chartH-bh;
+    bars+=`<rect x="${x}" y="${y}" width="${barW-4}" height="${bh}" fill="${colors[i]}" rx="3" opacity=".85"/>`;
+    bars+=`<text x="${padL+i*barW+barW/2}" y="${padT+chartH-bh-4}" text-anchor="middle" font-size="9" fill="#e8f0ff" font-family="Tajawal">${v}</text>`;
+    bars+=`<text x="${padL+i*barW+barW/2}" y="${H-10}" text-anchor="middle" font-size="9" fill="#7a95c4" font-family="Tajawal">${HIST.labels[i]}</text>`;
+  });
+  // Y axis
+  let yAxis='';
+  for(let v=0;v<=maxV;v+=2){
+    const y=padT+chartH-(v/maxV)*chartH;
+    yAxis+=`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="rgba(122,149,196,.12)" stroke-width="1"/>`;
+    yAxis+=`<text x="${padL-4}" y="${y+3}" text-anchor="end" font-size="8" fill="#7a95c4" font-family="Tajawal">${v}</text>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" class="hist-svg" xmlns="http://www.w3.org/2000/svg">
+    ${yAxis}${bars}
+    <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT+chartH}" stroke="rgba(122,149,196,.3)" stroke-width="1"/>
+    <line x1="${padL}" y1="${padT+chartH}" x2="${W-padR}" y2="${padT+chartH}" stroke="rgba(122,149,196,.3)" stroke-width="1"/>
+    <text x="${W/2}" y="${H+2}" text-anchor="middle" font-size="8.5" fill="#5a7ab4" font-family="Tajawal">عدد المنشورات يومياً</text>
+  </svg>`;
+}
+
+// ══════════════════════════════════════
+//  RENDER QUESTION
+// ══════════════════════════════════════
+function renderQ(){
+  const q = QUESTIONS[currentQ];
+  const n = currentQ+1;
+
+  document.getElementById('qNum').textContent = `السؤال ${n} من ${TOTAL_Q}`;
+  document.getElementById('qText').textContent = q.text;
+
+  // Progress
+  const pct = (n/TOTAL_Q)*100;
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progLabel').textContent = `${n} / ${TOTAL_Q}`;
+
+  // Histogram
+  const hc = document.getElementById('histContainer');
+  if(q.showHist){
+    hc.innerHTML = `<div class="mini-hist">${buildHistSVG()}</div>`;
+  } else { hc.innerHTML=''; }
+
+  // Options
+  const letters = ['أ','ب','ج','د'];
+  const ow = document.getElementById('optionsWrap');
+  ow.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const d=document.createElement('div');
+    d.className='opt';
+    d.id='opt_'+i;
+    d.innerHTML=`<div class="opt-letter">${letters[i]}</div><div class="opt-text">${opt}</div>`;
+    d.onclick=()=>selectAnswer(i);
+    ow.appendChild(d);
+  });
+
+  // Feedback & nav
+  document.getElementById('feedbackBox').className='feedback';
+  document.getElementById('feedbackBox').textContent='';
+  document.getElementById('nextBtn').style.display='none';
+
+  // Score track
+  const correct=answers.filter(a=>a.chosen===a.correct).length;
+  document.getElementById('scoreTrack').textContent = answers.length ? `✅ ${correct} صحيح  ❌ ${answers.length-correct} خطأ` : '';
+}
+
+// ══════════════════════════════════════
+//  SELECT ANSWER
+// ══════════════════════════════════════
+function selectAnswer(idx){
+  const q=QUESTIONS[currentQ];
+  const isCorrect = idx===q.correct;
+  answers.push({chosen:idx, correct:q.correct});
+
+  // Disable all options
+  document.querySelectorAll('.opt').forEach(o=>{
+    o.classList.add('disabled');
+    o.onclick=null;
+  });
+
+  // Mark chosen
+  const chosen=document.getElementById('opt_'+idx);
+  chosen.classList.add('selected', isCorrect?'correct':'wrong');
+
+  // Reveal correct if wrong
+  if(!isCorrect){
+    document.getElementById('opt_'+q.correct).classList.add('reveal-correct');
+  }
+
+  // Feedback
+  const fb=document.getElementById('feedbackBox');
+  fb.textContent=q.feedback;
+  fb.className='feedback '+(isCorrect?'correct':'wrong');
+
+  // Show next btn
+  const nb=document.getElementById('nextBtn');
+  nb.style.display='flex';
+  nb.textContent = currentQ===TOTAL_Q-1 ? 'عرض النتيجة ✓' : 'التالي ←';
+
+  // Score track
+  const correct=answers.filter(a=>a.chosen===a.correct).length;
+  document.getElementById('scoreTrack').textContent=`✅ ${correct} صحيح  ❌ ${answers.length-correct} خطأ`;
+}
+
+// ══════════════════════════════════════
+//  NEXT
+// ══════════════════════════════════════
+function nextQ(){
+  if(currentQ < TOTAL_Q-1){
+    currentQ++;
+    renderQ();
+  } else {
+    finishQuiz();
+  }
+}
+
+// ══════════════════════════════════════
+//  FINISH
+// ══════════════════════════════════════
+function finishQuiz(){
+  const correct=answers.filter(a=>a.chosen===a.correct).length;
+  const pct=Math.round((correct/TOTAL_Q)*100);
+  const elapsed = Math.round((Date.now()-quizStartTime)/1000);
+  const mins=Math.floor(elapsed/60), secs=elapsed%60;
+  const timeStr=`${mins}:${secs.toString().padStart(2,'0')}`;
+
+  // Grade
+  let grade,msg;
+  if(pct>=90){grade='ممتاز 🏆';msg='أداء رائع! لديك فهم عميق للمدرج التكراري.';}
+  else if(pct>=75){grade='جيد جداً 🌟';msg='عمل جيد! مراجعة بسيطة ستجعلك متميزاً.';}
+  else if(pct>=60){grade='جيد 👍';msg='أساس جيد! راجع الأسئلة التي أخطأت فيها.';}
+  else{grade='يحتاج مراجعة 📚';msg='لا تيأس! راجع الدرس وأعد المحاولة.';}
+
+  // Update result UI
+  document.getElementById('resultNameLabel').textContent='نتيجة: '+studentName;
+  document.getElementById('scoreNum').textContent=correct;
+  document.getElementById('scoreDenom').textContent='من '+TOTAL_Q;
+  document.getElementById('gradeLabel').textContent=grade;
+  document.getElementById('gradeMsg').textContent=msg;
+  document.getElementById('correctCount').textContent=correct;
+  document.getElementById('wrongCount').textContent=TOTAL_Q-correct;
+  document.getElementById('pctVal').textContent=pct+'%';
+
+  // Conic gradient
+  document.getElementById('scoreCircle').style.setProperty('--score-pct', pct+'%');
+
+  // Save to localStorage
+  saveResult({name:studentName, score:correct, total:TOTAL_Q, pct, grade: getLetterGrade(pct), time:timeStr, date: new Date().toLocaleString('ar-QA')});
+
+  goPage('pageResult');
+}
+
+function getLetterGrade(pct){
+  if(pct>=90) return 'A';
+  if(pct>=75) return 'B';
+  if(pct>=60) return 'C';
+  return 'D';
+}
+
+// ══════════════════════════════════════
+//  REVIEW
+// ══════════════════════════════════════
+function showReview(){
+  const wrap=document.getElementById('reviewWrap');
+  wrap.innerHTML='';
+  const letters=['أ','ب','ج','د'];
+  QUESTIONS.forEach((q,qi)=>{
+    const ans=answers[qi];
+    const isCorrect=ans.chosen===ans.correct;
+    const card=document.createElement('div');
+    card.className='q-card';
+    card.style.marginTop='0';
+    let optsHtml='';
+    q.opts.forEach((opt,i)=>{
+      let cls='opt disabled ';
+      if(i===ans.chosen && isCorrect) cls+='selected correct';
+      else if(i===ans.chosen && !isCorrect) cls+='selected wrong';
+      else if(i===q.correct) cls+='reveal-correct';
+      const lCls=(i===ans.chosen&&isCorrect)?'style="background:var(--green);color:#fff;border-color:var(--green)"':(i===ans.chosen&&!isCorrect)?'style="background:var(--red);color:#fff;border-color:var(--red)"':(i===q.correct)?'style="background:var(--green);color:#fff;border-color:var(--green)"':'';
+      optsHtml+=`<div class="${cls}"><div class="opt-letter" ${lCls}>${letters[i]}</div><div class="opt-text">${opt}</div></div>`;
+    });
+    const histPart = q.showHist ? `<div class="mini-hist">${buildHistSVG()}</div>` : '';
+    card.innerHTML=`
+      <div class="q-num">السؤال ${qi+1} — ${isCorrect?'<span style="color:var(--green)">✅ صحيح</span>':'<span style="color:var(--red)">❌ خطأ</span>'}</div>
+      <div class="q-text">${q.text}</div>
+      ${histPart}
+      <div class="options">${optsHtml}</div>
+      <div class="feedback correct">${q.feedback}</div>`;
+    wrap.appendChild(card);
+  });
+  goPage('pageReview');
+}
+
+// ══════════════════════════════════════
+//  RETRY
+// ══════════════════════════════════════
+function retryQuiz(){
+  currentQ=0; answers=[];
+  quizStartTime=Date.now();
+  goPage('pageQuiz');
+  renderQ();
+}
+
+// ══════════════════════════════════════
+//  FIREBASE CONFIG
+// ══════════════════════════════════════
+const FB_URL = "https://cyber-safety-class-default-rtdb.firebaseio.com/histogram_activity";
+
+async function saveResult(data){
+  try {
+    await fetch(FB_URL + "/results.json", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(data)
+    });
+  } catch(e){
+    const arr = JSON.parse(localStorage.getItem("histogram_results")||"[]");
+    arr.push(data);
+    localStorage.setItem("histogram_results", JSON.stringify(arr));
+  }
+}
+
+async function getResults(){
+  try {
+    const res  = await fetch(FB_URL + "/results.json");
+    const data = await res.json();
+    if(!data) return [];
+    return Object.entries(data).map(([k,v])=>({...v, _key:k}));
+  } catch(e){
+    return JSON.parse(localStorage.getItem("histogram_results")||"[]");
+  }
+}
+
+async function clearAllResults(){
+  if(!confirm("هل تريد حذف جميع نتائج الطلاب؟")) return;
+  try {
+    await fetch(FB_URL + "/results.json", { method:"DELETE" });
+    localStorage.removeItem("histogram_results");
+    loadDashboard();
+  } catch(e){ alert("تعذّر الحذف، تحقق من الاتصال"); }
+}
+
+// ══════════════════════════════════════
+//  TEACHER DASHBOARD
+// ══════════════════════════════════════
+async function loadDashboard(){
+  const tbody = document.getElementById("studentsBody");
+  tbody.innerHTML = "<tr><td colspan='6'><div class='no-data'>⏳ جارٍ تحميل النتائج...</div></td></tr>";
+  document.getElementById("dTotalStudents").textContent = "...";
+  document.getElementById("dAvgScore").textContent      = "...";
+  document.getElementById("dPassRate").textContent      = "...";
+
+  const results = await getResults();
+  document.getElementById("dTotalStudents").textContent = results.length;
+
+  if(results.length === 0){
+    tbody.innerHTML = "<tr><td colspan='6'><div class='no-data'>لا توجد نتائج بعد — انتظر حتى يُكمل الطلاب الاختبار</div></td></tr>";
+    document.getElementById("dAvgScore").textContent = "—";
+    document.getElementById("dPassRate").textContent = "—";
+    return;
+  }
+
+  const avg  = Math.round(results.reduce((s,r)=>s+r.pct,0) / results.length);
+  const pass = Math.round(results.filter(r=>r.pct>=60).length / results.length * 100);
+  document.getElementById("dAvgScore").textContent = avg  + "%";
+  document.getElementById("dPassRate").textContent = pass + "%";
+
+  tbody.innerHTML = "";
+  results.slice().reverse().forEach((r, i) => {
+    const tr = document.createElement("tr");
+    const gradeClass = "grade-" + r.grade;
+    const gradeAr = {"A":"ممتاز","B":"جيد جداً","C":"جيد","D":"مراجعة"}[r.grade] || r.grade;
+    tr.innerHTML =
+      "<td>" + (results.length - i) + "</td>" +
+      "<td style='font-weight:700;text-align:right;'>" + r.name + "</td>" +
+      "<td>" + r.score + "/" + r.total + "</td>" +
+      "<td>" + r.pct + "%</td>" +
+      "<td><span class='grade-badge " + gradeClass + "'>" + gradeAr + "</span></td>" +
+      "<td style='font-size:.75rem;color:var(--muted);'>" + r.date + "</td>";
+    tbody.appendChild(tr);
+  });
+}
+
+// ══════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════
+function openPwModal(){
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwError').textContent='';
+  document.getElementById('pwModalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('pwInput').focus(),200);
+}
+function closePwModal(){
+  document.getElementById('pwModalOverlay').classList.remove('open');
+}
+function checkPassword(){
+  const v=document.getElementById('pwInput').value;
+  if(v===TEACHER_PASSWORD){
+    closePwModal();
+    openTeacherModal();
+  } else {
+    document.getElementById('pwError').textContent='❌ كلمة المرور غير صحيحة، حاول مجدداً';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+async function openTeacherModal(){
+  await loadDashboard();
+  document.getElementById('teacherModalOverlay').classList.add('open');
+}
+function closeTeacherModal(){
+  document.getElementById('teacherModalOverlay').classList.remove('open');
+}
+
+// Close modals on overlay click
+document.getElementById('pwModalOverlay').addEventListener('click',function(e){if(e.target===this)closePwModal();});
+document.getElementById('teacherModalOverlay').addEventListener('click',function(e){if(e.target===this)closeTeacherModal();});
+</script>
+</body>
+</html>
