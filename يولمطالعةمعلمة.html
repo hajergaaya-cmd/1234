@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 لوحة المعلمة — يوم المطالعة العالمي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --bg:#04091a;
+  --surface:#070d1e;
+  --card:#0c1530;
+  --border:#162040;
+  --border2:#1e2d52;
+  --cyan:#22d3ee;
+  --cyan2:#0891b2;
+  --gold:#f59e0b;
+  --green:#10b981;
+  --yellow:#eab308;
+  --orange:#f97316;
+  --red:#f43f5e;
+  --text:#e8edf5;
+  --muted:#64748b;
+  --muted2:#94a3b8;
+  --font:'Tajawal',sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  min-height:100vh;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:radial-gradient(ellipse 70% 30% at 50% -5%, rgba(34,211,238,0.05) 0%, transparent 60%);
+  pointer-events:none;
+}
+
+/* ── HEADER ── */
+.header{
+  background:rgba(4,9,26,0.96);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border2);
+  padding:16px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.header-left{display:flex;align-items:center;gap:14px;}
+.header-icon{font-size:2rem;}
+.header-titles{}
+.header-title{font-size:1.2rem;font-weight:900;color:var(--cyan);}
+.header-sub{font-size:0.82rem;color:var(--muted2);}
+
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+
+.refresh-info{
+  display:flex;align-items:center;gap:6px;
+  font-size:0.82rem;color:var(--muted2);
+}
+.pulse-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);
+  animation:pulse-anim 2s infinite;
+}
+@keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
+
+.btn-refresh{
+  background:rgba(34,211,238,0.1);
+  border:1px solid rgba(34,211,238,0.3);
+  border-radius:10px;
+  padding:8px 18px;
+  color:var(--cyan);
+  font-family:var(--font);
+  font-size:0.88rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-refresh:hover{background:rgba(34,211,238,0.18);}
+
+.btn-reset{
+  background:rgba(244,63,94,0.08);
+  border:1px solid rgba(244,63,94,0.25);
+  border-radius:10px;
+  padding:8px 18px;
+  color:var(--red);
+  font-family:var(--font);
+  font-size:0.88rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-reset:hover{background:rgba(244,63,94,0.16);}
+
+/* ── STATS ROW ── */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:14px;
+  padding:20px 24px;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.stat-card{
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:16px;
+  padding:18px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:6px;
+  position:relative;
+  overflow:hidden;
+}
+.stat-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:2px;
+  border-radius:2px;
+}
+.stat-card.sc-total::before{background:linear-gradient(90deg,var(--cyan2),var(--cyan));}
+.stat-card.sc-avg::before{background:linear-gradient(90deg,var(--gold),#fbbf24);}
+.stat-card.sc-high::before{background:linear-gradient(90deg,#059669,var(--green));}
+.stat-card.sc-done::before{background:linear-gradient(90deg,var(--purple),#a78bfa);}
+
+.stat-icon{font-size:1.6rem;}
+.stat-val{
+  font-size:2rem;
+  font-weight:900;
+  line-height:1;
+}
+.sc-total .stat-val{color:var(--cyan);}
+.sc-avg .stat-val{color:var(--gold);}
+.sc-high .stat-val{color:var(--green);}
+.sc-done .stat-val{color:#a78bfa;}
+.stat-label{font-size:0.78rem;color:var(--muted2);font-weight:500;}
+
+/* ── FILTER TABS ── */
+.filter-row{
+  padding:0 24px 16px;
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+}
+.filter-label{font-size:0.82rem;color:var(--muted);margin-left:4px;}
+.tab{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:6px 14px;
+  color:var(--muted2);
+  font-family:var(--font);
+  font-size:0.82rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+}
+.tab.active{background:rgba(34,211,238,0.12);border-color:var(--cyan);color:var(--cyan);}
+.tab:hover:not(.active){background:rgba(255,255,255,0.04);}
+
+/* ── TABLE ── */
+.table-wrap{
+  padding:0 24px 40px;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.table-card{
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+
+.t-head{
+  display:grid;
+  grid-template-columns:50px 1fr 90px 90px 130px 110px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border2);
+  padding:12px 18px;
+  gap:8px;
+}
+.t-head-cell{
+  font-size:0.78rem;
+  font-weight:700;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+.t-body{min-height:200px;}
+
+.t-row{
+  display:grid;
+  grid-template-columns:50px 1fr 90px 90px 130px 110px;
+  border-bottom:1px solid var(--border);
+  padding:13px 18px;
+  gap:8px;
+  align-items:center;
+  transition:background .15s;
+  animation:rowIn .3s ease;
+}
+@keyframes rowIn{from{opacity:0;transform:translateX(10px);}to{opacity:1;transform:translateX(0);}}
+.t-row:hover{background:rgba(255,255,255,0.02);}
+.t-row:last-child{border-bottom:none;}
+
+.rank-badge{
+  width:32px;height:32px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem;
+  font-weight:900;
+}
+.rank-1{background:rgba(245,158,11,0.2);color:var(--gold);}
+.rank-2{background:rgba(148,163,184,0.15);color:#94a3b8;}
+.rank-3{background:rgba(180,83,9,0.2);color:#b45309;}
+.rank-n{background:var(--border);color:var(--muted2);}
+
+.student-name{font-weight:700;font-size:0.95rem;}
+.student-class{font-size:0.78rem;color:var(--muted2);margin-top:2px;}
+
+.class-chip{
+  background:rgba(34,211,238,0.08);
+  border:1px solid rgba(34,211,238,0.2);
+  border-radius:7px;
+  padding:4px 10px;
+  font-size:0.8rem;
+  color:var(--cyan);
+  font-weight:600;
+  text-align:center;
+}
+
+.score-pill{
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:8px;
+  padding:5px 12px;
+  font-weight:900;
+  font-size:0.95rem;
+  min-width:60px;
+  text-align:center;
+}
+.sp-excellent{background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3);}
+.sp-good{background:rgba(234,179,8,0.15);color:var(--yellow);border:1px solid rgba(234,179,8,0.3);}
+.sp-ok{background:rgba(249,115,22,0.15);color:var(--orange);border:1px solid rgba(249,115,22,0.3);}
+.sp-weak{background:rgba(244,63,94,0.1);color:var(--red);border:1px solid rgba(244,63,94,0.2);}
+
+.pct-bar-wrap{
+  height:6px;
+  background:var(--border);
+  border-radius:3px;
+  overflow:hidden;
+  flex:1;
+}
+.pct-bar-fill{height:100%;border-radius:3px;transition:width .5s;}
+
+.stars-cell{font-size:1rem;letter-spacing:1px;}
+.time-cell{font-size:0.85rem;color:var(--muted2);}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+}
+.empty-icon{font-size:60px;margin-bottom:16px;opacity:0.4;}
+.empty-text{color:var(--muted2);font-size:1rem;}
+
+/* ── LOADING ── */
+.loading{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--muted2);
+}
+.spin{
+  display:inline-block;
+  width:36px;height:36px;
+  border:3px solid var(--border2);
+  border-top-color:var(--cyan);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin-bottom:12px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .t-head,.t-row{
+    grid-template-columns:40px 1fr 70px 70px;
+  }
+  .t-head-cell:nth-child(5),.t-row>*:nth-child(5),
+  .t-head-cell:nth-child(6),.t-row>*:nth-child(6){display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon">📊</div>
+    <div class="header-titles">
+      <div class="header-title">لوحة المعلمة — يوم المطالعة العالمي</div>
+      <div class="header-sub">قصة السندباد البحري · الصف السادس · ٢٠٢٥</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div id="conn-status" style="font-size:0.8rem;color:var(--muted2);">⏳ جارٍ الاتصال...</div>
+    <div class="refresh-info">
+      <div class="pulse-dot"></div>
+      <span>تحديث كل <span id="countdown-txt">٢٠</span> ث</span>
+    </div>
+    <button class="btn-refresh" onclick="loadData()">🔄 تحديث الآن</button>
+    <button class="btn-reset" onclick="resetData()">🗑️ مسح</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-card sc-total">
+    <div class="stat-icon">👩‍🎓</div>
+    <div class="stat-val" id="st-total">—</div>
+    <div class="stat-label">عدد الطالبات المشاركات</div>
+  </div>
+  <div class="stat-card sc-avg">
+    <div class="stat-icon">📈</div>
+    <div class="stat-val" id="st-avg">—</div>
+    <div class="stat-label">متوسط الدرجات</div>
+  </div>
+  <div class="stat-card sc-high">
+    <div class="stat-icon">🏆</div>
+    <div class="stat-val" id="st-high">—</div>
+    <div class="stat-label">أعلى درجة</div>
+  </div>
+  <div class="stat-card sc-done">
+    <div class="stat-icon">✅</div>
+    <div class="stat-val" id="st-pct">—</div>
+    <div class="stat-label">نسبة النجاح (٥ فأكثر)</div>
+  </div>
+</div>
+
+<!-- (no filter tabs needed - single class) -->
+
+<!-- TABLE -->
+<div class="table-wrap">
+  <div class="table-card">
+    <div class="t-head">
+      <div class="t-head-cell">#</div>
+      <div class="t-head-cell">اسم الطالبة</div>
+      <div class="t-head-cell">الدرجة</div>
+      <div class="t-head-cell">النسبة</div>
+      <div class="t-head-cell">الوقت المستغرق</div>
+      <div class="t-head-cell">التقدير</div>
+    </div>
+    <div class="t-body" id="t-body">
+      <div class="loading"><div class="spin"></div><div>جارٍ تحميل البيانات...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<script>
+// ================================================================
+// ⚙️  نفس رابط Firebase في ملف الطالبة
+// ================================================================
+const FIREBASE_URL = 'https://cyber-safety-class-default-rtdb.firebaseio.com';
+// ================================================================
+
+let allStudents = [];
+let activeFilter = 'all';
+let countdownVal = 20;
+let countdownTimer;
+
+// ── Load Data ──
+async function loadData() {
+  const body = document.getElementById('t-body');
+  body.innerHTML = `<div class="loading"><div class="spin"></div><div>جارٍ تحميل البيانات...</div></div>`;
+
+  try {
+    const url = `${FIREBASE_URL}/reading-day.json`;
+    const r = await fetch(url);
+
+    if (!r.ok) {
+      const txt = await r.text();
+      throw new Error(`خطأ ${r.status}: ${txt}`);
+    }
+
+    const raw = await r.json();
+
+    if (!raw || typeof raw !== 'object') {
+      allStudents = [];
+    } else {
+      allStudents = Object.values(raw)
+        .filter(s => s && typeof s === 'object' && s.name)
+        .sort((a, b) => (b.score || 0) - (a.score || 0));
+    }
+
+    renderStats();
+    renderTable();
+    resetCountdown();
+
+    // ✅ تحديث شريط الحالة
+    document.getElementById('conn-status').textContent = `✅ متصل · آخر تحديث: ${new Date().toLocaleTimeString('ar')}`;
+    document.getElementById('conn-status').style.color = 'var(--green)';
+
+  } catch (e) {
+    body.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">⚠️</div>
+      <div class="empty-text" style="color:var(--red)">${e.message}</div>
+      <div class="empty-text" style="font-size:0.8rem;margin-top:10px;color:var(--muted)">
+        تأكدي من صحة رابط Firebase وأن قواعد قاعدة البيانات تسمح بالقراءة والكتابة
+      </div>
+    </div>`;
+    document.getElementById('conn-status').textContent = `❌ خطأ في الاتصال: ${e.message}`;
+    document.getElementById('conn-status').style.color = 'var(--red)';
+    resetCountdown();
+  }
+}
+
+// ── Stats ──
+function renderStats() {
+  const s = allStudents;
+  const n = s.length;
+
+  document.getElementById('st-total').textContent = toAr(n);
+
+  if (n === 0) {
+    ['st-avg','st-high','st-pct'].forEach(id => document.getElementById(id).textContent = '—');
+    return;
+  }
+
+  const avg = s.reduce((a,b) => a + b.score, 0) / n;
+  const high = Math.max(...s.map(x => x.score));
+  const passed = s.filter(x => x.score >= 5).length;
+  const pct = Math.round((passed / n) * 100);
+
+  document.getElementById('st-avg').textContent = toAr(Math.round(avg * 10) / 10);
+  document.getElementById('st-high').textContent = toAr(high) + '/٨';
+  document.getElementById('st-pct').textContent = toAr(pct) + '%';
+}
+
+// (no filter needed - single class)
+
+function renderTable() {
+  const body = document.getElementById('t-body');
+  const data = allStudents;
+
+  if (data.length === 0) {
+    body.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-text">لا توجد بيانات بعد<br><small style="color:var(--muted)">في انتظار إجابات الطالبات...</small></div>
+    </div>`;
+    return;
+  }
+
+  body.innerHTML = data.map((s, i) => {
+    const total = s.total || 8;
+    const pct = Math.round((s.score / total) * 100);
+    const rank = i + 1;
+    const stars = pct >= 87 ? '⭐⭐⭐' : pct >= 62 ? '⭐⭐' : '⭐';
+    const timeStr = formatTime(s.timeSpentSec || 0);
+
+    let scoreClass, barColor;
+    if (pct >= 87) { scoreClass = 'sp-excellent'; barColor = 'var(--green)'; }
+    else if (pct >= 62) { scoreClass = 'sp-good'; barColor = 'var(--yellow)'; }
+    else if (pct >= 37) { scoreClass = 'sp-ok'; barColor = 'var(--orange)'; }
+    else { scoreClass = 'sp-weak'; barColor = 'var(--red)'; }
+
+    const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-n';
+    const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : toAr(rank);
+
+    return `<div class="t-row">
+      <div><div class="rank-badge ${rankClass}">${rankEmoji}</div></div>
+      <div><div class="student-name">${escHtml(s.name)}</div></div>
+      <div><div class="score-pill ${scoreClass}">${toAr(s.score)} / ${toAr(total)}</div></div>
+      <div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <span style="font-size:0.85rem;font-weight:700;color:${barColor}">${toAr(pct)}%</span>
+          <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+        </div>
+      </div>
+      <div class="time-cell">⏱️ ${timeStr}</div>
+      <div class="stars-cell">${stars}</div>
+    </div>`;
+  }).join('');
+}
+
+function formatTime(sec) {
+  if (!sec || sec <= 0) return '—';
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return toAr(m) + 'د ' + toAr(s) + 'ث';
+}
+
+// ── Reset ──
+async function resetData() {
+  if (!confirm('⚠️ هل أنتِ متأكدة من حذف جميع بيانات الطالبات؟\nلا يمكن التراجع عن هذا الإجراء.')) return;
+  try {
+    await fetch(`${FIREBASE_URL}/reading-day.json`, { method: 'DELETE' });
+    allStudents = [];
+    renderStats();
+    renderTable();
+    alert('✅ تم حذف جميع البيانات بنجاح');
+  } catch (e) {
+    alert('⚠️ تعذّر حذف البيانات');
+  }
+}
+
+// ── Auto-refresh countdown ──
+function resetCountdown() {
+  clearInterval(countdownTimer);
+  countdownVal = 20;
+  document.getElementById('countdown-txt').textContent = toAr(countdownVal);
+  countdownTimer = setInterval(() => {
+    countdownVal--;
+    document.getElementById('countdown-txt').textContent = toAr(Math.max(countdownVal, 0));
+    if (countdownVal <= 0) loadData();
+  }, 1000);
+}
+
+// ── Helpers ──
+function toAr(n) {
+  return String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init ──
+loadData();
+</script>
+</body>
+</html>
