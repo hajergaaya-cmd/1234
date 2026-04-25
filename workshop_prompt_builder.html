@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مولّد prompt الدرس الكامل | ورشة Claude.ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #080d1a;
+  --navy2:  #0f1724;
+  --navy3:  #162035;
+  --navy4:  #1c2a46;
+  --border: rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.15);
+  --text:   #e2e8f0;
+  --muted:  #7a8fa8;
+  --teal:   #2dd4bf;
+  --green:  #34d399;
+  --amber:  #fbbf24;
+  --purple: #a78bfa;
+  --red:    #f87171;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Tajawal',sans-serif;
+  background:var(--navy);
+  color:var(--text);
+  min-height:100vh;
+  padding:2rem 1rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.wrap{width:100%;max-width:780px;display:flex;flex-direction:column;gap:1.5rem;}
+
+/* ─── HEADER ─── */
+.page-header{text-align:center;}
+.chip{
+  display:inline-block;
+  background:rgba(45,212,191,0.1);
+  color:var(--teal);
+  border:1px solid rgba(45,212,191,0.22);
+  border-radius:30px;padding:4px 18px;
+  font-size:13px;margin-bottom:14px;
+}
+.page-header h1{font-size:26px;font-weight:700;line-height:1.3;margin-bottom:8px;}
+.page-header p{color:var(--muted);font-size:14px;line-height:1.8;}
+
+/* ─── SECTION ─── */
+.section{
+  background:var(--navy2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:1.4rem;
+}
+.section-title{
+  font-size:14px;font-weight:700;
+  color:var(--teal);margin-bottom:1rem;
+  display:flex;align-items:center;gap:8px;
+}
+
+/* ─── GRID FORM ─── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.form-grid{grid-template-columns:1fr;}}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:580px){.form-grid.three{grid-template-columns:1fr 1fr;}}
+
+.field{display:flex;flex-direction:column;gap:5px;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:12.5px;color:var(--muted);}
+.field input,.field select,.field textarea{
+  background:var(--navy3);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:11px 13px;
+  color:var(--text);
+  font-family:'Tajawal',sans-serif;
+  font-size:14px;
+  outline:none;
+  transition:border-color .2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);}
+.field select option{background:var(--navy3);}
+.field textarea{min-height:80px;resize:vertical;line-height:1.7;}
+
+/* ─── CHECKBOXES ─── */
+.checks-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.check-item{
+  display:flex;align-items:center;gap:6px;
+  background:var(--navy3);border:1px solid var(--border);
+  border-radius:8px;padding:7px 12px;cursor:pointer;
+  transition:all .2s;user-select:none;font-size:13px;
+}
+.check-item:hover{border-color:var(--border2);}
+.check-item.on{border-color:var(--teal);background:rgba(45,212,191,0.08);color:var(--teal);}
+.check-item .icon{font-size:15px;}
+
+/* ─── GENERATE BTN ─── */
+.gen-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:linear-gradient(135deg,#0d9488,#0f766e);
+  color:#fff;border:none;border-radius:14px;
+  padding:16px;font-family:'Tajawal',sans-serif;
+  font-size:17px;font-weight:700;cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 4px 24px rgba(13,148,136,0.3);
+}
+.gen-btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+
+/* ─── OUTPUT ─── */
+.output-wrap{display:none;flex-direction:column;gap:1rem;}
+.output-wrap.show{display:flex;}
+
+.output-header{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
+}
+.output-header h2{font-size:16px;font-weight:700;}
+
+.copy-all-btn{
+  display:flex;align-items:center;gap:6px;
+  background:var(--teal);color:#0a1628;
+  border:none;border-radius:10px;padding:9px 20px;
+  font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.copy-all-btn:hover{filter:brightness(1.1);}
+
+.open-claude-btn{
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,#6d28d9,#4c1d95);
+  color:#ede9fe;border:none;border-radius:10px;
+  padding:9px 20px;
+  font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .2s;text-decoration:none;
+}
+.open-claude-btn:hover{filter:brightness(1.1);}
+
+.prompt-box{
+  background:var(--navy3);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1.4rem;
+  font-size:13.5px;
+  line-height:2;
+  white-space:pre-wrap;
+  max-height:520px;
+  overflow-y:auto;
+  color:var(--text);
+}
+.prompt-box::-webkit-scrollbar{width:6px;}
+.prompt-box::-webkit-scrollbar-track{background:transparent;}
+.prompt-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* highlight inside prompt */
+.hl-teal{color:var(--teal);font-weight:700;}
+.hl-amber{color:var(--amber);}
+.hl-green{color:var(--green);}
+.hl-purple{color:var(--purple);}
+.hl-red{color:var(--red);}
+
+/* ─── TIPS ─── */
+.tip-box{
+  background:rgba(167,139,250,0.07);
+  border:1px solid rgba(167,139,250,0.2);
+  border-radius:14px;padding:1rem 1.2rem;
+}
+.tip-box h3{font-size:13px;color:var(--purple);margin-bottom:8px;}
+.tip-list{display:flex;flex-direction:column;gap:6px;}
+.tip-list li{font-size:12.5px;color:var(--muted);line-height:1.7;padding-right:4px;}
+.tip-list li::before{content:'💡 ';}
+
+/* stars bg */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%,rgba(255,255,255,0.07) 0%,transparent 100%),
+    radial-gradient(1px 1px at 75% 12%,rgba(255,255,255,0.05) 0%,transparent 100%),
+    radial-gradient(1px 1px at 55% 88%,rgba(255,255,255,0.04) 0%,transparent 100%);
+}
+
+.badge-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.badge{
+  font-size:11.5px;padding:3px 10px;border-radius:20px;
+  background:var(--navy4);color:var(--muted);border:1px solid var(--border);
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="chip">✨ ورشة Claude.ai — المحور الثاني</div>
+  <h1>مولّد Prompt الدرس الكامل</h1>
+  <p>أدخلي بيانات درسك → احصلي على prompt احترافي جاهز للنسخ<br>ثم الصقيه في Claude.ai وستحصلين على درسك الكامل في ثوانٍ</p>
+</div>
+
+<!-- ═══ STEP 1: BASIC INFO ═══ -->
+<div class="section">
+  <div class="section-title">📌 المعلومات الأساسية</div>
+  <div class="form-grid">
+    <div class="field">
+      <label>المادة الدراسية</label>
+      <input type="text" id="subject" placeholder="مثال: علوم الحاسب، رياضيات، لغة عربية..." />
+    </div>
+    <div class="field">
+      <label>الصف الدراسي</label>
+      <select id="grade">
+        <option value="">اختاري الصف</option>
+        <optgroup label="ابتدائي">
+          <option>الصف الأول الابتدائي</option>
+          <option>الصف الثاني الابتدائي</option>
+          <option>الصف الثالث الابتدائي</option>
+          <option>الصف الرابع الابتدائي</option>
+          <option>الصف الخامس الابتدائي</option>
+          <option>الصف السادس الابتدائي</option>
+        </optgroup>
+        <optgroup label="إعدادي">
+          <option>الصف السابع</option>
+          <option>الصف الثامن</option>
+          <option>الصف التاسع</option>
+        </optgroup>
+        <optgroup label="ثانوي">
+          <option>الصف العاشر</option>
+          <option>الصف الحادي عشر</option>
+          <option>الصف الثاني عشر</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="field full">
+      <label>موضوع الدرس</label>
+      <input type="text" id="topic" placeholder="مثال: الشبكات الحاسوبية وأنواعها، الكسور الاعتيادية، الخلية النباتية..." />
+    </div>
+    <div class="field">
+      <label>الصفحات من الكتاب المدرسي</label>
+      <input type="text" id="pages" placeholder="مثال: من صفحة 45 إلى 52" />
+    </div>
+    <div class="field">
+      <label>الهدف الرئيسي للدرس (اختياري)</label>
+      <input type="text" id="objective" placeholder="مثال: أن يميّز الطالب بين LAN وWAN" />
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STEP 2: CLASS DETAILS ═══ -->
+<div class="section">
+  <div class="section-title">👥 تفاصيل الفصل</div>
+  <div class="form-grid three">
+    <div class="field">
+      <label>عدد الطلاب</label>
+      <select id="students">
+        <option>أقل من 15 طالباً</option>
+        <option>15-20 طالباً</option>
+        <option selected>20-25 طالباً</option>
+        <option>25-30 طالباً</option>
+        <option>أكثر من 30 طالباً</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>مدة الحصة</label>
+      <select id="duration">
+        <option>40 دقيقة</option>
+        <option selected>45 دقيقة</option>
+        <option>50 دقيقة</option>
+        <option>55 دقيقة</option>
+        <option>60 دقيقة</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>نوع الحصة</label>
+      <select id="classType">
+        <option selected>حصة عادية (وجاهية)</option>
+        <option>حصة عن بعد (أونلاين)</option>
+        <option>هجينة (وجاهي + أونلاين)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STEP 3: STRATEGIES ═══ -->
+<div class="section">
+  <div class="section-title">🎯 الاستراتيجيات المطلوبة</div>
+  <div style="font-size:12.5px;color:var(--muted);margin-bottom:10px;">اختاري الاستراتيجيات التي تريدين تضمينها في الدرس:</div>
+  <div class="checks-grid" id="strategies">
+    <div class="check-item on" data-val="Think-Pair-Share (فكر-زاوج-شارك)"><span class="icon">🤝</span> فكر-زاوج-شارك</div>
+    <div class="check-item on" data-val="العصف الذهني (Brainstorming)"><span class="icon">🧠</span> عصف ذهني</div>
+    <div class="check-item on" data-val="التعلم التعاوني (أنشطة جماعية)"><span class="icon">👥</span> تعاوني</div>
+    <div class="check-item" data-val="الخرائط المفاهيمية (Concept Maps)"><span class="icon">🗺️</span> خرائط مفاهيمية</div>
+    <div class="check-item" data-val="لعب الأدوار (Role Play)"><span class="icon">🎭</span> لعب الأدوار</div>
+    <div class="check-item" data-val="حل المشكلات (Problem-Based Learning)"><span class="icon">🔍</span> حل مشكلات</div>
+    <div class="check-item on" data-val="القصة والسيناريو التعليمي"><span class="icon">📖</span> قصة وسيناريو</div>
+    <div class="check-item" data-val="الاستقصاء والاكتشاف (Inquiry-Based)"><span class="icon">🔬</span> استقصاء واكتشاف</div>
+    <div class="check-item" data-val="تحليل الحالات الدراسية (Case Study)"><span class="icon">📋</span> تحليل حالة</div>
+    <div class="check-item" data-val="التعلم القائم على المشروع (Project-Based)"><span class="icon">🚀</span> مشروع</div>
+  </div>
+</div>
+
+<!-- ═══ STEP 4: DIGITAL TOOLS ═══ -->
+<div class="section">
+  <div class="section-title">💻 الأدوات والأنشطة الرقمية</div>
+  <div style="font-size:12.5px;color:var(--muted);margin-bottom:10px;">اختاري الأدوات الرقمية المتاحة لديكِ:</div>
+  <div class="checks-grid" id="tools">
+    <div class="check-item on" data-val="Padlet (لوحة تفاعلية تشاركية)"><span class="icon">📌</span> Padlet</div>
+    <div class="check-item on" data-val="Mentimeter (استطلاعات وسحابة كلمات)"><span class="icon">📊</span> Mentimeter</div>
+    <div class="check-item on" data-val="Kahoot (اختبار تنافسي تفاعلي)"><span class="icon">🎮</span> Kahoot</div>
+    <div class="check-item" data-val="Quizizz (اختبارات تفاعلية ذاتية)"><span class="icon">❓</span> Quizizz</div>
+    <div class="check-item" data-val="Jamboard أو Miro (لوح رقمي تشاركي)"><span class="icon">✏️</span> Jamboard/Miro</div>
+    <div class="check-item on" data-val="مقاطع YouTube التعليمية"><span class="icon">▶️</span> YouTube تعليمي</div>
+    <div class="check-item" data-val="Google Forms (نماذج التقييم)"><span class="icon">📝</span> Google Forms</div>
+    <div class="check-item" data-val="Nearpod (دروس تفاعلية)"><span class="icon">📱</span> Nearpod</div>
+    <div class="check-item" data-val="Scratch أو أدوات البرمجة البصرية"><span class="icon">🐱</span> Scratch</div>
+    <div class="check-item" data-val="ملف PDF تفاعلي أو HTML"><span class="icon">🌐</span> HTML/PDF تفاعلي</div>
+  </div>
+</div>
+
+<!-- ═══ STEP 5: EXTRAS ═══ -->
+<div class="section">
+  <div class="section-title">⚙️ إضافات خاصة (اختياري)</div>
+  <div class="form-grid">
+    <div class="field full">
+      <label>هل هناك طلاب يحتاجون اهتماماً خاصاً في فصلك؟</label>
+      <div class="checks-grid" id="special" style="margin-top:4px;">
+        <div class="check-item" data-val="صعوبات تعلم (خلل القراءة، صعوبات التركيز)"><span class="icon">📚</span> صعوبات تعلم</div>
+        <div class="check-item" data-val="طلاب موهوبون يحتاجون تحدياً إثرائياً"><span class="icon">⭐</span> موهوبون</div>
+        <div class="check-item" data-val="طلاب لا يتحدثون العربية بطلاقة"><span class="icon">🌍</span> ضعف لغوي</div>
+        <div class="check-item" data-val="طلاب يميلون لنمط التعلم البصري"><span class="icon">👁️</span> بصريون</div>
+        <div class="check-item" data-val="طلاب خجولون يرفضون المشاركة الصفية"><span class="icon">🤫</span> خجولون</div>
+      </div>
+    </div>
+    <div class="field full">
+      <label>ملاحظات إضافية تريدين إضافتها للـ prompt (اختياري)</label>
+      <textarea id="extra" placeholder="مثال: الدرس متصل بمشروع نهاية الفصل، أو هناك زيارة ميدانية قادمة، أو ريد دمج مادتين..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- GENERATE BUTTON -->
+<button class="gen-btn" onclick="generate()">
+  ✨ &nbsp; ولّدي الـ Prompt الكامل الآن
+</button>
+
+<!-- ═══ OUTPUT ═══ -->
+<div class="output-wrap" id="outputWrap">
+  <div class="output-header">
+    <h2>🎉 Prompt درسك الكامل — جاهز للنسخ!</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="copy-all-btn" onclick="copyPrompt()">📋 نسخ الكل</button>
+      <a href="https://claude.ai" target="_blank" class="open-claude-btn">🤖 فتح Claude.ai</a>
+    </div>
+  </div>
+
+  <div style="font-size:12.5px;color:var(--muted);">
+    انسخي النص التالي كاملاً والصقيه في Claude.ai:
+  </div>
+
+  <div class="prompt-box" id="promptBox"></div>
+
+  <div class="tip-box">
+    <h3>💡 نصائح للحصول على أفضل نتيجة:</h3>
+    <ul class="tip-list">
+      <li>إذا لم تُعجبك خطة نشاط معين، قولي لـ Claude: <strong style="color:var(--text);">"غيّري نشاط [رقم الخطوة] إلى استراتيجية أخرى"</strong></li>
+      <li>لتفصيل أي جزء أكثر: <strong style="color:var(--text);">"اشرحي لي خطوات نشاط العصف الذهني بالتفصيل"</strong></li>
+      <li>لتحويل الدرس إلى ملف: <strong style="color:var(--text);">"حوّلي هذه الخطة إلى ملف Word احترافي جاهز للطباعة"</strong></li>
+      <li>لبناء نشاط إلكتروني: <strong style="color:var(--text);">"اصنعي لي ملف HTML تفاعلي لنشاط الفروق الفردية"</strong></li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// Toggle checks
+document.querySelectorAll('.check-item').forEach(el => {
+  el.addEventListener('click', () => el.classList.toggle('on'));
+});
+
+function getChecked(containerId) {
+  return [...document.querySelectorAll(`#${containerId} .check-item.on`)]
+    .map(el => el.dataset.val).filter(Boolean);
+}
+
+function generate() {
+  const subject   = document.getElementById('subject').value.trim();
+  const grade     = document.getElementById('grade').value;
+  const topic     = document.getElementById('topic').value.trim();
+  const pages     = document.getElementById('pages').value.trim();
+  const objective = document.getElementById('objective').value.trim();
+  const students  = document.getElementById('students').value;
+  const duration  = document.getElementById('duration').value;
+  const classType = document.getElementById('classType').value;
+  const extra     = document.getElementById('extra').value.trim();
+
+  if (!subject || !grade || !topic) {
+    alert('يرجى ملء المادة والصف وموضوع الدرس على الأقل');
+    return;
+  }
+
+  const strategies = getChecked('strategies');
+  const tools      = getChecked('tools');
+  const special    = getChecked('special');
+
+  const strLine   = strategies.length ? strategies.join(' / ') : 'استراتيجيات مناسبة للموضوع';
+  const toolsLine = tools.length      ? tools.join(' / ')      : 'أدوات رقمية مناسبة';
+  const specLine  = special.length    ? `\n- الفصل يحتوي على: ${special.join(', ')}` : '';
+  const objLine   = objective         ? `\nالهدف الرئيسي المقترح: ${objective}` : '';
+  const pagesLine = pages             ? `\nالصفحات المقررة: ${pages}` : '';
+  const extraLine = extra             ? `\n\nملاحظات إضافية يجب مراعاتها: ${extra}` : '';
+
+  const prompt = `أنا معلمة ${subject} للـ${grade}.
+موضوع الدرس: ${topic}${pagesLine}
+مدة الحصة: ${duration} | عدد الطلاب: ${students} | نوع الحصة: ${classType}${objLine}${specLine}${extraLine}
+
+─────────────────────────────────────────
+أريد منكِ إعداد خطة درس كاملة ومتكاملة جاهزة للتطبيق الفوري، وفق البنية التالية بالتفصيل:
+─────────────────────────────────────────
+
+🎯 أولاً: هدف الدرس
+اكتبي هدفاً SMART واحداً رئيسياً قابلاً للقياس المباشر، يبدأ بفعل مضارع (يُميّز / يُطبّق / يُحلّل / يُنشئ...).
+ثم أضيفي 2-3 أهداف فرعية مساندة.
+
+─────────────────────────────────────────
+
+🔥 ثانياً: التمهيد للهدف (10 دقائق)
+- سؤال استفزازي يربط الموضوع بحياة الطالب اليومية
+- نشاط تحفيزي سريع لا يتجاوز دقيقتين
+- ربط بالمعرفة السابقة بسؤال واحد محدد
+- اكتبي بالضبط ما ستقوله المعلمة لتوجيه الطلاب نحو الهدف
+
+─────────────────────────────────────────
+
+📚 ثالثاً: عرض الدرس والأنشطة الأساسية (${parseInt(duration) - 20} دقيقة)
+استخدمي هذه الاستراتيجيات: ${strLine}
+
+لكل استراتيجية اذكري:
+  1. اسم الاستراتيجية وتوقيتها
+  2. خطوات التنفيذ بالتفصيل (ماذا تفعل المعلمة؟ ماذا يفعل الطلاب؟)
+  3. أسئلة التفكير العليا المرتبطة بها (على الأقل 3 أسئلة)
+  4. الوقت اللازم لكل خطوة
+
+─────────────────────────────────────────
+
+🌈 رابعاً: مراعاة الفروق الفردية (3 مستويات واضحة)
+لكل نشاط رئيسي في الدرس، قدّمي نسخة لكل مستوى:
+
+🔴 المستوى الأساسي (الطالب المتعثر):
+- نشاط مبسط مع دعائم بصرية (scaffold)
+- أسئلة تذكر وفهم فقط
+- وقت إضافي أو مساعدة موجّهة
+
+🟡 المستوى المتوسط:
+- النشاط الأساسي كما هو مخطط
+- أسئلة تطبيق وتحليل
+
+🟢 المستوى المتقدم (الموهوب):
+- تحدٍّ إثرائي يتجاوز المنهج
+- سؤال مفتوح يدفع للتفكير الإبداعي
+- ربط بمشكلة واقعية
+
+─────────────────────────────────────────
+
+💻 خامساً: الأنشطة الإلكترونية التفاعلية
+استخدمي هذه الأدوات: ${toolsLine}
+
+قدّمي:
+  • نشاطاً فردياً رقمياً مع رابط الأداة أو طريقة الوصول
+  • نشاطاً تعاونياً رقمياً لمجموعات 3-4 طلاب
+  • لكل نشاط: اكتبي التعليمات الكاملة التي ستُعطى للطالب
+
+─────────────────────────────────────────
+
+🎯 سادساً: الغلق الختامي (10 دقائق)
+هذا الجزء مهم جداً — يجب أن:
+  1. يعود صراحةً للهدف الذي بدأنا به في التمهيد (أغلقي الدائرة)
+  2. يتضمن Exit Ticket: 3 أسئلة محددة يجيب عنها الطالب قبل الخروج
+       السؤال الأول: تذكر/فهم
+       السؤال الثاني: تطبيق
+       السؤال الثالث: تفكير ناقد أو رأي
+  3. جملة ختامية تحفيزية تربط الدرس بالحياة
+  4. جسر للدرس القادم بجملة واحدة
+
+─────────────────────────────────────────
+
+📊 سابعاً: أداة التقييم
+  - معيار النجاح: ماذا يستطيع الطالب أن يفعل بعد الدرس؟ (مؤشر قابل للملاحظة)
+  - 3 مستويات للأداء (ممتاز / جيد / يحتاج دعماً)
+  - سؤال تأملي للمعلمة: كيف أعرف أن الهدف تحقق؟
+
+─────────────────────────────────────────
+
+📋 ملاحظات للتنفيذ:
+- رتّبي كل شيء زمنياً بدقة (كل خطوة مع وقتها)
+- اجعلي الخطة جاهزة للتطبيق المباشر بدون تعديلات
+- استخدمي لغة واضحة وعملية لا نظرية
+- الخطة موجهة للمرحلة والمادة والمنهج القطري`;
+
+  document.getElementById('promptBox').textContent = prompt;
+  const out = document.getElementById('outputWrap');
+  out.classList.add('show');
+  setTimeout(() => out.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function copyPrompt() {
+  const text = document.getElementById('promptBox').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-all-btn');
+    btn.textContent = '✅ تم النسخ!';
+    setTimeout(() => btn.textContent = '📋 نسخ الكل', 2500);
+  });
+}
+</script>
+</body>
+</html>
