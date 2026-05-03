@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط ثنائي 🌍 الاجتماعيات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07101f;--bg2:#0d1a30;--border:rgba(255,255,255,0.09);
+  --cyan:#00ffc8;--purple:#7c6fff;--gold:#ffc840;--green:#00ff88;--red:#ff4d4d;
+  --text:#e8f0fe;--muted:#6a7f99;
+}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,255,200,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,200,0.025) 1px,transparent 1px);
+  background-size:44px 44px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(124,111,255,0.12),transparent);
+  pointer-events:none;z-index:0}
+
+/* ===== SCREENS ===== */
+.screen{display:none;position:relative;z-index:1;min-height:100vh;padding-bottom:60px}
+.screen.active{display:block}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:36px 20px 24px}
+.header h1{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:900;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2}
+.header p{color:var(--muted);margin-top:10px;font-size:1rem;font-weight:500}
+
+/* ===== PAIRS GRID ===== */
+.pairs-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:14px;max-width:1200px;margin:10px auto 30px;padding:0 16px}
+.pair-card{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:18px;padding:18px 16px;transition:border-color 0.2s}
+.pair-card:hover{border-color:rgba(0,255,200,0.2)}
+.pair-label{font-size:0.78rem;color:var(--cyan);font-weight:800;
+  letter-spacing:0.05em;margin-bottom:12px;text-align:center}
+.teacher-btns{display:flex;gap:10px}
+.teacher-btn{
+  flex:1;padding:13px 6px;border:1.5px solid rgba(255,255,255,0.12);
+  border-radius:12px;background:rgba(255,255,255,0.04);color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:0.88rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;line-height:1.3}
+.teacher-btn:hover:not(.taken):not(.my-seat){
+  background:rgba(0,255,200,0.12);border-color:var(--cyan);color:var(--cyan);transform:translateY(-2px)}
+.teacher-btn.taken{
+  background:rgba(255,77,77,0.08);border-color:rgba(255,77,77,0.25);
+  color:rgba(255,100,100,0.7);cursor:not-allowed;font-size:0.8rem}
+.teacher-btn.my-seat{
+  background:rgba(0,255,200,0.15);border-color:var(--cyan);color:var(--cyan)}
+
+/* ===== QUESTION CARDS ===== */
+.questions-container{max-width:780px;margin:0 auto;padding:0 16px}
+.q-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.08);
+  border-radius:16px;padding:20px;margin-bottom:12px;cursor:pointer;transition:all 0.2s}
+.q-card:hover{border-color:var(--purple);background:rgba(124,111,255,0.08);transform:translateY(-1px)}
+.q-card.selected{border-color:var(--cyan);background:rgba(0,255,200,0.08)}
+.q-card .q-text{font-size:1.05rem;font-weight:700;line-height:1.5}
+.q-card .q-badge{
+  display:inline-block;margin-top:8px;padding:3px 10px;border-radius:20px;
+  font-size:0.75rem;font-weight:700;
+  background:rgba(124,111,255,0.15);color:var(--purple)}
+.q-card.selected .q-badge{background:rgba(0,255,200,0.15);color:var(--cyan)}
+
+/* ===== BUTTONS ===== */
+.btn-main{
+  display:block;width:calc(100% - 32px);max-width:420px;
+  margin:20px auto;padding:17px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  border:none;border-radius:14px;color:#07101f;
+  font-family:'Tajawal',sans-serif;font-size:1.1rem;font-weight:900;
+  cursor:pointer;transition:transform 0.2s,opacity 0.2s;letter-spacing:0.02em}
+.btn-main:hover:not(:disabled){transform:translateY(-3px);opacity:0.92}
+.btn-main:disabled{opacity:0.35;cursor:not-allowed;transform:none}
+.btn-sec{
+  display:inline-block;padding:12px 22px;
+  background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.15);
+  border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin:6px}
+.btn-sec:hover{background:rgba(255,255,255,0.12)}
+.btn-danger{border-color:rgba(255,77,77,0.3);color:#ff8080}
+.btn-danger:hover{background:rgba(255,77,77,0.1)}
+
+/* ===== INFO BOX ===== */
+.info-box{
+  max-width:680px;margin:0 auto 18px;padding:15px 20px;
+  background:rgba(124,111,255,0.08);border:1px solid rgba(124,111,255,0.2);
+  border-radius:14px;text-align:center;font-size:0.95rem;line-height:1.6;color:#b0c0e0}
+
+/* ===== WAITING SCREEN ===== */
+.wait-wrap{display:flex;flex-direction:column;align-items:center;padding-top:60px}
+.spinner{
+  width:90px;height:90px;border-radius:50%;
+  border:4px solid rgba(0,255,200,0.1);border-top-color:var(--cyan);
+  animation:spin 0.9s linear infinite;margin:0 auto 30px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.wait-text{color:var(--muted);font-size:0.9rem;margin-top:10px}
+.wait-partner{
+  margin-top:30px;padding:16px 28px;
+  background:rgba(0,255,200,0.06);border:1px solid rgba(0,255,200,0.15);
+  border-radius:14px;font-weight:700;font-size:1.05rem;color:var(--cyan)}
+
+/* ===== ANSWER OPTIONS ===== */
+.answer-options{display:grid;gap:11px;max-width:600px;margin:16px auto}
+.answer-opt{
+  padding:16px 20px;background:rgba(255,255,255,0.04);
+  border:2px solid rgba(255,255,255,0.1);border-radius:13px;
+  cursor:pointer;font-size:1rem;font-weight:600;transition:all 0.2s;text-align:right}
+.answer-opt:hover{border-color:var(--purple);background:rgba(124,111,255,0.1);transform:translateY(-1px)}
+.answer-opt.selected{border-color:var(--cyan);background:rgba(0,255,200,0.1)}
+.answer-opt.correct{border-color:var(--green)!important;background:rgba(0,255,136,0.12)!important;pointer-events:none}
+.answer-opt.wrong{border-color:var(--red)!important;background:rgba(255,77,77,0.1)!important;pointer-events:none}
+.answer-opt.reveal{border-color:var(--green)!important;background:rgba(0,255,136,0.08)!important;pointer-events:none}
+
+/* Fill input */
+.fill-wrap{max-width:460px;margin:20px auto}
+.fill-input{
+  display:block;width:100%;padding:16px 20px;
+  background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.15);
+  border-radius:13px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.15rem;text-align:center;direction:rtl;outline:none;transition:border-color 0.2s}
+.fill-input:focus{border-color:var(--purple)}
+
+/* ===== QUESTION BOX ===== */
+.q-box{
+  max-width:680px;margin:0 auto 24px;padding:24px;
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:18px}
+.q-box-label{font-size:0.8rem;color:var(--muted);margin-bottom:10px;font-weight:700;letter-spacing:0.05em}
+.q-box-text{font-size:1.2rem;font-weight:800;line-height:1.5;text-align:center}
+
+/* ===== RESULT ===== */
+.result-wrap{text-align:center;padding:20px}
+.result-icon{font-size:5rem;margin:20px 0;animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.result-score{font-size:4.5rem;font-weight:900;line-height:1}
+.result-score.c{color:var(--cyan)}
+.result-score.w{color:var(--red)}
+.result-msg{font-size:1.1rem;color:var(--muted);margin:14px 0 24px}
+.correct-reveal{
+  max-width:400px;margin:0 auto 24px;padding:18px;
+  background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.2);border-radius:14px}
+.correct-reveal p:first-child{color:var(--green);font-weight:700;font-size:0.85rem;margin-bottom:6px}
+.correct-reveal p:last-child{font-size:1.15rem;font-weight:800}
+
+/* ===== DASHBOARD ===== */
+.stats-bar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:0 auto 24px;max-width:900px;padding:0 16px}
+.stat-box{
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:14px;padding:16px 22px;text-align:center;min-width:110px}
+.stat-num{font-size:2.2rem;font-weight:900;color:var(--cyan)}
+.stat-label{font-size:0.78rem;color:var(--muted);margin-top:4px;font-weight:600}
+
+.dashboard-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:14px;max-width:1400px;margin:0 auto;padding:0 16px}
+.ps-card{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:18px;padding:18px;transition:border-color 0.3s}
+.ps-card.done{border-color:rgba(0,255,136,0.2)}
+.ps-card .ps-label{
+  font-size:0.78rem;color:var(--cyan);font-weight:800;
+  letter-spacing:0.05em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.t-row{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.t-row:last-child{border-bottom:none;padding-bottom:0}
+.t-name{font-weight:800;font-size:0.95rem}
+.t-sub{font-size:0.72rem;color:var(--muted);margin-top:3px;
+  max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.icons-row{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.ic{
+  width:28px;height:28px;border-radius:7px;display:flex;
+  align-items:center;justify-content:center;font-size:0.78rem;font-weight:900}
+.ic-sent{background:rgba(0,255,200,0.1);color:var(--cyan)}
+.ic-ans{background:rgba(124,111,255,0.1);color:var(--purple)}
+.ic-ok{background:rgba(0,255,136,0.1);color:var(--green)}
+.ic-bad{background:rgba(255,77,77,0.1);color:var(--red)}
+.ic-pts{background:rgba(255,200,64,0.1);color:var(--gold);font-size:0.7rem}
+.ic-gray{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.15)}
+
+/* ===== FLOAT BTN ===== */
+.float-btn{
+  position:fixed;bottom:20px;left:20px;padding:11px 18px;
+  background:rgba(13,26,48,0.95);border:1.5px solid rgba(255,255,255,0.15);
+  border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:0.88rem;font-weight:700;cursor:pointer;z-index:999;
+  backdrop-filter:blur(10px);transition:all 0.2s}
+.float-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* ===== MISC ===== */
+.center{text-align:center}
+.section-title{text-align:center;font-size:1.3rem;font-weight:800;color:var(--cyan);margin:20px 0 14px}
+
+/* Confetti */
+.cf{position:fixed;pointer-events:none;border-radius:2px;z-index:9999;
+  animation:cf-fall linear forwards}
+@keyframes cf-fall{
+  0%{transform:translateY(-80px) rotate(0deg);opacity:1}
+  100%{transform:translateY(105vh) rotate(800deg);opacity:0}}
+
+/* ===== PASSWORD MODAL ===== */
+.pw-overlay{
+  display:none;position:fixed;inset:0;z-index:8888;
+  background:rgba(7,16,31,0.88);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center}
+.pw-overlay.open{display:flex}
+.pw-modal{
+  background:#0d1a30;border:1px solid rgba(124,111,255,0.3);
+  border-radius:24px;padding:40px 36px;width:min(420px,92vw);text-align:center;
+  box-shadow:0 0 60px rgba(124,111,255,0.15);
+  animation:modal-in 0.3s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes modal-in{0%{transform:scale(0.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.pw-icon{font-size:3rem;margin-bottom:14px}
+.pw-modal h2{font-size:1.35rem;font-weight:900;color:var(--text);margin-bottom:6px}
+.pw-modal p{color:var(--muted);font-size:0.9rem;margin-bottom:24px}
+.pw-input{
+  display:block;width:100%;padding:15px 20px;
+  background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.12);
+  border-radius:13px;color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:1.3rem;text-align:center;letter-spacing:0.25em;direction:ltr;
+  outline:none;transition:border-color 0.2s;margin-bottom:16px}
+.pw-input:focus{border-color:var(--purple)}
+.pw-input.shake{animation:shake 0.4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pw-err{color:var(--red);font-size:0.85rem;height:20px;margin-bottom:10px;font-weight:700}
+.pw-btns{display:flex;gap:10px;justify-content:center}
+.pw-cancel{
+  padding:13px 24px;background:rgba(255,255,255,0.05);
+  border:1.5px solid rgba(255,255,255,0.12);border-radius:12px;
+  color:var(--muted);font-family:'Tajawal',sans-serif;font-size:0.95rem;
+  font-weight:700;cursor:pointer;transition:all 0.2s}
+.pw-cancel:hover{background:rgba(255,255,255,0.1);color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- ========== SCREEN 1: PAIR SELECTION ========== -->
+<div id="sc-login" class="screen active">
+  <div class="header">
+    <h1>🌍 نشاط ثنائي — الاجتماعيات</h1>
+    <p>اختاري اسمك من مربعات الثنائيات للبدء بالنشاط</p>
+  </div>
+  <div class="pairs-grid" id="pairs-grid"></div>
+  <button class="float-btn" onclick="openDashboard()">📊 شاشة المعلمة المقدمة</button>
+</div>
+
+<!-- ========== SCREEN 2: CHOOSE QUESTION ========== -->
+<div id="sc-questions" class="screen">
+  <div class="header">
+    <h1>📝 اختاري سؤالاً لزميلتك</h1>
+    <p id="q-partner-info"></p>
+  </div>
+  <div class="info-box">اختاري سؤالاً من القائمة أدناه وأرسليه لزميلتك — ستستقبلين في المقابل سؤالاً منها تجيبين عليه!</div>
+  <div class="questions-container" id="q-list"></div>
+  <button class="btn-main" id="send-btn" onclick="sendQuestion()" disabled>إرسال السؤال ✈️</button>
+</div>
+
+<!-- ========== SCREEN 3: WAITING ========== -->
+<div id="sc-waiting" class="screen">
+  <div class="header">
+    <h1>⏳ في انتظار زميلتك...</h1>
+  </div>
+  <div class="wait-wrap">
+    <div class="spinner"></div>
+    <div class="wait-partner" id="wait-partner-text">في انتظار سؤال زميلتك</div>
+    <p class="wait-text">يتم التحديث تلقائياً كل ثانيتين ⟳</p>
+  </div>
+</div>
+
+<!-- ========== SCREEN 4: ANSWER ========== -->
+<div id="sc-answer" class="screen">
+  <div class="header">
+    <h1>💡 أجيبي على السؤال</h1>
+    <p id="answer-from-label"></p>
+  </div>
+  <div class="questions-container">
+    <div class="q-box">
+      <div class="q-box-label">📌 السؤال المُرسَل إليكِ</div>
+      <div class="q-box-text" id="recv-q-text"></div>
+    </div>
+    <div id="answer-area"></div>
+    <button class="btn-main" id="submit-btn" onclick="submitAnswer()">تأكيد الإجابة ✅</button>
+  </div>
+</div>
+
+<!-- ========== SCREEN 5: RESULT ========== -->
+<div id="sc-result" class="screen">
+  <div class="header">
+    <h1 id="res-title">النتيجة</h1>
+  </div>
+  <div class="result-wrap">
+    <div class="result-icon" id="res-icon"></div>
+    <div class="result-score" id="res-score"></div>
+    <p class="result-msg" id="res-msg"></p>
+    <div class="correct-reveal" id="res-correct-box" style="display:none">
+      <p>✅ الإجابة الصحيحة هي:</p>
+      <p id="res-correct-text"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SCREEN 6: TEACHER DASHBOARD ========== -->
+<div id="sc-dash" class="screen">
+  <div class="header">
+    <h1>📊 لوحة المعلمة المقدمة</h1>
+    <p>تحديث تلقائي كل 3 ثوانٍ ⟳</p>
+  </div>
+  <div class="stats-bar" id="stats-bar"></div>
+  <div class="dashboard-grid" id="dash-grid"></div>
+  <div class="center" style="margin-top:24px;padding:0 16px">
+    <button class="btn-sec" onclick="leaveDash()">🔙 العودة للنشاط</button>
+    <button class="btn-sec btn-danger" onclick="resetAll()" style="border-color:rgba(255,77,77,0.4);background:rgba(255,77,77,0.06)">
+      🗑️ محو النتائج وإعادة الاستخدام
+    </button>
+  </div>
+</div>
+
+<!-- ========== PASSWORD MODAL ========== -->
+<div class="pw-overlay" id="pw-overlay">
+  <div class="pw-modal">
+    <div class="pw-icon">🔐</div>
+    <h2>شاشة المعلمة المقدمة</h2>
+    <p>أدخلي كلمة المرور للوصول للوحة التحكم</p>
+    <input class="pw-input" id="pw-input" type="password"
+      placeholder="••••" maxlength="10"
+      onkeydown="if(event.key==='Enter')checkPW()"
+      oninput="document.getElementById('pw-err').textContent=''">
+    <div class="pw-err" id="pw-err"></div>
+    <div class="pw-btns">
+      <button class="pw-cancel" onclick="closePWModal()">إلغاء</button>
+      <button class="btn-main" style="margin:0;width:auto;padding:13px 30px" onclick="checkPW()">دخول 🚀</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIG
+// ============================================================
+const FB = 'https://cyber-safety-class-default-rtdb.firebaseio.com/workshop_v2';
+const DASH_PASSWORD = '1234'; // ← غيّري كلمة المرور هنا
+
+// ============================================================
+//  FIREBASE HELPERS
+// ============================================================
+const headers = {'Content-Type':'application/json'};
+async function fbGet(p){try{const r=await fetch(`${FB}/${p}.json`);return await r.json();}catch{return null;}}
+async function fbSet(p,d){try{await fetch(`${FB}/${p}.json`,{method:'PUT',headers,body:JSON.stringify(d)});}catch{}}
+async function fbPatch(p,d){try{await fetch(`${FB}/${p}.json`,{method:'PATCH',headers,body:JSON.stringify(d)});}catch{}}
+async function fbDel(p){try{await fetch(`${FB}/${p}.json`,{method:'DELETE'});}catch{}}
+
+// ============================================================
+//  QUESTION BANK — 20 QUESTIONS
+// ============================================================
+const QS = [
+  {id:1,type:'mcq',text:'ما عاصمة دولة قطر؟',opts:['الرياض','الدوحة','أبوظبي','المنامة'],ans:'الدوحة'},
+  {id:2,type:'mcq',text:'في أي عام استقلت دولة قطر؟',opts:['1961','1971','1981','1951'],ans:'1971'},
+  {id:3,type:'mcq',text:'متى يُحتفل باليوم الوطني القطري؟',opts:['18 ديسمبر','3 سبتمبر','25 أبريل','1 يناير'],ans:'18 ديسمبر'},
+  {id:4,type:'mcq',text:'أيُّ دولة استضافت كأس العالم لكرة القدم 2022؟',opts:['الإمارات','المملكة العربية السعودية','قطر','البحرين'],ans:'قطر'},
+  {id:5,type:'mcq',text:'ما أكبر قارة في العالم مساحةً؟',opts:['أفريقيا','أمريكا الشمالية','آسيا','أوروبا'],ans:'آسيا'},
+  {id:6,type:'mcq',text:'ما أطول نهر في العالم؟',opts:['نهر الأمازون','نهر النيل','نهر الكونغو','نهر المسيسيبي'],ans:'نهر النيل'},
+  {id:7,type:'mcq',text:'ما أعلى قمة جبلية في العالم؟',opts:['جبل الألب','جبل إيفرست','جبل كليمنجارو','جبل دنالي'],ans:'جبل إيفرست'},
+  {id:8,type:'mcq',text:'كم عدد قارات العالم؟',opts:['5','6','7','8'],ans:'7'},
+  {id:9,type:'mcq',text:'ما أكبر محيط في العالم؟',opts:['المحيط الأطلسي','المحيط الهادئ','المحيط الهندي','المحيط المتجمد'],ans:'المحيط الهادئ'},
+  {id:10,type:'mcq',text:'ما عاصمة المملكة العربية السعودية؟',opts:['جدة','مكة المكرمة','الرياض','الدمام'],ans:'الرياض'},
+  {id:11,type:'mcq',text:'ما عاصمة الإمارات العربية المتحدة؟',opts:['دبي','الشارقة','أبوظبي','العين'],ans:'أبوظبي'},
+  {id:12,type:'mcq',text:'ما أكبر صحراء في العالم؟',opts:['صحراء العرب','صحراء كالاهاري','الصحراء الكبرى','صحراء جوبي'],ans:'الصحراء الكبرى'},
+  {id:13,type:'mcq',text:'أي دولة تُعدّ الأكبر مساحةً في العالم؟',opts:['كندا','الصين','روسيا','أستراليا'],ans:'روسيا'},
+  {id:14,type:'mcq',text:'ما اسم مؤسس الدولة القطرية الحديثة؟',opts:['الشيخ خليفة','الشيخ حمد','الشيخ جاسم بن محمد آل ثاني','الشيخ تميم'],ans:'الشيخ جاسم بن محمد آل ثاني'},
+  {id:15,type:'mcq',text:'أيُّ دولة خليجية تقع شمال شرق السعودية وجنوب العراق؟',opts:['قطر','البحرين','الكويت','الإمارات'],ans:'الكويت'},
+  {id:16,type:'fill',text:'تقع دولة قطر في شبه جزيرة على ساحل الخليج _____',ans:'العربي'},
+  {id:17,type:'fill',text:'عاصمة دولة الكويت هي مدينة _____',ans:'الكويت'},
+  {id:18,type:'fill',text:'أكبر قارة في العالم من حيث المساحة هي قارة _____',ans:'آسيا'},
+  {id:19,type:'fill',text:'أكثر المحيطات عمقاً وأوسعها مساحةً هو المحيط _____',ans:'الهادئ'},
+  {id:20,type:'fill',text:'أطول نهر في العالم هو نهر _____',ans:'النيل'},
+];
+
+// ============================================================
+//  STATE
+// ============================================================
+let myNum=null, myPair=null, isOdd=null, partnerNum=null;
+let selectedQ=null, receivedQ=null, myAnswer=null;
+let waitTimer=null, dashTimer=null;
+
+// ============================================================
+//  SCREEN NAVIGATION
+// ============================================================
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+//  BUILD PAIRS GRID
+// ============================================================
+function buildGrid(){
+  const g=document.getElementById('pairs-grid');g.innerHTML='';
+  for(let p=1;p<=15;p++){
+    const o=2*p-1,e=2*p;
+    const c=document.createElement('div');c.className='pair-card';c.id=`pc-${p}`;
+    c.innerHTML=`
+      <div class="pair-label">👥 الثنائي ${p}</div>
+      <div class="teacher-btns">
+        <button class="teacher-btn" id="btn-${o}" onclick="pickTeacher(${o},${p},true)">معلمة ${o}</button>
+        <button class="teacher-btn" id="btn-${e}" onclick="pickTeacher(${e},${p},false)">معلمة ${e}</button>
+      </div>`;
+    g.appendChild(c);
+  }
+}
+
+// ============================================================
+//  REFRESH SEATS (polling every 6s)
+// ============================================================
+async function refreshSeats(){
+  const data=await fbGet('teachers');
+  if(!data)return;
+  for(let n=1;n<=30;n++){
+    const btn=document.getElementById(`btn-${n}`);
+    if(!btn)continue;
+    const t=data[`t${n}`];
+    if(t&&t.status&&t.status!=='idle'&&n!==myNum){
+      btn.classList.add('taken');
+      btn.textContent=`معلمة ${n} ✓`;
+      btn.onclick=null;
+    }
+  }
+}
+
+// ============================================================
+//  SELECT TEACHER (LOGIN)
+// ============================================================
+async function pickTeacher(num,pair,odd){
+  // Check seat not taken
+  const ex=await fbGet(`teachers/t${num}`);
+  if(ex&&ex.status&&ex.status!=='idle'){alert('هذا المقعد محجوز! اختاري مقعداً آخر.');return;}
+
+  myNum=num;myPair=pair;isOdd=odd;partnerNum=odd?num+1:num-1;
+
+  await fbSet(`teachers/t${num}`,{name:`معلمة ${num}`,pair,status:'choosing',score:0});
+
+  const btn=document.getElementById(`btn-${num}`);
+  if(btn)btn.classList.add('my-seat');
+
+  showQScreen();
+}
+
+// ============================================================
+//  QUESTION SELECTION SCREEN
+// ============================================================
+function showQScreen(){
+  document.getElementById('q-partner-info').textContent=
+    `أنتِ معلمة ${myNum} — زميلتك في الثنائي: معلمة ${partnerNum}`;
+  selectedQ=null;
+  const sbtn=document.getElementById('send-btn');
+  sbtn.disabled=true;sbtn.textContent='إرسال السؤال ✈️';
+
+  // Shuffle Q list
+  const list=document.getElementById('q-list');list.innerHTML='';
+  const shuffled=[...QS].sort(()=>Math.random()-0.5);
+  shuffled.forEach(q=>{
+    const c=document.createElement('div');c.className='q-card';c.dataset.id=q.id;
+    c.innerHTML=`<div class="q-text">${q.text}</div>
+      <span class="q-badge">${q.type==='mcq'?'🔘 اختيار من متعدد':'✏️ أكمل الفراغ'}</span>`;
+    c.onclick=()=>{
+      document.querySelectorAll('.q-card').forEach(x=>x.classList.remove('selected'));
+      c.classList.add('selected');selectedQ=q;
+      document.getElementById('send-btn').disabled=false;
+    };
+    list.appendChild(c);
+  });
+  show('sc-questions');
+}
+
+// ============================================================
+//  SEND QUESTION
+// ============================================================
+async function sendQuestion(){
+  if(!selectedQ)return;
+  const sbtn=document.getElementById('send-btn');
+  sbtn.disabled=true;sbtn.textContent='...جارٍ الإرسال';
+
+  const qKey=isOdd?'q_from_odd':'q_from_even';
+  await fbPatch(`pairs/pair_${myPair}`,{[qKey]:selectedQ.id});
+  await fbPatch(`teachers/t${myNum}`,{status:'sent',sentQ:selectedQ.id});
+
+  showWaiting();
+}
+
+// ============================================================
+//  WAITING SCREEN
+// ============================================================
+function showWaiting(){
+  document.getElementById('wait-partner-text').textContent=
+    `في انتظار سؤال معلمة ${partnerNum}...`;
+  show('sc-waiting');
+  checkPartner();
+  waitTimer=setInterval(checkPartner,2000);
+}
+
+async function checkPartner(){
+  const pd=await fbGet(`pairs/pair_${myPair}`);if(!pd)return;
+  const pKey=isOdd?'q_from_even':'q_from_odd';
+  if(pd[pKey]){
+    clearInterval(waitTimer);
+    const qId=pd[pKey];
+    receivedQ=QS.find(q=>q.id===qId);
+    if(receivedQ)showAnswerScreen();
+  }
+}
+
+// ============================================================
+//  ANSWER SCREEN
+// ============================================================
+function showAnswerScreen(){
+  document.getElementById('answer-from-label').textContent=`سؤال مُرسَل من معلمة ${partnerNum} 💌`;
+  document.getElementById('recv-q-text').textContent=receivedQ.text;
+
+  myAnswer=null;
+  const sbtn=document.getElementById('submit-btn');
+  sbtn.disabled=false;sbtn.textContent='تأكيد الإجابة ✅';
+
+  const area=document.getElementById('answer-area');area.innerHTML='';
+
+  if(receivedQ.type==='mcq'){
+    const opts=document.createElement('div');opts.className='answer-options';
+    receivedQ.opts.forEach(o=>{
+      const btn=document.createElement('div');btn.className='answer-opt';btn.textContent=o;
+      btn.onclick=()=>{
+        document.querySelectorAll('.answer-opt').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');myAnswer=o;
+      };
+      opts.appendChild(btn);
+    });
+    area.appendChild(opts);
+  } else {
+    const wrap=document.createElement('div');wrap.className='fill-wrap';
+    const inp=document.createElement('input');
+    inp.type='text';inp.className='fill-input';inp.placeholder='اكتبي إجابتك هنا...';
+    inp.oninput=()=>{myAnswer=inp.value.trim();};
+    wrap.appendChild(inp);area.appendChild(wrap);
+  }
+  show('sc-answer');
+}
+
+// ============================================================
+//  SUBMIT ANSWER
+// ============================================================
+async function submitAnswer(){
+  if(!myAnswer||myAnswer===''){alert('يرجى اختيار إجابة أو كتابتها!');return;}
+
+  document.getElementById('submit-btn').disabled=true;
+
+  // Case-insensitive, strip diacritics for fill
+  const normalize=s=>s.replace(/[\u064B-\u065F]/g,'').trim().toLowerCase();
+  const correct=normalize(myAnswer)===normalize(receivedQ.ans);
+  const score=correct?100:0;
+
+  const ansKey=isOdd?'ans_from_odd':'ans_from_even';
+  await fbPatch(`pairs/pair_${myPair}`,{[ansKey]:{answer:myAnswer,correct,score}});
+  await fbPatch(`teachers/t${myNum}`,{status:'done',score,correct});
+
+  // Reveal options if MCQ
+  if(receivedQ.type==='mcq'){
+    document.querySelectorAll('.answer-opt').forEach(b=>{
+      if(b.textContent===receivedQ.ans)b.classList.add(correct&&b.classList.contains('selected')?'correct':'reveal');
+      else if(b.classList.contains('selected')&&!correct)b.classList.add('wrong');
+      b.onclick=null;
+    });
+    await new Promise(r=>setTimeout(r,800));
+  }
+
+  showResult(correct,score);
+}
+
+// ============================================================
+//  RESULT SCREEN
+// ============================================================
+function showResult(correct,score){
+  document.getElementById('res-icon').textContent=correct?'🎉':'😔';
+  document.getElementById('res-title').textContent=correct?'إجابة صحيحة! رائع 🌟':'إجابة خاطئة';
+  document.getElementById('res-score').textContent=`${score > 0 ? '+' : ''}${score}`;
+  document.getElementById('res-score').className=`result-score ${correct?'c':'w'}`;
+  document.getElementById('res-msg').textContent=correct?'أحسنتِ! لقد أجبتِ بشكل صحيح 👏':'للأسف الإجابة غير صحيحة — يمكنك المراجعة لاحقاً';
+
+  const cb=document.getElementById('res-correct-box');
+  if(!correct){
+    cb.style.display='block';
+    document.getElementById('res-correct-text').textContent=receivedQ.ans;
+  } else {
+    cb.style.display='none';
+    launchConfetti();
+  }
+  show('sc-result');
+}
+
+// ============================================================
+//  DASHBOARD
+// ============================================================
+let dashOpen=false;
+function openDashboard(){
+  // Show password modal instead of going straight to dashboard
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-err').textContent='';
+  document.getElementById('pw-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('pw-input').focus(),100);
+}
+function closePWModal(){
+  document.getElementById('pw-overlay').classList.remove('open');
+}
+function checkPW(){
+  const val=document.getElementById('pw-input').value.trim();
+  if(val===DASH_PASSWORD){
+    closePWModal();
+    _enterDashboard();
+  } else {
+    document.getElementById('pw-err').textContent='❌ كلمة المرور غير صحيحة';
+    const inp=document.getElementById('pw-input');
+    inp.classList.remove('shake');
+    void inp.offsetWidth; // reflow
+    inp.classList.add('shake');
+    inp.value='';
+    inp.focus();
+  }
+}
+function _enterDashboard(){
+  dashOpen=true;show('sc-dash');
+  updateDash();
+  dashTimer=setInterval(updateDash,3000);
+}
+function leaveDash(){
+  dashOpen=false;
+  clearInterval(dashTimer);dashTimer=null;
+  if(myNum)show(getCurrentScreen());
+  else show('sc-login');
+}
+function getCurrentScreen(){
+  // Return appropriate screen based on state
+  if(!myNum)return'sc-login';
+  return'sc-result';
+}
+
+async function updateDash(){
+  const [td,pd]=await Promise.all([fbGet('teachers'),fbGet('pairs')]);
+  renderStats(td);renderCards(td,pd);
+}
+
+function renderStats(td){
+  if(!td){document.getElementById('stats-bar').innerHTML='<div class="stat-box"><div class="stat-num" style="color:var(--muted)">0</div><div class="stat-label">لا توجد بيانات</div></div>';return;}
+  let total=0,sent=0,done=0,corr=0;
+  for(let n=1;n<=30;n++){
+    const t=td[`t${n}`];if(!t)continue;total++;
+    if(t.status==='sent'||t.status==='done')sent++;
+    if(t.status==='done')done++;
+    if(t.correct)corr++;
+  }
+  document.getElementById('stats-bar').innerHTML=`
+    <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">سجّلن</div></div>
+    <div class="stat-box"><div class="stat-num">${sent}</div><div class="stat-label">أرسلن سؤالاً</div></div>
+    <div class="stat-box"><div class="stat-num">${done}</div><div class="stat-label">أجبن</div></div>
+    <div class="stat-box" style="border-color:rgba(0,255,136,0.25)">
+      <div class="stat-num" style="color:var(--green)">${corr}</div>
+      <div class="stat-label">إجابات صحيحة</div></div>`;
+}
+
+function renderCards(td,pd){
+  const g=document.getElementById('dash-grid');g.innerHTML='';
+  for(let p=1;p<=15;p++){
+    const o=2*p-1,e=2*p;
+    const tO=td?td[`t${o}`]:null;
+    const tE=td?td[`t${e}`]:null;
+    const pData=pd?pd[`pair_${p}`]:null;
+    const complete=pData&&pData.ans_from_odd&&pData.ans_from_even;
+    const inProgress=pData&&(pData.q_from_odd||pData.q_from_even);
+
+    const card=document.createElement('div');
+    card.className=`ps-card${complete?' done':''}`;
+
+    const statusIcon=complete?'✅':inProgress?'🔄':'⏳';
+
+    card.innerHTML=`
+      <div class="ps-label">${statusIcon} &nbsp; الثنائي ${p}</div>
+      ${makeTeacherRow(o,tO,pData?pData.q_from_odd:null,pData?pData.ans_from_odd:null)}
+      ${makeTeacherRow(e,tE,pData?pData.q_from_even:null,pData?pData.ans_from_even:null)}`;
+    g.appendChild(card);
+  }
+}
+
+function makeTeacherRow(num,t,qSent,ansData){
+  if(!t) return `
+    <div class="t-row">
+      <div><div class="t-name" style="color:var(--muted);font-weight:500">معلمة ${num}</div>
+      <div class="t-sub">لم تسجّل بعد</div></div>
+    </div>`;
+
+  const q=qSent?QS.find(x=>x.id===qSent):null;
+  const qPreview=q?q.text.substring(0,28)+'...':'—';
+
+  const iSent=qSent
+    ?`<div class="ic ic-sent" title="أرسلت سؤالاً">✈</div>`
+    :`<div class="ic ic-gray">✈</div>`;
+  const iAns=ansData
+    ?`<div class="ic ic-ans" title="أجابت">💬</div>`
+    :`<div class="ic ic-gray">💬</div>`;
+  const iResult=ansData
+    ?(ansData.correct?`<div class="ic ic-ok" title="صحيح">✓</div>`:`<div class="ic ic-bad" title="خطأ">✗</div>`)
+    :`<div class="ic ic-gray">?</div>`;
+  const iPts=`<div class="ic ic-pts">${t.score||0}pt</div>`;
+
+  return `
+    <div class="t-row">
+      <div>
+        <div class="t-name">معلمة ${num}</div>
+        <div class="t-sub">${qPreview}</div>
+      </div>
+      <div class="icons-row">${iSent}${iAns}${iResult}${iPts}</div>
+    </div>`;
+}
+
+// ============================================================
+//  RESET
+// ============================================================
+async function resetAll(){
+  if(!confirm('⚠️ سيتم مسح جميع بيانات الجلسة الحالية (المعلمات والأسئلة والإجابات) لإعادة استخدام النشاط من جديد.\n\nهل أنت متأكدة؟'))return;
+  await Promise.all([fbDel('teachers'),fbDel('pairs')]);
+  // Reset local state too
+  myNum=null;myPair=null;isOdd=null;partnerNum=null;
+  selectedQ=null;receivedQ=null;myAnswer=null;
+  clearInterval(waitTimer);clearInterval(dashTimer);
+  waitTimer=null;dashTimer=null;dashOpen=false;
+  alert('✅ تم المسح بنجاح — يمكن للمعلمات الآن البدء من جديد');
+  buildGrid();refreshSeats();
+  leaveDash();
+  show('sc-login');
+}
+
+// ============================================================
+//  CONFETTI
+// ============================================================
+function launchConfetti(){
+  const cols=['#00ffc8','#7c6fff','#ffc840','#ff6b9d','#00ff88','#4db8ff'];
+  for(let i=0;i<90;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');p.className='cf';
+      p.style.cssText=`
+        left:${Math.random()*100}vw;top:-30px;
+        background:${cols[Math.floor(Math.random()*cols.length)]};
+        width:${7+Math.random()*8}px;height:${7+Math.random()*8}px;
+        border-radius:${Math.random()>.5?'50%':'3px'};
+        animation-duration:${2.5+Math.random()*2}s;
+        animation-delay:${Math.random()*0.3}s`;
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),5000);
+    },i*25);
+  }
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+buildGrid();
+refreshSeats();
+setInterval(()=>{
+  if(document.getElementById('sc-login').classList.contains('active'))refreshSeats();
+},6000);
+</script>
+</body>
+</html>
