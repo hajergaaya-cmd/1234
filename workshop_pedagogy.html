@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🎓 ورشة استراتيجيات التدريس الفعّال</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#07101f;--bg2:#0d1b30;--bg3:#132036;--bg4:#1a2840;
+  --cyan:#00ffc8;--purple:#7c6fff;--gold:#ffc107;--pink:#ff6b9d;--red:#ff5050;
+  --text:#e8f4ff;--muted:#6b8cae;
+}
+html,body{height:100%;overflow-x:hidden}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Tajawal',sans-serif;
+  background-image:
+    radial-gradient(ellipse at 15% 15%,rgba(124,111,255,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse at 85% 85%,rgba(0,255,200,0.07) 0%,transparent 60%);
+}
+
+/* ===== SCREENS ===== */
+.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.hidden{display:none!important}
+
+/* ===== JOIN SCREEN ===== */
+#joinScreen{text-align:center;gap:0}
+.join-logo{font-size:56px;margin-bottom:12px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.join-title{
+  font-size:clamp(20px,5vw,34px);font-weight:900;margin-bottom:6px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.join-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
+.numbers-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);
+  gap:9px;max-width:400px;width:100%;margin:0 auto 18px;
+}
+@media(max-width:400px){.numbers-grid{grid-template-columns:repeat(5,1fr)}}
+.num-btn{
+  aspect-ratio:1;border-radius:12px;
+  background:var(--bg2);border:2px solid rgba(255,255,255,0.07);
+  color:var(--text);font-family:'Tajawal',sans-serif;
+  font-size:16px;font-weight:800;cursor:pointer;
+  transition:all 0.18s;position:relative;
+}
+.num-btn:hover:not(.taken){border-color:var(--cyan);background:rgba(0,255,200,0.08);transform:scale(1.06)}
+.num-btn:active:not(.taken){transform:scale(0.96)}
+.num-btn.taken{
+  background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.04);
+  color:rgba(255,255,255,0.18);cursor:not-allowed;
+}
+.num-btn.taken::after{
+  content:'✓';position:absolute;top:2px;right:4px;
+  font-size:9px;color:var(--cyan);
+}
+.teacher-link{
+  font-size:13px;color:var(--muted);cursor:pointer;
+  text-decoration:underline;margin-top:4px;
+  transition:color 0.2s;
+}
+.teacher-link:hover{color:var(--cyan)}
+
+/* ===== WAITING SCREEN ===== */
+#waitScreen{text-align:center;gap:16px}
+.wait-icon{font-size:64px;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.wait-card{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.06);
+  border-radius:22px;padding:32px 28px;max-width:360px;width:100%;
+}
+.my-badge{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  color:#07101f;font-weight:900;font-size:20px;
+  padding:10px 32px;border-radius:30px;margin-bottom:10px;
+}
+.my-group-txt{font-size:15px;color:var(--muted);margin-bottom:20px}
+.my-group-txt span{color:var(--purple);font-weight:800}
+.wait-msg{font-size:18px;font-weight:700;margin-bottom:6px}
+.wait-hint{font-size:14px;color:var(--muted);margin-bottom:20px}
+.joined-pill{
+  background:var(--bg3);border-radius:12px;padding:12px 20px;
+  font-size:14px;color:var(--muted);
+  display:inline-flex;align-items:center;gap:8px;
+}
+.joined-pill strong{color:var(--cyan);font-size:20px;font-weight:900}
+.dots{display:inline-flex;gap:4px;margin-right:4px}
+.dots span{
+  width:7px;height:7px;border-radius:50%;background:var(--cyan);
+  animation:blink 1.4s ease infinite;
+}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
+
+/* ===== QUESTION SCREEN ===== */
+#questionScreen{justify-content:flex-start;padding-top:12px;gap:0}
+.q-progress{
+  width:100%;max-width:700px;height:5px;
+  background:rgba(255,255,255,0.07);border-radius:3px;
+  margin-bottom:14px;overflow:hidden;
+}
+.q-progress-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  transition:width 0.6s ease;
+}
+.q-topbar{
+  width:100%;max-width:700px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+.q-timer-wrap{display:flex;align-items:center;gap:10px}
+.timer-svg{transform:rotate(-90deg)}
+.t-bg{stroke:rgba(255,255,255,0.08);fill:none;stroke-width:5}
+.t-fill{
+  fill:none;stroke-width:5;stroke:var(--cyan);
+  stroke-dasharray:126;stroke-dashoffset:0;
+  stroke-linecap:round;
+  transition:stroke-dashoffset 1s linear,stroke 0.4s;
+}
+.timer-num{font-size:19px;font-weight:900;color:var(--cyan);min-width:32px;text-align:center}
+.q-counter-lbl{font-size:14px;color:var(--muted)}
+.q-group-pill{
+  background:rgba(124,111,255,0.12);
+  border:1px solid rgba(124,111,255,0.25);
+  border-radius:20px;padding:5px 14px;
+  font-size:13px;font-weight:700;color:#a095ff;
+}
+.q-card{
+  width:100%;max-width:700px;
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.06);
+  border-radius:20px;padding:26px;margin-bottom:14px;
+}
+.q-txt{
+  font-size:clamp(16px,3.5vw,21px);font-weight:700;
+  line-height:1.55;margin-bottom:20px;
+}
+.options-wrap{display:grid;gap:11px}
+.opt-btn{
+  width:100%;padding:15px 18px;
+  background:var(--bg3);border:2px solid rgba(255,255,255,0.07);
+  border-radius:14px;color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:clamp(14px,3vw,17px);font-weight:600;
+  cursor:pointer;text-align:right;
+  transition:all 0.18s;
+  display:flex;align-items:center;gap:14px;
+}
+.opt-btn:hover:not(:disabled){
+  border-color:rgba(0,255,200,0.35);background:rgba(0,255,200,0.05);
+  transform:translateX(-3px);
+}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(0,255,200,0.12);border-color:var(--cyan);color:var(--cyan)}
+.opt-btn.wrong{background:rgba(255,80,80,0.1);border-color:rgba(255,80,80,0.4);color:#ff7070}
+.opt-btn.reveal{opacity:0.45}
+.opt-ltr{
+  width:34px;height:34px;min-width:34px;border-radius:9px;
+  background:rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:800;flex-shrink:0;
+}
+.opt-btn.correct .opt-ltr{background:var(--cyan);color:#07101f}
+.opt-btn.wrong .opt-ltr{background:rgba(255,80,80,0.3);color:#ff7070}
+.fb-bar{
+  width:100%;max-width:700px;
+  padding:14px 20px;border-radius:12px;
+  font-size:15px;font-weight:700;
+  display:none;animation:slideUp 0.3s ease;
+}
+.fb-bar.ok{display:block;background:rgba(0,255,200,0.08);border:1px solid rgba(0,255,200,0.25);color:var(--cyan)}
+.fb-bar.no{display:block;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.25);color:#ff8080}
+
+/* ===== RESULTS ===== */
+#resultsScreen{text-align:center;gap:16px}
+.trophy-icon{font-size:72px;animation:float 2s ease-in-out infinite}
+.results-title{
+  font-size:clamp(24px,6vw,40px);font-weight:900;
+  background:linear-gradient(90deg,var(--gold),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.results-sub{font-size:15px;color:var(--muted)}
+.leaderboard{
+  width:100%;max-width:500px;
+  display:flex;flex-direction:column;gap:10px;
+  margin-top:8px;
+}
+.lb-row{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;padding:18px 22px;
+  display:flex;align-items:center;gap:16px;
+  animation:slideUp 0.4s ease both;
+}
+.lb-row:nth-child(1){border-color:rgba(255,193,7,0.4);background:rgba(255,193,7,0.05)}
+.lb-row:nth-child(2){border-color:rgba(200,200,200,0.25)}
+.lb-row:nth-child(3){border-color:rgba(200,120,60,0.25)}
+.lb-medal{font-size:30px;min-width:38px}
+.lb-name{flex:1;font-size:18px;font-weight:800}
+.lb-score{font-size:22px;font-weight:900;color:var(--cyan)}
+.my-score-note{
+  margin-top:12px;font-size:14px;color:var(--muted);
+  background:var(--bg2);border-radius:12px;padding:12px 20px;
+  max-width:380px;
+}
+
+/* ===== TEACHER DASHBOARD ===== */
+#teacherScreen{
+  justify-content:flex-start;align-items:stretch;
+  padding:20px;gap:0;min-height:100vh;
+}
+.dash-hdr{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;padding:18px 22px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-bottom:16px;
+}
+.dash-hdr-left h2{font-size:18px;font-weight:800;color:var(--cyan)}
+.dash-hdr-left p{font-size:13px;color:var(--muted);margin-top:2px}
+.dash-btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn-d{
+  padding:10px 18px;border-radius:10px;border:none;
+  font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all 0.18s;
+}
+.btn-d:hover{transform:translateY(-1px);opacity:0.9}
+.btn-start-d{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#07101f}
+.btn-next-d{background:rgba(124,111,255,0.18);color:#a095ff;border:1px solid rgba(124,111,255,0.3)}
+.btn-results-d{background:rgba(255,193,7,0.15);color:var(--gold);border:1px solid rgba(255,193,7,0.3)}
+.btn-clear-d{background:rgba(255,80,80,0.12);color:#ff8080;border:1px solid rgba(255,80,80,0.25)}
+
+.status-bar{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.05);
+  border-radius:14px;padding:16px 22px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:10px;margin-bottom:16px;
+}
+.status-txt{font-size:16px;font-weight:700}
+.status-meta{font-size:13px;color:var(--muted);margin-top:4px}
+.answer-pill{
+  background:rgba(0,255,200,0.1);border:1px solid rgba(0,255,200,0.2);
+  border-radius:10px;padding:8px 16px;
+  font-size:14px;font-weight:700;color:var(--cyan);
+}
+
+.dash-cols{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:14px;margin-bottom:14px;
+}
+@media(max-width:700px){.dash-cols{grid-template-columns:1fr}}
+.dash-panel{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.05);
+  border-radius:16px;padding:20px;
+}
+.dash-panel h3{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:16px}
+
+/* Groups */
+.groups-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grp-card{
+  background:var(--bg3);border-radius:12px;padding:14px 10px;
+  text-align:center;border:1px solid rgba(255,255,255,0.04);
+  transition:border-color 0.3s;
+}
+.grp-card.leading{border-color:rgba(255,193,7,0.5);background:rgba(255,193,7,0.06)}
+.grp-num-lbl{font-size:12px;color:var(--muted);margin-bottom:4px}
+.grp-score-val{font-size:26px;font-weight:900;color:var(--cyan)}
+.grp-members-lbl{font-size:10px;color:var(--muted);margin-top:4px}
+
+/* Participants */
+.ptcps-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+@media(max-width:500px){.ptcps-grid{grid-template-columns:repeat(5,1fr)}}
+.ptcp-cell{
+  aspect-ratio:1;border-radius:9px;
+  background:var(--bg3);border:2px solid rgba(255,255,255,0.05);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  transition:all 0.3s;
+}
+.ptcp-cell .pn{font-size:14px;font-weight:900}
+.ptcp-cell .pg{font-size:9px;color:var(--muted);margin-top:1px}
+.ptcp-cell.joined{border-color:rgba(0,255,200,0.3);color:var(--cyan)}
+.ptcp-cell.joined .pg{color:rgba(0,255,200,0.5)}
+.ptcp-cell.answered{background:rgba(0,255,200,0.1);border-color:rgba(0,255,200,0.5)}
+
+/* ===== PASSWORD MODAL ===== */
+.modal-bg{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:500;
+}
+.modal-box{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.1);
+  border-radius:22px;padding:38px 30px;max-width:340px;width:90%;
+  text-align:center;animation:slideUp 0.3s ease;
+}
+.modal-box h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.modal-box p{font-size:14px;color:var(--muted);margin-bottom:22px}
+.pw-inp{
+  width:100%;background:var(--bg3);
+  border:1px solid rgba(255,255,255,0.1);border-radius:12px;
+  padding:14px 20px;color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:20px;
+  text-align:center;letter-spacing:6px;outline:none;margin-bottom:14px;
+}
+.pw-inp:focus{border-color:var(--cyan)}
+.btn-pw-enter{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  border:none;border-radius:12px;color:#07101f;
+  font-family:'Tajawal',sans-serif;font-size:17px;font-weight:800;cursor:pointer;
+}
+.pw-err{color:var(--red);font-size:13px;margin-top:8px;display:none}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--bg2);border:1px solid rgba(0,255,200,0.3);
+  border-radius:12px;padding:12px 24px;
+  font-size:15px;font-weight:700;z-index:999;
+  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ===== CONFETTI ===== */
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+  100%{transform:translateY(110vh) rotate(900deg);opacity:0}
+}
+.cf{position:fixed;pointer-events:none;z-index:1000;animation:confettiFall linear forwards}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-bg hidden" id="pwModal">
+  <div class="modal-box">
+    <div style="font-size:40px;margin-bottom:12px">🔐</div>
+    <h2>لوحة المعلمة</h2>
+    <p>أدخلي كلمة المرور للوصول إلى لوحة التحكم</p>
+    <input type="password" class="pw-inp" id="pwInp" placeholder="••••"
+      onkeydown="if(event.key==='Enter')checkPw()">
+    <div class="pw-err" id="pwErr">كلمة مرور غير صحيحة ❌</div>
+    <button class="btn-pw-enter" onclick="checkPw()">دخول →</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ======================== JOIN SCREEN ======================== -->
+<div class="screen" id="joinScreen">
+  <div class="join-logo">🎓</div>
+  <div class="join-title">ورشة استراتيجيات التدريس الفعّال</div>
+  <div class="join-sub">اضغطي على رقمك للانضمام 👇</div>
+  <div class="numbers-grid" id="numbersGrid"></div>
+  <div class="teacher-link" onclick="openTeacherModal()">🔑 دخول المعلمة</div>
+</div>
+
+<!-- ======================== WAITING SCREEN ======================== -->
+<div class="screen hidden" id="waitScreen">
+  <div class="wait-icon">⏳</div>
+  <div class="wait-card">
+    <div class="my-badge" id="myBadge">معلمة ?</div>
+    <div class="my-group-txt">
+      أنتِ في <span id="myGroupLbl">المجموعة 1</span>
+    </div>
+    <div class="wait-msg">
+      <div class="dots"><span></span><span></span><span></span></div>
+      في انتظار المعلمة
+    </div>
+    <div class="wait-hint">استعدّي — سيبدأ النشاط قريباً</div>
+    <div class="joined-pill">
+      انضمّ حتى الآن: <strong id="joinedCnt">0</strong> / 30
+    </div>
+  </div>
+</div>
+
+<!-- ======================== QUESTION SCREEN ======================== -->
+<div class="screen hidden" id="questionScreen">
+  <div class="q-progress"><div class="q-progress-fill" id="progFill"></div></div>
+  <div class="q-topbar">
+    <div class="q-timer-wrap">
+      <svg class="timer-svg" viewBox="0 0 44 44" width="50" height="50">
+        <circle class="t-bg" cx="22" cy="22" r="20"/>
+        <circle class="t-fill" id="timerArc" cx="22" cy="22" r="20"/>
+      </svg>
+      <div class="timer-num" id="timerNum">45</div>
+    </div>
+    <div class="q-counter-lbl" id="qLbl">السؤال 1 من 10</div>
+    <div class="q-group-pill" id="qGroupPill">المجموعة 1</div>
+  </div>
+  <div class="q-card">
+    <div class="q-txt" id="qTxt">جاري التحميل...</div>
+    <div class="options-wrap" id="optsWrap"></div>
+  </div>
+  <div class="fb-bar" id="fbBar"></div>
+</div>
+
+<!-- ======================== RESULTS SCREEN ======================== -->
+<div class="screen hidden" id="resultsScreen">
+  <div class="trophy-icon">🏆</div>
+  <div class="results-title">النتائج النهائية!</div>
+  <div class="results-sub">إليكِ ترتيب المجموعات</div>
+  <div class="leaderboard" id="leaderboard"></div>
+  <div class="my-score-note" id="myScoreNote"></div>
+</div>
+
+<!-- ======================== TEACHER DASHBOARD ======================== -->
+<div class="screen hidden" id="teacherScreen" style="justify-content:flex-start;align-items:stretch">
+  <div class="dash-hdr">
+    <div class="dash-hdr-left">
+      <h2>🎛️ لوحة تحكم المعلمة</h2>
+      <p>ورشة استراتيجيات التدريس الفعّال — 30 مشاركة × 6 مجموعات</p>
+    </div>
+    <div class="dash-btns">
+      <button class="btn-d btn-start-d" onclick="teacherStart()">▶️ بدء النشاط</button>
+      <button class="btn-d btn-next-d" onclick="teacherNextQ()">⏭️ السؤال التالي</button>
+      <button class="btn-d btn-results-d" onclick="teacherShowResults()">🏆 عرض النتائج</button>
+      <button class="btn-d btn-clear-d" onclick="teacherClear()">🗑️ مسح البيانات</button>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div>
+      <div class="status-txt" id="dashStatus">⏳ في انتظار البدء</div>
+      <div class="status-meta" id="dashMeta">اضغطي "بدء النشاط" عندما تكون جميع المشاركات قد انضممن</div>
+    </div>
+    <div class="answer-pill" id="dashAnswerPill">أجاب: 0 / 0</div>
+  </div>
+
+  <div class="dash-cols">
+    <div class="dash-panel">
+      <h3>🏆 نقاط المجموعات (تتحدث لحظة بلحظة)</h3>
+      <div class="groups-grid" id="groupsGrid"></div>
+    </div>
+    <div class="dash-panel">
+      <h3>👩‍🏫 المشاركات — أخضر: انضمت | مضيء: أجابت</h3>
+      <div class="ptcps-grid" id="ptcpsGrid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const DB       = 'https://cyber-safety-class-default-rtdb.firebaseio.com/workshop_pedagogy_v1';
+const PW       = '1234';
+const N_PTCPS  = 30;
+const N_GROUPS = 6;
+const GRP_SIZE = 5;   // participants per group
+const TIME_Q   = 45;  // seconds per question
+const LETTERS  = ['أ','ب','ج','د'];
+
+const QUESTIONS = [
+  {
+    q: 'ما الهدف الرئيسي من استراتيجية "فكر–زاوج–شارك" في الفصل الدراسي؟',
+    opts: ['تقليل الضوضاء وضبط النظام','تعزيز التفكير النقدي والتعاون بين الطلاب','توفير وقت المعلمة في الشرح','اختبار مستوى الطلاب بشكل فردي'],
+    ans: 1
+  },
+  {
+    q: 'أيٌّ من التالي يُعدّ مثالاً على التقييم التكويني (البنائي)؟',
+    opts: ['اختبار نهاية الفصل الدراسي','التقرير السنوي للطالب','ملاحظة المعلمة لأداء الطلاب أثناء النشاط','نتيجة الاختبار النهائي للمادة'],
+    ans: 2
+  },
+  {
+    q: 'ما المقصود بمراعاة "الفروق الفردية" في التدريس؟',
+    opts: ['إعطاء كل طالب اختباراً مختلفاً تماماً','تقسيم الطلاب حسب مستوى ذكائهم فقط','تكييف طرق التدريس والمهام لتناسب احتياجات كل طالب','تعليم المتفوقين بشكل منفصل عن البقية'],
+    ans: 2
+  },
+  {
+    q: 'ما الفرق الأساسي بين "التهيئة" و"الغلق" في الدرس؟',
+    opts: ['لا يوجد فرق جوهري بينهما','التهيئة في البداية لإثارة الاهتمام، والغلق في النهاية لتلخيص التعلم','التهيئة للمتفوقين والغلق لمن يحتاج دعماً','التهيئة سؤال اختياري والغلق اختبار إجباري'],
+    ans: 1
+  },
+  {
+    q: 'ماذا تعني حروف نموذج KWL في التعليم؟',
+    opts: ['معرفة، كتابة، تعلم','ماذا أعرف — ماذا أريد أن أعرف — ماذا تعلمت','خطة، عمل، تقييم','مهارة، تطبيق، فهم'],
+    ans: 1
+  },
+  {
+    q: 'أيٌّ من التالي يُعدّ من مبادئ التعلم النشط؟',
+    opts: ['المعلمة تشرح والطالب يستمع ويدوّن فقط','الاعتماد الكلي على الكتاب المدرسي','تقليل وقت الأنشطة وزيادة وقت الشرح النظري','الطالب يُشارك ويفكر ويطبق بنفسه ويبني معرفته'],
+    ans: 3
+  },
+  {
+    q: 'لماذا يُعدّ الهدف السلوكي القابل للقياس ضرورياً في تخطيط الدرس؟',
+    opts: ['لتزيين ورقة الدرس اليومي','لأنه مطلوب إدارياً فقط','يحدد بدقة ما يُتوقع أن يُحقّقه الطالب في نهاية الدرس','يساعد فقط في تقييم أداء المعلمة'],
+    ans: 2
+  },
+  {
+    q: 'ما أنسب طريقة للتعامل مع طالب بطيء التعلم داخل الفصل؟',
+    opts: ['إعطاؤه نفس المهام مع ضغط وقتي إضافي','تجاهله والتركيز على المتفوقين لضمان سير الدرس','تحويله فوراً لغرفة المصادر في كل حصة','تقديم دعم فردي ومهام مُبسّطة ومتدرجة حسب مستواه'],
+    ans: 3
+  },
+  {
+    q: 'أيٌّ من التالي يُمثّل توظيفاً صحيحاً للتقنية في بيئة التعلم؟',
+    opts: ['استخدام الأجهزة للترفيه فقط أثناء الحصة','الاستغناء عن دور المعلمة بالاعتماد على الإنترنت','توظيف التقنية أداةً لتعزيز التفاعل وتعمّق الفهم','تشغيل فيديو وترك الطلاب يشاهدون طوال الحصة'],
+    ans: 2
+  },
+  {
+    q: 'ما الغرض الأساسي من نشاط "بطاقة الخروج" في نهاية الدرس؟',
+    opts: ['اختبار الطلاب اختباراً رسمياً قبل الانصراف','إعطاء الطلاب واجباً منزلياً إضافياً','ملء الوقت المتبقي من الحصة','معرفة مدى فهم الطلاب وتحديد من يحتاج دعماً لاحقاً'],
+    ans: 3
+  }
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let myNum   = null;
+let myGroup = null;
+let myScore = 0;
+let timeLeft    = TIME_Q;
+let timerInt    = null;
+let answered    = false;
+let sessES      = null;   // EventSource for session
+let pollInt     = null;   // polling interval for dashboard
+let dashCurrQ   = -1;
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const dbUrl  = p => DB + (p ? '/' + p : '') + '.json';
+const dbGet  = p => fetch(dbUrl(p)).then(r => r.json());
+const dbSet  = (p, d) => fetch(dbUrl(p), {method:'PUT', body:JSON.stringify(d)});
+const dbUpd  = (p, d) => fetch(dbUrl(p), {method:'PATCH', body:JSON.stringify(d)});
+const dbDel  = p => fetch(dbUrl(p), {method:'DELETE'});
+const getGrp = n => Math.ceil(n / GRP_SIZE);
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function toast(msg, dur = 3200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+function confetti(n = 15) {
+  const colors = ['#00ffc8','#7c6fff','#ffc107','#ff6b9d','#60a5fa','#f472b6'];
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement('div');
+    el.className = 'cf';
+    el.style.cssText = `
+      left:${10 + Math.random()*80}vw;top:-12px;
+      background:${colors[i % colors.length]};
+      width:${7+Math.random()*9}px;height:${7+Math.random()*9}px;
+      border-radius:${Math.random()>.5?'50%':'3px'};
+      animation-duration:${1.6+Math.random()*2}s;
+      animation-delay:${Math.random()*0.6}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4500);
+  }
+}
+
+/* ============================================================
+   JOIN SCREEN
+   ============================================================ */
+function buildJoinGrid() {
+  const grid = document.getElementById('numbersGrid');
+  for (let i = 1; i <= N_PTCPS; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.id = 'nb' + i;
+    btn.textContent = i;
+    btn.onclick = () => joinAs(i);
+    grid.appendChild(btn);
+  }
+  refreshTakenNums();
+  setInterval(refreshTakenNums, 4000);
+}
+
+async function refreshTakenNums() {
+  const data = await dbGet('participants').catch(() => null);
+  if (!data) return;
+  for (let i = 1; i <= N_PTCPS; i++) {
+    const btn = document.getElementById('nb' + i);
+    if (!btn || i === myNum) continue;
+    if (data[i] && data[i].joined) {
+      btn.classList.add('taken');
+      btn.disabled = true;
+    }
+  }
+}
+
+async function joinAs(num) {
+  myNum   = num;
+  myGroup = getGrp(num);
+  myScore = 0;
+
+  await dbSet(`participants/${num}`, {
+    name:    `معلمة ${num}`,
+    group:   myGroup,
+    joined:  true,
+    score:   0,
+    answers: {}
+  });
+
+  document.getElementById('myBadge').textContent   = `معلمة ${num}`;
+  document.getElementById('myGroupLbl').textContent = `المجموعة ${myGroup}`;
+  document.getElementById('qGroupPill').textContent = `المجموعة ${myGroup}`;
+
+  showScreen('waitScreen');
+  startListeningToSession();
+  updateJoinedCount();
+  const joinPoll = setInterval(updateJoinedCount, 4000);
+  window._joinPoll = joinPoll;
+}
+
+async function updateJoinedCount() {
+  const data = await dbGet('participants').catch(() => null);
+  if (!data) return;
+  const cnt = Object.values(data).filter(p => p && p.joined).length;
+  document.getElementById('joinedCnt').textContent = cnt;
+}
+
+/* ============================================================
+   SESSION LISTENER (EventSource / SSE)
+   ============================================================ */
+function startListeningToSession() {
+  if (sessES) sessES.close();
+  sessES = new EventSource(DB + '/session.json');
+
+  sessES.addEventListener('put', e => {
+    const d = JSON.parse(e.data).data;
+    if (!d) return;
+    handleSessionChange(d);
+  });
+
+  sessES.addEventListener('patch', e => {
+    const d = JSON.parse(e.data).data;
+    if (!d) return;
+    handleSessionChange(d);
+  });
+
+  sessES.onerror = () => {
+    // fallback polling if SSE fails
+    if (!window._sessPoll) {
+      window._sessPoll = setInterval(async () => {
+        const s = await dbGet('session').catch(() => null);
+        if (s) handleSessionChange(s);
+      }, 2500);
+    }
+  };
+}
+
+function handleSessionChange(session) {
+  if (!session) return;
+  const status = session.status;
+  const qIdx   = session.currentQ;
+
+  if (status === 'running' && qIdx >= 0 && qIdx < QUESTIONS.length) {
+    showQuestionScreen(qIdx, session.questionStartTime || Date.now());
+  } else if (status === 'results') {
+    loadAndShowResults();
+  }
+}
+
+/* ============================================================
+   QUESTION SCREEN
+   ============================================================ */
+function showQuestionScreen(qIdx, serverStart) {
+  showScreen('questionScreen');
+  answered = false;
+
+  const q = QUESTIONS[qIdx];
+  const total = QUESTIONS.length;
+
+  document.getElementById('progFill').style.width = ((qIdx + 1) / total * 100) + '%';
+  document.getElementById('qLbl').textContent = `السؤال ${qIdx + 1} من ${total}`;
+  document.getElementById('qTxt').textContent = q.q;
+
+  // Reset feedback
+  const fb = document.getElementById('fbBar');
+  fb.className = 'fb-bar';
+
+  // Build options
+  const wrap = document.getElementById('optsWrap');
+  wrap.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-ltr">${LETTERS[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(i, q.ans, qIdx);
+    wrap.appendChild(btn);
+  });
+
+  // Timer — sync with server start time
+  clearInterval(timerInt);
+  const elapsed = Math.floor((Date.now() - serverStart) / 1000);
+  timeLeft = Math.max(0, TIME_Q - elapsed);
+  updateTimerUI();
+
+  timerInt = setInterval(() => {
+    timeLeft = Math.max(0, timeLeft - 1);
+    updateTimerUI();
+    if (timeLeft === 0) {
+      clearInterval(timerInt);
+      if (!answered) forceTimeout(q.ans, qIdx);
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const circumference = 2 * Math.PI * 20;
+  const arc = document.getElementById('timerArc');
+  const num = document.getElementById('timerNum');
+  const pct = timeLeft / TIME_Q;
+
+  arc.style.strokeDashoffset = circumference * (1 - pct);
+  num.textContent = timeLeft;
+
+  const color = timeLeft <= 10 ? '#ff5050' : timeLeft <= TIME_Q * 0.4 ? '#ffc107' : '#00ffc8';
+  arc.style.stroke = color;
+  num.style.color  = color;
+}
+
+async function selectAnswer(chosen, correct, qIdx) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInt);
+
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct)      btn.classList.add('correct');
+    else if (i === chosen)  btn.classList.add('wrong');
+    else                    btn.classList.add('reveal');
+  });
+
+  const isOk = chosen === correct;
+  const pts  = isOk ? 10 : 0;
+  myScore += pts;
+
+  const fb = document.getElementById('fbBar');
+  if (isOk) {
+    fb.className = 'fb-bar ok';
+    fb.textContent = '✅ إجابة صحيحة! +10 نقاط للمجموعة';
+    confetti(4);
+  } else {
+    fb.className = 'fb-bar no';
+    fb.textContent = `❌ الإجابة الصحيحة: ${LETTERS[correct]}`;
+  }
+
+  // Save answer + update participant score
+  await dbUpd(`participants/${myNum}`, { score: myScore });
+  await dbUpd(`participants/${myNum}/answers`, { [`q${qIdx}`]: { chosen, pts } });
+}
+
+function forceTimeout(correct, qIdx) {
+  answered = true;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    else               btn.classList.add('reveal');
+  });
+  const fb = document.getElementById('fbBar');
+  fb.className = 'fb-bar no';
+  fb.textContent = `⏰ انتهى الوقت! الإجابة الصحيحة: ${LETTERS[correct]}`;
+}
+
+/* ============================================================
+   RESULTS
+   ============================================================ */
+async function loadAndShowResults() {
+  clearInterval(timerInt);
+  if (sessES)          sessES.close();
+  if (window._sessPoll) clearInterval(window._sessPoll);
+  if (window._joinPoll) clearInterval(window._joinPoll);
+
+  showScreen('resultsScreen');
+
+  const participants = await dbGet('participants').catch(() => ({}));
+  if (!participants) return;
+
+  // Calculate group scores from participant data
+  const groupScores = {};
+  for (let g = 1; g <= N_GROUPS; g++) groupScores[g] = 0;
+
+  Object.values(participants).forEach(p => {
+    if (p && p.group && p.score) {
+      groupScores[p.group] = (groupScores[p.group] || 0) + p.score;
+    }
+  });
+
+  const sorted = Object.entries(groupScores)
+    .map(([id, score]) => ({ id: parseInt(id), score }))
+    .sort((a, b) => b.score - a.score);
+
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣'];
+  const lb = document.getElementById('leaderboard');
+  lb.innerHTML = sorted.map((g, i) => `
+    <div class="lb-row" style="animation-delay:${i * 0.12}s">
+      <span class="lb-medal">${medals[i]}</span>
+      <span class="lb-name">المجموعة ${g.id}</span>
+      <span class="lb-score">${g.score} نقطة</span>
+    </div>
+  `).join('');
+
+  // My score note
+  const myRank = sorted.findIndex(g => g.id === myGroup) + 1;
+  document.getElementById('myScoreNote').textContent =
+    `نتيجتكِ الشخصية: ${myScore} نقطة | مجموعتكِ (${myGroup}) في المركز ${myRank}`;
+
+  if (myGroup === sorted[0]?.id) confetti(25);
+}
+
+/* ============================================================
+   TEACHER DASHBOARD
+   ============================================================ */
+function openTeacherModal() {
+  document.getElementById('pwModal').classList.remove('hidden');
+  document.getElementById('pwInp').value = '';
+  document.getElementById('pwErr').style.display = 'none';
+  setTimeout(() => document.getElementById('pwInp').focus(), 100);
+}
+
+function checkPw() {
+  const val = document.getElementById('pwInp').value;
+  if (val === PW) {
+    document.getElementById('pwModal').classList.add('hidden');
+    initDashboard();
+  } else {
+    document.getElementById('pwErr').style.display = 'block';
+    document.getElementById('pwInp').value = '';
+    document.getElementById('pwInp').focus();
+  }
+}
+
+function initDashboard() {
+  showScreen('teacherScreen');
+
+  // Build groups grid
+  const gg = document.getElementById('groupsGrid');
+  gg.innerHTML = '';
+  for (let g = 1; g <= N_GROUPS; g++) {
+    const start = (g - 1) * GRP_SIZE + 1;
+    const end   = g * GRP_SIZE;
+    gg.innerHTML += `
+      <div class="grp-card" id="gCard${g}">
+        <div class="grp-num-lbl">المجموعة ${g}</div>
+        <div class="grp-score-val" id="gScore${g}">0</div>
+        <div class="grp-members-lbl">معلمة ${start}–${end}</div>
+      </div>`;
+  }
+
+  // Build participants grid
+  const pg = document.getElementById('ptcpsGrid');
+  pg.innerHTML = '';
+  for (let i = 1; i <= N_PTCPS; i++) {
+    pg.innerHTML += `
+      <div class="ptcp-cell" id="pc${i}">
+        <span class="pn">${i}</span>
+        <span class="pg">م${getGrp(i)}</span>
+      </div>`;
+  }
+
+  // Start polling
+  refreshDashboard();
+  if (pollInt) clearInterval(pollInt);
+  pollInt = setInterval(refreshDashboard, 2500);
+}
+
+async function refreshDashboard() {
+  const [participants, session] = await Promise.all([
+    dbGet('participants').catch(() => null),
+    dbGet('session').catch(() => null)
+  ]);
+
+  // Participants
+  const groupScores = {};
+  for (let g = 1; g <= N_GROUPS; g++) groupScores[g] = 0;
+  let joinedCount  = 0;
+  let answeredCount = 0;
+  const currQ = session ? session.currentQ : -1;
+
+  for (let i = 1; i <= N_PTCPS; i++) {
+    const cell = document.getElementById('pc' + i);
+    const p = participants && participants[i];
+    if (!cell) continue;
+    if (p && p.joined) {
+      joinedCount++;
+      cell.classList.add('joined');
+      groupScores[p.group] = (groupScores[p.group] || 0) + (p.score || 0);
+      if (p.answers && p.answers[`q${currQ}`] !== undefined) {
+        cell.classList.add('answered');
+        answeredCount++;
+      } else {
+        cell.classList.remove('answered');
+      }
+    }
+  }
+
+  // Group scores + highlight leader
+  let maxScore = 0;
+  for (let g = 1; g <= N_GROUPS; g++) {
+    const s = groupScores[g] || 0;
+    const el = document.getElementById('gScore' + g);
+    if (el) el.textContent = s;
+    if (s > maxScore) maxScore = s;
+  }
+  for (let g = 1; g <= N_GROUPS; g++) {
+    const card = document.getElementById('gCard' + g);
+    if (!card) continue;
+    if (maxScore > 0 && groupScores[g] === maxScore) card.classList.add('leading');
+    else card.classList.remove('leading');
+  }
+
+  // Status bar
+  const statusEl = document.getElementById('dashStatus');
+  const metaEl   = document.getElementById('dashMeta');
+  const pillEl   = document.getElementById('dashAnswerPill');
+
+  if (!session || session.status === 'waiting') {
+    statusEl.textContent = '⏳ في انتظار البدء';
+    metaEl.textContent   = `انضمّت ${joinedCount} من 30 مشاركة`;
+  } else if (session.status === 'running') {
+    statusEl.textContent = `📝 السؤال ${currQ + 1} من ${QUESTIONS.length}`;
+    metaEl.textContent   = QUESTIONS[currQ]?.q?.substring(0, 60) + '...';
+    pillEl.textContent   = `أجابت: ${answeredCount} / ${joinedCount}`;
+  } else if (session.status === 'results') {
+    statusEl.textContent = '🏆 انتهى النشاط — النتائج معروضة';
+    metaEl.textContent   = 'يمكنك مسح البيانات للبدء مع صف جديد';
+  }
+  pillEl.textContent = `أجابت: ${answeredCount} / ${joinedCount}`;
+}
+
+async function teacherStart() {
+  dashCurrQ = 0;
+  await dbSet('session', {
+    status: 'running',
+    currentQ: 0,
+    totalQ: QUESTIONS.length,
+    questionStartTime: Date.now()
+  });
+  toast('✅ بدأ النشاط! السؤال الأول');
+}
+
+async function teacherNextQ() {
+  dashCurrQ++;
+  if (dashCurrQ >= QUESTIONS.length) {
+    await teacherShowResults();
+    return;
+  }
+  await dbUpd('session', {
+    currentQ: dashCurrQ,
+    questionStartTime: Date.now()
+  });
+  toast(`📝 السؤال ${dashCurrQ + 1} من ${QUESTIONS.length}`);
+}
+
+async function teacherShowResults() {
+  await dbUpd('session', { status: 'results' });
+  toast('🏆 تم عرض النتائج على شاشة المشاركات');
+}
+
+async function teacherClear() {
+  const ok = confirm('هل تريدين مسح جميع البيانات والبدء من جديد مع صف آخر؟\nسيتم حذف جميع الإجابات والنقاط.');
+  if (!ok) return;
+
+  await dbSet('session', { status: 'waiting', currentQ: -1 });
+  await dbDel('participants');
+  dashCurrQ = -1;
+
+  // Reset UI
+  for (let i = 1; i <= N_PTCPS; i++) {
+    const cell = document.getElementById('pc' + i);
+    if (cell) cell.classList.remove('joined', 'answered');
+  }
+  for (let g = 1; g <= N_GROUPS; g++) {
+    const el = document.getElementById('gScore' + g);
+    if (el) el.textContent = '0';
+    const card = document.getElementById('gCard' + g);
+    if (card) card.classList.remove('leading');
+  }
+  document.getElementById('dashStatus').textContent = '⏳ في انتظار البدء';
+  document.getElementById('dashMeta').textContent   = 'تم مسح البيانات — يمكن للمشاركات الانضمام الآن';
+  document.getElementById('dashAnswerPill').textContent = 'أجابت: 0 / 0';
+
+  toast('🗑️ تم مسح جميع البيانات بنجاح');
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+buildJoinGrid();
+
+// Initialize session node if not exists
+dbGet('session').then(s => {
+  if (!s) dbSet('session', { status: 'waiting', currentQ: -1 });
+});
+</script>
+</body>
+</html>
