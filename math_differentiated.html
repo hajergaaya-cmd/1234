@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محطات الفهم 🚦 الكسور</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07101f;--bg2:#0d1a30;--border:rgba(255,255,255,.09);
+  --text:#e8f0fe;--muted:#6a7f99;
+  --l1:#00ff88;--l1b:rgba(0,255,136,.1);--l1d:rgba(0,255,136,.25);
+  --l2:#ffc840;--l2b:rgba(255,200,64,.1);--l2d:rgba(255,200,64,.25);
+  --l3:#ff6b9d;--l3b:rgba(255,107,157,.1);--l3d:rgba(255,107,157,.25);
+  --gc:#00ffc8;
+}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(0,255,200,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,200,.018) 1px,transparent 1px);
+  background-size:44px 44px}
+
+.screen{display:none;position:relative;z-index:1;min-height:100vh;padding-bottom:80px}
+.screen.active{display:block}
+.hdr{text-align:center;padding:28px 20px 16px}
+.hdr h1{font-size:clamp(1.3rem,4vw,2rem);font-weight:900;line-height:1.2}
+.hdr p{color:var(--muted);margin-top:6px;font-size:.9rem;font-weight:500}
+
+/* LOGIN */
+.login-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;max-width:900px;margin:0 auto;padding:0 16px}
+.s-btn{padding:13px 8px;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.04);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s}
+.s-btn:hover:not(.taken){background:rgba(0,255,200,.1);border-color:#00ffc8;color:#00ffc8}
+.s-btn.taken{opacity:.4;cursor:not-allowed}
+.s-btn.me{background:rgba(0,255,200,.15);border-color:#00ffc8;color:#00ffc8}
+
+/* DIAGNOSTIC */
+.diag-wrap{max-width:600px;margin:0 auto;padding:0 16px}
+.diag-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:28px}
+
+/* LEVEL PICK */
+.level-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;max-width:800px;margin:0 auto;padding:0 16px}
+.lv-card{border-radius:20px;padding:24px;border:2px solid;cursor:pointer;transition:all .25s;position:relative}
+.lv-card:hover{transform:translateY(-5px)}
+.lv-card.l1{border-color:var(--l1d);background:var(--l1b)}
+.lv-card.l2{border-color:var(--l2d);background:var(--l2b)}
+.lv-card.l3{border-color:var(--l3d);background:var(--l3b)}
+.lv-card.l1:hover{box-shadow:0 8px 30px rgba(0,255,136,.2)}
+.lv-card.l2:hover{box-shadow:0 8px 30px rgba(255,200,64,.2)}
+.lv-card.l3:hover{box-shadow:0 8px 30px rgba(255,107,157,.2)}
+.lv-icon{font-size:2.4rem;margin-bottom:10px}
+.lv-name{font-size:1.1rem;font-weight:900;margin-bottom:6px}
+.lv-desc{font-size:.82rem;line-height:1.5;opacity:.75}
+.lv-badge{position:absolute;top:14px;left:14px;font-size:.68rem;font-weight:900;padding:3px 9px;border-radius:20px}
+.suggested-badge{background:rgba(255,200,64,.2);color:#ffc840;border:1px solid rgba(255,200,64,.4)}
+
+/* QUESTION SCREEN */
+.q-outer{max-width:640px;margin:0 auto;padding:0 16px}
+.level-strip{display:flex;align-items:center;gap:10px;padding:10px 16px;max-width:640px;margin:0 auto 14px;border-radius:12px}
+.level-strip.l1{background:var(--l1b);border:1px solid var(--l1d)}
+.level-strip.l2{background:var(--l2b);border:1px solid var(--l2d)}
+.level-strip.l3{background:var(--l3b);border:1px solid var(--l3d)}
+.ls-icon{font-size:1.2rem}
+.ls-name{font-size:.85rem;font-weight:900}
+.ls-bloom{font-size:.72rem;font-weight:700;margin-right:auto;opacity:.65}
+
+.prog-wrap{max-width:640px;margin:0 auto 14px;padding:0 16px}
+.prog-bar{height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width .4s cubic-bezier(.34,1.56,.64,1)}
+.prog-lbl{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);font-weight:700;margin-bottom:6px}
+
+.q-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:24px;transition:border-color .3s}
+.bloom-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:900;letter-spacing:.04em;margin-bottom:12px;border:1px solid}
+.q-text{font-size:1.05rem;font-weight:800;line-height:1.6;margin-bottom:16px}
+.frac-vis{display:flex;gap:5px;justify-content:center;margin:14px auto}
+.fv-part{width:50px;height:50px;border-radius:10px;border:2px solid;transition:all .2s}
+
+/* MCQ OPTIONS */
+.mcq-opts{display:grid;gap:10px}
+.mopt{padding:14px 18px;border:2px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.04);cursor:pointer;font-size:1rem;font-weight:700;transition:all .18s;text-align:right}
+.mopt:hover:not(.disabled){border-color:var(--gc);background:rgba(0,255,200,.07);transform:translateY(-1px)}
+.mopt.disabled{pointer-events:none}
+.mopt.chosen-correct{border-color:#00ff88;background:rgba(0,255,136,.12);color:#00ff88}
+.mopt.chosen-wrong{border-color:#ff4d4d;background:rgba(255,77,77,.1);color:#ff6060}
+.mopt.reveal-correct{border-color:#00ff88;background:rgba(0,255,136,.08);color:#00ff88}
+
+/* ORDER */
+.order-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:14px;background:rgba(255,255,255,.02);border:1.5px dashed rgba(255,255,255,.1);border-radius:13px;margin-bottom:12px;min-height:56px}
+.order-slots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.o-item{padding:10px 18px;border-radius:10px;font-size:1rem;font-weight:800;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);cursor:pointer;transition:all .18s;user-select:none}
+.o-item:hover{border-color:var(--gc);color:var(--gc)}
+.o-item.sel{border-color:var(--gc);color:var(--gc);background:rgba(0,255,200,.12);box-shadow:0 0 0 3px rgba(0,255,200,.18)}
+.o-slot{width:80px;height:52px;border-radius:10px;border:2px dashed rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:.9rem;color:var(--muted);position:relative}
+.o-slot.over{border-color:var(--gc);background:rgba(0,255,200,.07)}
+.o-slot.filled{border-style:solid;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.05);font-weight:900;font-size:1rem;color:var(--text)}
+.sn{position:absolute;top:3px;right:5px;font-size:.6rem;color:var(--muted);font-weight:800}
+.o-clear-btn{display:block;margin:8px auto;padding:7px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted);font-family:'Tajawal',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer}
+
+/* FILL INPUT */
+.fill-wrap{display:flex;justify-content:center;margin:12px 0}
+.fill-inp{padding:14px 20px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.15);border-radius:13px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.3rem;text-align:center;direction:ltr;outline:none;transition:border-color .2s;width:160px}
+.fill-inp:focus{border-color:var(--gc)}
+
+/* FEEDBACK */
+.feedback{margin-top:14px;padding:14px 18px;border-radius:13px;font-size:.9rem;font-weight:700;line-height:1.5;display:none}
+.fb-correct{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:#00ff88}
+.fb-wrong{background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);color:#ff8080}
+
+/* BUTTONS */
+.btn-main{display:block;width:calc(100% - 32px);max-width:420px;margin:14px auto;padding:16px;background:linear-gradient(135deg,var(--gc),#7c6fff);border:none;border-radius:14px;color:#07101f;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;transition:transform .2s,opacity .2s}
+.btn-main:hover:not(:disabled){transform:translateY(-3px);opacity:.9}
+.btn-main:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-sec{padding:11px 22px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-sec:hover{background:rgba(255,255,255,.12)}
+.btn-danger{border-color:rgba(255,77,77,.3);color:#ff8080}.btn-danger:hover{background:rgba(255,77,77,.1)}
+.btn-next{display:block;width:calc(100% - 32px);max-width:420px;margin:14px auto;padding:14px;border-radius:13px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;transition:all .2s;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--text);display:none}
+.btn-next:hover{background:rgba(255,255,255,.12)}
+
+/* RESULT */
+.result-card{max-width:560px;margin:0 auto 20px;padding:30px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:22px;text-align:center}
+.score-ring{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.8rem;font-weight:900;position:relative}
+.upgrade-card{max-width:560px;margin:0 auto;padding:22px;border-radius:18px;text-align:center;cursor:pointer;transition:all .25s;border:2px solid}
+
+/* DASHBOARD */
+.dist-bar{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;max-width:900px;margin:0 auto 22px;padding:0 16px}
+.dist-box{border-radius:16px;padding:18px 24px;text-align:center;min-width:120px;border:1px solid}
+.dist-n{font-size:2.2rem;font-weight:900}
+.dist-l{font-size:.75rem;font-weight:700;margin-top:4px;opacity:.75}
+.students-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;max-width:1100px;margin:0 auto;padding:0 14px}
+.st-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:14px;transition:border-color .3s}
+.st-card.l1{border-color:var(--l1d)}
+.st-card.l2{border-color:var(--l2d)}
+.st-card.l3{border-color:var(--l3d)}
+.st-name{font-size:.92rem;font-weight:800;margin-bottom:6px}
+.st-info{font-size:.78rem;color:var(--muted);line-height:1.6}
+.st-score{display:inline-block;padding:2px 8px;border-radius:8px;font-size:.75rem;font-weight:900;margin-top:5px}
+.need-help{border-color:rgba(255,100,100,.35);background:rgba(255,100,100,.04)}
+.multi-level{border-color:rgba(255,200,64,.35)}
+
+/* NEED HELP SECTION */
+.alert-section{max-width:900px;margin:0 auto 18px;padding:0 14px}
+.alert-box{padding:14px 18px;border-radius:14px;background:rgba(255,100,100,.06);border:1px solid rgba(255,100,100,.2)}
+.alert-box h3{color:#ff8080;font-size:.9rem;font-weight:900;margin-bottom:8px}
+
+/* MISC */
+.info-box{max-width:640px;margin:0 auto 12px;padding:12px 18px;background:rgba(124,111,255,.08);border:1px solid rgba(124,111,255,.2);border-radius:12px;text-align:center;font-size:.88rem;line-height:1.6;color:#b0c0e0}
+.spinner{width:70px;height:70px;border-radius:50%;border:4px solid rgba(0,255,200,.1);border-top-color:var(--gc);animation:spin .9s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pw-ov{display:none;position:fixed;inset:0;z-index:8888;background:rgba(7,16,31,.9);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.pw-ov.open{display:flex}
+.pw-modal{background:#0d1a30;border:1px solid rgba(124,111,255,.3);border-radius:22px;padding:34px;width:min(400px,92vw);text-align:center;animation:mi .3s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes mi{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.pw-inp{display:block;width:100%;padding:14px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.4rem;text-align:center;letter-spacing:.25em;direction:ltr;outline:none;margin-bottom:12px;transition:border-color .2s}
+.pw-inp:focus{border-color:#7c6fff}
+.pw-inp.shake{animation:shk .4s ease}
+@keyframes shk{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}
+.pw-err{color:#ff4d4d;font-size:.83rem;min-height:18px;margin-bottom:10px;font-weight:700}
+.float-btn{position:fixed;bottom:18px;left:18px;padding:10px 16px;background:rgba(13,26,48,.95);border:1.5px solid rgba(255,255,255,.15);border-radius:11px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;z-index:999;backdrop-filter:blur(10px);transition:all .2s}
+.float-btn:hover{border-color:#00ffc8;color:#00ffc8}
+.cf{position:fixed;pointer-events:none;border-radius:2px;z-index:9999;animation:cfall linear forwards}
+@keyframes cfall{0%{transform:translateY(-80px) rotate(0deg);opacity:1}100%{transform:translateY(105vh) rotate(800deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- SC1: LOGIN -->
+<div id="sc-login" class="screen active">
+  <div class="hdr">
+    <h1>🚦 محطات الفهم</h1>
+    <p>الكسور — الصف الخامس &nbsp;|&nbsp; اختاري اسمك للبدء</p>
+  </div>
+  <div class="login-grid" id="login-grid" style="margin-bottom:20px"></div>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC2: DIAGNOSTIC -->
+<div id="sc-diag" class="screen">
+  <div class="hdr"><h1>🔍 سؤال تشخيصي</h1><p>سؤال واحد سريع لتحديد نقطة البداية المناسبة لكِ</p></div>
+  <div class="diag-wrap">
+    <div class="diag-card">
+      <div style="font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:.05em;margin-bottom:12px">📌 السؤال التشخيصي</div>
+      <div id="diag-visual"></div>
+      <div id="diag-text" class="q-text"></div>
+      <div class="mcq-opts" id="diag-opts"></div>
+      <div class="feedback" id="diag-fb"></div>
+    </div>
+    <button class="btn-next" id="diag-next-btn" onclick="goLevelPick()">التالي ←</button>
+  </div>
+</div>
+
+<!-- SC3: LEVEL PICK -->
+<div id="sc-level" class="screen">
+  <div class="hdr"><h1>🎯 اختاري محطتك</h1><p id="level-sub">اختاري المستوى الذي تريدين البدء منه</p></div>
+  <div id="diag-result-box" style="max-width:600px;margin:0 auto 20px;padding:0 16px"></div>
+  <div class="level-cards" id="level-cards"></div>
+</div>
+
+<!-- SC4: QUESTIONS -->
+<div id="sc-questions" class="screen">
+  <div class="hdr" style="padding-bottom:8px">
+    <h1 id="q-screen-title">المستوى الأول</h1>
+    <p id="q-student-name"></p>
+  </div>
+  <div class="level-strip" id="level-strip">
+    <span class="ls-icon" id="ls-icon"></span>
+    <span class="ls-name" id="ls-name"></span>
+    <span class="ls-bloom" id="ls-bloom"></span>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-lbl"><span id="prog-txt">السؤال 1 من 5</span><span id="prog-score">0 ✓</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0"></div></div>
+  </div>
+  <div class="q-outer">
+    <div class="q-card" id="q-card">
+      <div class="bloom-tag" id="bloom-tag"></div>
+      <div class="q-text" id="q-text"></div>
+      <div id="q-visual"></div>
+      <div id="q-input"></div>
+      <div class="feedback" id="q-fb"></div>
+    </div>
+  </div>
+  <button class="btn-next" id="next-btn" onclick="nextQ()">التالي ←</button>
+</div>
+
+<!-- SC5: RESULT -->
+<div id="sc-result" class="screen">
+  <div class="hdr"><h1 id="res-title">نتيجتكِ 🏆</h1><p id="res-name"></p></div>
+  <div class="result-card" id="res-card">
+    <div class="score-ring" id="score-ring"></div>
+    <div id="res-score-text" style="font-size:1.5rem;font-weight:900;margin-bottom:6px"></div>
+    <div id="res-level-name" style="font-size:.9rem;color:var(--muted);margin-bottom:16px"></div>
+    <div id="res-answers"></div>
+  </div>
+  <div id="upgrade-section"></div>
+  <div style="text-align:center;margin-top:14px">
+    <button class="btn-sec" onclick="show('sc-login')">🔙 الرئيسية</button>
+  </div>
+</div>
+
+<!-- SC6: DASHBOARD -->
+<div id="sc-dash" class="screen">
+  <div class="hdr"><h1>📊 لوحة المعلمة — محطات الفهم</h1><p>تحديث تلقائي كل 4 ثوانٍ ⟳</p></div>
+  <div class="dist-bar" id="dist-bar"></div>
+  <div class="alert-section" id="alert-section"></div>
+  <div style="max-width:1100px;margin:0 auto 12px;padding:0 14px;font-size:.75rem;color:var(--muted);font-weight:700">
+    🟢 المستوى الأول &nbsp;&nbsp; 🟡 المستوى الثاني &nbsp;&nbsp; 🔴 المستوى الثالث &nbsp;&nbsp; ⭐ أكملت مستويين أو أكثر
+  </div>
+  <div class="students-grid" id="students-grid"></div>
+  <div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:0 14px">
+    <button class="btn-sec" onclick="leaveDash()">🔙 العودة</button>
+    <button class="btn-sec btn-danger" onclick="resetAll()">🗑️ محو وإعادة</button>
+  </div>
+</div>
+
+<!-- PASSWORD -->
+<div class="pw-ov" id="pw-ov">
+  <div class="pw-modal">
+    <div style="font-size:2.5rem;margin-bottom:12px">🔐</div>
+    <h2 style="font-size:1.2rem;font-weight:900;margin-bottom:6px">شاشة المعلمة</h2>
+    <p style="color:var(--muted);font-size:.88rem;margin-bottom:18px">أدخلي كلمة المرور</p>
+    <input class="pw-inp" id="pw-inp" type="password" placeholder="••••" maxlength="10"
+      onkeydown="if(event.key==='Enter')checkPW()"
+      oninput="document.getElementById('pw-err').textContent=''">
+    <div class="pw-err" id="pw-err"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-sec" style="flex:1" onclick="closePW()">إلغاء</button>
+      <button class="btn-main" style="margin:0;flex:1;padding:12px" onclick="checkPW()">دخول 🚀</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIG
+// ============================================================
+const FB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com/math_diff_v1';
+const PASS = '1234';
+const NUM_STUDENTS = 30;
+
+// Level metadata
+const LV = {
+  1:{name:'أتعرف',icon:'🟢',color:'var(--l1)',bg:'var(--l1b)',bd:'var(--l1d)',cls:'l1',
+     title:'المستوى الأول — أتعرف',desc:'أسئلة فهم وتذكر مع صور بصرية'},
+  2:{name:'أطبّق',icon:'🟡',color:'var(--l2)',bg:'var(--l2b)',bd:'var(--l2d)',cls:'l2',
+     title:'المستوى الثاني — أطبّق',desc:'حساب وترتيب ومقارنة'},
+  3:{name:'أتحدى',icon:'🔴',color:'var(--l3)',bg:'var(--l3b)',bd:'var(--l3d)',cls:'l3',
+     title:'المستوى الثالث — أتحدى',desc:'مسائل حياتية وتفكير عميق'},
+};
+
+// ============================================================
+//  DIAGNOSTIC QUESTION
+// ============================================================
+const DIAG = {
+  text:'شاهدي الشكل أدناه — ما الكسر الذي يمثل الجزء الملوّن؟',
+  visual:{parts:4, colored:1, color:'#00ffc8'},
+  opts:['¼','½','⅔','¾'],
+  ans:'¼',
+  fb_ok:'ممتاز! ✅ أحسنتِ — يبدو أنكِ جاهزة للمستوى الثاني',
+  fb_ng:'لا بأس! ❤️ الجزء الملوّن واحد من أربعة أجزاء متساوية، إذاً هو ¼ — ابدئي بالمستوى الأول',
+};
+
+// ============================================================
+//  QUESTION BANK
+// ============================================================
+const QB = {
+  // ---- LEVEL 1: أتعرف (تذكر + فهم) ----
+  1:[
+    {id:'1a', bloom:'تذكر', type:'mcq',
+     text:'شاهدي الشكل — أيٌّ من الكسور التالية يمثل الجزء الملوّن؟',
+     visual:{parts:3, colored:2, color:'#00ff88'},
+     opts:['⅓','½','⅔','¾'], ans:'⅔',
+     fb:'الصحيح هو ⅔ — جزآن ملوّنان من ثلاثة أجزاء'},
+    {id:'1b', bloom:'فهم', type:'mcq',
+     text:'في الكسر ¾ — ماذا يمثل الرقم 4 (المقام)؟',
+     opts:['عدد الأجزاء الملوّنة','عدد الأجزاء الكلية للشكل','عدد الأشخاص','ناتج القسمة'],
+     ans:'عدد الأجزاء الكلية للشكل',
+     fb:'المقام = عدد الأجزاء المتساوية الكلية'},
+    {id:'1c', bloom:'فهم', type:'mcq',
+     text:'أيٌّ من الكسور التالية يساوي النصف بالضبط؟',
+     visual:{parts:6, colored:3, color:'#00ff88'},
+     opts:['⅓','¼','½','⅔'], ans:'½',
+     fb:'النصف = 3 من 6 = ½'},
+    {id:'1d', bloom:'تذكر', type:'mcq',
+     text:'أيٌّ من هذه الكسور أكبر من 1؟',
+     opts:['½','¾','⁵/₄','⅓'], ans:'⁵/₄',
+     fb:'⁵/₄ أكبر من 1 لأن البسط أكبر من المقام'},
+    {id:'1e', bloom:'تطبيق', type:'mcq',
+     text:'قُسِّمت تفاحة إلى 4 أجزاء متساوية — أكلتِ جزءاً واحداً. ما الكسر الذي يمثل ما أكلتِ؟',
+     opts:['¼','½','¾','⅓'], ans:'¼',
+     fb:'1 جزء من 4 أجزاء = ¼'},
+  ],
+  // ---- LEVEL 2: أطبّق (تطبيق) ----
+  2:[
+    {id:'2a', bloom:'تطبيق', type:'order',
+     text:'رتّبي الكسور من الأصغر إلى الأكبر',
+     items:['½','⅓','¾','⅔'], ans:['⅓','½','⅔','¾'],
+     fb:'الترتيب الصحيح: ⅓ < ½ < ⅔ < ¾'},
+    {id:'2b', bloom:'تطبيق', type:'mcq',
+     text:'ما ناتج: ½ + ¼ = ؟',
+     opts:['¼','½','¾','1'], ans:'¾',
+     fb:'½ = ²/₄ ، إذاً ²/₄ + ¼ = ¾'},
+    {id:'2c', bloom:'فهم', type:'mcq',
+     text:'أيٌّ من الكسور التالية مكافئ للكسر ½؟',
+     opts:['²/₅','³/₆','⁴/₉','⁵/₈'], ans:'³/₆',
+     fb:'³/₆ = ½ لأن 3÷6 = 1÷2'},
+    {id:'2d', bloom:'تطبيق', type:'mcq',
+     text:'قارني: ⅔ ○ ¾ — أيٌّ من الخيارات صحيح؟',
+     opts:['⅔ < ¾','⅔ > ¾','⅔ = ¾','لا يمكن المقارنة'], ans:'⅔ < ¾',
+     fb:'⅔ ≈ 0.67 وهي أصغر من ¾ = 0.75'},
+    {id:'2e', bloom:'تطبيق', type:'mcq',
+     text:'ما ناتج: ¾ − ½ = ؟',
+     opts:['¼','⅓','½','¾'], ans:'¼',
+     fb:'¾ − ²/₄ = ¼'},
+  ],
+  // ---- LEVEL 3: أتحدى (تحليل + تقييم) ----
+  3:[
+    {id:'3a', bloom:'تحليل', type:'mcq',
+     text:'قطعت فاطمة كعكة إلى 12 جزءاً متساوياً. أكلت هي ⅓ منها وأكل أخوها ¼ منها. كم جزءاً تبقّى؟',
+     opts:['4 أجزاء','5 أجزاء','7 أجزاء','8 أجزاء'], ans:'5 أجزاء',
+     fb:'⅓ من 12 = 4 أجزاء، ¼ من 12 = 3 أجزاء → أُكِل 7، تبقّى 12−7 = 5'},
+    {id:'3b', bloom:'تطبيق عميق', type:'mcq',
+     text:'المسافة من البيت إلى المدرسة ¾ كيلومتر. قطعت سارة ⅓ المسافة مشياً. كم كيلومتراً تبقّى عليها؟',
+     opts:['¼ كيلو','⅜ كيلو','½ كيلو','⅝ كيلو'], ans:'½ كيلو',
+     fb:'⅓ × ¾ = ¼ كيلو قطعته، إذاً تبقّى ¾ − ¼ = ½ كيلو'},
+    {id:'3c', bloom:'تقييم', type:'mcq',
+     text:'أيٌّ من الكسور أقرب إلى العدد 1؟',
+     opts:['½','⅔','¾','⅞'], ans:'⅞',
+     fb:'الفروق عن 1: ½=0.5، ⅔≈0.33، ¾=0.25، ⅞=0.125 ← ⅞ الأقرب'},
+    {id:'3d', bloom:'تحليل', type:'fill',
+     text:'ما العدد الناقص؟ &nbsp; ___ ÷ 8 = ¾',
+     ans:['6'],
+     fb:'¾ × 8 = 6 ← إذاً الناقص هو 6'},
+    {id:'3e', bloom:'إبداع', type:'mcq',
+     text:'اشترت نورة ½ كيلو تفاحاً و¼ كيلو برتقالاً. كم يزيد التفاح عن البرتقال؟',
+     opts:['¼ كيلو','½ كيلو','⅛ كيلو','¾ كيلو'], ans:'¼ كيلو',
+     fb:'½ − ¼ = ¼ كيلو'},
+  ],
+};
+
+// ============================================================
+//  STATE
+// ============================================================
+let myNum=null, myLevel=null, curQ=0, score=0;
+let ordSel=null, ordSlots={}, ordBank=[];
+let completedLevels=[];
+let diagCorrect=false;
+let dashT=null;
+
+// ============================================================
+//  FIREBASE
+// ============================================================
+const H={'Content-Type':'application/json'};
+const fG=async p=>{try{const r=await fetch(`${FB}/${p}.json`);return await r.json();}catch{return null;}};
+const fS=async(p,d)=>{try{await fetch(`${FB}/${p}.json`,{method:'PUT',headers:H,body:JSON.stringify(d)});}catch{}};
+const fP=async(p,d)=>{try{await fetch(`${FB}/${p}.json`,{method:'PATCH',headers:H,body:JSON.stringify(d)});}catch{}};
+const fD=async p=>{try{await fetch(`${FB}/${p}.json`,{method:'DELETE'});}catch{}};
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+
+// ============================================================
+//  VISUAL FRACTION
+// ============================================================
+function fracVis(parts, colored, color){
+  let h=`<div class="frac-vis">`;
+  for(let i=0;i<parts;i++){
+    const c=i<colored;
+    h+=`<div class="fv-part" style="background:${c?color+'28':'rgba(255,255,255,.05)'};border-color:${c?color+'66':'rgba(255,255,255,.15)'}"></div>`;
+  }
+  return h+'</div>';
+}
+
+// ============================================================
+//  BUILD LOGIN GRID
+// ============================================================
+function buildGrid(){
+  const g=document.getElementById('login-grid');g.innerHTML='';
+  for(let n=1;n<=NUM_STUDENTS;n++){
+    const b=document.createElement('button');b.className='s-btn';b.id=`sb-${n}`;
+    b.textContent=`طالبة ${n}`;b.onclick=()=>pickStudent(n);g.appendChild(b);
+  }
+}
+
+// ============================================================
+//  PICK STUDENT
+// ============================================================
+async function pickStudent(num){
+  const ex=await fG(`students/s${num}`);
+  if(ex&&ex.status&&ex.status!=='idle'){alert('هذا المقعد محجوز!');return;}
+  myNum=num;completedLevels=[];score=0;
+  await fS(`students/s${num}`,{name:`طالبة ${num}`,status:'diagnosing',level:0,levels:{},diagCorrect:false});
+  document.getElementById(`sb-${num}`).classList.add('me');
+  showDiag();
+}
+
+// ============================================================
+//  DIAGNOSTIC
+// ============================================================
+function showDiag(){
+  // Visual
+  const vEl=document.getElementById('diag-visual');
+  vEl.innerHTML=fracVis(DIAG.visual.parts,DIAG.visual.colored,DIAG.visual.color);
+  document.getElementById('diag-text').textContent=DIAG.text;
+  // Options
+  const opts=document.getElementById('diag-opts');opts.innerHTML='';
+  DIAG.opts.forEach(o=>{
+    const b=document.createElement('div');b.className='mopt';b.textContent=o;
+    b.onclick=()=>answerDiag(o,b);opts.appendChild(b);
+  });
+  show('sc-diag');
+}
+
+function answerDiag(choice, el){
+  diagCorrect=(choice===DIAG.ans);
+  document.querySelectorAll('#diag-opts .mopt').forEach(b=>{
+    b.classList.add('disabled');
+    if(b.textContent===DIAG.ans)b.classList.add('chosen-correct');
+    if(b===el&&!diagCorrect)b.classList.add('chosen-wrong');
+  });
+  const fb=document.getElementById('diag-fb');
+  fb.textContent=diagCorrect?DIAG.fb_ok:DIAG.fb_ng;
+  fb.className=`feedback ${diagCorrect?'fb-correct':'fb-wrong'}`;
+  fb.style.display='block';
+  const nb=document.getElementById('diag-next-btn');nb.style.display='block';
+  fP(`students/s${myNum}`,{diagCorrect,status:'picking'});
+}
+
+function goLevelPick(){
+  const suggested=diagCorrect?2:1;
+  const box=document.getElementById('diag-result-box');
+  box.innerHTML=`<div style="padding:14px 18px;border-radius:14px;background:${diagCorrect?'var(--l2b)':'var(--l1b)'};border:1px solid ${diagCorrect?'var(--l2d)':'var(--l1d)'};text-align:center">
+    <span style="font-weight:800;font-size:.9rem">🎯 المقترح لكِ: <strong style="color:${diagCorrect?'var(--l2)':'var(--l1)'}">${LV[suggested].icon} ${LV[suggested].name}</strong></span>
+    <span style="font-size:.8rem;color:var(--muted);display:block;margin-top:4px">لكِ حرية اختيار أي مستوى تريدين</span>
+  </div>`;
+
+  const cards=document.getElementById('level-cards');cards.innerHTML='';
+  [1,2,3].forEach(n=>{
+    const lv=LV[n];
+    const isSugg=n===suggested;
+    const card=document.createElement('div');
+    card.className=`lv-card l${n}`;
+    if(isSugg)card.innerHTML=`<div class="lv-badge suggested-badge">⭐ مقترح لكِ</div>`;
+    card.innerHTML+= `<div class="lv-icon">${lv.icon}</div>
+      <div class="lv-name" style="color:${lv.color}">${lv.title}</div>
+      <div class="lv-desc">${lv.desc}</div>
+      <div style="margin-top:12px;font-size:.72rem;font-weight:700;color:${lv.color};opacity:.7">
+        ${n===1?'تذكر + فهم':n===2?'تطبيق + مقارنة':'تحليل + تقييم'} &nbsp;|&nbsp; 5 أسئلة
+      </div>`;
+    card.onclick=()=>startLevel(n);
+    cards.appendChild(card);
+  });
+  show('sc-level');
+}
+
+// ============================================================
+//  START LEVEL
+// ============================================================
+async function startLevel(n){
+  myLevel=n;curQ=0;score=0;ordSel=null;ordSlots={};ordBank=[];
+  const lv=LV[n];
+  document.getElementById('q-screen-title').textContent=lv.title;
+  document.getElementById('q-student-name').textContent=`طالبة ${myNum}`;
+  const strip=document.getElementById('level-strip');
+  strip.className=`level-strip l${n}`;
+  document.getElementById('ls-icon').textContent=lv.icon;
+  document.getElementById('ls-name').textContent=lv.name;
+  document.getElementById('prog-fill').style.background=`linear-gradient(90deg,${getVar(`--l${n}`)},${getVar(`--l${n}`)}aa)`;
+  await fP(`students/s${myNum}`,{status:'answering',level:n,[`levels/l${n}/startedAt`]:Date.now()});
+  show('sc-questions');
+  renderQ(0);
+}
+
+function getVar(v){
+  const map={'--l1':'#00ff88','--l2':'#ffc840','--l3':'#ff6b9d','--l1b':'rgba(0,255,136,.1)','--l2b':'rgba(255,200,64,.1)','--l3b':'rgba(255,107,157,.1)'};
+  return map[v]||'#00ffc8';
+}
+
+// ============================================================
+//  RENDER QUESTION
+// ============================================================
+function renderQ(idx){
+  const qs=QB[myLevel];
+  const q=qs[idx];
+  const lv=LV[myLevel];
+  const total=qs.length;
+
+  document.getElementById('prog-txt').textContent=`السؤال ${idx+1} من ${total}`;
+  document.getElementById('prog-score').textContent=`${score} ✓`;
+  document.getElementById('prog-fill').style.width=`${(idx/total)*100}%`;
+
+  // Bloom tag
+  const btag=document.getElementById('bloom-tag');
+  btag.textContent=`مستوى بلوم: ${q.bloom}`;
+  btag.style.cssText=`background:${getVar(`--l${myLevel}b`)};color:${getVar(`--l${myLevel}`)};border-color:${getVar(`--l${myLevel}`)}44`;
+
+  document.getElementById('q-text').innerHTML=q.text;
+
+  // Visual
+  const vis=document.getElementById('q-visual');
+  vis.innerHTML=q.visual?fracVis(q.visual.parts,q.visual.colored,getVar(`--l${myLevel}`)):'';
+
+  // Input
+  const input=document.getElementById('q-input');input.innerHTML='';
+  if(q.type==='mcq')renderMCQ(q,input);
+  else if(q.type==='order')renderOrder(q,input);
+  else if(q.type==='fill')renderFill(q,input);
+
+  // Reset feedback & next button
+  const fb=document.getElementById('q-fb');fb.style.display='none';fb.textContent='';
+  document.getElementById('next-btn').style.display='none';
+
+  // Bloom level strip info
+  document.getElementById('ls-bloom').textContent=`${idx+1}/${total} — ${q.bloom}`;
+}
+
+// MCQ
+function renderMCQ(q,container){
+  const opts=document.createElement('div');opts.className='mcq-opts';
+  q.opts.forEach(o=>{
+    const b=document.createElement('div');b.className='mopt';b.textContent=o;
+    b.onclick=()=>evalMCQ(q,o,b);opts.appendChild(b);
+  });
+  container.appendChild(opts);
+}
+
+function evalMCQ(q,choice,el){
+  const correct=choice===q.ans;
+  if(correct)score++;
+  document.querySelectorAll('#q-input .mopt').forEach(b=>{
+    b.classList.add('disabled');
+    if(b.textContent===q.ans)b.classList.add(correct&&b===el?'chosen-correct':'reveal-correct');
+    if(b===el&&!correct)b.classList.add('chosen-wrong');
+  });
+  showFeedback(correct,q.fb);
+  document.getElementById('prog-score').textContent=`${score} ✓`;
+}
+
+// ORDER
+function renderOrder(q,container){
+  ordSel=null;ordSlots={};
+  const shuffled=[...q.items].sort(()=>Math.random()-.5);
+  ordBank=[...shuffled];
+
+  const blbl=document.createElement('div');blbl.style.cssText='font-size:.75rem;color:var(--muted);font-weight:700;text-align:center;margin-bottom:8px';blbl.textContent='اضغطي على الكسر ثم اضغطي على الخانة لوضعه';
+  const bank=document.createElement('div');bank.className='order-bank';bank.id='ord-bank';
+  shuffled.forEach(v=>bank.appendChild(mkOItem(v)));
+
+  const slbl=document.createElement('div');slbl.style.cssText='font-size:.75rem;color:var(--muted);font-weight:700;text-align:center;margin:10px 0 8px';slbl.textContent='⬅ من الأصغر إلى الأكبر';
+  const slots=document.createElement('div');slots.className='order-slots';slots.id='ord-slots';
+  for(let i=0;i<q.items.length;i++){
+    const s=mkOSlot(i);slots.appendChild(s);
+  }
+
+  const clr=document.createElement('button');clr.className='o-clear-btn';clr.textContent='↺ مسح وإعادة';clr.onclick=()=>resetOrder(q,container);
+
+  const checkBtn=document.createElement('button');checkBtn.className='btn-main';checkBtn.style.cssText='margin-top:14px';checkBtn.id='ord-check-btn';checkBtn.disabled=true;checkBtn.textContent='✅ تحقق من الإجابة';
+  checkBtn.onclick=()=>evalOrder(q);
+
+  container.append(blbl,bank,slbl,slots,clr,checkBtn);
+  initOrderEvents(q);
+}
+
+function mkOItem(val){const el=document.createElement('div');el.className='o-item';el.textContent=val;el.dataset.val=val;el.onclick=()=>{if(ordSel)ordSel.classList.remove('sel');ordSel=el===ordSel?null:el;if(ordSel)ordSel.classList.add('sel');};return el;}
+function mkOSlot(idx){const s=document.createElement('div');s.className='o-slot';s.dataset.idx=idx;s.dataset.val='';const sn=document.createElement('span');sn.className='sn';sn.textContent=idx+1;s.appendChild(sn);const ph=document.createElement('span');ph.style.color='rgba(255,255,255,.15)';ph.textContent='?';s.appendChild(ph);return s;}
+
+function initOrderEvents(q){
+  document.querySelectorAll('#ord-slots .o-slot').forEach(sl=>{
+    sl.onclick=()=>{
+      if(ordSel){
+        const val=ordSel.dataset.val;
+        if(sl.dataset.val){const old=sl.dataset.val;clearOSlot(sl);const ni=mkOItem(old);document.getElementById('ord-bank').appendChild(ni);}
+        fillOSlot(sl,val);ordSel.remove();ordSel=null;checkOrderDone(q);
+      } else if(sl.dataset.val){
+        const v=sl.dataset.val;clearOSlot(sl);const ni=mkOItem(v);document.getElementById('ord-bank').appendChild(ni);checkOrderDone(q);
+      }
+    };
+  });
+}
+function clearOSlot(s){s.dataset.val='';s.classList.remove('filled');const sn=s.querySelector('.sn').cloneNode(true);s.innerHTML='';s.appendChild(sn);const ph=document.createElement('span');ph.style.color='rgba(255,255,255,.15)';ph.textContent='?';s.appendChild(ph);}
+function fillOSlot(s,val){s.dataset.val=val;s.classList.add('filled');const sn=s.querySelector('.sn').cloneNode(true);s.innerHTML='';s.appendChild(sn);s.appendChild(document.createTextNode(val));}
+function checkOrderDone(q){const filled=[...document.querySelectorAll('#ord-slots .o-slot')].filter(s=>s.dataset.val).length;const btn=document.getElementById('ord-check-btn');if(btn)btn.disabled=filled<q.items.length;}
+function resetOrder(q,container){container.innerHTML='';renderOrder(q,container);}
+
+function evalOrder(q){
+  const placed=[...document.querySelectorAll('#ord-slots .o-slot')].map(s=>s.dataset.val);
+  const correct=JSON.stringify(placed)===JSON.stringify(q.ans);
+  if(correct)score++;
+  document.querySelectorAll('#ord-slots .o-slot').forEach((s,i)=>{
+    if(s.dataset.val){s.style.background=s.dataset.val===q.ans[i]?'rgba(0,255,136,.2)':'rgba(255,77,77,.15)';s.style.borderColor=s.dataset.val===q.ans[i]?'#00ff88':'#ff4d4d';}
+  });
+  const checkBtn=document.getElementById('ord-check-btn');if(checkBtn)checkBtn.disabled=true;
+  showFeedback(correct,q.fb);
+  document.getElementById('prog-score').textContent=`${score} ✓`;
+}
+
+// FILL
+function renderFill(q,container){
+  const inp=document.createElement('input');inp.type='text';inp.className='fill-inp';inp.placeholder='___';inp.id='fill-val';
+  const wrap=document.createElement('div');wrap.className='fill-wrap';wrap.appendChild(inp);
+  const checkBtn=document.createElement('button');checkBtn.className='btn-main';checkBtn.style.cssText='margin-top:12px';checkBtn.textContent='✅ تحقق';
+  checkBtn.onclick=()=>evalFill(q,inp.value.trim());
+  container.append(wrap,checkBtn);
+  setTimeout(()=>inp.focus(),100);
+}
+
+function evalFill(q,val){
+  const norm=s=>s.replace(/[\u064B-\u065F\s]/g,'').toLowerCase();
+  const correct=q.ans.some(a=>norm(a)===norm(val));
+  if(correct)score++;
+  const inp=document.getElementById('fill-val');
+  if(inp){inp.disabled=true;inp.style.borderColor=correct?'#00ff88':'#ff4d4d';inp.style.background=correct?'rgba(0,255,136,.1)':'rgba(255,77,77,.08)';}
+  showFeedback(correct,q.fb);
+  document.getElementById('prog-score').textContent=`${score} ✓`;
+}
+
+// ============================================================
+//  FEEDBACK + NEXT
+// ============================================================
+function showFeedback(correct, fbText){
+  const fb=document.getElementById('q-fb');
+  fb.textContent=(correct?'✅ أحسنتِ! ':' الإجابة الصحيحة: ')+fbText;
+  fb.className=`feedback ${correct?'fb-correct':'fb-wrong'}`;
+  fb.style.display='block';
+  const nb=document.getElementById('next-btn');
+  nb.style.display='block';
+  const isLast=curQ===QB[myLevel].length-1;
+  nb.textContent=isLast?'عرض النتيجة 🏁':'التالي ←';
+}
+
+function nextQ(){
+  curQ++;
+  const total=QB[myLevel].length;
+  if(curQ>=total){finishLevel();return;}
+  renderQ(curQ);
+}
+
+// ============================================================
+//  FINISH LEVEL
+// ============================================================
+async function finishLevel(){
+  const total=QB[myLevel].length;
+  const pct=Math.round((score/total)*100);
+  completedLevels.push({level:myLevel,score,total,pct});
+  await fP(`students/s${myNum}`,{
+    status:'done',
+    level:myLevel,
+    [`levels/l${myLevel}/score`]:score,
+    [`levels/l${myLevel}/total`]:total,
+    [`levels/l${myLevel}/pct`]:pct,
+    [`levels/l${myLevel}/doneAt`]:Date.now(),
+  });
+  showResult();
+}
+
+// ============================================================
+//  RESULT SCREEN
+// ============================================================
+function showResult(){
+  const lv=LV[myLevel];
+  const last=completedLevels[completedLevels.length-1];
+  const pct=last.pct;
+
+  document.getElementById('res-name').textContent=`طالبة ${myNum}`;
+  document.getElementById('res-level-name').textContent=`${lv.icon} ${lv.title}`;
+
+  // Score ring
+  const ring=document.getElementById('score-ring');
+  ring.style.cssText=`width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+    border:4px solid ${getVar(`--l${myLevel}`)};background:${getVar(`--l${myLevel}b`)};font-size:1.8rem;font-weight:900;color:${getVar(`--l${myLevel}`)}`;
+  ring.textContent=`${pct}%`;
+  document.getElementById('res-score-text').textContent=`${last.score} من ${last.total} إجابة صحيحة`;
+
+  // Answer summary
+  const qs=QB[myLevel];
+  const resAns=document.getElementById('res-answers');resAns.innerHTML='';
+  qs.forEach((q,i)=>{
+    // We don't store per-question results in this version, so just show Bloom
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.82rem;font-weight:700';
+    row.innerHTML=`<span style="color:${getVar(`--l${myLevel}`)};opacity:.6;font-size:.7rem;font-weight:800">س${i+1}</span>
+      <span style="flex:1;color:var(--muted)">${q.bloom}</span>`;
+    resAns.appendChild(row);
+  });
+
+  // Upgrade section
+  const up=document.getElementById('upgrade-section');up.innerHTML='';
+  if(pct>=60&&myLevel<3){
+    const nextLv=LV[myLevel+1];
+    const upCard=document.createElement('div');
+    upCard.className='upgrade-card';
+    upCard.style.cssText=`border-color:${getVar(`--l${myLevel+1}d`)};background:${getVar(`--l${myLevel+1}b`)};max-width:560px;margin:0 auto 14px;padding:22px;border-radius:18px;text-align:center;cursor:pointer`;
+    upCard.innerHTML=`<div style="font-size:2rem;margin-bottom:8px">⬆️</div>
+      <div style="font-size:1rem;font-weight:900;color:${getVar(`--l${myLevel+1}`)};margin-bottom:6px">
+        هل تريدين التحدي؟ انتقلي لـ ${nextLv.title}
+      </div>
+      <div style="font-size:.82rem;color:var(--muted)">${nextLv.desc}</div>`;
+    upCard.onclick=()=>startLevel(myLevel+1);
+    up.appendChild(upCard);
+    if(pct>=80)confetti();
+  } else if(myLevel===3&&pct>=60){
+    up.innerHTML=`<div style="text-align:center;padding:20px;font-size:1.1rem;font-weight:800;color:var(--l3)">🏆 أنهيتِ أعلى مستوى — رائع جداً!</div>`;
+    confetti();
+  }
+
+  show('sc-result');
+}
+
+// ============================================================
+//  DASHBOARD
+// ============================================================
+function openDash(){document.getElementById('pw-inp').value='';document.getElementById('pw-err').textContent='';document.getElementById('pw-ov').classList.add('open');setTimeout(()=>document.getElementById('pw-inp').focus(),100);}
+function closePW(){document.getElementById('pw-ov').classList.remove('open');}
+function checkPW(){const v=document.getElementById('pw-inp').value.trim();if(v===PASS){closePW();enterDash();}else{document.getElementById('pw-err').textContent='❌ كلمة المرور غير صحيحة';const inp=document.getElementById('pw-inp');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.value='';inp.focus();}}
+function enterDash(){show('sc-dash');loadDash();dashT=setInterval(loadDash,4000);}
+function leaveDash(){clearInterval(dashT);dashT=null;show(myNum?'sc-result':'sc-login');}
+
+async function loadDash(){
+  const data=await fG('students');
+  renderDist(data);renderAlerts(data);renderStudents(data);
+}
+
+function renderDist(data){
+  let l1=0,l2=0,l3=0,done=0;
+  if(data){Object.values(data).forEach(s=>{
+    if(!s||!s.status||s.status==='idle')return;
+    const l=s.level||0;
+    if(l===1)l1++;else if(l===2)l2++;else if(l===3)l3++;
+    if(s.status==='done')done++;
+  });}
+  document.getElementById('dist-bar').innerHTML=`
+    <div class="dist-box" style="background:var(--l1b);border-color:var(--l1d)">
+      <div class="dist-n" style="color:var(--l1)">${l1}</div>
+      <div class="dist-l">🟢 أتعرف</div>
+    </div>
+    <div class="dist-box" style="background:var(--l2b);border-color:var(--l2d)">
+      <div class="dist-n" style="color:var(--l2)">${l2}</div>
+      <div class="dist-l">🟡 أطبّق</div>
+    </div>
+    <div class="dist-box" style="background:var(--l3b);border-color:var(--l3d)">
+      <div class="dist-n" style="color:var(--l3)">${l3}</div>
+      <div class="dist-l">🔴 أتحدى</div>
+    </div>
+    <div class="dist-box" style="background:rgba(0,255,200,.07);border-color:rgba(0,255,200,.2)">
+      <div class="dist-n" style="color:#00ffc8">${done}</div>
+      <div class="dist-l">✅ أنهت</div>
+    </div>`;
+}
+
+function renderAlerts(data){
+  const sec=document.getElementById('alert-section');
+  if(!data){sec.innerHTML='';return;}
+  const needHelp=[];
+  Object.entries(data).forEach(([k,s])=>{
+    if(!s||s.status!=='done')return;
+    const l=s.level;
+    if(!l)return;
+    const ld=s.levels?.[`l${l}`];
+    if(ld&&ld.pct<60)needHelp.push({name:s.name,level:l,pct:ld.pct});
+  });
+  if(!needHelp.length){sec.innerHTML='';return;}
+  sec.innerHTML=`<div class="alert-box">
+    <h3>🆘 طالبات قد يحتجن دعماً فورياً (أقل من 60%)</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      ${needHelp.map(s=>`<span style="padding:5px 12px;border-radius:8px;font-size:.82rem;font-weight:700;background:rgba(255,100,100,.1);border:1px solid rgba(255,100,100,.25);color:#ff9090">${s.name} — ${LV[s.level].icon} ${s.pct}%</span>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderStudents(data){
+  const grid=document.getElementById('students-grid');grid.innerHTML='';
+  if(!data){grid.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px">لم تنضم أي طالبة بعد</div>';return;}
+
+  for(let n=1;n<=NUM_STUDENTS;n++){
+    const s=data[`s${n}`];if(!s||!s.status||s.status==='idle')continue;
+    const l=s.level||0;
+    const lv=l?LV[l]:null;
+    const ld=l&&s.levels?s.levels[`l${l}`]:null;
+    const pct=ld?.pct;
+    const doneCount=s.levels?Object.keys(s.levels).length:0;
+    const isMulti=doneCount>=2;
+    const needHelp=pct!==undefined&&pct<60&&s.status==='done';
+
+    const card=document.createElement('div');
+    card.className=`st-card${l?' l'+l:''}${needHelp?' need-help':''}${isMulti?' multi-level':''}`;
+
+    let statusTxt='📝 تجيب',statusCol='var(--muted)';
+    if(s.status==='picking')statusTxt='🎯 تختار المستوى';
+    if(s.status==='answering'&&lv)statusTxt=`${lv.icon} تحل ${lv.name}`;
+    if(s.status==='done'&&lv)statusTxt=`✅ أنهت ${lv.name}`;
+    if(s.status==='diagnosing')statusTxt='🔍 سؤال تشخيصي';
+
+    card.innerHTML=`
+      <div class="st-name">${s.name} ${isMulti?'⭐':''}</div>
+      <div class="st-info">
+        ${statusTxt}<br>
+        ${pct!==undefined?`الدرجة: <strong style="color:${pct>=80?'#00ff88':pct>=60?'#ffc840':'#ff8080'}">${pct}%</strong><br>`:''}
+        ${needHelp?'<span style="color:#ff8080;font-weight:800">⚠️ تحتاج دعم</span><br>':''}
+        ${isMulti?`<span style="color:#ffc840">أكملت ${doneCount} مستويات</span>`:''}
+      </div>
+      ${pct!==undefined?`<div class="st-score" style="background:${pct>=60?'rgba(0,255,136,.1)':'rgba(255,77,77,.1)'};color:${pct>=60?'#00ff88':'#ff8080'};border:1px solid ${pct>=60?'rgba(0,255,136,.25)':'rgba(255,77,77,.2)'}">${pct}%</div>`:''}`;
+    grid.appendChild(card);
+  }
+}
+
+// ============================================================
+//  RESET + SEATS
+// ============================================================
+async function resetAll(){
+  if(!confirm('سيتم مسح جميع البيانات. هل أنت متأكدة؟'))return;
+  await fD('students');
+  myNum=null;myLevel=null;curQ=0;score=0;completedLevels=[];
+  clearInterval(dashT);dashT=null;
+  buildGrid();refreshSeats();leaveDash();show('sc-login');
+  alert('✅ تم المسح');
+}
+
+async function refreshSeats(){
+  const data=await fG('students');if(!data)return;
+  for(let n=1;n<=NUM_STUDENTS;n++){
+    const btn=document.getElementById(`sb-${n}`);if(!btn||n===myNum)continue;
+    const s=data[`s${n}`];if(s&&s.status&&s.status!=='idle'){btn.classList.add('taken');btn.textContent=`✓ ${n}`;btn.onclick=null;}
+  }
+}
+
+function confetti(){const cols=['#00ff88','#ffc840','#ff6b9d','#00ffc8','#7c6fff'];for(let i=0;i<80;i++){setTimeout(()=>{const p=document.createElement('div');p.className='cf';p.style.cssText=`left:${Math.random()*100}vw;top:-20px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2.5+Math.random()*2}s`;document.body.appendChild(p);setTimeout(()=>p.remove(),5000);},i*28);}}
+
+buildGrid();
+refreshSeats();
+setInterval(()=>{if(document.getElementById('sc-login').classList.contains('active'))refreshSeats();},7000);
+</script>
+</body>
+</html>
