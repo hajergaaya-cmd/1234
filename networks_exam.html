@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>امتحان شبكات الحاسوب | الصف العاشر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07101f;--bg2:#0d1a30;--border:rgba(255,255,255,.09);
+  --text:#e8f0fe;--muted:#6a7f99;
+  --gr:#00c878;--grb:rgba(0,200,120,.1);--grd:rgba(0,200,120,.3);
+  --T1:#00b8ff;--T2:#7c6fff;--T3:#E8722A;--T4:#00ff88;--T5:#ffc840;--T6:#ff6b9d;
+}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(0,200,120,.015) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(0,200,120,.015) 1px,transparent 1px);background-size:44px 44px}
+.screen{display:none;position:relative;z-index:1;min-height:100vh;padding:16px 16px 60px}
+.screen.active{display:block}
+.hdr{text-align:center;padding:16px 16px 12px}
+.hdr h1{font-size:clamp(1.2rem,3vw,1.7rem);font-weight:900;background:linear-gradient(135deg,var(--gr),#00b8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr p{color:var(--muted);font-size:.82rem;margin-top:4px}
+
+/* LOGIN */
+.exam-info-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.eib{padding:8px 18px;border-radius:20px;font-size:.8rem;font-weight:800;border:1px solid;display:flex;align-items:center;gap:6px}
+.login-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px;max-width:1000px;margin:0 auto}
+.s-btn{padding:12px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.04);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
+.s-btn:hover:not(.done){background:rgba(0,200,120,.08);border-color:var(--gr);color:var(--gr)}
+.s-btn.done{background:rgba(0,200,120,.08);border-color:rgba(0,200,120,.25);color:#00c878;cursor:not-allowed;opacity:.6}
+
+/* EXAM NAV */
+.exam-topbar{position:sticky;top:0;z-index:100;background:rgba(7,16,31,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:10px 16px;margin:-16px -16px 14px}
+.etb-inner{display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;flex-wrap:wrap;gap:8px}
+.student-chip{padding:6px 14px;background:var(--grb);border:1px solid var(--grd);border-radius:20px;font-size:.82rem;font-weight:800;color:var(--gr)}
+.timer{font-size:1.4rem;font-weight:900;font-variant-numeric:tabular-nums;color:var(--gr);padding:6px 16px;border-radius:12px;border:2px solid var(--grd);background:var(--grb);letter-spacing:.05em}
+.timer.warn{color:#ffc840;border-color:rgba(255,200,64,.4);background:rgba(255,200,64,.1);animation:tpulse 1s ease-in-out infinite}
+.timer.danger{color:#ff6060;border-color:rgba(255,96,96,.4);background:rgba(255,96,96,.1);animation:tpulse .5s ease-in-out infinite}
+@keyframes tpulse{0%,100%{opacity:1}50%{opacity:.6}}
+.q-nav-grid{display:flex;gap:5px;flex-wrap:wrap;max-width:900px;margin:0 auto 14px;padding:0 4px}
+.qn-btn{width:36px;height:36px;border-radius:9px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted);font-family:'Tajawal',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center}
+.qn-btn.answered{border-color:var(--grd);background:var(--grb);color:var(--gr)}
+.qn-btn.current{border-color:var(--gr);background:rgba(0,200,120,.2);color:white;box-shadow:0 0 0 3px rgba(0,200,120,.2)}
+.qn-progress{max-width:900px;margin:0 auto 14px;font-size:.72rem;font-weight:800;color:var(--muted);text-align:center}
+
+/* QUESTION CARD */
+.q-card{max-width:760px;margin:0 auto;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:22px}
+.q-num-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px}
+.qnb-n{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:900;background:var(--grb);border:2px solid var(--grd);color:var(--gr)}
+.topic-chip{padding:3px 10px;border-radius:12px;font-size:.68rem;font-weight:900;border:1px solid}
+.q-text{font-size:1.05rem;font-weight:800;line-height:1.6;margin-bottom:18px}
+.opts{display:grid;gap:9px}
+.opt{padding:13px 18px;border:2px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.04);cursor:pointer;font-size:.95rem;font-weight:700;transition:all .18s;text-align:right;display:flex;align-items:center;gap:12px}
+.opt:hover{border-color:var(--gr);background:rgba(0,200,120,.06)}
+.opt.selected{border-color:var(--gr);background:var(--grb);color:var(--gr)}
+.opt-letter{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:900;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--muted);flex-shrink:0}
+.opt.selected .opt-letter{background:var(--grd);border-color:var(--gr);color:var(--gr)}
+.q-nav-btns{display:flex;gap:10px;justify-content:space-between;max-width:760px;margin:12px auto 0}
+
+/* RESULT ANSWER STYLES */
+.opt.correct{border-color:#00ff88;background:rgba(0,255,136,.1);color:#00ff88}
+.opt.wrong{border-color:#ff4d4d;background:rgba(255,77,77,.08);color:#ff6060}
+.opt.correct-reveal{border-color:#00ff88;background:rgba(0,255,136,.06);color:#00ff88}
+
+/* REVIEW SCREEN */
+.review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;max-width:900px;margin:0 auto 20px}
+.rev-item{padding:12px 14px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.rev-qn{font-size:.72rem;font-weight:800;color:var(--muted);margin-bottom:5px}
+.rev-q{font-size:.82rem;font-weight:700;margin-bottom:5px}
+.rev-ans{font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:8px;display:inline-block}
+.rev-ok{background:var(--grb);border:1px solid var(--grd);color:var(--gr)}
+.rev-empty{background:rgba(255,200,64,.1);border:1px solid rgba(255,200,64,.3);color:#ffc840}
+
+/* GRADE SCREEN */
+.grade-card{max-width:600px;margin:0 auto;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:22px;padding:28px;text-align:center}
+.grade-circle{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;border:5px solid}
+.grade-n{font-size:2.8rem;font-weight:900;line-height:1}
+.grade-denom{font-size:1rem;font-weight:700;opacity:.7}
+.grade-cat{font-size:1.2rem;font-weight:900;padding:8px 22px;border-radius:20px;border:2px solid;display:inline-block;margin-bottom:16px}
+.answers-review{text-align:right;margin-top:16px}
+.ar-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.82rem;font-weight:700}
+.ar-q{flex:1;color:var(--muted)}
+.ar-mark{width:24px;text-align:center;flex-shrink:0}
+
+/* ALREADY DONE */
+.done-card{max-width:500px;margin:40px auto;text-align:center;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:32px}
+
+/* DASHBOARD */
+.dash-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-width:1100px;margin:0 auto 20px}
+.ds-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
+.ds-n{font-size:2rem;font-weight:900}
+.ds-l{font-size:.7rem;font-weight:700;color:var(--muted);margin-top:3px}
+.grade-dist{max-width:1100px;margin:0 auto 22px;padding:0 14px}
+.gd-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.gd-label{font-size:.8rem;font-weight:800;min-width:60px;text-align:left}
+.gd-bar-wrap{flex:1;height:24px;background:rgba(255,255,255,.05);border-radius:6px;overflow:hidden;position:relative}
+.gd-bar{height:100%;border-radius:6px;transition:width .6s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.gd-bar-n{font-size:.75rem;font-weight:900;color:white}
+.gd-count{font-size:.8rem;font-weight:800;min-width:30px;text-align:left}
+.cat-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;max-width:1100px;margin:0 auto 20px;padding:0 14px}
+.cat-card{padding:12px;border-radius:12px;border:1px solid;text-align:center}
+.cat-n{font-size:1.6rem;font-weight:900}
+.cat-l{font-size:.72rem;font-weight:700;opacity:.75;margin-top:3px}
+.q-difficulty{max-width:1100px;margin:0 auto 22px;padding:0 14px}
+.qd-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.02)}
+.qd-n{font-size:.75rem;font-weight:800;min-width:28px;color:var(--muted)}
+.qd-text{flex:1;font-size:.8rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qd-pct{font-size:.8rem;font-weight:900;min-width:44px;text-align:left}
+.qd-bar-wrap{width:80px;height:8px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.qd-bar{height:100%;border-radius:4px}
+.grade-sheet{max-width:1100px;margin:0 auto;padding:0 14px}
+.gs-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;margin-bottom:7px}
+.gs-rank{font-size:.8rem;font-weight:800;color:var(--muted);min-width:28px}
+.gs-name{flex:1;font-size:.9rem;font-weight:800}
+.gs-grade{font-size:1.1rem;font-weight:900;min-width:52px;text-align:center;padding:5px 12px;border-radius:10px}
+.gs-cat{font-size:.72rem;font-weight:800;padding:3px 8px;border-radius:8px;min-width:70px;text-align:center}
+.gs-topics{display:flex;gap:6px;flex-wrap:wrap}
+.gs-tc{font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:6px}
+
+/* GRADE COLORS */
+.g-ex{color:#00ff88;border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.1)}
+.g-vg{color:#00d4ff;border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.1)}
+.g-go{color:#a78bfa;border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.1)}
+.g-pa{color:#ffc840;border-color:rgba(255,200,64,.3);background:rgba(255,200,64,.1)}
+.g-fl{color:#ff6060;border-color:rgba(255,96,96,.3);background:rgba(255,96,96,.1)}
+
+/* MISC */
+.btn-main{padding:14px 28px;background:linear-gradient(135deg,var(--gr),#00b8ff);border:none;border-radius:13px;color:#07101f;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(0,200,120,.25)}
+.btn-main:hover:not(:disabled){transform:translateY(-3px);opacity:.9}
+.btn-main:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-sec{padding:11px 20px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-sec:hover{background:rgba(255,255,255,.12)}
+.btn-danger{border-color:rgba(255,77,77,.3);color:#ff8080}.btn-danger:hover{background:rgba(255,77,77,.08)}
+.section-title{font-size:.73rem;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;max-width:1100px;margin-left:auto;margin-right:auto;padding:0 14px}
+.pw-ov{display:none;position:fixed;inset:0;z-index:8888;background:rgba(7,16,31,.9);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.pw-ov.open{display:flex}
+.pw-modal{background:#0d1a30;border:1px solid rgba(0,200,120,.25);border-radius:22px;padding:34px;width:min(400px,92vw);text-align:center;animation:mi .3s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes mi{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.pw-inp{display:block;width:100%;padding:14px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.4rem;text-align:center;letter-spacing:.25em;direction:ltr;outline:none;margin-bottom:12px;transition:border-color .2s}
+.pw-inp:focus{border-color:var(--gr)}
+.pw-inp.shake{animation:shk .4s ease}
+@keyframes shk{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}
+.pw-err{color:#ff4d4d;font-size:.83rem;min-height:18px;margin-bottom:10px;font-weight:700}
+.float-btn{position:fixed;bottom:18px;left:18px;padding:10px 16px;background:rgba(13,26,48,.95);border:1.5px solid rgba(255,255,255,.15);border-radius:11px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;z-index:999;backdrop-filter:blur(10px);transition:all .2s}
+.float-btn:hover{border-color:var(--gr);color:var(--gr)}
+.cf{position:fixed;pointer-events:none;border-radius:2px;z-index:9999;animation:cfall linear forwards}
+@keyframes cfall{0%{transform:translateY(-60px) rotate(0deg);opacity:1}100%{transform:translateY(105vh) rotate(800deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- SC1: LOGIN -->
+<div id="sc-login" class="screen active">
+  <div class="hdr">
+    <h1>📝 امتحان شبكات الحاسوب</h1>
+    <p>الصف العاشر | اختاري اسمك لبدء الامتحان</p>
+  </div>
+  <div class="exam-info-bar">
+    <div class="eib" style="background:rgba(0,200,120,.08);border-color:rgba(0,200,120,.25);color:var(--gr)">📋 20 سؤال</div>
+    <div class="eib" style="background:rgba(0,184,255,.08);border-color:rgba(0,184,255,.25);color:#00b8ff">⏱️ 30 دقيقة</div>
+    <div class="eib" style="background:rgba(255,200,64,.08);border-color:rgba(255,200,64,.25);color:#ffc840">🎯 20 علامة</div>
+    <div class="eib" style="background:rgba(255,107,107,.08);border-color:rgba(255,107,107,.25);color:#ff8080">⚠️ محاولة واحدة فقط</div>
+  </div>
+  <div class="login-grid" id="login-grid"></div>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC2: EXAM -->
+<div id="sc-exam" class="screen">
+  <div class="exam-topbar">
+    <div class="etb-inner">
+      <div class="student-chip" id="exam-name-chip"></div>
+      <div style="font-size:.8rem;font-weight:800;color:var(--muted)" id="exam-q-counter">1 / 20</div>
+      <div class="timer" id="exam-timer">30:00</div>
+    </div>
+  </div>
+  <!-- Question nav grid -->
+  <div class="q-nav-grid" id="q-nav-grid"></div>
+  <div class="qn-progress" id="qn-progress">0 / 20 سؤال أُجيب عنه</div>
+  <!-- Question card -->
+  <div class="q-card" id="q-card">
+    <div class="q-num-badge">
+      <div class="qnb-n" id="q-num"></div>
+      <div class="topic-chip" id="q-topic"></div>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div class="opts" id="q-opts"></div>
+  </div>
+  <!-- Navigation buttons -->
+  <div class="q-nav-btns">
+    <button class="btn-sec" id="btn-prev" onclick="goQ(-1)">← السابق</button>
+    <button class="btn-main" id="btn-finish" onclick="goReview()">مراجعة وتسليم 📋</button>
+    <button class="btn-sec" id="btn-nxt" onclick="goQ(1)">التالي →</button>
+  </div>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC3: REVIEW -->
+<div id="sc-review" class="screen">
+  <div class="hdr"><h1>📋 مراجعة إجاباتك</h1><p id="rev-name"></p></div>
+  <div id="rev-warning" style="max-width:760px;margin:0 auto 16px;padding:12px 16px;border-radius:12px;display:none;font-size:.88rem;font-weight:800;text-align:center;background:rgba(255,200,64,.1);border:1px solid rgba(255,200,64,.3);color:#ffc840"></div>
+  <div class="review-grid" id="review-grid"></div>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-sec" onclick="show('sc-exam')">← العودة للتعديل</button>
+    <button class="btn-main" onclick="submitExam()">✅ تسليم الامتحان نهائياً</button>
+  </div>
+</div>
+
+<!-- SC4: GRADE -->
+<div id="sc-grade" class="screen">
+  <div class="hdr"><h1>🏆 نتيجة الامتحان</h1><p id="grade-name"></p></div>
+  <div class="grade-card">
+    <div class="grade-circle" id="grade-circle">
+      <div class="grade-n" id="grade-n"></div>
+      <div class="grade-denom">من 20</div>
+    </div>
+    <div class="grade-cat" id="grade-cat"></div>
+    <div id="grade-msg" style="font-size:.88rem;color:var(--muted);margin-bottom:18px"></div>
+    <div class="answers-review" id="grade-answers"></div>
+  </div>
+  <div style="text-align:center;margin-top:16px">
+    <button class="btn-sec" onclick="show('sc-login')">🔙 الرئيسية</button>
+  </div>
+</div>
+
+<!-- SC5: ALREADY SUBMITTED -->
+<div id="sc-done" class="screen">
+  <div class="done-card">
+    <div style="font-size:4rem;margin-bottom:14px">✅</div>
+    <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:8px">قدّمتِ الامتحان سابقاً</h2>
+    <p style="color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:16px">لا يمكن إعادة الامتحان.<br>راجعي شاشة المعلمة لمعرفة نتيجتك.</p>
+    <div id="done-grade" style="font-size:2rem;font-weight:900;margin-bottom:16px"></div>
+    <button class="btn-sec" onclick="show('sc-login')">🔙 العودة</button>
+  </div>
+</div>
+
+<!-- SC6: DASHBOARD -->
+<div id="sc-dash" class="screen">
+  <div class="hdr"><h1>📊 لوحة تحليل الامتحان</h1><p>مراجعة شبكات الحاسوب | تحديث كل 5 ثوانٍ</p></div>
+
+  <!-- Summary stats -->
+  <div class="dash-summary" id="dash-summary"></div>
+
+  <!-- Grade categories -->
+  <div class="section-title">🎓 توزيع التقديرات</div>
+  <div class="cat-summary" id="cat-summary"></div>
+
+  <!-- Grade distribution bar chart -->
+  <div class="section-title">📊 توزيع العلامات (0-20)</div>
+  <div class="grade-dist" id="grade-dist"></div>
+
+  <!-- Question difficulty -->
+  <div class="section-title">🔬 صعوبة كل سؤال</div>
+  <div class="q-difficulty" id="q-difficulty"></div>
+
+  <!-- Topic analysis -->
+  <div class="section-title">📚 أداء الفصل حسب الموضوع</div>
+  <div style="max-width:1100px;margin:0 auto 22px;padding:0 14px" id="topic-analysis"></div>
+
+  <!-- Grade sheet -->
+  <div class="section-title">📋 كشف العلامات — مرتب تنازلياً</div>
+  <div class="grade-sheet" id="grade-sheet"></div>
+
+  <div style="text-align:center;margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-sec" onclick="leaveDash()">🔙 العودة</button>
+    <button class="btn-sec btn-danger" onclick="resetExam()">🗑️ مسح نتائج الامتحان</button>
+  </div>
+</div>
+
+<!-- PASSWORD -->
+<div class="pw-ov" id="pw-ov">
+  <div class="pw-modal">
+    <div style="font-size:2rem;margin-bottom:10px">📊</div>
+    <h2 style="font-size:1.1rem;font-weight:900;margin-bottom:5px">شاشة المعلمة</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">أدخلي كلمة المرور</p>
+    <input class="pw-inp" id="pw-inp" type="password" placeholder="••••" maxlength="10"
+      onkeydown="if(event.key==='Enter')checkPW()"
+      oninput="document.getElementById('pw-err').textContent=''">
+    <div class="pw-err" id="pw-err"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-sec" style="flex:1" onclick="closePW()">إلغاء</button>
+      <button class="btn-main" style="flex:1;padding:12px" onclick="checkPW()">دخول</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════
+const FB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com/networks_exam_v1';
+const PASS = '1234';
+const EXAM_MINS = 30;
+
+// ══════════════════════════════════════════════════════════
+// STUDENTS
+// ══════════════════════════════════════════════════════════
+const STUDENTS = [
+  'اسراء مصطفى سليم عبدالرحمن حسن',
+  'اسيل ايمن يوسف حسن الحورانى',
+  'انفال سيف ناصر الدرعى الكعبى',
+  'ايه امير خيرى بابكر خيرى',
+  'بانا زكريا خلف بني هاني',
+  'جنى تميم المقداد',
+  'حبيبه عمرو نور الدين هاشم',
+  'حنين اشرف عبدالقادر محمد شاهين',
+  'دعاء غزوان الحمدان',
+  'روفيده محمد عبدالظاهر محمد مهنى',
+  'رويدا محمد عبدالظاهر محمد مهنى',
+  'ريناد امجد شعبان عطيه',
+  'سارة المتولى برهام حسن السيد',
+  'سجى يونس سعيد شجراوي',
+  'سلمى محمد زكريا محمد محمود',
+  'عائشة احمد محمد حامد محمد',
+  'عائشه عادل محمد على البلوشى',
+  'فاطمه عوض الله عباس الحسين',
+  'كريمه عزو العلى',
+  'كنانه فؤاد حسين اللحام',
+  'ليلى محمد النوراني بشاره',
+  'ملاك يحيى الاحمدالعبدالموسى',
+  'منار حمد العبيد',
+  'منة الله محمد محمود على فايد',
+  'ندى السيد',
+  'نور محمود',
+  'نور الهدى',
+  'ندى احمد',
+  'نرهان محمود',
+  'هيفاء حسين',
+  'وهج كاظم',
+];
+
+// ══════════════════════════════════════════════════════════
+// TOPICS
+// ══════════════════════════════════════════════════════════
+const TC = {
+  'تعريف الشبكة':           {color:'#00b8ff'},
+  'أنواع الشبكات الجغرافية': {color:'#7c6fff'},
+  'مخططات توصيل الشبكات':   {color:'#E8722A'},
+  'نموذج OSI':              {color:'#00ff88'},
+  'البروتوكولات':            {color:'#ffc840'},
+  'الشبكات اللاسلكية':       {color:'#ff6b9d'},
+};
+
+// ══════════════════════════════════════════════════════════
+// 20 FIXED EXAM QUESTIONS
+// ══════════════════════════════════════════════════════════
+const EQ = [
+  {id:1, t:'تعريف الشبكة',
+   q:'ما الحد الأدنى لعدد الحواسيب اللازمة لتكوين شبكة حاسوب؟',
+   o:['حاسوب واحد','حاسوبان (اثنان)','ثلاثة حواسيب','أربعة حواسيب'], a:1},
+  {id:2, t:'تعريف الشبكة',
+   q:'من أي جزأين أساسيين تتكون شبكة الحاسوب؟',
+   o:['الخوادم والعملاء','الأجهزة الطرفية والنواقل','البرامج والأجهزة فقط','الكابلات والراوتر'], a:1},
+  {id:3, t:'أنواع الشبكات الجغرافية',
+   q:'ما اختصار الشبكة المحلية الضيقة النطاق الجغرافي؟',
+   o:['WAN','MAN','LAN','SAN'], a:2},
+  {id:4, t:'أنواع الشبكات الجغرافية',
+   q:'ما الشبكة التي تربط مباني جامعة متعددة في نفس المدينة؟',
+   o:['LAN','WAN','MAN','شبكة الإنترنت'], a:2},
+  {id:5, t:'أنواع الشبكات الجغرافية',
+   q:'الإنترنت هو المثال الأبرز على أي نوع من الشبكات؟',
+   o:['LAN الشبكة المحلية','MAN الشبكة متوسطة المجال','WAN الشبكة واسعة المجال','شبكة الفصل الدراسي'], a:2},
+  {id:6, t:'مخططات توصيل الشبكات',
+   q:'ماذا تعني كلمة Topology في شبكات الحاسوب؟',
+   o:['سرعة نقل البيانات','مخطط اتصال الأجهزة ببعضها','عدد الأجهزة المتصلة','نوع الكابل المستخدم'], a:1},
+  {id:7, t:'مخططات توصيل الشبكات',
+   q:'في المخطط الخطي Bus، كيف تتصل جميع الأجهزة؟',
+   o:['كل جهاز بجهاز مركزي','بناقل رئيسي Bus مشترك','بشكل حلقة مغلقة','بتوصيلات مباشرة بين كل جهاز'], a:1},
+  {id:8, t:'مخططات توصيل الشبكات',
+   q:'ما المشكلة التي تحدث في مخطط Bus عند إرسال جهازين في نفس الوقت؟',
+   o:['انقطاع الكهرباء','Collision تصادم البيانات','توقف الإنترنت فقط','تبادل الملفات تلقائياً'], a:1},
+  {id:9, t:'مخططات توصيل الشبكات',
+   q:'ماذا يحدث للشبكة الخطية Bus إذا انقطع الناقل الرئيسي؟',
+   o:['تتباطأ الشبكة فقط','يتعطل جهاز واحد','تتعطل الشبكة بأكملها','يستمر الاتصال بين بعض الأجهزة'], a:2},
+  {id:10, t:'مخططات توصيل الشبكات',
+   q:'في مخطط Ring، كم اتجاهاً تسري فيه البيانات؟',
+   o:['اتجاهان متعاكسان','ثلاثة اتجاهات','اتجاه واحد فقط','حسب حجم البيانات'], a:2},
+  {id:11, t:'مخططات توصيل الشبكات',
+   q:'ما الجهاز المركزي الذي يُستخدم في مخطط Star؟',
+   o:['Modem المودم','Hub الموزع أو Switch المحول','Server الخادم','Printer الطابعة'], a:1},
+  {id:12, t:'مخططات توصيل الشبكات',
+   q:'ما العيب الرئيسي لمخطط Star؟',
+   o:['بطء شديد في الشبكة دائماً','تعطل الشبكة كاملاً إذا تعطل الجهاز المركزي','لا يمكن إضافة أجهزة جديدة','رخص تكلفته الشديد'], a:1},
+  {id:13, t:'مخططات توصيل الشبكات',
+   q:'ما الميزة الأساسية لمخطط Mesh المتشابك؟',
+   o:['رخص تكلفته مقارنة بالمخططات الأخرى','وجود مسار بديل دائماً عند انقطاع أي اتصال','سهولة التركيب والتشغيل','استخدام جهاز مركزي واحد'], a:1},
+  {id:14, t:'نموذج OSI',
+   q:'كم عدد طبقات نموذج الاتصال المفتوح OSI؟',
+   o:['5 طبقات','6 طبقات','7 طبقات','9 طبقات'], a:2},
+  {id:15, t:'نموذج OSI',
+   q:'ما الطبقة الأولى الدنيا في نموذج OSI التي تنقل البيانات فيزيائياً؟',
+   o:['طبقة الشبكة Network','طبقة ربط البيانات Data Link','طبقة التطبيقات Application','الطبقة الفيزيائية Physical'], a:3},
+  {id:16, t:'نموذج OSI',
+   q:'أيٌّ من الطبقات مسؤولة عن تشفير البيانات Encryption وفك تشفيرها Decryption؟',
+   o:['طبقة الجلسة Session','طبقة التقديم Presentation','طبقة النقل Transport','طبقة الشبكة Network'], a:1},
+  {id:17, t:'نموذج OSI',
+   q:'أيٌّ من الطبقات تستخدم أجهزة Routers وموزعات Switches لتحديد مسار البيانات؟',
+   o:['طبقة النقل Transport','طبقة الجلسة Session','طبقة الشبكة Network','طبقة ربط البيانات Data Link'], a:2},
+  {id:18, t:'البروتوكولات',
+   q:'ما البروتوكول المستخدم لنقل الملفات بين الحواسيب عبر الشبكة؟',
+   o:['HTTP','SMTP','FTP','DNS'], a:2},
+  {id:19, t:'البروتوكولات',
+   q:'ما الفرق الرئيسي بين بروتوكول HTTP و HTTPS؟',
+   o:['HTTPS أبطأ بكثير من HTTP','HTTPS يوفر اتصالاً آمناً مشفراً','HTTP للمواقع الحكومية فقط','لا يوجد أي فرق بينهما'], a:1},
+  {id:20, t:'الشبكات اللاسلكية',
+   q:'ما التقنية اللاسلكية الأكثر شيوعاً في الشبكات المنزلية والمؤسسات؟',
+   o:['Bluetooth بلوتوث','NFC الاتصال قريب المدى','Wi-Fi واي فاي','4G LTE'], a:2},
+];
+
+// Grade categories
+const CATS = [
+  {label:'ممتاز',   min:18, max:20, cls:'g-ex'},
+  {label:'جيد جداً',min:16, max:17, cls:'g-vg'},
+  {label:'جيد',     min:14, max:15, cls:'g-go'},
+  {label:'مقبول',   min:10, max:13, cls:'g-pa'},
+  {label:'دون المستوى', min:0, max:9, cls:'g-fl'},
+];
+function getCat(g){return CATS.find(c=>g>=c.min&&g<=c.max)||CATS[4];}
+const LETTERS = ['أ','ب','ج','د'];
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let myName='', myKey='', curQ=0, answers=new Array(20).fill(null);
+let timerInterval=null, secsLeft=EXAM_MINS*60;
+let dashTimer=null;
+
+// ══════════════════════════════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════════════════════════════
+const H={'Content-Type':'application/json'};
+const fG=async p=>{try{const r=await fetch(`${FB}/${p}.json`);return await r.json();}catch{return null;}};
+const fS=async(p,d)=>{try{await fetch(`${FB}/${p}.json`,{method:'PUT',headers:H,body:JSON.stringify(d)});}catch{}};
+const fD=async p=>{try{await fetch(`${FB}/${p}.json`,{method:'DELETE'});}catch{}};
+
+const show=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);};
+
+// ══════════════════════════════════════════════════════════
+// BUILD LOGIN
+// ══════════════════════════════════════════════════════════
+async function buildLogin(){
+  const g=document.getElementById('login-grid');g.innerHTML='';
+  const data=await fG('students')||{};
+  STUDENTS.forEach((name,i)=>{
+    const key='s'+String(i+1).padStart(2,'0');
+    const submitted=data[key]&&data[key].submitted;
+    const grade=submitted?data[key].grade:null;
+    const b=document.createElement('button');
+    b.className='s-btn'+(submitted?' done':'');
+    b.innerHTML=submitted?`${name}<br><small style="color:var(--gr);font-size:.7rem">✅ ${grade}/20</small>`:name;
+    b.onclick=()=>pickStudent(name,i,submitted,grade);
+    g.appendChild(b);
+  });
+}
+
+async function pickStudent(name,idx,submitted,grade){
+  if(submitted){
+    myName=name;
+    document.getElementById('done-grade').innerHTML=`علامتك: <span style="color:${getCat(grade).cls.replace('g-','')==='ex'?'#00ff88':getCat(grade).cls==='g-vg'?'#00d4ff':getCat(grade).cls==='g-go'?'#a78bfa':getCat(grade).cls==='g-pa'?'#ffc840':'#ff6060'}">${grade}/20 — ${getCat(grade).label}</span>`;
+    show('sc-done');return;
+  }
+  myName=name;myKey='s'+String(idx+1).padStart(2,'0');
+  answers=new Array(20).fill(null);curQ=0;
+  document.getElementById('exam-name-chip').textContent=name;
+  buildNavGrid();renderQ(0);startTimer();
+  show('sc-exam');
+}
+
+// ══════════════════════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════════════════════
+function startTimer(){
+  secsLeft=EXAM_MINS*60;
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    secsLeft--;
+    const m=Math.floor(secsLeft/60),s=secsLeft%60;
+    const el=document.getElementById('exam-timer');
+    el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(secsLeft<=300&&secsLeft>60)el.className='timer warn';
+    else if(secsLeft<=60)el.className='timer danger';
+    if(secsLeft<=0){clearInterval(timerInterval);submitExam();}
+  },1000);
+}
+
+// ══════════════════════════════════════════════════════════
+// NAV GRID
+// ══════════════════════════════════════════════════════════
+function buildNavGrid(){
+  const g=document.getElementById('q-nav-grid');g.innerHTML='';
+  for(let i=0;i<20;i++){
+    const b=document.createElement('button');
+    b.className=`qn-btn${answers[i]!==null?' answered':''}${i===curQ?' current':''}`;
+    b.id=`qnb-${i}`;b.textContent=i+1;b.onclick=()=>renderQ(i);
+    g.appendChild(b);
+  }
+  updateProgress();
+}
+function updateNavBtn(i){
+  const b=document.getElementById(`qnb-${i}`);if(!b)return;
+  b.className=`qn-btn${answers[i]!==null?' answered':''}${i===curQ?' current':''}`;
+}
+function updateProgress(){
+  const n=answers.filter(a=>a!==null).length;
+  document.getElementById('qn-progress').textContent=`${n} / 20 سؤال أُجيب عنه`;
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER QUESTION
+// ══════════════════════════════════════════════════════════
+function renderQ(idx){
+  const prev=curQ;curQ=idx;
+  updateNavBtn(prev);updateNavBtn(idx);
+  const q=EQ[idx];const tc=TC[q.t];
+  document.getElementById('exam-q-counter').textContent=`${idx+1} / 20`;
+  document.getElementById('q-num').textContent=idx+1;
+  const tp=document.getElementById('q-topic');
+  tp.textContent=q.t;tp.style.cssText=`background:${tc.color}18;color:${tc.color};border-color:${tc.color}44`;
+  document.getElementById('q-text').textContent=q.q;
+  const opts=document.getElementById('q-opts');opts.innerHTML='';
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('div');
+    b.className=`opt${answers[idx]===i?' selected':''}`;
+    b.innerHTML=`<div class="opt-letter">${LETTERS[i]}</div><span>${opt}</span>`;
+    b.onclick=()=>{answers[idx]=i;renderQ(idx);};
+    opts.appendChild(b);
+  });
+  document.getElementById('btn-prev').disabled=idx===0;
+  document.getElementById('btn-nxt').disabled=idx===19;
+  updateProgress();
+}
+
+function goQ(dir){const n=curQ+dir;if(n>=0&&n<20)renderQ(n);}
+
+// ══════════════════════════════════════════════════════════
+// REVIEW BEFORE SUBMIT
+// ══════════════════════════════════════════════════════════
+function goReview(){
+  document.getElementById('rev-name').textContent=myName;
+  const unanswered=answers.filter(a=>a===null).length;
+  const warn=document.getElementById('rev-warning');
+  if(unanswered>0){warn.style.display='block';warn.textContent=`⚠️ لم تُجيبي على ${unanswered} سؤال — تأكدي قبل التسليم`;}
+  else warn.style.display='none';
+  const grid=document.getElementById('review-grid');grid.innerHTML='';
+  EQ.forEach((q,i)=>{
+    const ans=answers[i];
+    const div=document.createElement('div');div.className='rev-item';
+    div.style.cursor='pointer';
+    div.innerHTML=`<div class="rev-qn">س${i+1} — ${q.t}</div>
+      <div class="rev-q">${q.q}</div>
+      ${ans!==null?`<span class="rev-ans rev-ok">✓ ${LETTERS[ans]}. ${q.o[ans]}</span>`:
+      `<span class="rev-ans rev-empty">⚠️ لم تُجاب</span>`}`;
+    div.onclick=()=>{renderQ(i);show('sc-exam');};
+    grid.appendChild(div);
+  });
+  show('sc-review');
+}
+
+// ══════════════════════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════════════════════
+async function submitExam(){
+  clearInterval(timerInterval);
+  // Grade
+  let grade=0;
+  const qResults={};const topicScores={};
+  Object.keys(TC).forEach(t=>topicScores[t]={correct:0,total:0});
+  EQ.forEach((q,i)=>{
+    const ok=answers[i]===q.a;
+    if(ok)grade++;
+    qResults[`q${i+1}`]={chosen:answers[i],correct:ok};
+    topicScores[q.t].total++;
+    if(ok)topicScores[q.t].correct++;
+  });
+  const cat=getCat(grade);
+  // Save to Firebase
+  await fS(`students/${myKey}`,{
+    name:myName,grade,submitted:true,submittedAt:Date.now(),
+    qResults,topicScores,timeTaken:EXAM_MINS*60-secsLeft
+  });
+  showGrade(grade,qResults,cat);
+}
+
+// ══════════════════════════════════════════════════════════
+// SHOW GRADE
+// ══════════════════════════════════════════════════════════
+function showGrade(grade,qResults,cat){
+  document.getElementById('grade-name').textContent=myName;
+  const col=cat.cls==='g-ex'?'#00ff88':cat.cls==='g-vg'?'#00d4ff':cat.cls==='g-go'?'#a78bfa':cat.cls==='g-pa'?'#ffc840':'#ff6060';
+  const circle=document.getElementById('grade-circle');
+  circle.style.cssText=`width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 16px;border:5px solid ${col};background:${col}18`;
+  document.getElementById('grade-n').style.color=col;
+  document.getElementById('grade-n').textContent=grade;
+  const catEl=document.getElementById('grade-cat');
+  catEl.textContent=cat.label;catEl.className=`grade-cat ${cat.cls}`;
+  const msgs={'g-ex':'أداء ممتاز! استمري في هذا المستوى 🌟','g-vg':'نتيجة جيدة جداً! قريبة من الامتياز 👏','g-go':'جيد! يمكنك تحسين أدائك أكثر 💪','g-pa':'مقبول — راجعي النقاط التي أخطأتِ فيها 📚','g-fl':'تحتاجين مراجعة إضافية — لا تيأسي ❤️'};
+  document.getElementById('grade-msg').textContent=msgs[cat.cls]||'';
+  // Answers review
+  const ar=document.getElementById('grade-answers');ar.innerHTML='<div style="font-size:.75rem;font-weight:800;color:var(--muted);letter-spacing:.04em;margin-bottom:10px">تفاصيل إجاباتك</div>';
+  EQ.forEach((q,i)=>{
+    const r=qResults[`q${i+1}`];
+    ar.innerHTML+=`<div class="ar-row">
+      <div class="ar-mark">${r.correct?'✅':'❌'}</div>
+      <div class="ar-q">س${i+1}: ${q.q.substring(0,45)}${q.q.length>45?'...':''}</div>
+      ${!r.correct?`<div style="font-size:.72rem;color:#00ff88;min-width:100px;text-align:right">${LETTERS[q.a]}. ${q.o[q.a]}</div>`:''}
+    </div>`;
+  });
+  if(grade>=16)confetti();
+  show('sc-grade');
+}
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════
+function openDash(){document.getElementById('pw-inp').value='';document.getElementById('pw-err').textContent='';document.getElementById('pw-ov').classList.add('open');setTimeout(()=>document.getElementById('pw-inp').focus(),100);}
+function closePW(){document.getElementById('pw-ov').classList.remove('open');}
+function checkPW(){const v=document.getElementById('pw-inp').value.trim();if(v===PASS){closePW();show('sc-dash');loadDash();dashTimer=setInterval(loadDash,5000);}else{document.getElementById('pw-err').textContent='❌ كلمة المرور غير صحيحة';const inp=document.getElementById('pw-inp');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.value='';inp.focus();}}
+function leaveDash(){clearInterval(dashTimer);dashTimer=null;show(myName?'sc-grade':'sc-login');}
+
+async function loadDash(){
+  const data=await fG('students');
+  const students=data?Object.values(data).filter(s=>s&&s.submitted&&s.grade!==undefined):[];
+  renderSummary(students);
+  renderCatSummary(students);
+  renderGradeDist(students);
+  renderQDifficulty(students);
+  renderTopicAnalysis(students);
+  renderGradeSheet(students);
+}
+
+function renderSummary(students){
+  const total=students.length;
+  const avg=total?+(students.reduce((s,st)=>s+st.grade,0)/total).toFixed(1):0;
+  const hi=total?Math.max(...students.map(s=>s.grade)):0;
+  const lo=total?Math.min(...students.map(s=>s.grade)):0;
+  const pass=students.filter(s=>s.grade>=10).length;
+  document.getElementById('dash-summary').innerHTML=`
+    <div class="ds-card"><div class="ds-n" style="color:var(--gr)">${total}</div><div class="ds-l">طالبة قدّمت</div></div>
+    <div class="ds-card"><div class="ds-n" style="color:#ffc840">${avg}</div><div class="ds-l">متوسط العلامة</div></div>
+    <div class="ds-card"><div class="ds-n" style="color:#00ff88">${hi}/20</div><div class="ds-l">أعلى علامة</div></div>
+    <div class="ds-card"><div class="ds-n" style="color:#ff8080">${lo}/20</div><div class="ds-l">أدنى علامة</div></div>
+    <div class="ds-card"><div class="ds-n" style="color:var(--gr)">${pass}</div><div class="ds-l">ناجحة (≥10)</div></div>
+    <div class="ds-card"><div class="ds-n" style="color:#ff8080">${total-pass}</div><div class="ds-l">دون المستوى</div></div>`;
+}
+
+function renderCatSummary(students){
+  const el=document.getElementById('cat-summary');
+  el.innerHTML=CATS.map(cat=>{
+    const n=students.filter(s=>s.grade>=cat.min&&s.grade<=cat.max).length;
+    const pct=students.length?Math.round(n/students.length*100):0;
+    return `<div class="cat-card ${cat.cls}">
+      <div class="cat-n">${n}</div>
+      <div class="cat-l">${cat.label} (${cat.min}-${cat.max})<br>${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderGradeDist(students){
+  const el=document.getElementById('grade-dist');
+  if(!students.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px">لا توجد نتائج</div>';return;}
+  const maxCount=Math.max(...Array.from({length:21},(_,g)=>students.filter(s=>s.grade===g).length));
+  el.innerHTML=Array.from({length:21},(_,g)=>{
+    const n=students.filter(s=>s.grade===g).length;
+    if(n===0)return '';
+    const cat=getCat(g);
+    const w=maxCount?Math.round(n/maxCount*100):0;
+    const col=cat.cls==='g-ex'?'#00ff88':cat.cls==='g-vg'?'#00d4ff':cat.cls==='g-go'?'#a78bfa':cat.cls==='g-pa'?'#ffc840':'#ff6060';
+    return `<div class="gd-row">
+      <div class="gd-label" style="color:${col}">${g}/20</div>
+      <div class="gd-bar-wrap"><div class="gd-bar" style="width:${w}%;background:${col}cc"><span class="gd-bar-n">${n}</span></div></div>
+      <div class="gd-count" style="color:${col}">${n} طالبة</div>
+    </div>`;
+  }).reverse().join('');
+}
+
+function renderQDifficulty(students){
+  const el=document.getElementById('q-difficulty');
+  if(!students.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px">لا توجد نتائج</div>';return;}
+  const rows=EQ.map(q=>{
+    const pct=students.length?Math.round(students.filter(s=>s.qResults&&s.qResults[`q${q.id}`]&&s.qResults[`q${q.id}`].correct).length/students.length*100):0;
+    const col=pct>=80?'#00ff88':pct>=60?'#ffc840':'#ff6060';
+    const tc=TC[q.t];
+    return {id:q.id,text:q.q,pct,col,tc};
+  }).sort((a,b)=>a.pct-b.pct);
+  el.innerHTML='<div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:8px">مرتبة من الأصعب للأسهل</div>'+
+    rows.map(r=>`<div class="qd-row">
+      <div class="qd-n">س${r.id}</div>
+      <div class="qd-text" title="${r.text}">${r.text.substring(0,60)}...</div>
+      <div class="qd-bar-wrap"><div class="qd-bar" style="width:${r.pct}%;background:${r.col}"></div></div>
+      <div class="qd-pct" style="color:${r.col}">${r.pct}% ✓</div>
+      <div style="font-size:.65rem;padding:2px 6px;border-radius:6px;background:${r.tc.color}18;color:${r.tc.color};white-space:nowrap">${r.tc.color?r.id:''}</div>
+    </div>`).join('');
+}
+
+function renderTopicAnalysis(students){
+  const el=document.getElementById('topic-analysis');
+  if(!students.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px">لا توجد نتائج</div>';return;}
+  el.innerHTML=Object.entries(TC).map(([topic,tc])=>{
+    const avgs=students.filter(s=>s.topicScores&&s.topicScores[topic]&&s.topicScores[topic].total>0).map(s=>{
+      const ts=s.topicScores[topic];return Math.round(ts.correct/ts.total*100);
+    });
+    const avg=avgs.length?Math.round(avgs.reduce((s,v)=>s+v,0)/avgs.length):0;
+    const col=avg>=80?tc.color:avg>=60?'#ffc840':'#ff6060';
+    return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:11px">
+      <div style="font-size:.85rem;font-weight:700;color:${tc.color};min-width:200px">${topic}</div>
+      <div style="flex:1;height:12px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden">
+        <div style="height:100%;width:${avg}%;background:${col};border-radius:6px"></div>
+      </div>
+      <div style="font-size:.82rem;font-weight:900;color:${col};min-width:40px">${avg}%</div>
+      ${avg<60?'<span style="font-size:.68rem;font-weight:800;color:#ff8080;background:rgba(255,77,77,.1);padding:2px 7px;border-radius:6px">ضعف</span>':''}
+    </div>`;
+  }).join('');
+}
+
+function renderGradeSheet(students){
+  const el=document.getElementById('grade-sheet');
+  if(!students.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px">⏳ لا توجد نتائج بعد</div>';return;}
+  const sorted=students.sort((a,b)=>b.grade-a.grade);
+  el.innerHTML=sorted.map((s,i)=>{
+    const cat=getCat(s.grade);
+    const col=cat.cls==='g-ex'?'#00ff88':cat.cls==='g-vg'?'#00d4ff':cat.cls==='g-go'?'#a78bfa':cat.cls==='g-pa'?'#ffc840':'#ff6060';
+    const weakTopics=Object.entries(s.topicScores||{}).filter(([t,v])=>v.total>0&&v.correct/v.total<0.6).map(([t])=>t);
+    const mins=s.timeTaken?Math.floor(s.timeTaken/60):null;
+    return `<div class="gs-row">
+      <div class="gs-rank" style="color:${i<3?['#ffc840','#b0b8c4','#cd7f32'][i]:'var(--muted)'}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="gs-name">${s.name}</div>
+      ${mins!==null?`<div style="font-size:.7rem;color:var(--muted);min-width:50px">⏱️${mins}د</div>`:''}
+      <div class="gs-grade" style="background:${col}18;color:${col}">${s.grade}/20</div>
+      <div class="gs-cat ${cat.cls}">${cat.label}</div>
+      <div class="gs-topics">${weakTopics.map(t=>`<span class="gs-tc" style="background:rgba(255,100,100,.1);color:#ff9090;border:1px solid rgba(255,100,100,.2)">⚠️ ${t.split(' ')[0]}</span>`).join('')||'<span style="font-size:.72rem;color:var(--gr)">✅</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
+async function resetExam(){
+  if(!confirm('سيتم مسح جميع نتائج الامتحان بشكل نهائي. هل أنت متأكدة؟'))return;
+  await fD('students');
+  clearInterval(dashTimer);dashTimer=null;
+  await buildLogin();leaveDash();
+  alert('✅ تم مسح جميع النتائج');
+}
+
+function confetti(){const cols=['#00c878','#00b8ff','#a78bfa','#00ff88','#ffc840'];for(let i=0;i<70;i++){setTimeout(()=>{const p=document.createElement('div');p.className='cf';p.style.cssText=`left:${Math.random()*100}vw;top:-20px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2.5+Math.random()*2}s`;document.body.appendChild(p);setTimeout(()=>p.remove(),5000);},i*30);}}
+
+// INIT
+buildLogin();
+</script>
+</body>
+</html>
