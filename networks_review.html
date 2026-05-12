@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مراجعة شبكات الحاسوب | الصف العاشر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07101f;--bg2:#0d1a30;--border:rgba(255,255,255,.09);
+  --text:#e8f0fe;--muted:#6a7f99;--gc:#00ffc8;
+  --T1:#00b8ff;--T2:#7c6fff;--T3:#E8722A;--T4:#00ff88;--T5:#ffc840;--T6:#ff6b9d;
+}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(0,255,200,.015) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(0,255,200,.015) 1px,transparent 1px);background-size:44px 44px}
+.screen{display:none;position:relative;z-index:1;min-height:100vh;padding:20px 16px 70px}
+.screen.active{display:block}
+.hdr{text-align:center;padding:20px 16px 14px}
+.hdr h1{font-size:clamp(1.2rem,3.5vw,1.8rem);font-weight:900;background:linear-gradient(135deg,var(--gc),#7c6fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr p{color:var(--muted);font-size:.85rem;margin-top:5px}
+
+/* LOGIN */
+.subj-badge{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.sbadge{padding:7px 16px;border-radius:20px;font-size:.78rem;font-weight:800;border:1px solid}
+.login-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;max-width:1000px;margin:0 auto}
+.s-btn{padding:12px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.04);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
+.s-btn:hover{background:rgba(0,255,200,.08);border-color:var(--gc);color:var(--gc)}
+
+/* QUIZ */
+.prog-wrap{max-width:700px;margin:0 auto 14px}
+.prog-top{display:flex;justify-content:space-between;font-size:.75rem;font-weight:800;color:var(--muted);margin-bottom:6px}
+.prog-bar{height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gc),#7c6fff);transition:width .4s ease}
+.q-card{max-width:700px;margin:0 auto;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:22px}
+.topic-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:900;margin-bottom:12px;border:1px solid}
+.q-text{font-size:1.05rem;font-weight:800;line-height:1.6;margin-bottom:18px}
+.opts{display:grid;gap:10px}
+.opt{padding:14px 18px;border:2px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.04);cursor:pointer;font-size:.95rem;font-weight:700;transition:all .18s;text-align:right}
+.opt:hover:not(.disabled){border-color:var(--gc);background:rgba(0,255,200,.07);transform:translateY(-1px)}
+.opt.disabled{pointer-events:none}
+.opt.correct{border-color:#00ff88;background:rgba(0,255,136,.12);color:#00ff88}
+.opt.wrong{border-color:#ff4d4d;background:rgba(255,77,77,.1);color:#ff6060}
+.opt.reveal{border-color:#00ff88;background:rgba(0,255,136,.07);color:#00ff88}
+.fb-box{margin-top:12px;padding:12px 16px;border-radius:12px;font-size:.88rem;font-weight:700}
+.fb-ok{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:#00ff88}
+.fb-no{background:rgba(255,77,77,.07);border:1px solid rgba(255,77,77,.2);color:#ff8080}
+.btn-next{display:none;width:calc(100% - 32px);max-width:420px;margin:12px auto;padding:14px;border-radius:13px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;transition:all .2s;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--text)}
+.btn-next:hover{background:rgba(255,255,255,.12)}
+
+/* RESULT */
+.res-card{max-width:680px;margin:0 auto;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:22px;padding:28px}
+.score-ring{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;font-weight:900;border:4px solid}
+.topic-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.tr-name{font-size:.82rem;font-weight:700;min-width:160px}
+.tr-bar{flex:1;height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden}
+.tr-fill{height:100%;border-radius:5px;transition:width .6s ease}
+.tr-pct{font-size:.78rem;font-weight:800;min-width:36px;text-align:left}
+
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;max-width:1100px;margin:0 auto 20px}
+.d-stat{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center}
+.d-stat-n{font-size:2rem;font-weight:900}
+.d-stat-l{font-size:.72rem;font-weight:700;color:var(--muted);margin-top:4px}
+.topic-analysis{max-width:1100px;margin:0 auto 22px;padding:0 14px}
+.ta-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding:10px 14px;background:rgba(255,255,255,.02);border-radius:11px}
+.ta-name{font-size:.85rem;font-weight:700;min-width:180px}
+.ta-bar{flex:1;height:12px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden}
+.ta-fill{height:100%;border-radius:6px;transition:width .6s}
+.ta-pct{font-size:.8rem;font-weight:900;min-width:40px;text-align:left}
+.student-table{max-width:1100px;margin:0 auto;padding:0 14px}
+.st-row{display:flex;align-items:flex-start;gap:0;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .2s;flex-wrap:wrap;gap:8px}
+.st-row:hover{border-color:rgba(0,255,200,.25);background:rgba(0,255,200,.03)}
+.st-row.expanded{border-color:rgba(0,255,200,.35)}
+.st-name{font-size:.9rem;font-weight:800;min-width:200px;flex-shrink:0}
+.st-score{font-size:1rem;font-weight:900;padding:4px 12px;border-radius:10px;min-width:60px;text-align:center}
+.score-hi{background:rgba(0,255,136,.12);color:#00ff88;border:1px solid rgba(0,255,136,.25)}
+.score-mid{background:rgba(255,200,64,.1);color:#ffc840;border:1px solid rgba(255,200,64,.25)}
+.score-lo{background:rgba(255,77,77,.1);color:#ff8080;border:1px solid rgba(255,77,77,.25)}
+.st-attempts{font-size:.75rem;font-weight:700;color:var(--muted);padding:4px 10px}
+.st-weak{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.weak-chip{padding:3px 9px;border-radius:7px;font-size:.68rem;font-weight:800;background:rgba(255,77,77,.1);color:#ff8080;border:1px solid rgba(255,77,77,.2)}
+.expand-detail{display:none;width:100%;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.expand-detail.open{display:block}
+.detail-topic-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.02)}
+.dtr-name{font-size:.78rem;font-weight:700;min-width:150px}
+.dtr-bar{flex:1;height:8px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.dtr-fill{height:100%;border-radius:4px}
+.dtr-score{font-size:.75rem;font-weight:900;min-width:50px;text-align:left;color:var(--muted)}
+.attempts-hist{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.attempt-pill{padding:4px 10px;border-radius:8px;font-size:.72rem;font-weight:800;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--muted)}
+
+/* MISC */
+.btn-main{display:block;width:calc(100% - 32px);max-width:400px;margin:12px auto;padding:15px;background:linear-gradient(135deg,var(--gc),#7c6fff);border:none;border-radius:14px;color:#07101f;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;transition:transform .2s,opacity .2s}
+.btn-main:hover{transform:translateY(-3px);opacity:.9}
+.btn-sec{padding:11px 20px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-sec:hover{background:rgba(255,255,255,.12)}
+.btn-danger{border-color:rgba(255,77,77,.3);color:#ff8080}.btn-danger:hover{background:rgba(255,77,77,.08)}
+.pw-ov{display:none;position:fixed;inset:0;z-index:8888;background:rgba(7,16,31,.9);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.pw-ov.open{display:flex}
+.pw-modal{background:#0d1a30;border:1px solid rgba(0,255,200,.25);border-radius:22px;padding:34px;width:min(400px,92vw);text-align:center;animation:mi .3s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes mi{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.pw-inp{display:block;width:100%;padding:14px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.4rem;text-align:center;letter-spacing:.25em;direction:ltr;outline:none;margin-bottom:12px;transition:border-color .2s}
+.pw-inp:focus{border-color:var(--gc)}
+.pw-inp.shake{animation:shk .4s ease}
+@keyframes shk{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}
+.pw-err{color:#ff4d4d;font-size:.83rem;min-height:18px;margin-bottom:10px;font-weight:700}
+.float-btn{position:fixed;bottom:18px;left:18px;padding:10px 16px;background:rgba(13,26,48,.95);border:1.5px solid rgba(255,255,255,.15);border-radius:11px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;z-index:999;backdrop-filter:blur(10px);transition:all .2s}
+.float-btn:hover{border-color:var(--gc);color:var(--gc)}
+.no-data{text-align:center;color:var(--muted);padding:40px;font-size:.9rem;font-weight:700}
+
+/* LEADERBOARD */
+.lb-wrap{max-width:600px;margin:18px auto 0;background:rgba(255,200,64,.05);border:1.5px solid rgba(255,200,64,.22);border-radius:18px;padding:16px 18px}
+.lb-title{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:900;color:#ffc840;letter-spacing:.06em;margin-bottom:12px;text-transform:uppercase}
+.lb-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:11px;margin-bottom:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);transition:all .3s}
+.lb-row:last-child{margin-bottom:0}
+.lb-row.me{background:rgba(0,255,200,.08);border-color:rgba(0,255,200,.25)}
+.lb-medal{font-size:1.3rem;width:32px;text-align:center;flex-shrink:0}
+.lb-name{flex:1;font-size:.88rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-score{font-size:1rem;font-weight:900;min-width:46px;text-align:center;padding:4px 10px;border-radius:8px}
+.lb-attempts{font-size:.68rem;font-weight:700;color:var(--muted);min-width:40px;text-align:center}
+.lb-bar-mini{width:60px;height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.lb-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#ffc840,#E8722A)}
+.lb-empty{text-align:center;color:var(--muted);font-size:.82rem;font-weight:700;padding:14px 0}
+.section-title{font-size:.75rem;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;max-width:1100px;margin-left:auto;margin-right:auto;padding:0 14px}
+.cf{position:fixed;pointer-events:none;border-radius:2px;z-index:9999;animation:cfall linear forwards}
+@keyframes cfall{0%{transform:translateY(-60px) rotate(0deg);opacity:1}100%{transform:translateY(105vh) rotate(800deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- SC1: LOGIN -->
+<div id="sc-login" class="screen active">
+  <div class="hdr">
+    <h1>🌐 مراجعة شبكات الحاسوب</h1>
+    <p>الصف العاشر | اختاري اسمك لبدء المراجعة</p>
+  </div>
+  <div class="subj-badge">
+    <div class="sbadge" style="background:rgba(0,184,255,.1);border-color:rgba(0,184,255,.3);color:#00b8ff">LAN • MAN • WAN</div>
+    <div class="sbadge" style="background:rgba(232,114,42,.1);border-color:rgba(232,114,42,.3);color:#E8722A">Topologies</div>
+    <div class="sbadge" style="background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.3);color:#00ff88">OSI Model</div>
+    <div class="sbadge" style="background:rgba(255,200,64,.1);border-color:rgba(255,200,64,.3);color:#ffc840">Protocols</div>
+    <div class="sbadge" style="background:rgba(255,107,157,.1);border-color:rgba(255,107,157,.3);color:#ff6b9d">Wireless</div>
+  </div>
+  <div class="login-grid" id="login-grid"></div>
+
+  <!-- LEADERBOARD on login -->
+  <div class="lb-wrap" id="lb-login">
+    <div class="lb-title">🏆 المتصدرات الآن — أفضل 5 طالبات</div>
+    <div id="lb-login-list"><div class="lb-empty">⏳ لم تبدأ أي محاولة بعد</div></div>
+    <div style="text-align:center;margin-top:8px;font-size:.65rem;color:var(--muted);font-weight:700">يتحدث تلقائياً كل 5 ثوانٍ</div>
+  </div>
+
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC2: QUIZ -->
+<div id="sc-quiz" class="screen">
+  <div class="hdr" style="padding-bottom:6px">
+    <h1 id="quiz-name">مراجعة</h1>
+    <p id="quiz-attempt-label" style="color:#ffc840"></p>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-top">
+      <span id="q-num-lbl">السؤال 1 من 30</span>
+      <span id="q-score-lbl">0 ✓</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0"></div></div>
+  </div>
+  <div class="q-card">
+    <div class="topic-badge" id="topic-badge"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="opts" id="q-opts"></div>
+    <div id="q-fb" style="display:none" class="fb-box"></div>
+  </div>
+  <button class="btn-next" id="btn-next" onclick="nextQ()">التالي ←</button>
+
+  <!-- LEADERBOARD mini during quiz -->
+  <div class="lb-wrap" style="margin-top:16px;max-width:700px" id="lb-quiz">
+    <div class="lb-title">🏆 المتصدرات — أفضل 5</div>
+    <div id="lb-quiz-list"><div class="lb-empty">⏳ لا توجد نتائج بعد</div></div>
+  </div>
+
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC3: RESULT -->
+<div id="sc-result" class="screen">
+  <div class="hdr"><h1>🏆 نتيجتك</h1><p id="res-name"></p></div>
+  <div class="res-card">
+    <div class="score-ring" id="score-ring"></div>
+    <div style="text-align:center;margin-bottom:20px">
+      <div id="res-score" style="font-size:1.6rem;font-weight:900;margin-bottom:4px"></div>
+      <div id="res-stars" style="font-size:1.8rem"></div>
+      <div id="res-msg" style="font-size:.85rem;color:var(--muted);margin-top:6px"></div>
+    </div>
+    <div style="font-size:.75rem;font-weight:800;color:var(--muted);letter-spacing:.05em;margin-bottom:12px">الأداء حسب الموضوع</div>
+    <div id="res-topics"></div>
+    <div id="res-history" style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)"></div>
+  </div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap">
+    <button class="btn-sec" onclick="show('sc-login')">🔙 الرئيسية</button>
+    <button class="btn-main" style="margin:0;padding:14px 28px" onclick="retryQuiz()">🔁 محاولة أخرى</button>
+  </div>
+
+  <!-- LEADERBOARD on result -->
+  <div class="lb-wrap" id="lb-result">
+    <div class="lb-title">🏆 ترتيبك بين زميلاتك — أفضل 5</div>
+    <div id="lb-result-list"><div class="lb-empty">⏳ جارٍ التحميل...</div></div>
+    <div id="lb-my-rank" style="margin-top:10px;text-align:center;font-size:.82rem;font-weight:800;color:var(--muted)"></div>
+  </div>
+</div>
+
+<!-- SC4: DASHBOARD -->
+<div id="sc-dash" class="screen">
+  <div class="hdr"><h1>📊 لوحة تحليل النتائج</h1><p>تحديث كل 5 ثوانٍ | مراجعة شبكات الحاسوب</p></div>
+  <div class="dash-grid" id="dash-stats"></div>
+
+  <div class="section-title">📈 أداء الفصل حسب الموضوع</div>
+  <div class="topic-analysis" id="topic-analysis"></div>
+
+  <div class="section-title" style="margin-bottom:8px">
+    🔴 الطالبات اللواتي يحتجن دعماً (أقل من 60%)
+  </div>
+  <div style="max-width:1100px;margin:0 auto 18px;padding:0 14px" id="needs-help"></div>
+
+  <div class="section-title">👩‍🎓 تفاصيل كل طالبة — اضغطي للتوسع</div>
+  <div class="student-table" id="student-table"><div class="no-data">⏳ لا توجد نتائج بعد</div></div>
+
+  <div style="text-align:center;margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-sec" onclick="leaveDash()">🔙 العودة</button>
+    <button class="btn-sec btn-danger" onclick="resetAll()">🗑️ مسح جميع النتائج</button>
+  </div>
+</div>
+
+<!-- PASSWORD -->
+<div class="pw-ov" id="pw-ov">
+  <div class="pw-modal">
+    <div style="font-size:2.2rem;margin-bottom:10px">📊</div>
+    <h2 style="font-size:1.1rem;font-weight:900;margin-bottom:5px">شاشة المعلمة</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">أدخلي كلمة المرور</p>
+    <input class="pw-inp" id="pw-inp" type="password" placeholder="••••" maxlength="10"
+      onkeydown="if(event.key==='Enter')checkPW()"
+      oninput="document.getElementById('pw-err').textContent=''">
+    <div class="pw-err" id="pw-err"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-sec" style="flex:1" onclick="closePW()">إلغاء</button>
+      <button class="btn-main" style="margin:0;flex:1;padding:12px" onclick="checkPW()">دخول 🚀</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════
+const FB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com/networks_review_v1';
+const PASS = '1234';
+
+// ══════════════════════════════════════════════════════════
+// STUDENTS
+// ══════════════════════════════════════════════════════════
+const STUDENTS = [
+  'اسراء مصطفى سليم عبدالرحمن حسن',
+  'اسيل ايمن يوسف حسن الحورانى',
+  'انفال سيف ناصر الدرعى الكعبى',
+  'ايه امير خيرى بابكر خيرى',
+  'بانا زكريا خلف بني هاني',
+  'جنى تميم المقداد',
+  'حبيبه عمرو نور الدين هاشم',
+  'حنين اشرف عبدالقادر محمد شاهين',
+  'دعاء غزوان الحمدان',
+  'روفيده محمد عبدالظاهر محمد مهنى',
+  'رويدا محمد عبدالظاهر محمد مهنى',
+  'ريناد امجد شعبان عطيه',
+  'سارة المتولى برهام حسن السيد',
+  'سجى يونس سعيد شجراوي',
+  'سلمى محمد زكريا محمد محمود',
+  'عائشة احمد محمد حامد محمد',
+  'عائشه عادل محمد على البلوشى',
+  'فاطمه عوض الله عباس الحسين',
+  'كريمه عزو العلى',
+  'كنانه فؤاد حسين اللحام',
+  'ليلى محمد النوراني بشاره',
+  'ملاك يحيى الاحمدالعبدالموسى',
+  'منار حمد العبيد',
+  'منة الله محمد محمود على فايد',
+  'ندى السيد',
+  'نور محمود',
+  'نور الهدى',
+  'ندى احمد',
+  'نرهان محمود',
+  'هيفاء حسين',
+  'وهج كاظم',
+];
+
+// ══════════════════════════════════════════════════════════
+// TOPICS + COLORS
+// ══════════════════════════════════════════════════════════
+const TC = {
+  'تعريف الشبكة':        {color:'#00b8ff', var:'--T1'},
+  'أنواع الشبكات الجغرافية': {color:'#7c6fff', var:'--T2'},
+  'مخططات توصيل الشبكات':  {color:'#E8722A', var:'--T3'},
+  'نموذج OSI':           {color:'#00ff88', var:'--T4'},
+  'البروتوكولات':         {color:'#ffc840', var:'--T5'},
+  'الشبكات اللاسلكية':    {color:'#ff6b9d', var:'--T6'},
+};
+
+// ══════════════════════════════════════════════════════════
+// 30 QUESTIONS
+// ══════════════════════════════════════════════════════════
+const ALL_Q = [
+  // ── تعريف الشبكة ──
+  {id:1, t:'تعريف الشبكة',
+   q:'ما الحد الأدنى لعدد الحواسيب اللازمة لتكوين شبكة حاسوب؟',
+   o:['حاسوب واحد','حاسوبان (اثنان)','ثلاثة حواسيب','أربعة حواسيب'], a:1},
+  {id:2, t:'تعريف الشبكة',
+   q:'من أي جزأين أساسيين تتكون شبكة الحاسوب؟',
+   o:['الخوادم والعملاء','الأجهزة الطرفية والنواقل','البرامج والأجهزة فقط','الكابلات والأجهزة الضوئية'], a:1},
+  // ── أنواع الشبكات ──
+  {id:3, t:'أنواع الشبكات الجغرافية',
+   q:'ما اختصار الشبكة المحلية الضيقة النطاق الجغرافي؟',
+   o:['WAN','MAN','LAN','SAN'], a:2},
+  {id:4, t:'أنواع الشبكات الجغرافية',
+   q:'أيٌّ من الشبكات التالية تغطي نطاقاً ضيقاً كمبنى مدرسة أو شركة؟',
+   o:['WAN','MAN','LAN','شبكة الإنترنت'], a:2},
+  {id:5, t:'أنواع الشبكات الجغرافية',
+   q:'ما الشبكة التي تربط عدة مبانٍ في نفس المدينة كجامعة متعددة المباني؟',
+   o:['LAN','WAN','MAN','Bluetooth'], a:2},
+  {id:6, t:'أنواع الشبكات الجغرافية',
+   q:'الإنترنت هو المثال الأبرز على أي نوع من الشبكات؟',
+   o:['LAN','MAN','WAN','شبكة مدرسية'], a:2},
+  {id:7, t:'أنواع الشبكات الجغرافية',
+   q:'ما الغرض الرئيسي من استخدام الشبكة المحلية LAN؟',
+   o:['الاتصال الدولي','مشاركة الموارد والخدمات كالطابعات والملفات','تخزين البيانات بشكل مستقل','تشفير الرسائل فقط'], a:1},
+  // ── مخططات التوصيل ──
+  {id:8, t:'مخططات توصيل الشبكات',
+   q:'ماذا تعني كلمة Topology في شبكات الحاسوب؟',
+   o:['سرعة نقل البيانات','مخطط اتصال الأجهزة ببعضها','عدد الأجهزة المتصلة','نوع الكابل المستخدم'], a:1},
+  {id:9, t:'مخططات توصيل الشبكات',
+   q:'في المخطط الخطي Bus كيف يتم توصيل جميع الأجهزة؟',
+   o:['بجهاز مركزي Hub','بناقل رئيسي Bus مشترك','بشكل حلقة مغلقة','بتوصيلات مباشرة بين كل جهاز'], a:1},
+  {id:10, t:'مخططات توصيل الشبكات',
+   q:'ما المشكلة التي تحدث في مخطط Bus عند إرسال جهازين في نفس الوقت؟',
+   o:['انقطاع الكهرباء','Collision تصادم البيانات','بطء شديد في الشبكة','انفصال الأجهزة تلقائياً'], a:1},
+  {id:11, t:'مخططات توصيل الشبكات',
+   q:'ماذا يحدث للشبكة الخطية Bus إذا انقطع الناقل الرئيسي؟',
+   o:['تتباطأ الشبكة فقط','يتعطل جهاز واحد فقط','تتعطل الشبكة بأكملها','لا يتأثر الاتصال'], a:2},
+  {id:12, t:'مخططات توصيل الشبكات',
+   q:'في المخطط الحلقي Ring كم اتجاهاً تسري فيه البيانات عبر الشبكة؟',
+   o:['اتجاهان مختلفان','ثلاثة اتجاهات','اتجاه واحد فقط','حسب حجم البيانات'], a:2},
+  {id:13, t:'مخططات توصيل الشبكات',
+   q:'ما ميزة المخطط الحلقي Ring مقارنة بالمخطط الخطي Bus؟',
+   o:['أرخص تكلفةً','يقلل من تصادم Collision البيانات','أسهل في التركيب','يستخدم كابلات أقل'], a:1},
+  {id:14, t:'مخططات توصيل الشبكات',
+   q:'ما الجهاز المركزي الذي يُستخدم في المخطط النجمي Star؟',
+   o:['Router بروتر فقط','Hub موزع أو Switch محول','Modem مودم','Server خادم'], a:1},
+  {id:15, t:'مخططات توصيل الشبكات',
+   q:'ما العيب الرئيسي للمخطط النجمي Star؟',
+   o:['تكلفته مرتفعة دائماً','تعطل كامل الشبكة عند تعطل الجهاز المركزي','بطء نقل البيانات','عدم إمكانية التوسع'], a:1},
+  {id:16, t:'مخططات توصيل الشبكات',
+   q:'ما ميزة المخطط المتشابك Mesh الأساسية؟',
+   o:['رخص تكلفته','وجود مسار بديل دائماً عند انقطاع أي اتصال','سهولة التركيب','استخدام جهاز مركزي واحد'], a:1},
+  {id:17, t:'مخططات توصيل الشبكات',
+   q:'أيٌّ من المخططات التالية يدمج أكثر من تصميم هيكلي للشبكات؟',
+   o:['Ring الحلقي','Star النجمي','Hybrid المختلط','Bus الخطي'], a:2},
+  // ── نموذج OSI ──
+  {id:18, t:'نموذج OSI',
+   q:'كم عدد طبقات نموذج الاتصال المفتوح OSI؟',
+   o:['5 طبقات','6 طبقات','7 طبقات','8 طبقات'], a:2},
+  {id:19, t:'نموذج OSI',
+   q:'ما الطبقة الأولى (الدنيا) في نموذج OSI التي تنقل البيانات عبر الوسط الملموس؟',
+   o:['طبقة الشبكة','طبقة التطبيقات','طبقة ربط البيانات','الطبقة الفيزيائية Physical'], a:3},
+  {id:20, t:'نموذج OSI',
+   q:'ما الطبقة السابعة (العليا) في نموذج OSI المسؤولة عن تشغيل التطبيقات البرمجية؟',
+   o:['طبقة النقل Transport','طبقة الجلسة Session','طبقة التطبيقات Application','طبقة التقديم Presentation'], a:2},
+  {id:21, t:'نموذج OSI',
+   q:'أي طبقة في OSI مسؤولة عن تشفير Encryption وفك تشفير Decryption البيانات؟',
+   o:['طبقة الجلسة Session','طبقة التقديم Presentation','طبقة النقل Transport','طبقة الشبكة Network'], a:1},
+  {id:22, t:'نموذج OSI',
+   q:'أي طبقة OSI تستخدم أجهزة Routers وموزعات Switches لتحديد المسار المنطقي؟',
+   o:['طبقة النقل Transport','طبقة الجلسة Session','طبقة الشبكة Network','طبقة ربط البيانات Data Link'], a:2},
+  {id:23, t:'نموذج OSI',
+   q:'أي طبقة OSI تحول حزم البيانات إلى إطارات Frames وتفحص الأخطاء الفيزيائية؟',
+   o:['الطبقة الفيزيائية','طبقة ربط البيانات Data Link','طبقة الشبكة','طبقة التقديم'], a:1},
+  {id:24, t:'نموذج OSI',
+   q:'ما وظيفة طبقة الجلسة Session في نموذج OSI؟',
+   o:['تشفير البيانات وفك تشفيرها','تأسيس الاتصال بين المصدر Source والوجهة Destination','نقل البيانات فيزيائياً عبر الكابلات','تشغيل التطبيقات البرمجية'], a:1},
+  // ── البروتوكولات ──
+  {id:25, t:'البروتوكولات',
+   q:'ماذا يعني اختصار TCP في بروتوكول TCP/IP؟',
+   o:['Transfer Control Program','Transmission Control Protocol','Text Communication Protocol','Terminal Control Package'], a:1},
+  {id:26, t:'البروتوكولات',
+   q:'ما البروتوكول المستخدم لنقل الملفات بين الحواسيب عبر الشبكة؟',
+   o:['HTTP','SMTP','FTP','DNS'], a:2},
+  {id:27, t:'البروتوكولات',
+   q:'ما البروتوكول الذي يُستخدم لإرسال رسائل البريد الإلكتروني؟',
+   o:['FTP','DNS','HTTP','SMTP'], a:3},
+  {id:28, t:'البروتوكولات',
+   q:'ما الفرق الرئيسي بين بروتوكول HTTP و HTTPS؟',
+   o:['HTTPS أبطأ بكثير من HTTP','HTTPS يوفر اتصالاً آمناً مشفراً بين حاسوبين','HTTP للمواقع الحكومية فقط','لا يوجد فرق بينهما'], a:1},
+  {id:29, t:'البروتوكولات',
+   q:'ما وظيفة نظام أسماء النطاقات DNS؟',
+   o:['تشفير البيانات المرسلة','نقل الملفات بين الأجهزة','تحويل أسماء المواقع إلى عناوين IP','إرسال البريد الإلكتروني'], a:2},
+  // ── الشبكات اللاسلكية ──
+  {id:30, t:'الشبكات اللاسلكية',
+   q:'أيٌّ من التقنيات اللاسلكية التالية يُستخدم للمسافات القصيرة جداً كالهواتف والسماعات اللاسلكية؟',
+   o:['Wi-Fi','Bluetooth بلوتوث','NFC قريب المدى','4G LTE'], a:1},
+];
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let myName='', myKey='', curQs=[], curIdx=0, curScore=0, curTopicMap={};
+let dashTimer=null;
+
+// ══════════════════════════════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════════════════════════════
+const H={'Content-Type':'application/json'};
+const fG=async p=>{try{const r=await fetch(`${FB}/${p}.json`);return await r.json();}catch{return null;}};
+const fS=async(p,d)=>{try{await fetch(`${FB}/${p}.json`,{method:'PUT',headers:H,body:JSON.stringify(d)});}catch{}};
+const fP=async(p,d)=>{try{await fetch(`${FB}/${p}.json`,{method:'PATCH',headers:H,body:JSON.stringify(d)});}catch{}};
+const fD=async p=>{try{await fetch(`${FB}/${p}.json`,{method:'DELETE'});}catch{}};
+const show=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);};
+
+// ══════════════════════════════════════════════════════════
+// BUILD LOGIN
+// ══════════════════════════════════════════════════════════
+function buildLogin(){
+  const g=document.getElementById('login-grid');g.innerHTML='';
+  STUDENTS.forEach((name,i)=>{
+    const b=document.createElement('button');b.className='s-btn';b.textContent=name;
+    b.onclick=()=>startQuiz(name,i);g.appendChild(b);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// START QUIZ
+// ══════════════════════════════════════════════════════════
+async function startQuiz(name,idx){
+  myName=name;
+  myKey='s'+String(idx+1).padStart(2,'0');
+  curScore=0;curIdx=0;curTopicMap={};
+  curQs=shuffle([...ALL_Q]);
+  // init topic map
+  Object.keys(TC).forEach(t=>{curTopicMap[t]={correct:0,total:0};});
+  curQs.forEach(q=>curTopicMap[q.t].total++);
+
+  const data=await fG(`students/${myKey}`);
+  const attempts=(data&&data.attempts)?Object.keys(data.attempts).length:0;
+  document.getElementById('quiz-name').textContent=name;
+  document.getElementById('quiz-attempt-label').textContent=`المحاولة رقم ${attempts+1}`;
+  show('sc-quiz');
+  renderQ(0);
+}
+
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+
+// ══════════════════════════════════════════════════════════
+// RENDER QUESTION
+// ══════════════════════════════════════════════════════════
+function renderQ(idx){
+  const q=curQs[idx];
+  const tc=TC[q.t];
+  document.getElementById('q-num-lbl').textContent=`السؤال ${idx+1} من ${curQs.length}`;
+  document.getElementById('q-score-lbl').textContent=`${curScore} ✓`;
+  document.getElementById('prog-fill').style.width=`${(idx/curQs.length)*100}%`;
+  const badge=document.getElementById('topic-badge');
+  badge.textContent=q.t;badge.style.cssText=`background:${tc.color}18;color:${tc.color};border:1px solid ${tc.color}44`;
+  document.getElementById('q-text').textContent=q.q;
+  const opts=document.getElementById('q-opts');opts.innerHTML='';
+  const shuffledOpts=shuffleOpts(q.o,q.a);
+  shuffledOpts.opts.forEach((opt,i)=>{
+    const b=document.createElement('div');b.className='opt';b.textContent=opt;
+    b.onclick=()=>evalAnswer(q,shuffledOpts.ansIdx,i,b);
+    opts.appendChild(b);
+  });
+  document.getElementById('q-fb').style.display='none';
+  document.getElementById('btn-next').style.display='none';
+}
+
+function shuffleOpts(opts,ansIdx){
+  const paired=opts.map((o,i)=>({o,isAns:i===ansIdx}));
+  for(let i=paired.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[paired[i],paired[j]]=[paired[j],paired[i]];}
+  return{opts:paired.map(p=>p.o),ansIdx:paired.findIndex(p=>p.isAns)};
+}
+
+function evalAnswer(q,ansIdx,chosen,el){
+  const correct=chosen===ansIdx;
+  if(correct){curScore++;curTopicMap[q.t].correct++;}
+  document.querySelectorAll('.opt').forEach((b,i)=>{
+    b.classList.add('disabled');
+    if(i===ansIdx)b.classList.add(correct&&i===chosen?'correct':'reveal');
+    if(i===chosen&&!correct)b.classList.add('wrong');
+  });
+  document.getElementById('q-score-lbl').textContent=`${curScore} ✓`;
+  const fb=document.getElementById('q-fb');
+  fb.textContent=correct?'✅ إجابة صحيحة!':'❌ إجابة خاطئة — الإجابة الصحيحة مُظللة بالأخضر';
+  fb.className=`fb-box ${correct?'fb-ok':'fb-no'}`;
+  fb.style.display='block';
+  const nb=document.getElementById('btn-next');
+  nb.style.display='block';
+  nb.textContent=curIdx===curQs.length-1?'عرض النتيجة 🏁':'التالي ←';
+}
+
+function nextQ(){
+  curIdx++;
+  if(curIdx>=curQs.length){finishQuiz();return;}
+  renderQ(curIdx);
+}
+
+// ══════════════════════════════════════════════════════════
+// FINISH + SAVE
+// ══════════════════════════════════════════════════════════
+async function finishQuiz(){
+  const pct=Math.round((curScore/curQs.length)*100);
+  const ts=Date.now();
+  // Build topic scores for Firebase (sanitize keys)
+  const topicScores={};
+  Object.entries(curTopicMap).forEach(([t,v])=>{
+    const key=t.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g,'_');
+    topicScores[key]={...v,topic:t};
+  });
+  const newAttempt={ts,score:curScore,total:curQs.length,pct,topicScores};
+  // Get existing data
+  let data=await fG(`students/${myKey}`)||{name:myName,attempts:{}};
+  if(!data.attempts)data.attempts={};
+  const attemptKey='a'+ts;
+  data.attempts[attemptKey]=newAttempt;
+  // Recompute avg
+  const all=Object.values(data.attempts);
+  data.avgPct=Math.round(all.reduce((s,a)=>s+a.pct,0)/all.length);
+  data.attempts_count=all.length;
+  // Compute per-topic averages
+  const topicAvgs={};
+  Object.keys(TC).forEach(t=>{
+    const key=t.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g,'_');
+    const vals=all.map(a=>a.topicScores&&a.topicScores[key]?
+      Math.round((a.topicScores[key].correct/Math.max(a.topicScores[key].total,1))*100):null).filter(v=>v!==null);
+    topicAvgs[key]={avgPct:vals.length?Math.round(vals.reduce((s,v)=>s+v,0)/vals.length):0,topic:t};
+  });
+  data.topicAvgs=topicAvgs;
+  // Compute weak topics
+  data.weakTopics=Object.values(topicAvgs).filter(v=>v.avgPct<60).map(v=>v.topic);
+  await fS(`students/${myKey}`,data);
+  showResult(curScore,curQs.length,pct,data);
+}
+
+function showResult(score,total,pct,data){
+  document.getElementById('res-name').textContent=myName;
+  const ring=document.getElementById('score-ring');
+  const col=pct>=80?'#00ff88':pct>=60?'#ffc840':'#ff6060';
+  ring.style.cssText=`width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2rem;font-weight:900;border:4px solid ${col};background:${col}18;color:${col}`;
+  ring.textContent=pct+'%';
+  document.getElementById('res-score').textContent=`${score} / ${total} إجابة صحيحة`;
+  document.getElementById('res-stars').textContent=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':pct>=50?'⭐':'';
+  document.getElementById('res-msg').textContent=pct>=80?'ممتاز! أداء رائع':pct>=60?'جيد! يمكنك التحسن أكثر':'تحتاج مراجعة إضافية — حاولي مرة أخرى';
+  // Topics
+  const rt=document.getElementById('res-topics');rt.innerHTML='';
+  Object.keys(TC).forEach(topic=>{
+    const v=curTopicMap[topic];if(!v||v.total===0)return;
+    const tp=Math.round((v.correct/v.total)*100);
+    const c=TC[topic].color;
+    rt.innerHTML+=`<div class="topic-row">
+      <div class="tr-name" style="color:${c};font-size:.8rem">${topic}</div>
+      <div class="tr-bar"><div class="tr-fill" style="width:${tp}%;background:${c}"></div></div>
+      <div class="tr-pct" style="color:${c}">${v.correct}/${v.total}</div>
+    </div>`;
+  });
+  // History
+  if(data&&data.attempts_count>1){
+    const rh=document.getElementById('res-history');
+    const prev=Object.values(data.attempts).sort((a,b)=>a.ts-b.ts);
+    rh.innerHTML=`<div style="font-size:.75rem;font-weight:800;color:var(--muted);letter-spacing:.05em;margin-bottom:8px">📈 تاريخ المحاولات</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${prev.map((a,i)=>`
+        <div style="padding:5px 12px;border-radius:9px;font-size:.78rem;font-weight:800;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:${a.pct>=80?'#00ff88':a.pct>=60?'#ffc840':'#ff8080'}">
+          م${i+1}: ${a.pct}%
+        </div>`).join('')}
+      </div>
+      <div style="font-size:.8rem;font-weight:800;color:var(--gc);margin-top:8px">المعدل الكلي: ${data.avgPct}%</div>`;
+  }
+  if(pct>=80)confetti();
+  show('sc-result');
+}
+
+function retryQuiz(){startQuiz(myName,STUDENTS.indexOf(myName));}
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════
+function openDash(){document.getElementById('pw-inp').value='';document.getElementById('pw-err').textContent='';document.getElementById('pw-ov').classList.add('open');setTimeout(()=>document.getElementById('pw-inp').focus(),100);}
+function closePW(){document.getElementById('pw-ov').classList.remove('open');}
+function checkPW(){const v=document.getElementById('pw-inp').value.trim();if(v===PASS){closePW();show('sc-dash');loadDash();dashTimer=setInterval(loadDash,5000);}else{document.getElementById('pw-err').textContent='❌ كلمة المرور غير صحيحة';const inp=document.getElementById('pw-inp');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.value='';inp.focus();}}
+function leaveDash(){clearInterval(dashTimer);dashTimer=null;show(myName?'sc-result':'sc-login');}
+
+async function loadDash(){
+  const data=await fG('students');
+  renderStats(data);
+  renderTopicAnalysis(data);
+  renderNeedsHelp(data);
+  renderStudentTable(data);
+}
+
+function renderStats(data){
+  if(!data){document.getElementById('dash-stats').innerHTML='';return;}
+  const students=Object.values(data);
+  const withData=students.filter(s=>s&&s.avgPct!==undefined);
+  const total=withData.length;
+  const classAvg=total?Math.round(withData.reduce((s,st)=>s+st.avgPct,0)/total):0;
+  const hi=total?Math.max(...withData.map(s=>s.avgPct)):0;
+  const lo=total?Math.min(...withData.map(s=>s.avgPct)):0;
+  const attempts=students.reduce((s,st)=>s+(st.attempts_count||0),0);
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="d-stat"><div class="d-stat-n" style="color:var(--gc)">${total}</div><div class="d-stat-l">طالبة شاركت</div></div>
+    <div class="d-stat"><div class="d-stat-n" style="color:#ffc840">${classAvg}%</div><div class="d-stat-l">متوسط الفصل</div></div>
+    <div class="d-stat"><div class="d-stat-n" style="color:#00ff88">${hi}%</div><div class="d-stat-l">أعلى درجة</div></div>
+    <div class="d-stat"><div class="d-stat-n" style="color:#ff8080">${lo}%</div><div class="d-stat-l">أدنى درجة</div></div>
+    <div class="d-stat"><div class="d-stat-n" style="color:#7c6fff">${attempts}</div><div class="d-stat-l">إجمالي المحاولات</div></div>`;
+}
+
+function renderTopicAnalysis(data){
+  const el=document.getElementById('topic-analysis');
+  if(!data){el.innerHTML='<div class="no-data">لا توجد بيانات</div>';return;}
+  const students=Object.values(data).filter(s=>s&&s.topicAvgs);
+  if(!students.length){el.innerHTML='<div class="no-data">لا توجد نتائج بعد</div>';return;}
+  el.innerHTML='';
+  Object.entries(TC).forEach(([topic,tc])=>{
+    const key=topic.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g,'_');
+    const avgs=students.map(s=>s.topicAvgs&&s.topicAvgs[key]?s.topicAvgs[key].avgPct:null).filter(v=>v!==null);
+    const avg=avgs.length?Math.round(avgs.reduce((s,v)=>s+v,0)/avgs.length):0;
+    const col=avg>=80?tc.color:avg>=60?'#ffc840':'#ff6060';
+    el.innerHTML+=`<div class="ta-row">
+      <div class="ta-name" style="color:${tc.color}">${topic}</div>
+      <div class="ta-bar"><div class="ta-fill" style="width:${avg}%;background:${col}"></div></div>
+      <div class="ta-pct" style="color:${col}">${avg}%</div>
+      ${avg<60?'<span style="font-size:.7rem;font-weight:800;color:#ff8080;padding:2px 8px;border-radius:6px;background:rgba(255,77,77,.1)">ضعف</span>':''}
+    </div>`;
+  });
+}
+
+function renderNeedsHelp(data){
+  const el=document.getElementById('needs-help');
+  if(!data){el.innerHTML='';return;}
+  const weak=Object.values(data).filter(s=>s&&s.avgPct!==undefined&&s.avgPct<60);
+  if(!weak.length){el.innerHTML='<div style="padding:12px 16px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:12px;font-size:.88rem;font-weight:700;color:#00ff88">✅ جميع الطالبات فوق 60%</div>';return;}
+  el.innerHTML=`<div style="padding:14px 18px;background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.2);border-radius:14px">
+    <div style="font-size:.8rem;font-weight:800;color:#ff8080;margin-bottom:10px">⚠️ ${weak.length} طالبة بحاجة لدعم إضافي</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">${weak.sort((a,b)=>a.avgPct-b.avgPct).map(s=>`
+      <span style="padding:5px 14px;border-radius:10px;font-size:.82rem;font-weight:700;background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.25);color:#ff8080">
+        ${s.name} — ${s.avgPct}%
+      </span>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderStudentTable(data){
+  const el=document.getElementById('student-table');
+  if(!data){el.innerHTML='<div class="no-data">لا توجد نتائج بعد</div>';return;}
+  const students=Object.values(data).filter(s=>s&&s.name&&s.avgPct!==undefined).sort((a,b)=>b.avgPct-a.avgPct);
+  if(!students.length){el.innerHTML='<div class="no-data">⏳ لا توجد نتائج بعد</div>';return;}
+  el.innerHTML='';
+  students.forEach((s,si)=>{
+    const scoreCls=s.avgPct>=80?'score-hi':s.avgPct>=60?'score-mid':'score-lo';
+    const attempts=Object.values(s.attempts||{}).sort((a,b)=>a.ts-b.ts);
+    const trend=attempts.length>1?(attempts[attempts.length-1].pct>attempts[0].pct?'↑':'↓'):'—';
+    const trendCol=trend==='↑'?'#00ff88':trend==='↓'?'#ff8080':'var(--muted)';
+
+    const row=document.createElement('div');row.className='st-row';row.id=`row-${si}`;
+    row.innerHTML=`
+      <div class="st-name">${s.name}</div>
+      <div class="st-score ${scoreCls}">${s.avgPct}%</div>
+      <div class="st-attempts">📝 ${s.attempts_count||0} محاولة <span style="color:${trendCol};font-weight:900">${trend}</span></div>
+      <div class="st-weak">${(s.weakTopics||[]).map(t=>`<span class="weak-chip">⚠️ ${t}</span>`).join('')||'<span style="font-size:.75rem;color:var(--gc)">✅ لا نقاط ضعف</span>'}</div>
+      <div class="expand-detail" id="detail-${si}">${buildDetailHtml(s,si)}</div>`;
+    row.onclick=e=>{if(e.target.closest('.expand-detail'))return;const d=document.getElementById(`detail-${si}`);d.classList.toggle('open');row.classList.toggle('expanded');};
+    el.appendChild(row);
+  });
+}
+
+function buildDetailHtml(s,si){
+  const attempts=Object.values(s.attempts||{}).sort((a,b)=>a.ts-b.ts);
+  let topicsHtml='';
+  if(s.topicAvgs){
+    Object.entries(TC).forEach(([topic,tc])=>{
+      const key=topic.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g,'_');
+      const v=s.topicAvgs[key];if(!v)return;
+      const col=v.avgPct>=80?tc.color:v.avgPct>=60?'#ffc840':'#ff6060';
+      const isWeak=v.avgPct<60;
+      topicsHtml+=`<div class="detail-topic-row" style="border-right:3px solid ${col}">
+        <div class="dtr-name" style="color:${col}">${topic}${isWeak?' ⚠️':''}</div>
+        <div class="dtr-bar"><div class="dtr-fill" style="width:${v.avgPct}%;background:${col}"></div></div>
+        <div class="dtr-score">${v.avgPct}%</div>
+      </div>`;
+    });
+  }
+  const attHtml=attempts.map((a,i)=>{
+    const date=new Date(a.ts);
+    const d=`${date.getDate()}/${date.getMonth()+1} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+    const col=a.pct>=80?'#00ff88':a.pct>=60?'#ffc840':'#ff8080';
+    return `<div class="attempt-pill" style="color:${col};border-color:${col}44">م${i+1}: ${a.pct}% (${a.score}/${a.total}) — ${d}</div>`;
+  }).join('');
+  return `<div style="font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:.04em;margin-bottom:8px">تحليل الأداء حسب الموضوع</div>
+    ${topicsHtml}
+    <div style="font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:.04em;margin:12px 0 6px">سجل المحاولات</div>
+    <div class="attempts-hist">${attHtml||'<span style="color:var(--muted)">لا توجد محاولات بعد</span>'}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// RESET
+// ══════════════════════════════════════════════════════════
+async function resetAll(){
+  if(!confirm('سيتم مسح جميع النتائج. هل أنت متأكدة؟'))return;
+  await fD('students');
+  clearInterval(dashTimer);dashTimer=null;
+  show('sc-login');alert('✅ تم المسح');
+}
+
+// ══════════════════════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════════════════════
+function confetti(){const cols=['#00ffc8','#ffc840','#7c6fff','#00ff88','#E8722A'];for(let i=0;i<70;i++){setTimeout(()=>{const p=document.createElement('div');p.className='cf';p.style.cssText=`left:${Math.random()*100}vw;top:-20px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2.5+Math.random()*2}s`;document.body.appendChild(p);setTimeout(()=>p.remove(),5000);},i*30);}}
+
+// INIT
+buildLogin();
+
+// ══════════════════════════════════════════════════════════
+// LEADERBOARD
+// ══════════════════════════════════════════════════════════
+const MEDALS = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+
+async function loadLeaderboard(listId, highlightName='') {
+  const data = await fG('students');
+  const el = document.getElementById(listId);
+  if (!el) return;
+  if (!data) { el.innerHTML = '<div class="lb-empty">⏳ لا توجد نتائج بعد</div>'; return; }
+
+  const students = Object.values(data)
+    .filter(s => s && s.name && s.avgPct !== undefined)
+    .sort((a, b) => b.avgPct - a.avgPct);
+
+  if (!students.length) { el.innerHTML = '<div class="lb-empty">⏳ لم تبدأ أي محاولة بعد</div>'; return; }
+
+  const top5 = students.slice(0, 5);
+  const myRank = students.findIndex(s => s.name === highlightName) + 1;
+
+  el.innerHTML = top5.map((s, i) => {
+    const isMe = s.name === highlightName;
+    const col = s.avgPct >= 80 ? '#00ff88' : s.avgPct >= 60 ? '#ffc840' : '#ff8080';
+    const firstName = s.name.split(' ')[0];
+    return `<div class="lb-row${isMe ? ' me' : ''}">
+      <div class="lb-medal">${MEDALS[i]}</div>
+      <div class="lb-name" title="${s.name}">${firstName}${isMe ? ' ← أنتِ' : ''}</div>
+      <div class="lb-bar-mini"><div class="lb-bar-fill" style="width:${s.avgPct}%"></div></div>
+      <div class="lb-score" style="background:${col}18;color:${col}">${s.avgPct}%</div>
+      <div class="lb-attempts">×${s.attempts_count||1}</div>
+    </div>`;
+  }).join('');
+
+  // Show my rank on result screen
+  const rankEl = document.getElementById('lb-my-rank');
+  if (rankEl && highlightName) {
+    if (myRank > 0 && myRank <= 5) {
+      rankEl.innerHTML = `<span style="color:var(--gc)">🎉 أنتِ ضمن أفضل 5 طالبات! المركز ${myRank}</span>`;
+    } else if (myRank > 5) {
+      rankEl.innerHTML = `ترتيبك الحالي: ${myRank} من ${students.length} طالبة — حاولي مرة أخرى للوصول للمتصدرات 💪`;
+    }
+  }
+}
+
+// Auto-refresh leaderboard on all student screens
+let lbTimer = null;
+function startLbRefresh(listId, name='') {
+  clearInterval(lbTimer);
+  loadLeaderboard(listId, name);
+  lbTimer = setInterval(() => loadLeaderboard(listId, name), 5000);
+}
+
+// Hook into screen transitions
+const _origShow = show;
+window.show = function(id) {
+  _origShow(id);
+  clearInterval(lbTimer);
+  if (id === 'sc-login') startLbRefresh('lb-login-list', myName);
+  if (id === 'sc-quiz')  startLbRefresh('lb-quiz-list', myName);
+  if (id === 'sc-result') startLbRefresh('lb-result-list', myName);
+};
+
+// Start on page load
+startLbRefresh('lb-login-list');
+</script>
+</body>
+</html>
