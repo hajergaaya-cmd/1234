@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔍 المحقق والمتهم | العلوم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07101f;--bg2:#0d1b35;--border:rgba(255,255,255,.09);
+  --text:#e8f0fe;--muted:#6a7f99;
+  --gold:#ffc840;--goldb:rgba(255,200,64,.1);--goldd:rgba(255,200,64,.3);
+  --blue:#00b8ff;--blueb:rgba(0,184,255,.1);--blued:rgba(0,184,255,.3);
+  --green:#00ff88;--greenb:rgba(0,255,136,.1);--greend:rgba(0,255,136,.3);
+  --red:#ff5555;--redb:rgba(255,85,85,.1);
+}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,200,64,.015) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,200,64,.015) 1px,transparent 1px);background-size:48px 48px}
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.active{display:flex;flex-direction:column;align-items:center;padding:20px 16px 70px}
+
+/* HEADER */
+.act-hdr{text-align:center;margin-bottom:16px}
+.act-hdr h1{font-size:clamp(1.2rem,3.5vw,1.8rem);font-weight:900}
+.act-hdr p{color:var(--muted);font-size:.83rem;margin-top:4px}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.badge{padding:5px 14px;border-radius:14px;font-size:.75rem;font-weight:800;border:1px solid}
+
+/* LOGIN */
+.login-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;max-width:900px;width:100%;margin:0 auto}
+.s-btn{padding:12px 8px;border:1.5px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.04);color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
+.s-btn:hover:not(.taken){background:var(--goldb);border-color:var(--gold);color:var(--gold)}
+.s-btn.taken{opacity:.4;cursor:not-allowed}
+.s-btn.me{background:var(--goldb);border-color:var(--gold);color:var(--gold)}
+
+/* PAIR SCREEN */
+.pair-card{width:100%;max-width:560px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:22px;padding:26px;text-align:center;margin-top:6px}
+.pair-vs{display:flex;align-items:center;justify-content:center;gap:16px;margin:18px 0}
+.player-box{padding:14px 20px;border-radius:16px;border:2px solid;min-width:130px;text-align:center}
+.player-box.me-box{border-color:var(--gold);background:var(--goldb)}
+.player-box.partner-box{border-color:var(--blued);background:var(--blueb)}
+.pb-role{font-size:.68rem;font-weight:800;letter-spacing:.05em;margin-bottom:4px}
+.pb-name{font-size:.95rem;font-weight:900}
+.me-box .pb-role{color:var(--gold)}.me-box .pb-name{color:var(--gold)}
+.partner-box .pb-role{color:var(--blue)}.partner-box .pb-name{color:var(--blue)}
+.vs-icon{font-size:1.8rem}
+.role-desc{padding:12px 16px;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-align:right;font-size:.86rem;font-weight:600;line-height:1.7;margin-top:6px}
+
+/* DETECTIVE SCREEN - Question Selection */
+.q-bank{width:100%;max-width:700px}
+.q-option{padding:14px 18px;border:2px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(255,255,255,.04);cursor:pointer;margin-bottom:10px;transition:all .22s;text-align:right}
+.q-option:hover{border-color:var(--gold);background:var(--goldb);transform:translateX(-4px)}
+.q-option.selected{border-color:var(--gold);background:var(--goldb)}
+.q-option-n{font-size:.7rem;font-weight:800;color:var(--gold);margin-bottom:5px}
+.q-option-text{font-size:.95rem;font-weight:700;line-height:1.5}
+.q-option.selected .q-option-text{color:var(--gold)}
+
+/* WAITING SCREEN */
+.wait-anim{display:flex;gap:6px;justify-content:center;margin:20px 0}
+.wdot{width:10px;height:10px;border-radius:50%;background:var(--gold);animation:wdp 1.4s ease-in-out infinite}
+.wdot:nth-child(2){animation-delay:.2s}.wdot:nth-child(3){animation-delay:.4s}
+@keyframes wdp{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* SUSPECT SCREEN - Answer question */
+.recv-card{width:100%;max-width:640px;background:rgba(255,200,64,.05);border:1.5px solid var(--goldd);border-radius:18px;padding:20px;margin-bottom:16px;text-align:right}
+.recv-lbl{font-size:.72rem;font-weight:800;color:var(--gold);letter-spacing:.05em;margin-bottom:8px}
+.recv-q{font-size:1rem;font-weight:800;line-height:1.6}
+.mc-opts{width:100%;max-width:640px;display:grid;gap:9px}
+.mc-opt{padding:13px 18px;border:2px solid rgba(255,255,255,.1);border-radius:13px;background:rgba(255,255,255,.04);cursor:pointer;font-size:.92rem;font-weight:700;transition:all .18s;text-align:right}
+.mc-opt:hover:not(.disabled){border-color:var(--gold);background:var(--goldb);transform:translateY(-1px)}
+.mc-opt.disabled{pointer-events:none}
+.mc-opt.selected{border-color:var(--gold);background:var(--goldb);color:var(--gold)}
+.mc-opt.correct{border-color:var(--green);background:var(--greenb);color:var(--green)}
+.mc-opt.wrong{border-color:var(--red);background:var(--redb);color:var(--red)}
+.mc-opt.reveal{border-color:var(--green);background:var(--greenb);color:var(--green)}
+
+/* RESULT SCREEN */
+.result-pair{width:100%;max-width:680px;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:560px){.result-pair{grid-template-columns:1fr}}
+.r-card{border-radius:16px;padding:18px;border:2px solid}
+.r-card.correct-card{border-color:var(--greend);background:var(--greenb)}
+.r-card.wrong-card{border-color:rgba(255,85,85,.3);background:var(--redb)}
+.r-role{font-size:.7rem;font-weight:800;letter-spacing:.05em;margin-bottom:6px}
+.r-card.correct-card .r-role{color:var(--green)}.r-card.wrong-card .r-role{color:var(--red)}
+.r-q{font-size:.82rem;font-weight:700;line-height:1.5;margin-bottom:8px;color:var(--muted)}
+.r-ans{font-size:.88rem;font-weight:800;margin-bottom:4px}
+.r-correct{font-size:.78rem;font-weight:700;color:var(--green)}
+.discuss-box{width:100%;max-width:680px;padding:16px 20px;border-radius:14px;background:rgba(124,111,255,.08);border:1px solid rgba(124,111,255,.25);text-align:center;font-size:.9rem;font-weight:700;line-height:1.6;color:#b0b8e0}
+
+/* DASHBOARD */
+.dash-wrap{width:100%;max-width:1100px}
+.dash-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.d-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-width:1100px;width:100%;margin:0 auto 20px}
+.d-stat{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center}
+.ds-n{font-size:2rem;font-weight:900}.ds-l{font-size:.7rem;font-weight:700;color:var(--muted);margin-top:3px}
+.pairs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;max-width:1100px;width:100%;margin:0 auto}
+.pair-dash-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:16px;transition:border-color .3s}
+.pair-dash-card.full{border-color:rgba(0,255,136,.2)}
+.pair-dash-card.partial{border-color:rgba(255,200,64,.2)}
+.pd-title{font-size:.85rem;font-weight:800;margin-bottom:12px;color:var(--gold);display:flex;align-items:center;gap:6px}
+.pd-row{padding:10px 12px;border-radius:11px;margin-bottom:8px;border:1px solid}
+.pd-row.correct-row{background:var(--greenb);border-color:var(--greend)}
+.pd-row.wrong-row{background:var(--redb);border-color:rgba(255,85,85,.25)}
+.pd-row.pending-row{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.08)}
+.pd-label{font-size:.68rem;font-weight:800;letter-spacing:.04em;margin-bottom:4px}
+.correct-row .pd-label{color:var(--green)}.wrong-row .pd-label{color:var(--red)}.pending-row .pd-label{color:var(--muted)}
+.pd-q{font-size:.8rem;font-weight:700;margin-bottom:4px;line-height:1.4}
+.pd-ans{font-size:.75rem;font-weight:700;color:var(--muted)}
+
+/* MISC */
+.btn-main{padding:14px 28px;background:linear-gradient(135deg,var(--gold),#E8722A);border:none;border-radius:13px;color:#07101f;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;transition:all .2s;box-shadow:0 5px 18px rgba(255,200,64,.3)}
+.btn-main:hover:not(:disabled){transform:translateY(-3px);opacity:.9}
+.btn-main:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-sec{padding:11px 20px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-sec:hover{background:rgba(255,255,255,.12)}
+.btn-danger{border-color:rgba(255,77,77,.3);color:#ff8080}.btn-danger:hover{background:rgba(255,77,77,.08)}
+.pw-ov{display:none;position:fixed;inset:0;z-index:8888;background:rgba(7,16,31,.9);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.pw-ov.open{display:flex}
+.pw-modal{background:#0d1a30;border:1px solid rgba(255,200,64,.3);border-radius:22px;padding:34px;width:min(400px,92vw);text-align:center;animation:mi .3s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes mi{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.pw-inp{display:block;width:100%;padding:14px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1.4rem;text-align:center;letter-spacing:.25em;direction:ltr;outline:none;margin-bottom:12px;transition:border-color .2s}
+.pw-inp:focus{border-color:var(--gold)}
+.pw-inp.shake{animation:shk .4s}
+@keyframes shk{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}
+.pw-err{color:#ff4d4d;font-size:.83rem;min-height:18px;margin-bottom:10px;font-weight:700}
+.float-btn{position:fixed;bottom:18px;left:18px;padding:10px 16px;background:rgba(13,26,48,.95);border:1.5px solid rgba(255,255,255,.15);border-radius:11px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;z-index:999;backdrop-filter:blur(10px);transition:all .2s}
+.float-btn:hover{border-color:var(--gold);color:var(--gold)}
+.no-data{text-align:center;color:var(--muted);padding:40px;font-size:.9rem;font-weight:700;width:100%}
+.cf{position:fixed;pointer-events:none;border-radius:2px;z-index:9999;animation:cfall linear forwards}
+@keyframes cfall{0%{transform:translateY(-60px) rotate(0deg);opacity:1}100%{transform:translateY(105vh) rotate(800deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- SC1: LOGIN -->
+<div id="sc-login" class="screen active">
+  <div class="act-hdr">
+    <h1>🔍 المحقق والمتهم</h1>
+    <p>استراتيجية إغلاق الهدف | العلوم</p>
+  </div>
+  <div class="badge-row">
+    <div class="badge" style="background:var(--goldb);border-color:var(--goldd);color:var(--gold)">🔍 15 ثنائي</div>
+    <div class="badge" style="background:var(--blueb);border-color:var(--blued);color:var(--blue)">❓ 10 أسئلة</div>
+    <div class="badge" style="background:var(--greenb);border-color:var(--greend);color:var(--green)">📊 شاشة المعلمة</div>
+  </div>
+  <div class="login-grid" id="login-grid"></div>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC2: PAIR INFO -->
+<div id="sc-pair" class="screen">
+  <div class="act-hdr"><h1>🔍 ثنائيتك</h1><p id="pair-subtitle"></p></div>
+  <div class="pair-card">
+    <div style="font-size:.8rem;font-weight:800;color:var(--muted);letter-spacing:.04em">أنتِ وزميلتك في هذا النشاط</div>
+    <div class="pair-vs">
+      <div class="player-box me-box">
+        <div class="pb-role">🔍 أنتِ</div>
+        <div class="pb-name" id="my-name-display"></div>
+      </div>
+      <div class="vs-icon">⚡</div>
+      <div class="player-box partner-box">
+        <div class="pb-role">👤 زميلتك</div>
+        <div class="pb-name" id="partner-name-display"></div>
+      </div>
+    </div>
+    <div class="role-desc">
+      <div style="font-size:.78rem;font-weight:800;color:var(--gold);margin-bottom:6px">🔍 دور المحقق</div>
+      اختاري سؤالاً من قائمة الأسئلة وأرسليه لزميلتك — ستُجيب عنه هي، وستتلقّين أنتِ السؤال الذي اختارته لكِ
+      <div style="font-size:.78rem;font-weight:800;color:var(--blue);margin-top:8px;margin-bottom:6px">👤 دور المتهمة</div>
+      أجيبي على السؤال الذي أرسلته إليكِ زميلتك بأفضل إجابة ممكنة
+    </div>
+    <button class="btn-main" style="width:100%;margin-top:16px" onclick="show('sc-detective')">
+      ابدئي كمحققة 🔍
+    </button>
+  </div>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC3: DETECTIVE - Choose question -->
+<div id="sc-detective" class="screen">
+  <div class="act-hdr">
+    <h1>🔍 دور المحقق</h1>
+    <p id="detective-sub">اختاري سؤالاً لترسليه لزميلتك</p>
+  </div>
+  <div style="font-size:.82rem;font-weight:700;color:var(--muted);text-align:center;margin-bottom:14px;max-width:600px">
+    💡 اختاري سؤالاً واحداً تعتقدين أنه مهم — ستتلقّين في المقابل سؤالاً من زميلتك لتجيبي عنه
+  </div>
+  <div class="q-bank" id="q-bank"></div>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:6px;flex-wrap:wrap">
+    <button class="btn-sec" onclick="show('sc-pair')">← العودة</button>
+    <button class="btn-main" id="send-btn" onclick="sendQuestion()" disabled>📤 أرسلي السؤال لزميلتك</button>
+  </div>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC4: WAITING -->
+<div id="sc-waiting" class="screen">
+  <div class="act-hdr"><h1>⏳ في انتظار زميلتك</h1></div>
+  <div style="text-align:center;max-width:520px;width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:28px;margin-top:6px">
+    <div style="font-size:3rem;margin-bottom:12px">📤</div>
+    <div style="font-size:1rem;font-weight:800;margin-bottom:6px">أرسلتِ سؤالك!</div>
+    <div style="font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:18px">
+      في انتظار أن تختار زميلتك سؤالها لكِ<br>سينتقل النشاط تلقائياً عند جاهزيتها
+    </div>
+    <div class="wait-anim"><div class="wdot"></div><div class="wdot"></div><div class="wdot"></div></div>
+    <div style="margin-top:18px;padding:12px 16px;border-radius:12px;background:var(--goldb);border:1px solid var(--goldd);font-size:.82rem;font-weight:700">
+      💡 السؤال الذي اخترتِه: <span id="sent-q-preview" style="color:var(--gold)"></span>
+    </div>
+  </div>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC5: SUSPECT - Answer question -->
+<div id="sc-suspect" class="screen">
+  <div class="act-hdr">
+    <h1>👤 دور المتهمة</h1>
+    <p>أجيبي على السؤال الذي أرسلته إليكِ زميلتك</p>
+  </div>
+  <div class="recv-card">
+    <div class="recv-lbl">🔍 السؤال من زميلتك <span id="recv-from"></span></div>
+    <div class="recv-q" id="recv-q"></div>
+  </div>
+  <div class="mc-opts" id="mc-opts"></div>
+  <div id="ans-fb" style="display:none;margin-top:12px;max-width:640px;width:100%;padding:12px 16px;border-radius:12px;font-size:.88rem;font-weight:700"></div>
+  <button class="btn-main" id="ans-btn" onclick="submitAnswer()" disabled style="margin-top:14px">
+    ✅ سجّلي إجابتك
+  </button>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC6: RESULT -->
+<div id="sc-result" class="screen">
+  <div class="act-hdr"><h1>📊 نتيجة الثنائي</h1><p id="result-pair-label"></p></div>
+  <div class="result-pair" id="result-pair"></div>
+  <div class="discuss-box">
+    💬 ناقشا مع زميلتك النتائج — لماذا أجابت كل منكما بهذه الطريقة؟ ما الإجابة الأصح ولماذا؟
+  </div>
+  <div style="text-align:center;margin-top:14px">
+    <button class="btn-sec" onclick="show('sc-login')">🔙 الرئيسية</button>
+  </div>
+  <button class="float-btn" onclick="openDash()">📊 شاشة المعلمة</button>
+</div>
+
+<!-- SC7: DASHBOARD -->
+<div id="sc-dash" class="screen">
+  <div class="dash-wrap">
+    <div class="dash-top">
+      <div>
+        <div style="font-size:1.4rem;font-weight:900">🔍 المحقق والمتهم — لوحة المعلمة</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-top:3px">تحديث كل 3 ثوانٍ</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-sec" onclick="leaveDash()">🔙 العودة</button>
+        <button class="btn-sec btn-danger" onclick="resetAll()">🗑️ مسح</button>
+      </div>
+    </div>
+    <div class="d-stats" id="d-stats"></div>
+    <div style="font-size:.73rem;font-weight:800;color:var(--muted);letter-spacing:.06em;max-width:1100px;width:100%;margin:0 auto 12px;padding:0 14px">
+      📋 نتائج كل الثنائيات
+    </div>
+    <div class="pairs-grid" id="pairs-grid">
+      <div class="no-data" style="grid-column:1/-1">⏳ في انتظار المشاركات...</div>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD -->
+<div class="pw-ov" id="pw-ov">
+  <div class="pw-modal">
+    <div style="font-size:2rem;margin-bottom:10px">📊</div>
+    <h2 style="font-size:1.1rem;font-weight:900;margin-bottom:5px">شاشة المعلمة</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-bottom:16px">أدخلي كلمة المرور</p>
+    <input class="pw-inp" id="pw-inp" type="password" placeholder="••••" maxlength="10"
+      onkeydown="if(event.key==='Enter')checkPW()"
+      oninput="document.getElementById('pw-err').textContent=''">
+    <div class="pw-err" id="pw-err"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-sec" style="flex:1" onclick="closePW()">إلغاء</button>
+      <button class="btn-main" style="flex:1;padding:12px" onclick="checkPW()">دخول 🚀</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────
+const FB   = 'https://cyber-safety-class-default-rtdb.firebaseio.com/detective_science_v1';
+const PASS = '1234';
+const NUM  = 30;
+
+// ── QUESTION BANK (10 questions) ──────────────────────────
+const QB = [
+  {id:'q1', text:'ما المكوّن الرئيسي المسؤول عن عملية البناء الضوئي في النباتات؟',
+   opts:['الميتوكوندريا','الكلوروفيل','الريبوسوم','النواة'], ans:1},
+  {id:'q2', text:'أيٌّ من التالي يُعدّ مثالاً على تغيّر كيميائي وليس فيزيائياً؟',
+   opts:['انصهار الجليد','تبخّر الماء','احتراق الخشب','تفتّت الصخر'], ans:2},
+  {id:'q3', text:'ما الجهاز المسؤول عن ضخ الدم في جسم الإنسان؟',
+   opts:['الرئتان','الكبد','الكلية','القلب'], ans:3},
+  {id:'q4', text:'ما نوع الشحنة الكهربائية التي تحملها الإلكترونات؟',
+   opts:['موجبة','سالبة','محايدة','متغيّرة'], ans:1},
+  {id:'q5', text:'أيٌّ من المصادر التالية يُعدّ مصدراً للطاقة المتجددة؟',
+   opts:['الفحم الحجري','النفط الخام','الطاقة الشمسية','الغاز الطبيعي'], ans:2},
+  {id:'q6', text:'ما المادة الوحيدة التي توجد بحالاتها الثلاث (صلبة وسائلة وغازية) بدرجات حرارة طبيعية؟',
+   opts:['الحديد','الزئبق','الماء','الأكسجين'], ans:2},
+  {id:'q7', text:'كم عدد كروموسومات الخلية الجسمية الطبيعية في جسم الإنسان؟',
+   opts:['23','44','46','48'], ans:2},
+  {id:'q8', text:'أيٌّ من التالي يُعدّ جزءاً من الجهاز العصبي المركزي؟',
+   opts:['القلب','الرئتان','المخ والحبل الشوكي','الكلية'], ans:2},
+  {id:'q9', text:'أيٌّ قانون من قوانين نيوتن يصف العلاقة: ق = ك × ع ؟',
+   opts:['القانون الأول','القانون الثاني','القانون الثالث','لا يوجد'], ans:1},
+  {id:'q10', text:'أيٌّ من الغازات التالية يُعدّ الأكثر وفرةً في الغلاف الجوي للأرض؟',
+   opts:['الأكسجين','ثاني أكسيد الكربون','النيتروجين','الأرجون'], ans:2},
+];
+
+// ── STATE ─────────────────────────────────────────────────
+let myNum=null, myName='', pairKey='', mySlot='', partnerSlot='', partnerName='';
+let selectedQ=null, myAnswer=null, pollTimer=null, dashTimer=null;
+
+// ── FIREBASE ──────────────────────────────────────────────
+const H={'Content-Type':'application/json'};
+const fG=async p=>{try{const r=await fetch(`${FB}/${p}.json`);return await r.json();}catch{return null;}};
+const fS=async(p,d)=>{try{await fetch(`${FB}/${p}.json`,{method:'PUT',headers:H,body:JSON.stringify(d)});}catch{}};
+const fP=async(p,d)=>{try{await fetch(`${FB}/${p}.json`,{method:'PATCH',headers:H,body:JSON.stringify(d)});}catch{}};
+const fD=async p=>{try{await fetch(`${FB}/${p}.json`,{method:'DELETE'});}catch{}};
+
+const show=id=>{
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id!=='sc-waiting')stopPoll();
+};
+
+// ── BUILD LOGIN ───────────────────────────────────────────
+function buildLogin(){
+  const g=document.getElementById('login-grid');g.innerHTML='';
+  for(let n=1;n<=NUM;n++){
+    const b=document.createElement('button');b.className='s-btn';b.id=`sb-${n}`;
+    b.textContent=`معلمة ${n}`;b.onclick=()=>pickTeacher(n);
+    g.appendChild(b);
+  }
+}
+
+function getPairInfo(num){
+  const pairNum=Math.ceil(num/2);
+  const slot=num%2===1?'t1':'t2';
+  const partnerNum=num%2===1?num+1:num-1;
+  return{pairNum, slot, partnerNum};
+}
+
+async function pickTeacher(num){
+  myNum=num;myName=`معلمة ${num}`;
+  const info=getPairInfo(num);
+  pairKey=`p${info.pairNum}`;
+  mySlot=info.slot;
+  partnerSlot=mySlot==='t1'?'t2':'t1';
+  partnerName=`معلمة ${info.partnerNum}`;
+  selectedQ=null;myAnswer=null;
+
+  // Mark as active
+  await fP(`pairs/${pairKey}/${mySlot}`,{name:myName,sentQ:null,answer:null,phase:'joined'});
+
+  document.getElementById(`sb-${num}`).classList.add('me');
+  document.getElementById('my-name-display').textContent=myName;
+  document.getElementById('partner-name-display').textContent=partnerName;
+  document.getElementById('pair-subtitle').textContent=`الثنائية ${info.pairNum} من 15`;
+  show('sc-pair');
+}
+
+// ── BUILD QUESTION BANK ───────────────────────────────────
+function buildQBank(){
+  const container=document.getElementById('q-bank');container.innerHTML='';
+  QB.forEach((q,i)=>{
+    const el=document.createElement('div');el.className='q-option';el.id=`qo-${q.id}`;
+    el.innerHTML=`<div class="q-option-n">السؤال ${i+1}</div><div class="q-option-text">${q.text}</div>`;
+    el.onclick=()=>{
+      document.querySelectorAll('.q-option').forEach(x=>x.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedQ=q.id;
+      document.getElementById('send-btn').disabled=false;
+    };
+    container.appendChild(el);
+  });
+}
+
+// ── SEND QUESTION ─────────────────────────────────────────
+async function sendQuestion(){
+  if(!selectedQ)return;
+  await fP(`pairs/${pairKey}/${mySlot}`,{sentQ:selectedQ,phase:'sent'});
+  const q=QB.find(x=>x.id===selectedQ);
+  document.getElementById('sent-q-preview').textContent=q.text.substring(0,50)+'...';
+  show('sc-waiting');
+  startPoll();
+}
+
+// ── POLLING ───────────────────────────────────────────────
+function startPoll(){
+  stopPoll();
+  pollTimer=setInterval(checkPartner,3000);
+  checkPartner();
+}
+function stopPoll(){clearInterval(pollTimer);pollTimer=null;}
+
+async function checkPartner(){
+  const data=await fG(`pairs/${pairKey}`);
+  if(!data)return;
+  const partnerData=data[partnerSlot];
+  if(partnerData&&partnerData.sentQ){
+    stopPoll();
+    // Partner chose a question — show it to me
+    buildSuspectScreen(partnerData.sentQ);
+    show('sc-suspect');
+  }
+}
+
+// ── SUSPECT SCREEN ────────────────────────────────────────
+function buildSuspectScreen(qId){
+  const q=QB.find(x=>x.id===qId);
+  document.getElementById('recv-from').textContent=partnerName;
+  document.getElementById('recv-q').textContent=q.text;
+  const opts=document.getElementById('mc-opts');opts.innerHTML='';
+  const letters=['أ','ب','ج','د'];
+  q.opts.forEach((opt,i)=>{
+    const b=document.createElement('div');b.className='mc-opt';
+    b.innerHTML=`<span style="font-weight:900;color:var(--gold);margin-left:8px">${letters[i]}</span> ${opt}`;
+    b.onclick=()=>{
+      opts.querySelectorAll('.mc-opt').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      myAnswer=i;
+      document.getElementById('ans-btn').disabled=false;
+    };
+    opts.appendChild(b);
+  });
+}
+
+async function submitAnswer(){
+  if(myAnswer===null)return;
+  // Get the question I'm answering (partner sent it)
+  const partnerData=await fG(`pairs/${pairKey}/${partnerSlot}`);
+  const qId=partnerData.sentQ;
+  const q=QB.find(x=>x.id===qId);
+  const correct=myAnswer===q.ans;
+
+  await fP(`pairs/${pairKey}/${mySlot}`,{answer:myAnswer,correct,phase:'answered'});
+
+  // Show feedback
+  document.querySelectorAll('.mc-opt').forEach((b,i)=>{
+    b.classList.add('disabled');
+    if(i===q.ans)b.classList.add(correct&&i===myAnswer?'correct':'reveal');
+    if(i===myAnswer&&!correct)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('ans-fb');
+  fb.style.display='block';
+  fb.textContent=correct?'✅ إجابة صحيحة! 🎉':'❌ إجابة خاطئة — الإجابة الصحيحة مُظلّلة بالأخضر';
+  fb.style.cssText=`display:block;margin-top:12px;max-width:640px;width:100%;padding:12px 16px;border-radius:12px;font-size:.88rem;font-weight:700;background:${correct?'var(--greenb)':'var(--redb)'};border:1px solid ${correct?'var(--greend)':'rgba(255,85,85,.25)'};color:${correct?'var(--green)':'var(--red)'}`;
+
+  document.getElementById('ans-btn').disabled=true;
+  document.getElementById('ans-btn').textContent='تم ✅';
+
+  // Wait briefly then show result
+  setTimeout(()=>showResult(correct,q),1500);
+}
+
+async function showResult(myCorrect,myQ){
+  const data=await fG(`pairs/${pairKey}`);
+  const myData=data[mySlot];
+  const partnerData=data[partnerSlot];
+
+  document.getElementById('result-pair-label').textContent=`${myName} & ${partnerName}`;
+
+  // My performance (I answered partner's question)
+  const myReceivedQ=QB.find(x=>x.id===partnerData.sentQ);
+
+  // Partner's performance (they answered my question)
+  const partnerCorrect=partnerData.answer===myReceivedQ?.ans||false;
+  const mySentQ=QB.find(x=>x.id===myData.sentQ);
+
+  let html='';
+
+  // My result
+  html+=`<div class="r-card ${myCorrect?'correct-card':'wrong-card'}">
+    <div class="r-role">${myCorrect?'✅':'❌'} إجابتكِ — ${myName}</div>
+    <div class="r-q">السؤال: ${myReceivedQ?.text||''}</div>
+    <div class="r-ans">أجبتِ بـ: ${myReceivedQ?.opts[myAnswer]||''}</div>
+    ${!myCorrect?`<div class="r-correct">الإجابة الصحيحة: ${myReceivedQ?.opts[myReceivedQ.ans]||''}</div>`:''}
+  </div>`;
+
+  // Partner result
+  if(partnerData&&partnerData.answer!==null&&partnerData.answer!==undefined){
+    const partnerAns=partnerData.answer;
+    const pCorrect=partnerAns===mySentQ?.ans;
+    html+=`<div class="r-card ${pCorrect?'correct-card':'wrong-card'}">
+      <div class="r-role">${pCorrect?'✅':'❌'} إجابة ${partnerName}</div>
+      <div class="r-q">السؤال: ${mySentQ?.text||''}</div>
+      <div class="r-ans">أجابت بـ: ${mySentQ?.opts[partnerAns]||''}</div>
+      ${!pCorrect?`<div class="r-correct">الإجابة الصحيحة: ${mySentQ?.opts[mySentQ.ans]||''}</div>`:''}
+    </div>`;
+  } else {
+    html+=`<div class="r-card" style="border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.03)">
+      <div class="r-role" style="color:var(--muted)">⏳ ${partnerName}</div>
+      <div class="r-q" style="color:var(--muted)">لم تُجب بعد...</div>
+    </div>`;
+  }
+
+  document.getElementById('result-pair').innerHTML=html;
+  if(myCorrect)confetti();
+  show('sc-result');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────
+function openDash(){document.getElementById('pw-inp').value='';document.getElementById('pw-err').textContent='';document.getElementById('pw-ov').classList.add('open');setTimeout(()=>document.getElementById('pw-inp').focus(),100);}
+function closePW(){document.getElementById('pw-ov').classList.remove('open');}
+function checkPW(){
+  const v=document.getElementById('pw-inp').value.trim();
+  if(v===PASS){closePW();show('sc-dash');loadDash();dashTimer=setInterval(loadDash,3000);}
+  else{document.getElementById('pw-err').textContent='❌ كلمة المرور غير صحيحة';const inp=document.getElementById('pw-inp');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.value='';inp.focus();}
+}
+function leaveDash(){clearInterval(dashTimer);dashTimer=null;show('sc-login');}
+
+async function loadDash(){
+  const data=await fG('pairs');
+  let totalPairs=0,answeredPairs=0,correct=0,total=0;
+
+  if(data){
+    Object.values(data).forEach(p=>{
+      if(p&&(p.t1||p.t2))totalPairs++;
+      if(p&&p.t1&&p.t1.answer!==null&&p.t1.answer!==undefined)answeredPairs++;
+      if(p&&p.t2&&p.t2.answer!==null&&p.t2.answer!==undefined)answeredPairs++;
+      [p?.t1,p?.t2].forEach(t=>{
+        if(t&&t.answer!==null&&t.answer!==undefined){total++;if(t.correct)correct++;}
+      });
+    });
+  }
+
+  document.getElementById('d-stats').innerHTML=`
+    <div class="d-stat"><div class="ds-n" style="color:var(--gold)">${totalPairs}</div><div class="ds-l">ثنائي نشط</div></div>
+    <div class="ds-n hidden"></div>
+    <div class="d-stat"><div class="ds-n" style="color:var(--blue)">${answeredPairs}</div><div class="ds-l">إجابات مسجّلة</div></div>
+    <div class="d-stat"><div class="ds-n" style="color:var(--green)">${correct}</div><div class="ds-l">إجابات صحيحة</div></div>
+    <div class="d-stat"><div class="ds-n" style="color:var(--red)">${total-correct}</div><div class="ds-l">إجابات خاطئة</div></div>
+    <div class="d-stat"><div class="ds-n" style="color:#ffc840">${total?Math.round(correct/total*100):0}%</div><div class="ds-l">نسبة الصحة</div></div>`;
+
+  const grid=document.getElementById('pairs-grid');
+  if(!data){grid.innerHTML='<div class="no-data" style="grid-column:1/-1">⏳ لا توجد بيانات بعد</div>';return;}
+
+  grid.innerHTML='';
+  let hasPairs=false;
+  for(let p=1;p<=15;p++){
+    const pData=data[`p${p}`];if(!pData||((!pData.t1||pData.t1.phase==='joined')&&(!pData.t2||pData.t2.phase==='joined')))continue;
+    hasPairs=true;
+    const t1=pData.t1,t2=pData.t2;
+    const bothAnswered=(t1&&t1.answer!==null&&t1.answer!==undefined)&&(t2&&t2.answer!==null&&t2.answer!==undefined);
+    const card=document.createElement('div');card.className=`pair-dash-card ${bothAnswered?'full':'partial'}`;
+
+    // t1 answered t2's question, t2 answered t1's question
+    const t1Q=t2&&t2.sentQ?QB.find(x=>x.id===t2.sentQ):null;
+    const t2Q=t1&&t1.sentQ?QB.find(x=>x.id===t1.sentQ):null;
+
+    const mkRow=(teacher,q,ans,correct)=>{
+      if(!teacher||!teacher.name)return`<div class="pd-row pending-row"><div class="pd-label">⏳ في الانتظار</div></div>`;
+      if(!q)return`<div class="pd-row pending-row"><div class="pd-label">${teacher.name}</div><div class="pd-q" style="color:var(--muted)">لم تختار سؤالاً بعد</div></div>`;
+      if(ans===null||ans===undefined)return`<div class="pd-row pending-row"><div class="pd-label">⏳ ${teacher.name} — لم تُجب بعد</div><div class="pd-q">${q.text.substring(0,60)}...</div></div>`;
+      return`<div class="pd-row ${correct?'correct-row':'wrong-row'}"><div class="pd-label">${correct?'✅':'❌'} ${teacher.name}</div><div class="pd-q">${q.text.substring(0,60)}...</div><div class="pd-ans">أجابت بـ: ${q.opts[ans]} | الصحيح: ${q.opts[q.ans]}</div></div>`;
+    };
+
+    card.innerHTML=`
+      <div class="pd-title">🔍 الثنائي ${p} &nbsp; <span style="font-size:.7rem;color:var(--muted)">(م${p*2-1} & م${p*2})</span></div>
+      ${mkRow(t1,t1Q,t1?.answer,t1?.correct)}
+      ${mkRow(t2,t2Q,t2?.answer,t2?.correct)}`;
+    grid.appendChild(card);
+  }
+  if(!hasPairs)grid.innerHTML='<div class="no-data" style="grid-column:1/-1">⏳ في انتظار المشاركات...</div>';
+}
+
+async function resetAll(){
+  if(!confirm('سيتم مسح جميع البيانات. هل أنت متأكدة؟'))return;
+  await fD('pairs');
+  myNum=null;myName='';selectedQ=null;myAnswer=null;
+  buildLogin();stopPoll();clearInterval(dashTimer);dashTimer=null;
+  show('sc-login');alert('✅ تم المسح');
+}
+
+function confetti(){
+  const cols=['#ffc840','#E8722A','#00ff88','#00b8ff','#7c6fff'];
+  for(let i=0;i<60;i++){setTimeout(()=>{const p=document.createElement('div');p.className='cf';p.style.cssText=`left:${Math.random()*100}vw;top:-20px;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2.5+Math.random()*2}s`;document.body.appendChild(p);setTimeout(()=>p.remove(),5000);},i*30);}
+}
+
+// ── INIT ──────────────────────────────────────────────────
+buildLogin();
+buildQBank();
+</script>
+</body>
+</html>
