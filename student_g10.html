@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مراجعة الصف العاشر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a0f1e;--navy2:#111827;--navy3:#1a2340;
+  --cyan:#00d4ff;--green:#00e676;--orange:#ff6d00;
+  --gold:#ffd600;--purple:#7c3aed;--red:#ef5350;
+  --border:rgba(0,212,255,0.15);--text:#e8eaf6;--text2:#90a4ae;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;}
+
+/* SCREENS */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ====== SPLASH ====== */
+#splash{
+  align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 30% 20%,rgba(0,212,255,0.12) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 80%,rgba(124,58,237,0.1) 0%,transparent 60%),var(--navy);
+  padding:30px 20px;text-align:center;
+}
+.splash-logo{font-size:4.5rem;margin-bottom:20px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+#splash h1{font-size:2rem;font-weight:900;color:#fff;margin-bottom:6px;}
+#splash h1 span{color:var(--cyan);}
+#splash p{color:var(--text2);margin-bottom:36px;}
+.name-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:560px;width:100%;margin-bottom:20px;}
+.name-btn{padding:12px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;color:var(--text2);font-family:'Tajawal',sans-serif;font-size:0.85rem;
+  cursor:pointer;transition:.25s;text-align:right;}
+.name-btn:hover{border-color:var(--cyan);color:#fff;background:rgba(0,212,255,0.08);}
+.name-btn.selected{border-color:var(--cyan);background:rgba(0,212,255,0.12);color:#fff;}
+.btn-join{padding:16px 40px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1rem;font-weight:800;cursor:pointer;transition:.3s;
+  box-shadow:0 8px 30px rgba(0,212,255,0.3);}
+.btn-join:hover{transform:translateY(-2px);}
+.btn-join:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+/* ====== WAITING ====== */
+#waiting{align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 50%,rgba(0,212,255,0.06) 0%,transparent 70%),var(--navy);
+  padding:30px 20px;text-align:center;}
+.waiting-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:24px;padding:48px 32px;max-width:380px;width:100%;}
+.waiting-icon{font-size:4rem;margin-bottom:20px;animation:spin 4s linear infinite;}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.waiting-card h2{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px;}
+.waiting-card p{color:var(--text2);font-size:0.9rem;margin-bottom:24px;}
+.student-badge{display:inline-flex;align-items:center;gap:10px;
+  padding:10px 20px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);
+  border-radius:30px;margin-bottom:20px;}
+.badge-dot{width:10px;height:10px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.badge-name{font-size:0.95rem;font-weight:700;color:var(--cyan);}
+.score-display{font-size:1.8rem;font-weight:900;color:var(--gold);margin-top:12px;}
+.score-lbl{font-size:0.8rem;color:var(--text2);margin-top:2px;}
+
+/* ====== CONTENT ====== */
+#content{background:var(--navy);padding:0;}
+.content-topbar{
+  background:rgba(10,15,30,0.98);border-bottom:1px solid var(--border);
+  padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);}
+.ctb-name{font-size:0.9rem;font-weight:700;color:var(--cyan);}
+.ctb-score{font-size:1rem;font-weight:900;color:var(--gold);}
+.ctb-section{font-size:0.8rem;color:var(--text2);}
+
+.content-body{padding:20px;max-width:680px;margin:0 auto;}
+
+/* Section Display */
+.section-display{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:20px;padding:24px;margin-bottom:20px;animation:fadeUp .4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.section-display h2{font-size:1.2rem;font-weight:900;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+
+.info-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.info-lbl{min-width:100px;font-size:0.78rem;font-weight:700;color:var(--cyan);
+  padding:3px 8px;background:rgba(0,212,255,0.08);border-radius:8px;text-align:center;flex-shrink:0;}
+.info-val{font-size:0.88rem;color:var(--text2);line-height:1.6;}
+
+.mini-table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-top:10px;}
+.mini-table th{padding:8px 12px;background:rgba(0,212,255,0.08);color:var(--cyan);font-weight:800;border:1px solid rgba(0,212,255,0.1);}
+.mini-table td{padding:8px 10px;border:1px solid rgba(255,255,255,0.05);color:var(--text2);text-align:center;}
+.mini-table td:first-child{color:var(--gold);font-weight:700;}
+
+.benefit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.b-item{background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.1);border-radius:10px;padding:10px;}
+.b-item h5{color:var(--green);font-size:0.82rem;font-weight:800;margin-bottom:3px;}
+.b-item p{font-size:0.76rem;color:var(--text2);}
+
+.topo-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.tm-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px;padding:10px;}
+.tm-card h5{color:var(--green);font-size:0.82rem;font-weight:800;margin-bottom:4px;}
+.tm-card p{font-size:0.76rem;color:var(--text2);line-height:1.5;}
+
+.sensor-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.sm-card{background:rgba(255,214,0,0.04);border:1px solid rgba(255,214,0,0.1);
+  border-radius:10px;padding:10px;text-align:center;}
+.sm-card .icon{font-size:1.6rem;margin-bottom:4px;}
+.sm-card h6{color:var(--gold);font-size:0.78rem;font-weight:800;}
+.sm-card p{font-size:0.72rem;color:var(--text2);margin-top:3px;}
+
+/* ====== QUESTION OVERLAY ====== */
+#q-overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(5,8,20,0.96);backdrop-filter:blur(16px);
+  align-items:center;justify-content:center;padding:20px;}
+#q-overlay.show{display:flex;}
+
+.q-card{background:var(--navy2);border:1px solid var(--border);
+  border-radius:24px;width:100%;max-width:560px;overflow:hidden;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+
+.q-header{
+  padding:16px 24px;display:flex;align-items:center;justify-content:space-between;
+  background:rgba(124,58,237,0.1);border-bottom:1px solid rgba(124,58,237,0.15);}
+.q-header .q-type{font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:10px;
+  background:rgba(124,58,237,0.15);color:#a78bfa;}
+.q-timer-ring{
+  width:52px;height:52px;border-radius:50%;border:3px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;font-weight:900;color:var(--gold);transition:border-color .3s;}
+
+.q-body{padding:24px;}
+.q-text{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:20px;line-height:1.6;}
+.q-options{display:flex;flex-direction:column;gap:10px;}
+.q-opt{
+  padding:14px 18px;border-radius:12px;border:2px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);color:var(--text);
+  font-family:'Tajawal',sans-serif;font-size:0.95rem;cursor:pointer;transition:.25s;
+  text-align:right;display:flex;align-items:center;gap:12px;}
+.q-opt .opt-l{min-width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;
+  color:var(--text2);flex-shrink:0;}
+.q-opt:hover:not(:disabled){border-color:var(--cyan);background:rgba(0,212,255,0.08);}
+.q-opt.selected{border-color:var(--cyan);background:rgba(0,212,255,0.1);}
+.q-opt.selected .opt-l{background:var(--cyan);color:var(--navy);}
+.q-opt.correct{border-color:var(--green)!important;background:rgba(0,230,118,0.1)!important;}
+.q-opt.correct .opt-l{background:var(--green)!important;color:var(--navy)!important;}
+.q-opt.wrong{border-color:var(--red)!important;background:rgba(183,28,28,0.1)!important;}
+.q-opt.wrong .opt-l{background:var(--red)!important;color:#fff!important;}
+.q-opt:disabled{cursor:default;}
+
+.q-submitted{text-align:center;padding:20px;}
+.q-submitted .wait-icon{font-size:2.5rem;margin-bottom:12px;animation:spin 2s linear infinite;}
+.q-submitted p{color:var(--text2);font-size:0.9rem;}
+
+/* ANSWER REVEAL */
+.answer-reveal{background:rgba(255,255,255,0.03);border-radius:16px;padding:20px;margin-top:16px;}
+.ar-correct{color:var(--green);font-size:0.9rem;font-weight:700;margin-bottom:8px;}
+.ar-explain{color:var(--text2);font-size:0.85rem;line-height:1.6;}
+
+/* RESULT BADGE */
+.result-badge{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:600;padding:24px 40px;border-radius:20px;text-align:center;
+  font-family:'Tajawal',sans-serif;font-weight:900;font-size:1.3rem;
+  animation:badgePop .5s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+.rb-correct{background:rgba(0,230,118,0.9);color:var(--navy);box-shadow:0 20px 60px rgba(0,230,118,0.5);}
+.rb-wrong{background:rgba(183,28,28,0.9);color:#fff;box-shadow:0 20px 60px rgba(183,28,28,0.5);}
+@keyframes badgePop{from{opacity:0;transform:translate(-50%,-50%) scale(.5)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+/* LEADERBOARD OVERLAY */
+#lb-overlay{
+  display:none;position:fixed;inset:0;z-index:550;
+  background:rgba(5,8,20,0.97);
+  align-items:center;justify-content:center;padding:20px;}
+#lb-overlay.show{display:flex;}
+.lb-card{background:var(--navy2);border:1px solid var(--border);
+  border-radius:24px;width:100%;max-width:480px;padding:32px;text-align:center;}
+.lb-card h2{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:6px;}
+.lb-card p{color:var(--text2);font-size:0.85rem;margin-bottom:24px;}
+.lb-entries{display:flex;flex-direction:column;gap:8px;}
+.lb-entry{display:flex;align-items:center;gap:12px;padding:12px 16px;
+  background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.06);}
+.lb-entry:nth-child(1){border-color:rgba(255,214,0,0.3);background:rgba(255,214,0,0.06);}
+.lb-entry:nth-child(2){border-color:rgba(192,192,192,0.3);background:rgba(192,192,192,0.04);}
+.lb-entry:nth-child(3){border-color:rgba(205,127,50,0.3);background:rgba(205,127,50,0.04);}
+.lb-medal{font-size:1.4rem;min-width:32px;text-align:center;}
+.lb-entry-name{flex:1;font-size:0.9rem;font-weight:700;color:#fff;text-align:right;}
+.lb-entry-pts{font-size:0.95rem;font-weight:800;}
+.lb-entry:nth-child(1) .lb-entry-pts{color:var(--gold);}
+.lb-entry:nth-child(2) .lb-entry-pts{color:#c0c0c0;}
+.lb-entry:nth-child(3) .lb-entry-pts{color:#cd7f32;}
+.lb-highlight{border-color:rgba(0,212,255,0.4)!important;background:rgba(0,212,255,0.06)!important;}
+
+.my-score-big{font-size:3rem;font-weight:900;color:var(--gold);margin:16px 0 4px;}
+.my-score-lbl{font-size:0.85rem;color:var(--text2);margin-bottom:20px;}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.2);border-radius:10px;}
+</style>
+</head>
+<body>
+
+<!-- SPLASH: Choose Name -->
+<div id="splash" class="screen active">
+  <div class="splash-logo">📚</div>
+  <h1>مراجعة <span>الصف العاشر</span></h1>
+  <p>شبكات الحاسوب والحوسبة السحابية</p>
+  <div class="name-grid" id="name-grid"></div>
+  <button class="btn-join" id="btn-join" disabled onclick="joinSession()">انضمي ◀</button>
+</div>
+
+<!-- WAITING -->
+<div id="waiting" class="screen">
+  <div class="waiting-card">
+    <div class="waiting-icon">🌐</div>
+    <h2>مرحباً!</h2>
+    <div class="student-badge">
+      <div class="badge-dot"></div>
+      <span class="badge-name" id="wait-name">—</span>
+    </div>
+    <p>انتظري إشارة المعلمة لبدء النشاط</p>
+    <div class="score-display" id="wait-score">0</div>
+    <div class="score-lbl">نقطة</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div id="content" class="screen">
+  <div class="content-topbar">
+    <div>
+      <div class="ctb-name" id="ctb-name">—</div>
+      <div class="ctb-section" id="ctb-section">انتظري المعلمة...</div>
+    </div>
+    <div class="ctb-score">⭐ <span id="ctb-score">0</span> نقطة</div>
+  </div>
+  <div class="content-body" id="content-body">
+    <div style="text-align:center;padding:60px 20px;color:var(--text2)">
+      <div style="font-size:3rem;margin-bottom:16px">👁️</div>
+      <p>انتظري المعلمة لتبدأ عرض المحتوى...</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUESTION OVERLAY -->
+<div id="q-overlay">
+  <div class="q-card" id="q-card-inner"></div>
+</div>
+
+<!-- LEADERBOARD OVERLAY -->
+<div id="lb-overlay">
+  <div class="lb-card" id="lb-card-inner"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = { databaseURL: "https://cyber-safety-class-default-rtdb.firebaseio.com" };
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const STUDENTS = [
+  'اسراء مصطفى','اسيل ايمن','انفال سيف','ايه امير','بانا زكريا',
+  'جنى تميم','حبيبه عمرو','حنين اشرف','دعاء غزوان','روفيده محمد',
+  'رويدا محمد','ريناد امجد','سارة المتولى','سجى يونس','سلمى محمد',
+  'عائشة احمد','عائشه عادل','فاطمه عوض الله','كريمه عزو','كنانه فؤاد',
+  'ليلى محمد','ملاك يحيى','منار حمد','منة الله محمد','ندى السيد',
+  'نور محمود','نور الهدى','ندى احمد','نرهان محمود','هيفاء حسين','وهج كاظم'
+];
+
+let myName = '';
+let myScore = 0;
+let myKey = '';
+let currentQId = null;
+let hasAnswered = false;
+let timerInterval = null;
+
+// Build name grid
+const grid = document.getElementById('name-grid');
+STUDENTS.forEach(name => {
+  const btn = document.createElement('button');
+  btn.className = 'name-btn';
+  btn.textContent = name;
+  btn.onclick = () => {
+    document.querySelectorAll('.name-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    myName = name;
+    document.getElementById('btn-join').disabled = false;
+  };
+  grid.appendChild(btn);
+});
+
+window.joinSession = function() {
+  if (!myName) return;
+  myKey = 'st_' + myName.replace(/\s+/g,'_');
+  set(ref(db,'g10_session/students/'+myKey), { name:myName, score:0, online:true });
+  document.getElementById('wait-name').textContent = myName;
+  document.getElementById('ctb-name').textContent = myName;
+  showScreen('content');
+  watchSession();
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+const SECTION_CONTENT = {
+  networks: `<div class="section-display">
+    <h2>🌐 شبكات الحاسوب وأنواعها</h2>
+    <div class="info-row"><div class="info-lbl">التعريف</div><div class="info-val">شبكة الحاسوب هي عدد من الحواسيب (على الأقل اثنان) متصلة ببعضها لمشاركة الموارد (البيانات والأجهزة). تتكون من: الأجهزة الطرفية + النواقل.</div></div>
+    <div class="info-row"><div class="info-lbl">التصنيف</div><div class="info-val">① الحيز الجغرافي (LAN / MAN / WAN) &nbsp;② الوسط الناقل (سلكي / لاسلكي)</div></div>
+    <table class="mini-table" style="margin-top:14px">
+      <tr><th>النوع</th><th>الرمز</th><th>النطاق</th><th>مثال</th></tr>
+      <tr><td>المحلية</td><td style="color:var(--cyan)">LAN</td><td>مبنى</td><td>شبكة المدرسة</td></tr>
+      <tr><td>متوسطة المجال</td><td style="color:var(--green)">MAN</td><td>مدينة</td><td>شبكة الجامعة</td></tr>
+      <tr><td>واسعة المجال</td><td style="color:var(--orange)">WAN</td><td>عالم</td><td>الإنترنت</td></tr>
+    </table>
+  </div>`,
+  topology: `<div class="section-display">
+    <h2>🔗 مخططات توصيل الشبكات (Topology)</h2>
+    <div class="topo-mini">
+      <div class="tm-card"><h5>🚌 الخطي Bus</h5><p>ناقل رئيسي واحد. انقطاعه = توقف الشبكة. مناسب للشبكات الصغيرة.</p></div>
+      <div class="tm-card"><h5>💍 الحلقي Ring</h5><p>حلقة مغلقة. بيانات باتجاه واحد. عطل أي جهاز يوقف الشبكة.</p></div>
+      <div class="tm-card"><h5>⭐ النجمي Star</h5><p>الأكثر شيوعاً. كل جهاز بـ Hub أو Switch مركزي. مناسب للشبكات الكبيرة.</p></div>
+      <div class="tm-card"><h5>🕸️ المتشابك Mesh</h5><p>كل جهاز بكافة الأجهزة. مسار بديل دائماً. تكلفة عالية.</p></div>
+      <div class="tm-card" style="grid-column:span 2"><h5>🔀 المختلط Hybrid</h5><p>دمج أكثر من تصميم معاً. مرن وقابل للتطوير. يُستخدم لربط الشبكات بين المؤسسات.</p></div>
+    </div>
+  </div>`,
+  protocols: `<div class="section-display">
+    <h2>📡 البروتوكولات ونموذج OSI</h2>
+    <table class="mini-table">
+      <tr><th>البروتوكول</th><th>الوظيفة</th></tr>
+      <tr><td>FTP</td><td>نقل الملفات بين الحواسيب</td></tr>
+      <tr><td>SMTP</td><td>نقل رسائل البريد الإلكتروني</td></tr>
+      <tr><td>HTTP</td><td>تبادل البيانات في صفحات الويب</td></tr>
+      <tr><td>HTTPS</td><td>تبادل البيانات بشكل آمن</td></tr>
+      <tr><td>DNS</td><td>تحويل عناوين الحواسيب إلى IP</td></tr>
+      <tr><td>TCP/IP</td><td>تجهيز مقاطع البيانات ونقلها</td></tr>
+    </table>
+    <table class="mini-table" style="margin-top:12px">
+      <tr><th>#</th><th>الطبقة</th><th>الوظيفة</th></tr>
+      <tr><td>7</td><td>التطبيقات</td><td>تشغيل التطبيقات البرمجية</td></tr>
+      <tr><td>6</td><td>التقديم</td><td>تشفير وفك تشفير البيانات</td></tr>
+      <tr><td>5</td><td>الجلسة</td><td>تأسيس الاتصال بين المصدر والوجهة</td></tr>
+      <tr><td>4</td><td>النقل</td><td>نقل البيانات مع تجنب الأخطاء</td></tr>
+      <tr><td>3</td><td>الشبكة</td><td>تحديد العنوان والمسار المنطقي</td></tr>
+      <tr><td>2</td><td>ربط البيانات</td><td>تحويل البيانات إلى إطارات Frames</td></tr>
+      <tr><td>1</td><td>الفيزيائية</td><td>نقل البيانات عبر الكابلات</td></tr>
+    </table>
+  </div>`,
+  cloud: `<div class="section-display">
+    <h2>☁️ الحوسبة السحابية</h2>
+    <div class="info-row"><div class="info-lbl">التعريف</div><div class="info-val">تقديم خدمات حوسبة عند الطلب — من التطبيقات إلى التخزين والمعالجة — عبر الإنترنت.</div></div>
+    <div class="benefit-grid">
+      <div class="b-item"><h5>🌍 الوصول من أي مكان</h5><p>ملفاتك في أي مكان عبر الإنترنت</p></div>
+      <div class="b-item"><h5>💾 مساحة كبيرة</h5><p>سعة تخزين قابلة للتوسعة</p></div>
+      <div class="b-item"><h5>⚡ إعداد سريع</h5><p>في غضون دقائق</p></div>
+      <div class="b-item"><h5>🔄 تحديثات تلقائية</h5><p>بدون تدخل من المستخدم</p></div>
+      <div class="b-item" style="grid-column:span 2"><h5>💰 تقليل التكلفة</h5><p>الدفع فقط عند الاستخدام — لا حاجة لتثبيت البرامج</p></div>
+    </div>
+  </div>`,
+  control: `<div class="section-display">
+    <h2>⚙️ أنظمة التحكم والمراقبة</h2>
+    <div class="info-row"><div class="info-lbl">المراقبة</div><div class="info-val">يراقب أحداثاً ويرسل البيانات. مثال: كاميرات المراقبة، أنظمة الإنذار ضد السرقة.</div></div>
+    <div class="info-row"><div class="info-lbl">التحكم</div><div class="info-val">يتحكم بعملية أو نظام. نوعان: مفتوح ومغلق.</div></div>
+    <table class="mini-table" style="margin-top:10px">
+      <tr><th>المقارنة</th><th>🔓 مفتوح</th><th>🔒 مغلق</th></tr>
+      <tr><td>التغذية الراجعة</td><td>لا توجد</td><td>مستمرة</td></tr>
+      <tr><td>التكيّف</td><td>لا يستطيع</td><td>يتكيف</td></tr>
+      <tr><td>مثال</td><td>الغسالة 🫧</td><td>مكيف الهواء ❄️</td></tr>
+    </table>
+  </div>`,
+  sensors: `<div class="section-display">
+    <h2>📟 المستشعرات</h2>
+    <div class="info-row"><div class="info-lbl">التعريف</div><div class="info-val">جهاز يكشف عن إشارة كالحركة والضوء والضغط ودرجة الحرارة ويرسلها إلى الحاسوب.</div></div>
+    <div class="sensor-mini">
+      <div class="sm-card"><div class="icon">🌡️</div><h6>الحرارة</h6><p>الثلاجات والمواقد</p></div>
+      <div class="sm-card"><div class="icon">💡</div><h6>الضوء</h6><p>مصابيح الشوارع</p></div>
+      <div class="sm-card"><div class="icon">🌊</div><h6>الضغط</h6><p>الطائرات ومحطات الأرصاد</p></div>
+      <div class="sm-card"><div class="icon">💨</div><h6>الدخان</h6><p>نظام إنذار الحريق</p></div>
+      <div class="sm-card"><div class="icon">👆</div><h6>اللمس</h6><p>الهواتف الذكية</p></div>
+      <div class="sm-card"><div class="icon">🏃</div><h6>الحركة</h6><p>الأغراض الأمنية</p></div>
+    </div>
+  </div>`
+};
+
+function watchSession() {
+  // Watch current section
+  onValue(ref(db,'g10_session/currentSection'), snap => {
+    const sec = snap.val();
+    if (!sec) return;
+    const secNames = {networks:'🌐 شبكات الحاسوب',topology:'🔗 المخططات',protocols:'📡 البروتوكولات',cloud:'☁️ الحوسبة السحابية',control:'⚙️ أنظمة التحكم',sensors:'📟 المستشعرات'};
+    document.getElementById('ctb-section').textContent = secNames[sec]||sec;
+    const body = document.getElementById('content-body');
+    body.innerHTML = SECTION_CONTENT[sec] || '<p style="color:var(--text2);text-align:center;padding:40px">محتوى الدرس...</p>';
+  });
+
+  // Watch current question
+  onValue(ref(db,'g10_session/currentQuestion'), snap => {
+    const q = snap.val();
+    if (!q) { hideQuestion(); return; }
+
+    if (q.ended) { hideQuestion(); return; }
+
+    if (q.showAnswer) {
+      showAnswerReveal(q);
+      return;
+    }
+
+    if (q.id !== currentQId) {
+      currentQId = q.id;
+      hasAnswered = false;
+      showQuestion(q);
+    }
+  });
+
+  // Watch leaderboard signals
+  onValue(ref(db,'g10_session/students'), snap => {
+    const data = snap.val()||{};
+    if (data[myKey]) {
+      myScore = data[myKey].score || 0;
+      document.getElementById('wait-score').textContent = myScore;
+      document.getElementById('ctb-score').textContent = myScore;
+    }
+  });
+}
+
+function showQuestion(q) {
+  const overlay = document.getElementById('q-overlay');
+  const card = document.getElementById('q-card-inner');
+  overlay.classList.add('show');
+
+  const typeMap = {mcq:'اختيار من متعدد',tf:'صح أو خطأ',fill:'أكملي الجملة',drag:'ترتيب'};
+  const letters = ['أ','ب','ج','د'];
+
+  let optsHtml = '';
+  const opts = q.type==='tf' ? ['صح ✓','خطأ ✗'] : (q.options||[]);
+  opts.forEach((opt,i) => {
+    optsHtml += `<button class="q-opt" id="opt-${i}" onclick="selectOpt(${i},${opts.length})"
+      ><span class="opt-l">${letters[i]}</span>${opt}</button>`;
+  });
+
+  card.innerHTML = `
+    <div class="q-header">
+      <span class="q-type">${typeMap[q.type]||'سؤال'}</span>
+      <div class="q-timer-ring" id="q-timer">${q.timer}</div>
+    </div>
+    <div class="q-body">
+      <div class="q-text">${q.text}</div>
+      <div class="q-options" id="q-opts">${optsHtml}</div>
+    </div>`;
+
+  startQuestionTimer(q.timer, q);
+}
+
+let selectedOpt = -1;
+window.selectOpt = function(idx, total) {
+  if (hasAnswered) return;
+  selectedOpt = idx;
+  for(let i=0;i<total;i++) document.getElementById('opt-'+i)?.classList.remove('selected');
+  document.getElementById('opt-'+idx)?.classList.add('selected');
+  submitAnswer(idx);
+};
+
+function submitAnswer(idx) {
+  if (hasAnswered) return;
+  hasAnswered = true;
+  clearInterval(timerInterval);
+
+  onValue(ref(db,'g10_session/currentQuestion'), snap => {
+    const q = snap.val();
+    if (!q) return;
+    const correct = (idx === q.answer) || (q.type==='tf' && ((idx===0&&q.answer===true)||(idx===1&&q.answer===false)));
+    const timeLeft = parseInt(document.getElementById('q-timer')?.textContent)||0;
+    const points = correct ? (10 + Math.floor(timeLeft/2)) : 0;
+
+    set(ref(db,`g10_session/answers/${myKey}`), { name:myName, correct, points, answeredAt:Date.now() });
+    if (correct) {
+      myScore += points;
+      update(ref(db,'g10_session/students/'+myKey), { score:myScore, answered:true });
+    } else {
+      update(ref(db,'g10_session/students/'+myKey), { answered:true });
+    }
+
+    // Show result badge
+    const badge = document.createElement('div');
+    badge.className = 'result-badge '+(correct?'rb-correct':'rb-wrong');
+    badge.innerHTML = correct ? `✅ صحيح! +${points} نقطة` : '❌ خطأ!';
+    document.body.appendChild(badge);
+    setTimeout(()=>badge.remove(), 2000);
+
+    // Disable options
+    document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+
+    // Show waiting
+    const opts = document.getElementById('q-opts');
+    if(opts) {
+      const wait = document.createElement('div');
+      wait.className='q-submitted';
+      wait.innerHTML='<div class="wait-icon">⏳</div><p>انتظري الإجابة الصحيحة...</p>';
+      opts.appendChild(wait);
+    }
+  }, {onlyOnce:true});
+}
+
+function startQuestionTimer(seconds, q) {
+  clearInterval(timerInterval);
+  let t = seconds;
+  const el = document.getElementById('q-timer');
+  timerInterval = setInterval(()=>{
+    t--;
+    if(el) {
+      el.textContent=t;
+      el.style.borderColor=t<=5?'var(--red)':t<=10?'var(--orange)':'var(--gold)';
+      el.style.color=t<=5?'var(--red)':t<=10?'var(--orange)':'var(--gold)';
+    }
+    if(t<=0){clearInterval(timerInterval); if(!hasAnswered){hasAnswered=true; update(ref(db,'g10_session/students/'+myKey),{answered:true});}}
+  },1000);
+}
+
+function showAnswerReveal(q) {
+  clearInterval(timerInterval);
+  const card = document.getElementById('q-card-inner');
+  const opts = q.type==='tf'?['صح ✓','خطأ ✗']:(q.options||[]);
+
+  // Highlight correct option
+  opts.forEach((_,i)=>{
+    const btn = document.getElementById('opt-'+i);
+    if(!btn) return;
+    btn.disabled=true;
+    if(i===q.answer) btn.classList.add('correct');
+    else if(btn.classList.contains('selected')) btn.classList.add('wrong');
+  });
+
+  // Remove waiting msg
+  document.querySelector('.q-submitted')?.remove();
+
+  // Add reveal box
+  const existing = document.querySelector('.answer-reveal');
+  if(!existing && card) {
+    const rev = document.createElement('div');
+    rev.className='answer-reveal';
+    rev.innerHTML=`<div class="ar-correct">✅ الإجابة الصحيحة: ${opts[q.answer]||q.answer}</div>
+      <div class="ar-explain">تحقق من ملاحظاتك واحرصي على فهم هذه النقطة جيداً.</div>`;
+    card.querySelector('.q-body')?.appendChild(rev);
+  }
+
+  // Show leaderboard after 3s
+  setTimeout(()=>{ loadAndShowLeaderboard(); }, 3000);
+}
+
+function hideQuestion() {
+  clearInterval(timerInterval);
+  document.getElementById('q-overlay').classList.remove('show');
+  document.getElementById('lb-overlay').classList.remove('show');
+  currentQId = null;
+  hasAnswered = false;
+}
+
+function loadAndShowLeaderboard() {
+  onValue(ref(db,'g10_session/students'), snap=>{
+    const data = snap.val()||{};
+    const sorted = Object.values(data).filter(s=>s.score>0).sort((a,b)=>b.score-a.score);
+    const top3 = sorted.slice(0,3);
+    const myRank = sorted.findIndex(s=>s.name===myName)+1;
+    const medals = ['🥇','🥈','🥉'];
+
+    const lbHtml = top3.map((s,i)=>`
+      <div class="lb-entry${s.name===myName?' lb-highlight':''}">
+        <div class="lb-medal">${medals[i]}</div>
+        <div class="lb-entry-name">${s.name}</div>
+        <div class="lb-entry-pts">${s.score} نقطة</div>
+      </div>`).join('');
+
+    document.getElementById('lb-card-inner').innerHTML = `
+      <h2>🏆 المتصدرات</h2>
+      <p>أفضل 3 طالبات في الجلسة</p>
+      <div class="lb-entries">${lbHtml}</div>
+      <div class="my-score-big">${myScore}</div>
+      <div class="my-score-lbl">نقطتك — المركز ${myRank||'—'} من ${sorted.length}</div>`;
+
+    document.getElementById('q-overlay').classList.remove('show');
+    document.getElementById('lb-overlay').classList.add('show');
+    setTimeout(()=>document.getElementById('lb-overlay').classList.remove('show'), 6000);
+  },{onlyOnce:true});
+}
+</script>
+</body>
+</html>
