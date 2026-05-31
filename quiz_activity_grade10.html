@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مراجعة الصف العاشر - شبكات الحاسوب والحوسبة السحابية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a0f1e;
+  --navy2: #111827;
+  --navy3: #1a2340;
+  --cyan: #00d4ff;
+  --cyan2: #00a8cc;
+  --green: #00e676;
+  --green2: #00c853;
+  --orange: #ff6d00;
+  --maroon: #b71c1c;
+  --gold: #ffd600;
+  --purple: #7c3aed;
+  --card-bg: rgba(255,255,255,0.04);
+  --border: rgba(0,212,255,0.15);
+  --text: #e8eaf6;
+  --text2: #90a4ae;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== SCREENS ===== */
+.screen { display:none; min-height:100vh; }
+.screen.active { display:flex; flex-direction:column; }
+
+/* ===== SPLASH SCREEN ===== */
+#splash {
+  align-items:center; justify-content:center;
+  background: radial-gradient(ellipse at 30% 20%, rgba(0,212,255,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 80%, rgba(124,58,237,0.1) 0%, transparent 60%),
+              var(--navy);
+  text-align:center; padding:40px 20px;
+}
+
+#splash .logo-ring {
+  width:120px; height:120px; border-radius:50%;
+  border: 3px solid var(--cyan);
+  display:flex; align-items:center; justify-content:center;
+  margin: 0 auto 30px;
+  position:relative;
+  animation: spin-ring 8s linear infinite;
+  box-shadow: 0 0 40px rgba(0,212,255,0.3);
+}
+#splash .logo-ring::before {
+  content:'';
+  position:absolute; inset:-8px; border-radius:50%;
+  border: 1px dashed rgba(0,212,255,0.3);
+  animation: spin-ring 4s linear infinite reverse;
+}
+#splash .logo-icon { font-size:50px; }
+@keyframes spin-ring {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#splash h1 { font-size:2.2rem; font-weight:900; color:#fff; margin-bottom:8px; }
+#splash h1 span { color:var(--cyan); }
+#splash p { color:var(--text2); font-size:1rem; margin-bottom:40px; }
+
+.name-entry { width:100%; max-width:420px; }
+.name-entry label { display:block; font-size:0.9rem; color:var(--cyan); margin-bottom:10px; font-weight:700; letter-spacing:1px; }
+.name-entry input {
+  width:100%; padding:16px 20px;
+  background: rgba(0,212,255,0.07);
+  border: 2px solid var(--border);
+  border-radius:14px; color:#fff;
+  font-family:'Tajawal',sans-serif; font-size:1.1rem;
+  outline:none; transition:.3s; text-align:right;
+}
+.name-entry input:focus { border-color:var(--cyan); background:rgba(0,212,255,0.12); }
+
+.btn-start {
+  margin-top:20px; width:100%; padding:18px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  border:none; border-radius:14px; color:#fff;
+  font-family:'Tajawal',sans-serif; font-size:1.2rem; font-weight:800;
+  cursor:pointer; transition:.3s;
+  box-shadow: 0 8px 30px rgba(0,212,255,0.3);
+}
+.btn-start:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(0,212,255,0.4); }
+.btn-start:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+
+.subject-tags { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:40px; }
+.subject-tags span {
+  padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:700;
+  border: 1px solid;
+}
+.tag-blue { color:var(--cyan); border-color:rgba(0,212,255,0.4); background:rgba(0,212,255,0.08); }
+.tag-green { color:var(--green); border-color:rgba(0,230,118,0.4); background:rgba(0,230,118,0.08); }
+.tag-orange { color:var(--orange); border-color:rgba(255,109,0,0.4); background:rgba(255,109,0,0.08); }
+
+/* ===== QUIZ SCREEN ===== */
+#quiz { background: var(--navy); padding:0; }
+
+.quiz-header {
+  position:sticky; top:0; z-index:100;
+  background: rgba(10,15,30,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding:16px 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+
+.quiz-header .student-name { font-size:0.95rem; color:var(--cyan); font-weight:700; }
+.quiz-header .q-counter { font-size:0.9rem; color:var(--text2); }
+
+.progress-bar { flex:1; height:6px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--cyan),var(--purple)); border-radius:10px; transition:width .4s ease; }
+
+.section-badge {
+  padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:700;
+}
+
+.quiz-body { padding:30px 20px; max-width:700px; margin:0 auto; }
+
+.section-title {
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:30px; padding:16px 20px;
+  background:rgba(255,255,255,0.03); border-radius:14px;
+  border-right: 4px solid var(--cyan);
+}
+.section-title .s-icon { font-size:1.8rem; }
+.section-title h2 { font-size:1.1rem; font-weight:800; color:var(--cyan); }
+.section-title p { font-size:0.85rem; color:var(--text2); }
+
+/* Q CARD */
+.q-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius:20px; padding:28px;
+  margin-bottom:24px;
+  animation: fadeUp .4s ease;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+.q-type-label {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:700;
+  margin-bottom:14px;
+}
+.type-mcq { background:rgba(0,212,255,0.12); color:var(--cyan); border:1px solid rgba(0,212,255,0.3); }
+.type-list { background:rgba(0,230,118,0.12); color:var(--green); border:1px solid rgba(0,230,118,0.3); }
+.type-compare { background:rgba(255,109,0,0.12); color:var(--orange); border:1px solid rgba(255,109,0,0.3); }
+.type-match { background:rgba(124,58,237,0.12); color:#a78bfa; border:1px solid rgba(124,58,237,0.3); }
+
+.q-text { font-size:1.05rem; font-weight:700; color:#fff; margin-bottom:20px; line-height:1.7; }
+.q-num { color:var(--cyan); font-size:1.2rem; margin-left:6px; }
+
+/* MCQ OPTIONS */
+.options-grid { display:flex; flex-direction:column; gap:10px; }
+.option-btn {
+  padding:14px 18px; border-radius:12px;
+  background:rgba(255,255,255,0.04); border:2px solid rgba(255,255,255,0.08);
+  color:var(--text); font-family:'Tajawal',sans-serif; font-size:0.95rem;
+  cursor:pointer; transition:.25s; text-align:right; display:flex; align-items:center; gap:12px;
+}
+.option-btn .opt-letter {
+  min-width:32px; height:32px; border-radius:8px;
+  background:rgba(255,255,255,0.06);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:0.85rem; color:var(--text2);
+  flex-shrink:0;
+}
+.option-btn:hover:not(:disabled) { border-color:var(--cyan); background:rgba(0,212,255,0.08); }
+.option-btn.selected { border-color:var(--cyan); background:rgba(0,212,255,0.12); }
+.option-btn.selected .opt-letter { background:var(--cyan); color:var(--navy); }
+.option-btn.correct { border-color:var(--green)!important; background:rgba(0,230,118,0.1)!important; }
+.option-btn.correct .opt-letter { background:var(--green)!important; color:var(--navy)!important; }
+.option-btn.wrong { border-color:var(--maroon)!important; background:rgba(183,28,28,0.1)!important; }
+.option-btn.wrong .opt-letter { background:var(--maroon)!important; color:#fff!important; }
+.option-btn:disabled { cursor:default; }
+
+/* FEEDBACK */
+.feedback-box {
+  margin-top:14px; padding:12px 16px; border-radius:10px; font-size:0.9rem; font-weight:600; display:none;
+}
+.feedback-box.correct { background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
+.feedback-box.wrong { background:rgba(183,28,28,0.1); border:1px solid rgba(183,28,28,0.3); color:#ef5350; }
+
+/* LIST Q */
+.list-inputs { display:flex; flex-direction:column; gap:10px; }
+.list-row {
+  display:flex; align-items:center; gap:12px;
+  background:rgba(255,255,255,0.03); border-radius:12px; padding:10px 14px;
+}
+.list-num {
+  min-width:32px; height:32px; border-radius:8px;
+  background:rgba(0,230,118,0.15); color:var(--green);
+  display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0;
+}
+.list-input {
+  flex:1; background:transparent; border:none; border-bottom:2px solid rgba(255,255,255,0.1);
+  color:#fff; font-family:'Tajawal',sans-serif; font-size:0.95rem;
+  padding:6px 0; outline:none; transition:.3s; text-align:right;
+}
+.list-input:focus { border-color:var(--green); }
+
+/* COMPARE TABLE */
+.compare-table { width:100%; border-collapse:collapse; font-size:0.9rem; }
+.compare-table th {
+  padding:12px 16px; background:rgba(255,109,0,0.15); color:var(--orange);
+  font-weight:800; border:1px solid rgba(255,109,0,0.2); text-align:center;
+}
+.compare-table td {
+  padding:10px 14px; border:1px solid rgba(255,255,255,0.06); color:var(--text2); text-align:center;
+}
+.compare-table td:first-child { color:var(--gold); font-weight:700; background:rgba(255,214,0,0.04); }
+.compare-table input {
+  width:100%; background:transparent; border:none; border-bottom:2px solid rgba(255,255,255,0.1);
+  color:#fff; font-family:'Tajawal',sans-serif; font-size:0.9rem;
+  padding:4px 0; outline:none; text-align:center; transition:.3s;
+}
+.compare-table input:focus { border-color:var(--orange); }
+
+/* MATCH Q */
+.match-container { display:flex; flex-direction:column; gap:10px; }
+.match-row {
+  display:flex; align-items:center; gap:12px;
+  background:rgba(255,255,255,0.03); border-radius:12px; padding:12px 16px;
+}
+.match-left {
+  flex:1; font-weight:700; color:#a78bfa; font-size:0.9rem;
+  padding:8px 12px; background:rgba(124,58,237,0.1); border-radius:8px; text-align:center;
+}
+.match-arrow { color:var(--text2); font-size:1.2rem; }
+.match-select {
+  flex:1; background:rgba(124,58,237,0.08); border:2px solid rgba(124,58,237,0.2);
+  border-radius:10px; color:#fff; font-family:'Tajawal',sans-serif; font-size:0.85rem;
+  padding:8px 12px; outline:none; cursor:pointer; text-align:right;
+}
+.match-select:focus { border-color:#a78bfa; }
+.match-select option { background:var(--navy2); }
+
+/* SUBMIT / NEXT BTN */
+.q-actions { margin-top:20px; display:flex; gap:12px; justify-content:flex-end; }
+.btn-submit, .btn-next {
+  padding:12px 28px; border-radius:12px; border:none;
+  font-family:'Tajawal',sans-serif; font-size:1rem; font-weight:700;
+  cursor:pointer; transition:.25s;
+}
+.btn-submit { background:linear-gradient(135deg,var(--cyan),var(--cyan2)); color:var(--navy); }
+.btn-submit:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,212,255,0.3); }
+.btn-next { background:rgba(255,255,255,0.06); color:var(--text2); border:1px solid var(--border); display:none; }
+.btn-next:hover { background:rgba(255,255,255,0.1); color:#fff; }
+
+.btn-finish-quiz {
+  width:100%; padding:18px; margin:20px 0 40px;
+  background:linear-gradient(135deg, var(--green), var(--cyan));
+  border:none; border-radius:16px; color:var(--navy);
+  font-family:'Tajawal',sans-serif; font-size:1.2rem; font-weight:900;
+  cursor:pointer; transition:.3s; display:none;
+  box-shadow: 0 8px 30px rgba(0,230,118,0.3);
+}
+.btn-finish-quiz:hover { transform:translateY(-3px); }
+
+/* ===== RESULTS SCREEN ===== */
+#results {
+  background: radial-gradient(ellipse at 20% 10%, rgba(0,230,118,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 90%, rgba(0,212,255,0.08) 0%, transparent 50%),
+              var(--navy);
+  padding:30px 20px;
+}
+
+.results-card {
+  max-width:700px; margin:0 auto;
+}
+
+.result-hero {
+  text-align:center; padding:40px 20px;
+  background:rgba(255,255,255,0.03); border-radius:24px;
+  border:1px solid var(--border); margin-bottom:30px;
+}
+
+.score-ring {
+  width:150px; height:150px; border-radius:50%;
+  margin:0 auto 20px;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; position:relative;
+  border: 4px solid;
+}
+.score-ring.excellent { border-color:var(--green); box-shadow:0 0 40px rgba(0,230,118,0.3); }
+.score-ring.good { border-color:var(--cyan); box-shadow:0 0 40px rgba(0,212,255,0.3); }
+.score-ring.needs-work { border-color:var(--orange); box-shadow:0 0 40px rgba(255,109,0,0.3); }
+.score-ring.weak { border-color:var(--maroon); box-shadow:0 0 40px rgba(183,28,28,0.3); }
+
+.score-num { font-size:2.8rem; font-weight:900; }
+.score-ring.excellent .score-num { color:var(--green); }
+.score-ring.good .score-num { color:var(--cyan); }
+.score-ring.needs-work .score-num { color:var(--orange); }
+.score-ring.weak .score-num { color:#ef5350; }
+
+.score-label { font-size:0.8rem; color:var(--text2); }
+.result-name { font-size:1.4rem; font-weight:800; color:#fff; margin-bottom:6px; }
+.result-msg { font-size:1rem; color:var(--text2); }
+
+/* SECTION SCORES */
+.section-scores { margin-bottom:30px; }
+.section-scores h3 { font-size:1rem; font-weight:800; color:var(--cyan); margin-bottom:16px; padding-right:4px; }
+
+.sec-score-row {
+  display:flex; align-items:center; gap:14px;
+  background:rgba(255,255,255,0.03); border-radius:14px;
+  padding:14px 18px; margin-bottom:10px; border:1px solid rgba(255,255,255,0.05);
+}
+.sec-icon { font-size:1.4rem; }
+.sec-info { flex:1; }
+.sec-name { font-size:0.9rem; font-weight:700; color:#fff; margin-bottom:4px; }
+.sec-bar-wrap { height:8px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; }
+.sec-bar { height:100%; border-radius:10px; transition:width .8s ease; }
+.sec-pct { font-size:0.85rem; font-weight:700; min-width:40px; text-align:center; }
+
+/* WEAK AREAS */
+.weak-areas {
+  background:rgba(183,28,28,0.08); border:1px solid rgba(183,28,28,0.2);
+  border-radius:20px; padding:24px; margin-bottom:24px;
+}
+.weak-areas h3 { color:#ef5350; font-size:1rem; font-weight:800; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.weak-item {
+  display:flex; align-items:flex-start; gap:12px;
+  background:rgba(255,255,255,0.03); border-radius:12px; padding:14px;
+  margin-bottom:10px;
+}
+.weak-num { min-width:28px; height:28px; background:rgba(183,28,28,0.3); color:#ef5350; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.85rem; flex-shrink:0; }
+.weak-text { font-size:0.9rem; color:var(--text2); line-height:1.6; }
+.weak-text strong { color:#fff; display:block; margin-bottom:2px; }
+
+/* STRONG AREAS */
+.strong-areas {
+  background:rgba(0,230,118,0.06); border:1px solid rgba(0,230,118,0.15);
+  border-radius:20px; padding:24px; margin-bottom:24px;
+}
+.strong-areas h3 { color:var(--green); font-size:1rem; font-weight:800; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.strong-tag {
+  display:inline-block; padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:700;
+  background:rgba(0,230,118,0.12); color:var(--green); border:1px solid rgba(0,230,118,0.3);
+  margin:4px;
+}
+
+.btn-restart {
+  width:100%; padding:18px; border:none; border-radius:16px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  color:#fff; font-family:'Tajawal',sans-serif; font-size:1.1rem; font-weight:800;
+  cursor:pointer; transition:.3s; box-shadow:0 8px 30px rgba(0,212,255,0.2);
+}
+.btn-restart:hover { transform:translateY(-2px); }
+
+/* ===== TEACHER SCREEN ===== */
+#teacher-btn {
+  position:fixed; bottom:24px; left:24px; z-index:999;
+  width:50px; height:50px; border-radius:50%;
+  background:rgba(124,58,237,0.9); border:2px solid rgba(124,58,237,0.5);
+  color:#fff; font-size:1.2rem; cursor:pointer;
+  box-shadow:0 4px 20px rgba(124,58,237,0.4); transition:.3s;
+  display:flex; align-items:center; justify-content:center;
+}
+#teacher-btn:hover { transform:scale(1.1); }
+
+.teacher-modal {
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,0.8); backdrop-filter:blur(8px);
+  align-items:center; justify-content:center; padding:20px;
+}
+.teacher-modal.open { display:flex; }
+
+.teacher-panel {
+  background:var(--navy2); border:1px solid rgba(124,58,237,0.3);
+  border-radius:24px; width:100%; max-width:900px; max-height:90vh;
+  overflow:hidden; display:flex; flex-direction:column;
+}
+
+.teacher-header {
+  padding:20px 24px; background:rgba(124,58,237,0.1);
+  border-bottom:1px solid rgba(124,58,237,0.2);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.teacher-header h2 { color:#a78bfa; font-size:1.1rem; font-weight:800; }
+
+.teacher-password-screen {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:60px 40px; text-align:center;
+}
+.teacher-password-screen h3 { color:#a78bfa; font-size:1.2rem; font-weight:800; margin-bottom:8px; }
+.teacher-password-screen p { color:var(--text2); font-size:0.9rem; margin-bottom:24px; }
+.pw-input {
+  padding:14px 20px; border-radius:12px; border:2px solid rgba(124,58,237,0.3);
+  background:rgba(124,58,237,0.08); color:#fff;
+  font-family:'Tajawal',sans-serif; font-size:1rem;
+  outline:none; text-align:center; width:200px; letter-spacing:4px;
+}
+.pw-input:focus { border-color:#a78bfa; }
+.btn-pw { margin-top:14px; padding:12px 30px; border-radius:12px; border:none; background:linear-gradient(135deg,#7c3aed,#a78bfa); color:#fff; font-family:'Tajawal',sans-serif; font-size:1rem; font-weight:700; cursor:pointer; }
+
+.teacher-content { overflow-y:auto; padding:24px; }
+
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:28px; }
+.stat-box {
+  background:rgba(255,255,255,0.04); border-radius:16px; padding:18px; text-align:center;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.stat-val { font-size:2rem; font-weight:900; }
+.stat-lbl { font-size:0.8rem; color:var(--text2); margin-top:4px; }
+.stat-cyan .stat-val { color:var(--cyan); }
+.stat-green .stat-val { color:var(--green); }
+.stat-orange .stat-val { color:var(--orange); }
+.stat-red .stat-val { color:#ef5350; }
+
+.students-table-wrap { overflow-x:auto; margin-bottom:28px; }
+table.students-tbl { width:100%; border-collapse:collapse; font-size:0.88rem; }
+table.students-tbl th {
+  padding:12px 14px; background:rgba(124,58,237,0.15); color:#a78bfa; font-weight:800;
+  border-bottom:2px solid rgba(124,58,237,0.2); text-align:right;
+}
+table.students-tbl td {
+  padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text2);
+  text-align:right;
+}
+table.students-tbl tr:hover td { background:rgba(255,255,255,0.02); }
+.grade-badge { padding:3px 10px; border-radius:10px; font-size:0.8rem; font-weight:700; }
+.grade-a { background:rgba(0,230,118,0.15); color:var(--green); }
+.grade-b { background:rgba(0,212,255,0.15); color:var(--cyan); }
+.grade-c { background:rgba(255,214,0,0.15); color:var(--gold); }
+.grade-d { background:rgba(255,109,0,0.15); color:var(--orange); }
+.grade-f { background:rgba(183,28,28,0.15); color:#ef5350; }
+
+.weak-summary { margin-bottom:20px; }
+.weak-summary h3 { color:#a78bfa; font-size:1rem; font-weight:800; margin-bottom:14px; }
+.weak-topic-bar {
+  display:flex; align-items:center; gap:12px; margin-bottom:8px;
+}
+.wtb-label { min-width:160px; font-size:0.85rem; color:var(--text2); text-align:right; }
+.wtb-bar-wrap { flex:1; height:10px; background:rgba(255,255,255,0.06); border-radius:10px; overflow:hidden; }
+.wtb-bar { height:100%; border-radius:10px; background:linear-gradient(90deg,#ef5350,var(--orange)); }
+.wtb-pct { min-width:36px; font-size:0.82rem; font-weight:700; color:#ef5350; text-align:center; }
+
+.close-btn {
+  width:34px; height:34px; border-radius:8px; border:none;
+  background:rgba(255,255,255,0.06); color:var(--text2);
+  cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center;
+  transition:.2s;
+}
+.close-btn:hover { background:rgba(255,255,255,0.12); color:#fff; }
+
+.empty-state { text-align:center; padding:60px 20px; color:var(--text2); }
+.empty-state .e-icon { font-size:3rem; margin-bottom:16px; }
+.empty-state p { font-size:0.9rem; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(0,212,255,0.2); border-radius:10px; }
+</style>
+</head>
+<body>
+
+<!-- ===== SPLASH ===== -->
+<div id="splash" class="screen active">
+  <div class="logo-ring"><span class="logo-icon">🌐</span></div>
+  <h1>مراجعة <span>الصف العاشر</span></h1>
+  <p>الوحدة الثانية — شبكات الحاسوب والحوسبة السحابية</p>
+  <div class="subject-tags">
+    <span class="tag-blue">🔵 شبكات الحاسوب</span>
+    <span class="tag-green">🟢 الحوسبة السحابية</span>
+    <span class="tag-orange">🟠 أنظمة التحكم والمستشعرات</span>
+  </div>
+  <div class="name-entry">
+    <label>اكتبي اسمك للبدء</label>
+    <input type="text" id="student-name-input" placeholder="الاسم الكامل..." />
+    <button class="btn-start" id="btn-start" disabled onclick="startQuiz()">ابدأ المراجعة ◀</button>
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <div>
+      <div class="student-name" id="header-name">—</div>
+      <div class="q-counter" id="q-counter">السؤال 1 من 30</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="section-badge" id="section-badge">—</div>
+  </div>
+  <div class="quiz-body" id="quiz-body">
+    <!-- Questions injected here -->
+  </div>
+</div>
+
+<!-- ===== RESULTS ===== -->
+<div id="results" class="screen">
+  <div class="results-card" id="results-card">
+    <!-- Injected -->
+  </div>
+</div>
+
+<!-- ===== TEACHER BUTTON ===== -->
+<button id="teacher-btn" onclick="openTeacher()" title="لوحة المعلمة">👩‍🏫</button>
+
+<!-- ===== TEACHER MODAL ===== -->
+<div class="teacher-modal" id="teacher-modal">
+  <div class="teacher-panel">
+    <div class="teacher-header">
+      <h2>👩‍🏫 لوحة تحكم المعلمة</h2>
+      <button class="close-btn" onclick="closeTeacher()">✕</button>
+    </div>
+    <div id="teacher-inner">
+      <!-- Password or content -->
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// DATA
+// =============================================
+const TEACHER_PASSWORD = '1234';
+let teacherUnlocked = false;
+
+const SECTIONS = [
+  { id:'networks', name:'تعريف الشبكات وتصنيفها', icon:'🌐', color:'var(--cyan)' },
+  { id:'topology', name:'مخططات توصيل الشبكات', icon:'🔗', color:'var(--green)' },
+  { id:'protocols', name:'البروتوكولات', icon:'📡', color:'var(--orange)' },
+  { id:'cloud', name:'الحوسبة السحابية', icon:'☁️', color:'var(--cyan)' },
+  { id:'control', name:'أنظمة التحكم والمراقبة', icon:'⚙️', color:'var(--purple)' },
+  { id:'sensors', name:'المستشعرات', icon:'📟', color:'var(--gold)' },
+];
+
+const QUESTIONS = [
+  // ===== MCQ =====
+  { id:1, section:'networks', type:'mcq', text:'شبكة الحاسوب هي عبارة عن:',
+    options:['جهاز واحد متصل بالإنترنت','عدد من الحواسيب (على الأقل اثنان) متصلة ببعضها لمشاركة الموارد','برنامج لنقل البيانات','ناقل بيانات رئيسي'], answer:1 },
+  { id:2, section:'networks', type:'mcq', text:'يمكن تصنيف الشبكات بناءً على:',
+    options:['لون الأجهزة وعددها','الحيز الجغرافي والوسط الناقل للبيانات','سرعة المعالج فقط','نوع نظام التشغيل'], answer:1 },
+  { id:3, section:'networks', type:'mcq', text:'الشبكة التي تربط عدة مبانٍ في نفس المدينة مثل الجامعات تُسمى:',
+    options:['LAN','WAN','MAN','Cloud Network'], answer:2 },
+  { id:4, section:'networks', type:'mcq', text:'أكبر شبكة WAN في العالم هي:',
+    options:['الشبكة المحلية','الإنترنت','الشبكة النجمية','شبكة المدينة'], answer:1 },
+  { id:5, section:'topology', type:'mcq', text:'في المخطط الخطي (Bus)، ماذا يحدث عند انقطاع الناقل الرئيسي؟',
+    options:['تستمر الشبكة بشكل طبيعي','يتأثر جهاز واحد فقط','تتعطل كامل الشبكة','تنتقل البيانات عبر مسار بديل'], answer:2 },
+  { id:6, section:'topology', type:'mcq', text:'المخطط الذي يعتمد على جهاز مركزي (Hub أو Switch) هو:',
+    options:['المخطط الخطي','المخطط الحلقي','المخطط النجمي','المخطط المتشابك'], answer:2 },
+  { id:7, section:'topology', type:'mcq', text:'ميزة المخطط الحلقي (Ring) هي:',
+    options:['تكلفة منخفضة جداً','البيانات تسري باتجاه واحد مما يقلل من تصادم البيانات','عدم تأثر الشبكة عند عطل أي جهاز','لا تحتاج لأي ناقل'], answer:1 },
+  { id:8, section:'topology', type:'mcq', text:'في المخطط المتشابك (Mesh)، ما الميزة الرئيسية؟',
+    options:['التكلفة المنخفضة','يوجد دائماً مسار بديل لتدفق البيانات عند انقطاع الاتصال','سهولة التركيب','مناسب للشبكات الصغيرة فقط'], answer:1 },
+  { id:9, section:'topology', type:'mcq', text:'المخطط المختلط (Hybrid) هو:',
+    options:['نوع جديد من الشبكات اللاسلكية','دمج أكثر من تصميم هيكلي للشبكات معاً','مخطط خاص بالجامعات فقط','مخطط يعتمد على جهاز مركزي واحد'], answer:1 },
+  { id:10, section:'protocols', type:'mcq', text:'بروتوكول الشبكة هو:',
+    options:['جهاز لنقل البيانات','مجموعة القوانين التي تحدد كيف يتم تنسيق ومعالجة البيانات عبر الشبكة','برنامج لحماية الشبكة','نوع من أنواع الكابلات'], answer:1 },
+  { id:11, section:'protocols', type:'mcq', text:'البروتوكول المستخدم لنقل رسائل البريد الإلكتروني هو:',
+    options:['FTP','HTTP','SMTP','DNS'], answer:2 },
+  { id:12, section:'protocols', type:'mcq', text:'ما الفرق بين HTTP و HTTPS؟',
+    options:['HTTP أسرع من HTTPS','HTTPS يوفر اتصالاً آمناً بين الحاسوبين','لا فرق بينهما','HTTP مخصص للصور فقط'], answer:1 },
+  { id:13, section:'protocols', type:'mcq', text:'وظيفة بروتوكول DNS هي:',
+    options:['نقل الملفات بين الحواسيب','تشفير البيانات','تحويل عناوين الحواسيب في الشبكة إلى عناوين IP','تقسيم الرسائل إلى حزم'], answer:2 },
+  { id:14, section:'protocols', type:'mcq', text:'بروتوكول TCP/IP يختص بـ:',
+    options:['إنشاء الجلسة بين المستخدمين','تجهيز مقاطع البيانات ونقلها عبر الشبكة','تشفير البيانات وفك تشفيرها','مراقبة الشبكة فقط'], answer:1 },
+  { id:15, section:'cloud', type:'mcq', text:'الحوسبة السحابية هي:',
+    options:['تخزين البيانات على القرص الصلب المحلي','تقديم خدمات حوسبة عند الطلب بالقدرة على التخزين والمعالجة عبر الإنترنت','نوع من أنواع الشبكات المحلية','برنامج لإدارة الملفات'], answer:1 },
+  { id:16, section:'cloud', type:'mcq', text:'من ميزات الحوسبة السحابية:',
+    options:['تتطلب تركيب البرامج على كل جهاز','يجب أن تكون في نفس المكان للوصول إليها','التحديثات تلقائية ولا تتطلب تدخلاً من المستخدم','تكلفتها أعلى دائماً من البرامج التقليدية'], answer:2 },
+  { id:17, section:'control', type:'mcq', text:'ما الفرق الرئيسي بين النظام المفتوح والنظام المغلق؟',
+    options:['النظام المفتوح أكثر تكلفة','النظام المغلق يعتمد على التغذية الراجعة للتحكم في مخرجاته','النظام المفتوح يستخدم مستشعرات أكثر','لا فرق بينهما'], answer:1 },
+  { id:18, section:'control', type:'mcq', text:'مكيف الهواء مثال على:',
+    options:['نظام تحكم مفتوح','نظام تحكم مغلق','نظام مراقبة فقط','بروتوكول شبكة'], answer:1 },
+  { id:19, section:'sensors', type:'mcq', text:'المستشعر هو:',
+    options:['جهاز لتخزين البيانات','جهاز يكشف عن إشارة كالحركة والضوء والضغط ودرجة الحرارة ويرسلها للحاسوب','بروتوكول لنقل البيانات','نوع من الشبكات اللاسلكية'], answer:1 },
+  { id:20, section:'sensors', type:'mcq', text:'مستشعر الضغط يُستخدم في:',
+    options:['تشغيل مصابيح الشوارع تلقائياً','الكشف عن الدخان في المنازل','قياس ضغط السوائل والغاز في الطائرات ومحطات الأرصاد','الكشف عن الحركة في الحدائق'], answer:2 },
+
+  // ===== LIST =====
+  { id:21, section:'topology', type:'list', text:'عدّدي أنواع مخططات توصيل الشبكات (Topology) الخمسة:',
+    count:5, answers:['المخطط الخطي','المخطط الحلقي','المخطط النجمي','المخطط المتشابك','المخطط المختلط'] },
+  { id:22, section:'cloud', type:'list', text:'عدّدي خمس مزايا للحوسبة السحابية:',
+    count:5, answers:['الوصول من شتى أنحاء العالم','المزيد من المساحة التخزينية','سهولة الإعداد','التحديثات التلقائية','تقليل التكلفة'] },
+  { id:23, section:'sensors', type:'list', text:'عدّدي أربعة أنواع من المستشعرات مع ذكر وظيفة كل منها:',
+    count:4, answers:['مستشعر الحرارة — يقيس درجة الحرارة','مستشعر الضوء — يكشف عن الضوء','مستشعر الضغط — يقيس ضغط السوائل والغاز','مستشعر الدخان — يكشف عن الدخان'] },
+  { id:24, section:'protocols', type:'list', text:'عدّدي أربعة بروتوكولات شبكية مع ذكر وظيفة كل منها:',
+    count:4, answers:['FTP — نقل الملفات بين حواسيب الشبكة','SMTP — نقل رسائل البريد الإلكتروني','HTTP — تبادل البيانات في صفحات الويب','HTTPS — تبادل البيانات بشكل آمن'] },
+  { id:25, section:'cloud', type:'list', text:'عدّدي أربعة من آثار استخدام الحوسبة السحابية في حياتنا:',
+    count:4, answers:['جعل البرمجيات والحواسيب غير ظاهرة للمستخدم','تطوير الذات واتخاذ القرارات الذكية','التطور في مجال الصحة','التطور في إمكانيات التسوق'] },
+
+  // ===== COMPARE =====
+  { id:26, section:'networks', type:'compare',
+    text:'قارني بين الشبكات السلكية واللاسلكية من حيث: السرعة — الأمان — التكاليف — التوسعة',
+    cols:['الشبكة السلكية','الشبكة اللاسلكية'],
+    rows:['السرعة','الأمان','التكاليف','التوسعة'],
+    answers:[
+      ['100 ميغابايت إلى 1 جيجابايت، أداء أفضل','تعتمد على المسافة، تضعف كلما ابتعد الجهاز'],
+      ['أفضل حماية، يمكن تثبيت جدران الحماية مباشرة','معرضة للاختراق رغم وجود أنظمة تشفير'],
+      ['معدات موثوقة لكن التركيب مكلف','سهلة الإضافة لكن تزداد تكلفة الإدارة'],
+      ['مكلفة، تتطلب أسلاك وموزعات جديدة','سهلة جداً، يكفي إضافة مستخدم جديد']
+    ]
+  },
+  { id:27, section:'control', type:'compare',
+    text:'قارني بين نظام التحكم المفتوح والمغلق من حيث: التغذية الراجعة — التكيّف مع المؤثرات — المثال التطبيقي',
+    cols:['النظام المفتوح','النظام المغلق'],
+    rows:['التغذية الراجعة','التكيّف مع المؤثرات الخارجية','مثال تطبيقي'],
+    answers:[
+      ['لا يوجد نظام للتغذية الراجعة','توجد تغذية راجعة مستمرة'],
+      ['لا يستطيع التعامل مع الظروف الخارجية','يتكيف مع الظروف الموجودة حالياً'],
+      ['الغسالة','مكيف الهواء']
+    ]
+  },
+  { id:28, section:'networks', type:'compare',
+    text:'قارني بين أنواع الشبكات الثلاثة (LAN / MAN / WAN) من حيث: الحجم الجغرافي — مثال — السرعة',
+    cols:['LAN','MAN','WAN'],
+    rows:['الحجم الجغرافي','مثال','السرعة'],
+    answers:[
+      ['نطاق ضيق — مبنى أو مؤسسة','عدة مبانٍ في نفس المدينة','دولة أو قارة أو العالم'],
+      ['شبكة فصل دراسي','شبكة جامعة','الإنترنت'],
+      ['عالية جداً','متوسطة','أقل نسبياً وتتفاوت']
+    ]
+  },
+  { id:29, section:'topology', type:'compare',
+    text:'قارني بين المخطط النجمي (Star) والمتشابك (Mesh) من حيث: التكلفة — الموثوقية — الاستخدام المناسب',
+    cols:['المخطط النجمي','المخطط المتشابك'],
+    rows:['التكلفة','الموثوقية','الاستخدام المناسب'],
+    answers:[
+      ['عالية بسبب الجهاز المركزي','عالية جداً بسبب توصيلات متكررة'],
+      ['عطل الجهاز المركزي يوقف الشبكة كاملاً','يوجد دائماً مسار بديل'],
+      ['الشبكات المتوسطة والكبيرة','الشبكات التي تتطلب موثوقية عالية']
+    ]
+  },
+
+  // ===== MATCH =====
+  { id:30, section:'protocols', type:'match',
+    text:'اربطي بسهم كل طبقة من طبقات OSI بالوظيفة التي تؤديها:',
+    pairs:[
+      { left:'التطبيقات (Application)', right:'تُشغّل التطبيقات البرمجية' },
+      { left:'التقديم (Presentation)', right:'تقوم بتشفير وفك تشفير البيانات' },
+      { left:'الجلسة (Session)', right:'تُؤسس عملية الاتصال بين المصدر والوجهة' },
+      { left:'النقل (Transport)', right:'تضمن نقل البيانات مع تجنب الأخطاء' },
+      { left:'الشبكة (Network)', right:'تحدد العنوان والمسار المنطقي لنقل البيانات' },
+      { left:'ربط البيانات (Data Link)', right:'تحوّل حزم البيانات إلى إطارات Frames' },
+      { left:'الفيزيائية (Physical)', right:'تنقل البيانات عبر الوسط الملموس كالكابلات' },
+    ]
+  }
+];
+
+// =============================================
+// STATE
+// =============================================
+let studentName = '';
+let studentAnswers = {}; // qId -> { answered: bool, correct: bool, partial: number }
+let allStudentResults = JSON.parse(localStorage.getItem('quiz_results_g10') || '[]');
+let currentQ = 0;
+let quizStarted = false;
+
+// Section score tracking
+let sectionScores = {}; // sectionId -> { correct:0, total:0 }
+
+SECTIONS.forEach(s => sectionScores[s.id] = { correct:0, total:0 });
+QUESTIONS.forEach(q => sectionScores[q.section].total++);
+
+// =============================================
+// SPLASH
+// =============================================
+document.getElementById('student-name-input').addEventListener('input', function() {
+  document.getElementById('btn-start').disabled = this.value.trim().length < 2;
+});
+document.getElementById('student-name-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim().length >= 2) startQuiz();
+});
+
+function startQuiz() {
+  studentName = document.getElementById('student-name-input').value.trim();
+  if (!studentName) return;
+  document.getElementById('header-name').textContent = studentName;
+  showScreen('quiz');
+  renderQuestion(0);
+}
+
+// =============================================
+// QUIZ ENGINE
+// =============================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQuestion(idx) {
+  currentQ = idx;
+  const q = QUESTIONS[idx];
+  const sec = SECTIONS.find(s => s.id === q.section);
+  const pct = Math.round((idx / QUESTIONS.length) * 100);
+
+  document.getElementById('q-counter').textContent = `السؤال ${idx+1} من ${QUESTIONS.length}`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  const badge = document.getElementById('section-badge');
+  badge.textContent = sec.icon + ' ' + sec.name;
+  badge.style.background = `rgba(0,212,255,0.1)`;
+  badge.style.color = sec.color;
+  badge.style.border = `1px solid ${sec.color}40`;
+  badge.style.borderRadius = '20px';
+  badge.style.padding = '4px 12px';
+  badge.style.fontSize = '0.75rem';
+  badge.style.fontWeight = '700';
+
+  const body = document.getElementById('quiz-body');
+  body.innerHTML = '';
+
+  // Section header when section changes
+  if (idx === 0 || QUESTIONS[idx-1].section !== q.section) {
+    const sh = document.createElement('div');
+    sh.className = 'section-title';
+    sh.innerHTML = `<div class="s-icon">${sec.icon}</div><div><h2>${sec.name}</h2><p>أجيبي على الأسئلة التالية بعناية</p></div>`;
+    body.appendChild(sh);
+  }
+
+  const card = document.createElement('div');
+  card.className = 'q-card';
+  card.id = 'q-card-' + q.id;
+
+  // Type label
+  const typeMap = { mcq:['type-mcq','⭕ اختيار من متعدد'], list:['type-list','📝 تعداد'], compare:['type-compare','📊 مقارنة'], match:['type-match','🔗 ربط'] };
+  const [cls, lbl] = typeMap[q.type];
+  card.innerHTML = `<div class="q-type-label ${cls}">${lbl}</div><div class="q-text"><span class="q-num">س${q.id}.</span> ${q.text}</div>`;
+
+  if (q.type === 'mcq') renderMCQ(card, q);
+  else if (q.type === 'list') renderList(card, q);
+  else if (q.type === 'compare') renderCompare(card, q);
+  else if (q.type === 'match') renderMatch(card, q);
+
+  // Actions
+  const actions = document.createElement('div');
+  actions.className = 'q-actions';
+  actions.innerHTML = `<button class="btn-submit" id="btn-submit-${q.id}" onclick="submitAnswer(${q.id})">تحقق من الإجابة ✓</button>
+  <button class="btn-next" id="btn-next-${q.id}" onclick="nextQuestion(${idx})">التالي ◀</button>`;
+  card.appendChild(actions);
+
+  // Finish button on last Q
+  if (idx === QUESTIONS.length - 1) {
+    const fin = document.createElement('button');
+    fin.className = 'btn-finish-quiz'; fin.id = 'btn-finish';
+    fin.textContent = '🏁 إنهاء المراجعة وعرض النتائج';
+    fin.onclick = showResults;
+    body.appendChild(card);
+    body.appendChild(fin);
+  } else {
+    body.appendChild(card);
+  }
+}
+
+function renderMCQ(card, q) {
+  const grid = document.createElement('div');
+  grid.className = 'options-grid';
+  const letters = ['أ','ب','ج','د'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.id = `opt-${q.id}-${i}`;
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt}`;
+    btn.addEventListener('click', () => selectMCQ(q.id, i, q.options.length));
+    grid.appendChild(btn);
+  });
+  const fb = document.createElement('div');
+  fb.className = 'feedback-box'; fb.id = `fb-${q.id}`;
+  card.appendChild(grid);
+  card.appendChild(fb);
+}
+
+function selectMCQ(qId, idx, total) {
+  if (document.getElementById(`opt-${qId}-0`).disabled) return;
+  for (let i=0; i<total; i++) {
+    document.getElementById(`opt-${qId}-${i}`)?.classList.remove('selected');
+  }
+  document.getElementById(`opt-${qId}-${idx}`).classList.add('selected');
+  document.getElementById(`opt-${qId}-${idx}`).dataset.selected = 'true';
+}
+
+function renderList(card, q) {
+  const wrap = document.createElement('div');
+  wrap.className = 'list-inputs';
+  for (let i=0; i<q.count; i++) {
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = `<div class="list-num">${i+1}</div><input class="list-input" id="list-${q.id}-${i}" type="text" placeholder="اكتبي إجابتك هنا..." />`;
+    wrap.appendChild(row);
+  }
+  const fb = document.createElement('div');
+  fb.className = 'feedback-box'; fb.id = `fb-${q.id}`;
+  card.appendChild(wrap);
+  card.appendChild(fb);
+}
+
+function renderCompare(card, q) {
+  const tbl = document.createElement('table');
+  tbl.className = 'compare-table';
+  // Header
+  let hdr = '<tr><th>وجه المقارنة</th>';
+  q.cols.forEach(c => hdr += `<th>${c}</th>`);
+  hdr += '</tr>';
+  tbl.innerHTML = hdr;
+  // Rows
+  q.rows.forEach((row, ri) => {
+    const tr = document.createElement('tr');
+    let html = `<td>${row}</td>`;
+    q.cols.forEach((col, ci) => {
+      html += `<td><input type="text" id="cmp-${q.id}-${ri}-${ci}" placeholder="..." /></td>`;
+    });
+    tr.innerHTML = html;
+    tbl.appendChild(tr);
+  });
+  const fb = document.createElement('div');
+  fb.className = 'feedback-box'; fb.id = `fb-${q.id}`;
+  card.appendChild(tbl);
+  card.appendChild(fb);
+}
+
+function renderMatch(card, q) {
+  // Shuffle right options
+  const rights = [...q.pairs.map(p => p.right)].sort(() => Math.random()-0.5);
+  const wrap = document.createElement('div');
+  wrap.className = 'match-container';
+  q.pairs.forEach((pair, i) => {
+    const row = document.createElement('div');
+    row.className = 'match-row';
+    let opts = `<option value="">-- اختاري --</option>`;
+    rights.forEach(r => opts += `<option value="${r}">${r}</option>`);
+    row.innerHTML = `<div class="match-left">${pair.left}</div><div class="match-arrow">←</div><select class="match-select" id="match-${q.id}-${i}">${opts}</select>`;
+    wrap.appendChild(row);
+  });
+  const fb = document.createElement('div');
+  fb.className = 'feedback-box'; fb.id = `fb-${q.id}`;
+  card.appendChild(wrap);
+  card.appendChild(fb);
+}
+
+// =============================================
+// SUBMIT LOGIC
+// =============================================
+function submitAnswer(qId) {
+  const q = QUESTIONS.find(x => x.id === qId);
+  let correct = false, partial = 0;
+
+  if (q.type === 'mcq') {
+    const letters = ['أ','ب','ج','د'];
+    let selected = -1;
+    for (let i=0; i<q.options.length; i++) {
+      const btn = document.getElementById(`opt-${q.id}-${i}`);
+      if (btn && btn.classList.contains('selected')) { selected = i; break; }
+    }
+    if (selected === -1) { showFeedback(qId, false, 'يرجى اختيار إجابة أولاً'); return; }
+    correct = (selected === q.answer);
+    // Show results
+    for (let i=0; i<q.options.length; i++) {
+      const btn = document.getElementById(`opt-${q.id}-${i}`);
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add('correct');
+      else if (i === selected && !correct) btn.classList.add('wrong');
+      btn.classList.remove('selected');
+    }
+    showFeedback(qId, correct, correct ? '✅ إجابة صحيحة! أحسنتِ' : `❌ الإجابة الصحيحة: ${letters[q.answer]}. ${q.options[q.answer]}`);
+    partial = correct ? 1 : 0;
+  }
+  else if (q.type === 'list') {
+    let hits = 0;
+    const userAnswers = [];
+    for (let i=0; i<q.count; i++) {
+      const inp = document.getElementById(`list-${q.id}-${i}`);
+      if (inp) { userAnswers.push(inp.value.trim()); inp.disabled = true; }
+    }
+    userAnswers.forEach(ua => {
+      if (q.answers.some(a => ua && a.includes(ua.substring(0,4)))) hits++;
+    });
+    partial = hits / q.count;
+    correct = partial >= 0.6;
+    const answersHtml = q.answers.map((a,i) => `<br>${i+1}. ${a}`).join('');
+    showFeedback(qId, correct, `${correct?'✅':'⚠️'} أصبتِ ${hits} من ${q.count} | الإجابات الكاملة:${answersHtml}`);
+  }
+  else if (q.type === 'compare') {
+    let hits = 0, total = 0;
+    q.rows.forEach((row, ri) => {
+      q.cols.forEach((col, ci) => {
+        const inp = document.getElementById(`cmp-${q.id}-${ri}-${ci}`);
+        if (inp) { inp.disabled = true; total++; }
+      });
+    });
+    // Just mark as submitted — give partial credit
+    partial = 0.7; correct = true;
+    let answersHtml = '<br>';
+    q.rows.forEach((row, ri) => {
+      answersHtml += `<br><strong>${row}:</strong> `;
+      q.answers[ri].forEach((ans, ci) => { answersHtml += `${q.cols[ci]}: ${ans} | `; });
+    });
+    showFeedback(qId, true, `✅ تحقق من إجاباتك مقارنةً بالنموذج:${answersHtml}`);
+  }
+  else if (q.type === 'match') {
+    let hits = 0;
+    q.pairs.forEach((pair, i) => {
+      const sel = document.getElementById(`match-${q.id}-${i}`);
+      if (sel) {
+        if (sel.value === pair.right) hits++;
+        sel.disabled = true;
+      }
+    });
+    partial = hits / q.pairs.length;
+    correct = partial >= 0.7;
+    const answersHtml = q.pairs.map(p => `<br>${p.left} ← ${p.right}`).join('');
+    showFeedback(qId, correct, `${correct?'✅':'⚠️'} أصبتِ ${hits} من ${q.pairs.length} | الإجابات الصحيحة:${answersHtml}`);
+  }
+
+  studentAnswers[qId] = { answered:true, correct, partial, section: q.section };
+  if (correct || partial > 0) sectionScores[q.section].correct += (partial || (correct?1:0));
+
+  // Show next / finish
+  document.getElementById(`btn-submit-${qId}`).style.display = 'none';
+  const nxt = document.getElementById(`btn-next-${qId}`);
+  if (nxt) nxt.style.display = 'inline-block';
+
+  // Show finish button on last Q
+  if (qId === QUESTIONS[QUESTIONS.length-1].id) {
+    const fin = document.getElementById('btn-finish');
+    if (fin) fin.style.display = 'block';
+  }
+}
+
+function showFeedback(qId, correct, msg) {
+  const fb = document.getElementById(`fb-${qId}`);
+  if (!fb) return;
+  fb.className = 'feedback-box ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = msg;
+  fb.style.display = 'block';
+}
+
+function nextQuestion(currentIdx) {
+  if (currentIdx + 1 < QUESTIONS.length) renderQuestion(currentIdx + 1);
+}
+
+// =============================================
+// RESULTS
+// =============================================
+function showResults() {
+  // Calculate scores
+  const secResults = {};
+  SECTIONS.forEach(s => {
+    const sc = sectionScores[s.id];
+    secResults[s.id] = { pct: sc.total > 0 ? Math.round((sc.correct/sc.total)*100) : 0, ...sc };
+  });
+
+  const totalCorrect = Object.values(studentAnswers).reduce((sum,a) => sum + (a.partial||0), 0);
+  const totalQ = QUESTIONS.length;
+  const overallPct = Math.round((totalCorrect / totalQ) * 100);
+
+  // Grade
+  let grade, gradeClass, emoji, msg;
+  if (overallPct >= 90) { grade='A'; gradeClass='excellent'; emoji='🌟'; msg='ممتاز! أداء رائع جداً'; }
+  else if (overallPct >= 75) { grade='B'; gradeClass='good'; emoji='👍'; msg='جيد جداً! استمري بالمراجعة'; }
+  else if (overallPct >= 60) { grade='C'; gradeClass='needs-work'; emoji='📚'; msg='جيد، لكن تحتاجين مزيداً من المراجعة'; }
+  else { grade='D'; gradeClass='weak'; emoji='⚡'; msg='تحتاجين مراجعة مكثفة للمادة'; }
+
+  // Weak areas (< 60%)
+  const weakSections = SECTIONS.filter(s => secResults[s.id].pct < 60);
+  const strongSections = SECTIONS.filter(s => secResults[s.id].pct >= 80);
+
+  // Save to localStorage
+  const record = {
+    name: studentName,
+    date: new Date().toLocaleString('ar-QA'),
+    overall: overallPct,
+    grade,
+    sections: secResults,
+    weakSections: weakSections.map(s=>s.id)
+  };
+  allStudentResults.push(record);
+  localStorage.setItem('quiz_results_g10', JSON.stringify(allStudentResults));
+
+  // Build HTML
+  let secBarsHtml = SECTIONS.map(s => {
+    const pct = secResults[s.id].pct;
+    let barColor = pct>=80?'var(--green)':pct>=60?'var(--cyan)':pct>=40?'var(--orange)':'#ef5350';
+    let pctColor = pct>=80?'var(--green)':pct>=60?'var(--cyan)':pct>=40?'var(--orange)':'#ef5350';
+    return `<div class="sec-score-row">
+      <div class="sec-icon">${s.icon}</div>
+      <div class="sec-info">
+        <div class="sec-name">${s.name}</div>
+        <div class="sec-bar-wrap"><div class="sec-bar" style="width:${pct}%;background:${barColor}"></div></div>
+      </div>
+      <div class="sec-pct" style="color:${pctColor}">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  let weakHtml = weakSections.length === 0
+    ? '<div style="color:var(--green);font-size:0.9rem">🎉 لا توجد نقاط ضعف — أداء ممتاز في جميع المحاور!</div>'
+    : weakSections.map((s,i) => {
+        const tips = {
+          networks:'راجعي تعريف الشبكة وأنواعها LAN/MAN/WAN من صفحة 118',
+          topology:'راجعي مخططات التوصيل الخمسة ومزايا وعيوب كل منها من صفحة 120-122',
+          protocols:'راجعي جدول البروتوكولات ونموذج OSI من صفحة 123-124',
+          cloud:'راجعي تعريف الحوسبة السحابية ومزاياها وآثارها من صفحة 153-156',
+          control:'راجعي الفرق بين النظام المفتوح والمغلق وأمثلتهما من صفحة 157-158',
+          sensors:'راجعي أنواع المستشعرات ووظائف كل نوع من صفحة 160-161'
+        };
+        return `<div class="weak-item">
+          <div class="weak-num">${i+1}</div>
+          <div class="weak-text"><strong>${s.icon} ${s.name}</strong>${tips[s.id]||''}</div>
+        </div>`;
+      }).join('');
+
+  let strongHtml = strongSections.length === 0
+    ? '<span style="color:var(--text2);font-size:0.85rem">واصلي المراجعة لتطوير نقاط قوتك</span>'
+    : strongSections.map(s => `<span class="strong-tag">${s.icon} ${s.name}</span>`).join('');
+
+  const html = `
+    <div class="result-hero">
+      <div class="score-ring ${gradeClass}">
+        <div class="score-num">${overallPct}%</div>
+        <div class="score-label">الدرجة الكلية</div>
+      </div>
+      <div class="result-name">${emoji} ${studentName}</div>
+      <div class="result-msg">${msg}</div>
+    </div>
+    <div class="section-scores">
+      <h3>📊 أداؤكِ في كل محور</h3>
+      ${secBarsHtml}
+    </div>
+    <div class="weak-areas">
+      <h3>⚠️ المحاور التي تحتاجين التركيز عليها</h3>
+      ${weakHtml}
+    </div>
+    <div class="strong-areas">
+      <h3>✅ نقاط قوتك</h3>
+      ${strongHtml}
+    </div>
+    <button class="btn-restart" onclick="restartQuiz()">🔄 إعادة المحاولة</button>
+  `;
+
+  document.getElementById('results-card').innerHTML = html;
+  showScreen('results');
+}
+
+function restartQuiz() {
+  studentAnswers = {};
+  SECTIONS.forEach(s => sectionScores[s.id] = { correct:0, total:0 });
+  QUESTIONS.forEach(q => sectionScores[q.section].total++);
+  showScreen('splash');
+  document.getElementById('student-name-input').value = '';
+  document.getElementById('btn-start').disabled = true;
+}
+
+// =============================================
+// TEACHER DASHBOARD
+// =============================================
+function openTeacher() {
+  document.getElementById('teacher-modal').classList.add('open');
+  renderTeacherInner();
+}
+function closeTeacher() {
+  document.getElementById('teacher-modal').classList.remove('open');
+}
+
+function renderTeacherInner() {
+  const inner = document.getElementById('teacher-inner');
+  if (!teacherUnlocked) {
+    inner.innerHTML = `
+      <div class="teacher-password-screen">
+        <div style="font-size:3rem;margin-bottom:16px">🔐</div>
+        <h3>لوحة تحكم المعلمة</h3>
+        <p>أدخلي كلمة المرور للوصول</p>
+        <input class="pw-input" type="password" id="pw-inp" placeholder="****" maxlength="10" />
+        <br>
+        <button class="btn-pw" onclick="checkPassword()">دخول</button>
+        <div id="pw-err" style="color:#ef5350;margin-top:10px;font-size:0.85rem"></div>
+      </div>`;
+    document.getElementById('pw-inp').addEventListener('keydown', e => { if(e.key==='Enter') checkPassword(); });
+  } else {
+    renderTeacherDashboard(inner);
+  }
+}
+
+function checkPassword() {
+  const val = document.getElementById('pw-inp').value;
+  if (val === TEACHER_PASSWORD) {
+    teacherUnlocked = true;
+    renderTeacherDashboard(document.getElementById('teacher-inner'));
+  } else {
+    document.getElementById('pw-err').textContent = 'كلمة المرور غير صحيحة';
+  }
+}
+
+function renderTeacherDashboard(container) {
+  const results = JSON.parse(localStorage.getItem('quiz_results_g10') || '[]');
+
+  if (results.length === 0) {
+    container.innerHTML = `<div class="teacher-content"><div class="empty-state"><div class="e-icon">📭</div><p>لا توجد نتائج بعد.<br>انتظري حتى تنهي الطالبات المراجعة.</p></div></div>`;
+    return;
+  }
+
+  const avg = Math.round(results.reduce((s,r)=>s+r.overall,0)/results.length);
+  const passed = results.filter(r=>r.overall>=60).length;
+  const failed = results.length - passed;
+  const topStudent = results.reduce((a,b) => a.overall>b.overall?a:b);
+
+  // Weak topics frequency
+  const weakFreq = {};
+  SECTIONS.forEach(s => weakFreq[s.id] = 0);
+  results.forEach(r => r.weakSections?.forEach(ws => weakFreq[ws]++));
+
+  const gradeF = (p) => {
+    if(p>=90) return '<span class="grade-badge grade-a">A ممتاز</span>';
+    if(p>=75) return '<span class="grade-badge grade-b">B جيد جداً</span>';
+    if(p>=60) return '<span class="grade-badge grade-c">C جيد</span>';
+    if(p>=40) return '<span class="grade-badge grade-d">D مقبول</span>';
+    return '<span class="grade-badge grade-f">F ضعيف</span>';
+  };
+
+  let studentRows = results.map(r => {
+    const weakNames = (r.weakSections||[]).map(ws => SECTIONS.find(s=>s.id===ws)?.name || ws).join('، ') || '—';
+    return `<tr>
+      <td>${r.name}</td>
+      <td style="color:${r.overall>=75?'var(--green)':r.overall>=60?'var(--cyan)':'#ef5350'};font-weight:700">${r.overall}%</td>
+      <td>${gradeF(r.overall)}</td>
+      <td style="color:#ef5350;font-size:0.82rem">${weakNames}</td>
+      <td style="color:var(--text2);font-size:0.8rem">${r.date}</td>
+    </tr>`;
+  }).join('');
+
+  let weakBarsHtml = SECTIONS.map(s => {
+    const cnt = weakFreq[s.id];
+    const pct = results.length > 0 ? Math.round((cnt/results.length)*100) : 0;
+    return `<div class="weak-topic-bar">
+      <div class="wtb-label">${s.icon} ${s.name}</div>
+      <div class="wtb-bar-wrap"><div class="wtb-bar" style="width:${pct}%"></div></div>
+      <div class="wtb-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="teacher-content">
+      <div class="stats-grid">
+        <div class="stat-box stat-cyan"><div class="stat-val">${results.length}</div><div class="stat-lbl">عدد الطالبات</div></div>
+        <div class="stat-box stat-green"><div class="stat-val">${avg}%</div><div class="stat-lbl">متوسط الدرجات</div></div>
+        <div class="stat-box stat-green"><div class="stat-val">${passed}</div><div class="stat-lbl">ناجحات (≥60%)</div></div>
+        <div class="stat-box stat-red"><div class="stat-val">${failed}</div><div class="stat-lbl">تحتجن دعماً</div></div>
+        <div class="stat-box stat-orange"><div class="stat-val" style="font-size:1rem">${topStudent.name.split(' ')[0]}</div><div class="stat-lbl">🏆 الأعلى ${topStudent.overall}%</div></div>
+      </div>
+
+      <div class="weak-summary">
+        <h3>📉 المحاور الأكثر ضعفاً عند الطالبات</h3>
+        ${weakBarsHtml}
+      </div>
+
+      <div class="students-table-wrap">
+        <h3 style="color:#a78bfa;font-size:1rem;font-weight:800;margin-bottom:14px">📋 نتائج جميع الطالبات</h3>
+        <table class="students-tbl">
+          <tr>
+            <th>اسم الطالبة</th>
+            <th>الدرجة</th>
+            <th>التقدير</th>
+            <th>محاور تحتاج تركيزاً</th>
+            <th>وقت الانتهاء</th>
+          </tr>
+          ${studentRows}
+        </table>
+      </div>
+
+      <button onclick="clearResults()" style="padding:10px 20px;border-radius:10px;border:1px solid rgba(183,28,28,0.3);background:rgba(183,28,28,0.08);color:#ef5350;font-family:Tajawal,sans-serif;font-size:0.85rem;cursor:pointer;float:left;margin-top:10px">🗑️ مسح جميع النتائج</button>
+    </div>`;
+}
+
+function clearResults() {
+  if (confirm('هل أنتِ متأكدة من مسح جميع النتائج؟')) {
+    localStorage.removeItem('quiz_results_g10');
+    allStudentResults = [];
+    renderTeacherDashboard(document.getElementById('teacher-inner'));
+  }
+}
+</script>
+</body>
+</html>
