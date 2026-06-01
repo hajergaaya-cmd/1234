@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مراجعة الصف الرابع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1b2a;--pur:#7c3aed;--pur2:#a78bfa;
+  --grn:#10b981;--org:#f59e0b;--red:#ef4444;--pnk:#ec4899;
+  --cyn:#06b6d4;--gld:#fbbf24;--sky:#0ea5e9;--teal:#14b8a6;
+  --card:#1a2535;--bdr:rgba(167,139,250,0.18);--txt:#e2e8f0;--txt2:#94a3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--txt);min-height:100vh;overflow-x:hidden;}
+
+/* SCREENS */
+.scr{display:none!important;}
+.scr.on{display:flex!important;flex-direction:column;min-height:100vh;}
+#res-scr{display:none!important;}
+#res-scr.on{display:flex!important;min-height:100vh;align-items:center;justify-content:center;padding:20px;}
+
+/* SPLASH */
+#splash{
+  align-items:center;justify-content:center;padding:22px 16px;text-align:center;
+  background:radial-gradient(ellipse at 40% 20%,rgba(124,58,237,0.16) 0%,transparent 60%),var(--navy);
+}
+.sp-icon{font-size:5rem;animation:bob 2.5s ease-in-out infinite;margin-bottom:14px;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.sp-title{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:4px;}
+.sp-title span{color:var(--pur2);}
+.sp-sub{color:var(--txt2);margin-bottom:26px;font-size:.9rem;}
+.name-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;
+  width:100%;max-width:560px;margin-bottom:18px;
+  max-height:320px;overflow-y:auto;padding:2px;
+}
+.name-grid::-webkit-scrollbar{width:4px;}
+.name-grid::-webkit-scrollbar-thumb{background:rgba(167,139,250,0.25);border-radius:10px;}
+.nb{
+  padding:10px 10px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);border-radius:11px;
+  color:var(--txt2);font-family:'Tajawal',sans-serif;font-size:.8rem;
+  cursor:pointer;transition:.2s;text-align:right;line-height:1.4;
+}
+.nb:hover{border-color:var(--pur2);color:#fff;background:rgba(167,139,250,0.08);}
+.nb.sel{border-color:var(--pur2);background:rgba(167,139,250,0.14);color:#fff;}
+.btn-join{
+  width:100%;max-width:320px;padding:14px;
+  background:linear-gradient(135deg,var(--pur),var(--cyn));
+  border:none;border-radius:13px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;
+  cursor:pointer;transition:.3s;box-shadow:0 8px 28px rgba(124,58,237,0.35);
+}
+.btn-join:hover{transform:translateY(-3px);}
+.btn-join:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+/* TOPBAR */
+.topbar{
+  background:rgba(13,27,42,0.97);border-bottom:1px solid var(--bdr);
+  padding:11px 18px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);
+}
+.tb-t{font-size:.92rem;font-weight:800;color:#fff;}
+.tb-t span{color:var(--pur2);}
+.pill{padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:700;}
+.pp{background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);color:var(--pur2);}
+.pg{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25);color:var(--gld);}
+
+/* STEPS */
+.steps-w{background:rgba(13,27,42,0.97);padding:8px 18px 10px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.steps-r{display:flex;gap:3px;align-items:center;overflow-x:auto;}
+.steps-r::-webkit-scrollbar{height:2px;}
+.sd{
+  min-width:25px;height:25px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:800;
+  border:2px solid rgba(255,255,255,0.1);color:var(--txt2);
+  background:rgba(255,255,255,0.04);transition:.3s;flex-shrink:0;
+}
+.sd.active{border-color:var(--pur2);color:var(--pur2);background:rgba(167,139,250,0.1);}
+.sd.done{border-color:var(--grn);color:var(--grn);background:rgba(16,185,129,0.08);}
+.sl{width:14px;height:2px;background:rgba(255,255,255,0.06);border-radius:2px;flex-shrink:0;}
+.sl.done{background:var(--grn);}
+
+/* CONTENT */
+.ca{flex:1;padding:20px 16px;max-width:680px;margin:0 auto;width:100%;}
+.qcard{
+  background:var(--card);border:1px solid var(--bdr);
+  border-radius:20px;padding:24px;margin-bottom:16px;
+  animation:fu .36s ease;
+}
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* section header */
+.sec-hdr{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 18px;border-radius:14px;margin-bottom:18px;
+  border-right:4px solid;
+}
+.sh-robot{border-color:var(--pur2);background:rgba(167,139,250,0.06);}
+.sh-algo{border-color:var(--org);background:rgba(245,158,11,0.06);}
+.sh-loop{border-color:var(--teal);background:rgba(20,184,166,0.06);}
+.sh-icon{font-size:1.6rem;}
+.sh-title{font-size:1rem;font-weight:800;}
+.sh-robot .sh-title{color:var(--pur2);}
+.sh-algo .sh-title{color:var(--org);}
+.sh-loop .sh-title{color:var(--teal);}
+.sh-sub{font-size:.8rem;color:var(--txt2);margin-top:2px;}
+
+/* BADGE */
+.qbadge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 12px;border-radius:20px;font-size:.76rem;font-weight:700;margin-bottom:12px;
+}
+.bmc{background:rgba(6,182,212,0.12);color:var(--cyn);border:1px solid rgba(6,182,212,0.25);}
+.btf{background:rgba(245,158,11,0.12);color:var(--org);border:1px solid rgba(245,158,11,0.25);}
+.bmt{background:rgba(124,58,237,0.12);color:var(--pur2);border:1px solid rgba(124,58,237,0.25);}
+.bdf{background:rgba(236,72,153,0.12);color:var(--pnk);border:1px solid rgba(236,72,153,0.25);}
+.btl{background:rgba(20,184,166,0.12);color:var(--teal);border:1px solid rgba(20,184,166,0.25);}
+
+.qnum{color:var(--pur2);font-size:1rem;margin-left:3px;}
+.qtxt{font-size:1rem;font-weight:700;color:#fff;margin-bottom:14px;line-height:1.7;}
+.qsub{font-size:.84rem;color:var(--txt2);margin-bottom:12px;line-height:1.6;}
+
+/* MCQ */
+.opts{display:flex;flex-direction:column;gap:8px;}
+.ob{
+  padding:12px 15px;border-radius:11px;
+  background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.08);
+  color:var(--txt);font-family:'Tajawal',sans-serif;font-size:.92rem;
+  cursor:pointer;transition:.2s;text-align:right;
+  display:flex;align-items:center;gap:9px;
+}
+.ol{
+  min-width:29px;height:29px;border-radius:8px;
+  background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.8rem;color:var(--txt2);flex-shrink:0;
+}
+.ob:hover:not(:disabled){border-color:var(--pur2);background:rgba(167,139,250,0.07);}
+.ob.sel{border-color:var(--pur2);background:rgba(167,139,250,0.09);}
+.ob.sel .ol{background:var(--pur2);color:#fff;}
+.ob.cor{border-color:var(--grn)!important;background:rgba(16,185,129,0.07)!important;}
+.ob.cor .ol{background:var(--grn)!important;color:#fff!important;}
+.ob.wrg{border-color:var(--red)!important;background:rgba(239,68,68,0.06)!important;}
+.ob.wrg .ol{background:var(--red)!important;color:#fff!important;}
+.ob:disabled{cursor:default;}
+
+/* FEEDBACK */
+.fb{margin-top:9px;padding:10px 13px;border-radius:9px;font-size:.86rem;font-weight:600;display:none;}
+.fb-ok{background:rgba(16,185,129,0.09);border:1px solid rgba(16,185,129,0.26);color:var(--grn);}
+.fb-no{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);color:#fc8181;}
+.ar{margin-top:9px;padding:12px 14px;border-radius:11px;display:none;
+  background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.16);}
+.ar-t{color:var(--grn);font-size:.81rem;font-weight:800;margin-bottom:4px;}
+.ar-b{color:var(--txt2);font-size:.84rem;line-height:1.7;}
+
+/* WRITE (definition) */
+.def-area{
+  width:100%;padding:13px 15px;min-height:110px;
+  background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);
+  border-radius:11px;color:#fff;font-family:'Tajawal',sans-serif;
+  font-size:.93rem;outline:none;resize:vertical;transition:.3s;line-height:1.7;text-align:right;
+}
+.def-area:focus{border-color:var(--pur2);}
+.hint{
+  margin-top:8px;padding:8px 12px;
+  background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.16);
+  border-radius:9px;font-size:.8rem;color:var(--gld);line-height:1.6;
+}
+.hint strong{display:block;margin-bottom:2px;}
+
+/* MATCH */
+.match-g{display:flex;flex-direction:column;gap:8px;}
+.mr{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);
+  border-radius:11px;padding:9px 11px;
+}
+.ml{
+  flex:1;font-size:.83rem;font-weight:700;color:var(--pur2);
+  padding:6px 9px;background:rgba(124,58,237,0.1);border-radius:7px;text-align:center;min-width:0;
+}
+.marr{color:var(--txt2);font-size:1rem;flex-shrink:0;}
+.ms{
+  flex:1;background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.09);
+  border-radius:8px;color:#fff;font-family:'Tajawal',sans-serif;font-size:.82rem;
+  padding:7px 9px;outline:none;cursor:pointer;transition:.2s;min-width:0;
+}
+.ms:focus{border-color:var(--pur2);}
+.ms option{background:#1a2535;}
+.mr.mc{border-color:var(--grn)!important;}
+.mr.mc .ms{border-color:var(--grn);}
+.mr.mw{border-color:var(--red)!important;}
+.mr.mw .ms{border-color:var(--red);}
+
+/* SORT */
+.sort-g{display:flex;flex-direction:column;gap:7px;margin-bottom:11px;}
+.sor{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);
+  border-radius:10px;padding:9px 11px;
+}
+.son{
+  min-width:26px;height:26px;border-radius:7px;
+  background:rgba(245,158,11,0.14);color:var(--org);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;flex-shrink:0;
+}
+.sos{
+  flex:1;background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.09);
+  border-radius:8px;color:#fff;font-family:'Tajawal',sans-serif;font-size:.83rem;
+  padding:7px 9px;outline:none;cursor:pointer;transition:.2s;
+}
+.sos:focus{border-color:var(--org);}
+.sos option{background:#1a2535;}
+.sor.sc .sos{border-color:var(--grn);}
+.sor.sw .sos{border-color:var(--red);}
+
+/* INFO CARD */
+.info-c{
+  background:rgba(14,165,233,0.07);border:1px solid rgba(14,165,233,0.18);
+  border-radius:11px;padding:12px 14px;margin-bottom:13px;
+  font-size:.84rem;color:var(--sky);line-height:1.6;
+}
+.info-c strong{display:block;margin-bottom:2px;font-size:.86rem;}
+
+/* ROBOT COMPONENT CARD */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.comp-card{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px;padding:12px;
+}
+.comp-icon{font-size:1.5rem;margin-bottom:5px;}
+.comp-name{font-size:.85rem;font-weight:800;color:var(--pur2);margin-bottom:3px;}
+.comp-role{font-size:.78rem;color:var(--txt2);line-height:1.5;}
+
+/* BTNS */
+.btn-chk{
+  padding:10px 24px;border-radius:11px;border:none;
+  background:linear-gradient(135deg,var(--pur),var(--cyn));
+  color:#fff;font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:800;
+  cursor:pointer;transition:.22s;margin-top:13px;
+}
+.btn-chk:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(124,58,237,0.3);}
+.btn-nxt{
+  padding:10px 24px;border-radius:11px;
+  background:rgba(255,255,255,0.06);border:1px solid var(--bdr);
+  color:var(--txt2);font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:.22s;margin-top:13px;margin-right:8px;display:none;
+}
+.btn-nxt:hover{background:rgba(255,255,255,0.1);color:#fff;}
+
+/* RESULTS */
+#res-scr{
+  flex-direction:column;padding:22px 16px;text-align:center;
+  background:radial-gradient(ellipse at 50% 30%,rgba(16,185,129,0.12) 0%,transparent 60%),var(--navy);
+}
+.res-w{width:100%;max-width:500px;}
+.r-robot{font-size:4rem;margin-bottom:16px;animation:bob 2.5s ease-in-out infinite;}
+.r-ring{
+  width:128px;height:128px;border-radius:50%;margin:0 auto 16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid;
+}
+.rg{border-color:var(--grn);box-shadow:0 0 32px rgba(16,185,129,0.28);}
+.rb{border-color:var(--cyn);box-shadow:0 0 32px rgba(6,182,212,0.28);}
+.ro{border-color:var(--org);box-shadow:0 0 32px rgba(245,158,11,0.28);}
+.r-pct{font-size:2.2rem;font-weight:900;}
+.rg .r-pct{color:var(--grn);}
+.rb .r-pct{color:var(--cyn);}
+.ro .r-pct{color:var(--org);}
+.r-lbl{font-size:.7rem;color:var(--txt2);}
+.r-name{font-size:1.25rem;font-weight:900;color:#fff;margin-bottom:5px;}
+.r-msg{font-size:.92rem;color:var(--txt2);margin-bottom:22px;}
+.r-det{
+  background:var(--card);border:1px solid var(--bdr);border-radius:16px;
+  padding:18px;margin-bottom:18px;text-align:right;
+}
+.rrow{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.rrow:last-child{border-bottom:none;}
+.rq{flex:1;font-size:.8rem;color:var(--txt2);}
+.rst{font-size:.76rem;font-weight:700;}
+.stc{color:var(--grn);}
+.stp{color:var(--org);}
+.stw{color:var(--red);}
+.btn-re{
+  padding:13px 34px;border:none;border-radius:12px;
+  background:linear-gradient(135deg,var(--pur),var(--cyn));
+  color:#fff;font-family:'Tajawal',sans-serif;font-size:.98rem;font-weight:800;
+  cursor:pointer;transition:.3s;
+}
+.btn-re:hover{transform:translateY(-3px);}
+
+/* TEACHER FAB */
+#tfab{
+  position:fixed;bottom:18px;left:18px;z-index:500;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(124,58,237,0.9);border:2px solid rgba(167,139,250,0.4);
+  color:#fff;font-size:1.15rem;cursor:pointer;
+  box-shadow:0 4px 16px rgba(124,58,237,0.5);transition:.3s;
+  display:flex;align-items:center;justify-content:center;
+}
+#tfab:hover{transform:scale(1.1);}
+
+/* TEACHER MODAL */
+.tm{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:12px;}
+.tm.open{display:flex;}
+.tp{background:#111827;border:1px solid rgba(124,58,237,0.3);border-radius:20px;width:100%;max-width:820px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;}
+.th{padding:15px 20px;background:rgba(124,58,237,0.1);border-bottom:1px solid rgba(124,58,237,0.2);display:flex;align-items:center;justify-content:space-between;}
+.th h2{color:var(--pur2);font-size:.98rem;font-weight:800;}
+.xb{width:30px;height:30px;border-radius:7px;border:none;background:rgba(255,255,255,0.06);color:var(--txt2);cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.xb:hover{background:rgba(255,255,255,0.12);color:#fff;}
+.tpw{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:52px 32px;text-align:center;}
+.tpw h3{color:var(--pur2);font-size:1.05rem;font-weight:800;margin-bottom:5px;}
+.tpw p{color:var(--txt2);font-size:.86rem;margin-bottom:18px;}
+.pw-i{padding:12px 16px;border-radius:10px;border:2px solid rgba(124,58,237,0.3);background:rgba(124,58,237,0.08);color:#fff;font-family:'Tajawal',sans-serif;font-size:.93rem;outline:none;text-align:center;width:180px;letter-spacing:4px;}
+.pw-i:focus{border-color:var(--pur2);}
+.pw-b{margin-top:11px;padding:10px 26px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--pur),var(--pur2));color:#fff;font-family:'Tajawal',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;}
+.tbody{overflow-y:auto;padding:18px;}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px;margin-bottom:18px;}
+.tst{background:rgba(255,255,255,0.04);border-radius:11px;padding:13px;text-align:center;border:1px solid rgba(255,255,255,0.06);}
+.tsv{font-size:1.5rem;font-weight:900;}
+.tsl{font-size:.7rem;color:var(--txt2);margin-top:2px;}
+.sc2 .tsv{color:var(--cyn);}
+.sg2 .tsv{color:var(--grn);}
+.so2 .tsv{color:var(--org);}
+.sr2 .tsv{color:var(--red);}
+.sgo2 .tsv{color:var(--gld);}
+.qa-t{font-size:.86rem;font-weight:800;color:var(--pur2);margin-bottom:9px;}
+.qa-r{display:flex;align-items:center;gap:9px;padding:8px 11px;background:rgba(255,255,255,0.03);border-radius:10px;margin-bottom:5px;border:1px solid rgba(255,255,255,0.04);}
+.qa-n{min-width:24px;height:24px;border-radius:6px;background:rgba(124,58,237,0.14);color:var(--pur2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.76rem;flex-shrink:0;}
+.qa-q{flex:1;font-size:.78rem;color:var(--txt2);}
+.qbw{width:80px;height:6px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;}
+.qbf{height:100%;border-radius:10px;}
+.qp{font-size:.76rem;font-weight:700;min-width:30px;text-align:center;}
+.sw{overflow-x:auto;margin-bottom:12px;}
+table.st{width:100%;border-collapse:collapse;font-size:.78rem;}
+table.st th{padding:8px 10px;background:rgba(124,58,237,0.13);color:var(--pur2);font-weight:800;border-bottom:2px solid rgba(124,58,237,0.2);text-align:right;}
+table.st td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--txt2);text-align:right;}
+table.st tr:hover td{background:rgba(255,255,255,0.02);}
+.gb{padding:2px 8px;border-radius:8px;font-size:.73rem;font-weight:700;}
+.ga{background:rgba(16,185,129,0.14);color:var(--grn);}
+.gc{background:rgba(6,182,212,0.14);color:var(--cyn);}
+.gd{background:rgba(251,191,36,0.14);color:var(--gld);}
+.ge{background:rgba(239,68,68,0.14);color:var(--red);}
+.terr{color:var(--red);font-size:.8rem;margin-top:6px;}
+.t-sec{font-size:.84rem;font-weight:800;color:var(--txt2);margin-bottom:9px;}
+.temp{text-align:center;padding:44px 18px;color:var(--txt2);}
+.temp .ei{font-size:2.6rem;margin-bottom:10px;}
+
+/* CONFETTI */
+.cp{position:fixed;width:7px;height:7px;pointer-events:none;z-index:999;animation:cf linear forwards;}
+@keyframes cf{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:rgba(167,139,250,0.2);border-radius:10px;}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash" class="scr on">
+  <div class="sp-icon">🤖</div>
+  <div class="sp-title">مراجعة <span>الصف الرابع</span></div>
+  <div class="sp-sub">الخوارزمية • الروبوت • التكرار</div>
+  <div class="name-grid" id="ngrid"></div>
+  <button class="btn-join" id="btn-join" disabled onclick="start()">ابدأ المراجعة ◀</button>
+</div>
+
+<!-- MAIN -->
+<div id="main-scr" class="scr">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:1.3rem">🤖</span>
+      <div class="tb-t">مراجعة <span>الصف الرابع</span></div>
+    </div>
+    <div style="display:flex;gap:7px;align-items:center">
+      <div class="pill pp">👩‍🎓 <span id="tb-n">—</span></div>
+      <div class="pill pg">⭐ <span id="tb-s">0</span></div>
+    </div>
+  </div>
+  <div class="steps-w"><div class="steps-r" id="strow"></div></div>
+  <div class="ca" id="carea"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="res-scr">
+  <div class="res-w">
+    <div class="r-robot" id="r-em">🤖</div>
+    <div class="r-ring" id="r-ring">
+      <div class="r-pct" id="r-pct">0%</div>
+      <div class="r-lbl">نتيجتك</div>
+    </div>
+    <div class="r-name" id="r-name"></div>
+    <div class="r-msg" id="r-msg"></div>
+    <div class="r-det" id="r-det"></div>
+    <button class="btn-re" onclick="restart()">🔄 إعادة المحاولة</button>
+  </div>
+</div>
+
+<!-- TEACHER FAB -->
+<button id="tfab" onclick="openT()" title="لوحة المعلمة">👩‍🏫</button>
+
+<!-- TEACHER MODAL -->
+<div class="tm" id="t-modal">
+  <div class="tp">
+    <div class="th">
+      <h2>👩‍🏫 لوحة تحكم المعلمة</h2>
+      <button class="xb" onclick="closeT()">✕</button>
+    </div>
+    <div id="t-inner"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STUDENTS
+// ============================================================
+const STUDENTS = [
+  'أريام حميد الحبيني','اسيل موسى العوض','الجازي عبدالعزيز المنصورى',
+  'امامه سليم علبي','امنه هياب احمد','انوار حمد العبيد',
+  'انيسه نعمة الله','حبيبه علاء ابراهيم','حفصه احمد عبد المنعم',
+  'حلا أحمد محمد الباز','حنان محمد طاهر','حوريه نبيل احمد',
+  'داليا رمضان العلي','ذهب محمد طاهر','رغد نبي جول',
+  'رقية حمدى سعيد','رنيم حسني عواد','روقيه شعبان محمد',
+  'رؤى بوكيوض','ريان محمود الحاج','ريتال حسني عواد',
+  'شما عمر بشير','فاطمه فخر الدين احمد','قمر حازم عمر',
+  'ليا عبد الحاج اسماعيل','ماريا عبدالعليم الرزوق','مريم حافظ فاروق',
+  'ملاك عبدالله الدرويش','نداء حسين المحمد','نور أيهاب عبدالحميد',
+  'نورا عبدالعزيز المنصورى','نيللي أمير سعيد','هنادي محمد عبدالله','وعد مصطفى أحمد'
+];
+
+// ============================================================
+// QUESTIONS
+// ============================================================
+const QS = [
+
+  // ─────────────────────────────────────────────
+  // SECTION 1: الخوارزمية في حياتنا اليومية
+  // ─────────────────────────────────────────────
+
+  { id:1, section:'algo',
+    type:'mcq', badge:'⭕ اختيار من متعدد', bc:'bmc',
+    text:'الخوارزمية هي:',
+    opts:[
+      'برنامج حاسوبي معقد 💻',
+      'خطوات متسلسلة ومنطقية وواضحة لحل مشكلة ما 📋',
+      'جهاز تحكم في الروبوت 🤖',
+      'لبنة تكرار في سكراتش 🔄'
+    ], ans:1,
+    exp:'✅ الخوارزمية: خطوات متسلسلة ومنطقية وواضحة لحل مشكلة ما. نستخدمها في حياتنا اليومية مثل: وصفة الطعام، روتين الصباح، طريق الوصول لمكان ما.',
+    pts:10 },
+
+  { id:2, section:'algo',
+    type:'mcq', badge:'⭕ اختيار من متعدد', bc:'bmc',
+    text:'أيٌّ مما يلي يُعدّ مثالاً على الخوارزمية في حياتنا اليومية؟',
+    opts:[
+      'تشغيل التلفاز بالريموت 📺',
+      'خطوات وصف الطريق من البيت إلى الحديقة 🗺️',
+      'اللعب بالكرة في الملعب ⚽',
+      'مشاهدة فيديو على الإنترنت 📱'
+    ], ans:1,
+    exp:'✅ وصف الاتجاهات للوصول إلى الحديقة هو خوارزمية — خطوات متسلسلة وواضحة لحل مشكلة الوصول إلى مكان.',
+    pts:10 },
+
+  { id:3, section:'algo',
+    type:'mcq', badge:'⭕ اختيار من متعدد', bc:'bmc',
+    text:'روتين صباحك اليومي من الاستيقاظ حتى الوصول للمدرسة يُعدّ خوارزمية لأنه:',
+    opts:[
+      'يحدث كل يوم تلقائياً ⏰',
+      'خطوات متسلسلة ومنطقية وواضحة لإتمام مهمة محددة ✅',
+      'يبدأ بالاستيقاظ من النوم 😴',
+      'يتكرر كل يوم دون تغيير 🔄'
+    ], ans:1,
+    exp:'✅ روتين الصباح خوارزمية لأنه خطوات متسلسلة ومنطقية لإتمام مهمة (الوصول للمدرسة). وليس كل شيء يتكرر هو خوارزمية — المهم أن تكون الخطوات منطقية وهادفة.',
+    pts:10 },
+
+  { id:4, section:'algo',
+    type:'sort', badge:'🔢 رتّبي الخطوات', bc:'btf',
+    text:'رتّبي خطوات خوارزمية عصر البرتقال بالترتيب الصحيح:',
+    info:'💡 تذكّري: الخوارزمية تبدأ بـ "بداية" وتنتهي بـ "نهاية"، وأمر "كرر" يأتي بعد تعلّم الخطوة الأساسية.',
+    steps:[
+      'بداية الخوارزمية',
+      'خذ 3 برتقالات',
+      'التقط برتقالة واحدة',
+      'اقطع البرتقالة',
+      'اعصر البرتقالة',
+      'كرر الخطوات من 3 – 5 ثلاث مرات',
+      'ضع العصير في الزجاجة',
+      'اشرب العصير',
+      'نهاية الخوارزمية'
+    ], pts:15 },
+
+  { id:5, section:'algo',
+    type:'tf', badge:'✔️ صح أو خطأ', bc:'btf',
+    text:'الخوارزمية الصحيحة لعصر البرتقال تضع "ضع العصير في الزجاجة" قبل "اعصر البرتقالة".',
+    ans:false,
+    exp:'❌ خطأ — يجب عصر البرتقالة أولاً ثم وضع العصير في الزجاجة. ترتيب الخطوات في الخوارزمية مهم جداً، فإذا اختلّ الترتيب لن تنجح الخوارزمية.',
+    pts:10 },
+
+  // ─────────────────────────────────────────────
+  // SECTION 2: الروبوت ومكوناته
+  // ─────────────────────────────────────────────
+
+  { id:6, section:'robot',
+    type:'define', badge:'✍️ اكتبي التعريف', bc:'bdf',
+    text:'ما هو الروبوت؟ اكتبي تعريفه بكلماتك الخاصة.',
+    hint:'الكلمات المفتاحية: آلة — برمجة — مهامّ — تفاعل مع البيئة',
+    model:'الروبوت هو آلة تتفاعل مع البيئة الخارجية، ويتم برمجتها لتقوم بمهامّ معيّنة مثل الحركة وحمل الأشياء أو المساعدة في بعض الأعمال المنزلية.',
+    keywords:['آلة','برمجة','مهام','تفاعل','بيئة'],
+    pts:15 },
+
+  { id:7, section:'robot',
+    type:'mcq', badge:'⭕ اختيار من متعدد', bc:'bmc',
+    text:'وحدة التحكم (Spike Hub) في روبوت SPIKE Prime تتحكم في:',
+    opts:[
+      'المحرّكات فقط ⚙️',
+      'المستشعرات فقط 📡',
+      'المحرّكات والمستشعرات المتصلة بها معاً ✅',
+      'الاتصال بالإنترنت 🌐'
+    ], ans:2,
+    exp:'✅ وحدة التحكم (Spike Hub) هي "دماغ" الروبوت — تتحكم في جميع المحرّكات والمستشعرات المتصلة بها.',
+    pts:10 },
+
+  { id:8, section:'robot',
+    type:'mcq', badge:'⭕ اختيار من متعدد', bc:'bmc',
+    text:'المحرّك الكبير (المحرّك الكبير) في روبوت SPIKE Prime يُستخدم في:',
+    opts:[
+      'التحكم في حركة عجلات الروبوت للأمام والخلف 🏃',
+      'التحكم في ذراع الروبوت أو رافعته 🦾',
+      'قياس المسافة أمام الروبوت 📏',
+      'قياس زاوية استدارة الروبوت 🔄'
+    ], ans:1,
+    exp:'✅ المحرّك الكبير يمكن استخدامه للتحكم في ذراع الروبوت أو رافعته. أما المحرّك المتوسط فهو الذي يتحكم في حركة الروبوت (عجلاته).',
+    pts:10 },
+
+  { id:9, section:'robot',
+    type:'mcq', badge:'⭕ اختيار من متعدد', bc:'bmc',
+    text:'المحرّك المتوسط (المحرّك المتوسط) في روبوت SPIKE Prime يُستخدم في:',
+    opts:[
+      'التحكم في ذراع الروبوت 🦾',
+      'التحكم في حركة الروبوت (عجلاته) 🏃',
+      'اكتشاف العقبات 🚧',
+      'قياس قوة الضغط 💪'
+    ], ans:1,
+    exp:'✅ المحرّك المتوسط يتحكم في حركة الروبوت — أي يحرّك عجلاته للأمام والخلف واليمين واليسار.',
+    pts:10 },
+
+  { id:10, section:'robot',
+    type:'match', badge:'🔗 ربط المستشعرات', bc:'bmt',
+    text:'اربطي كل مستشعر من مستشعرات روبوت SPIKE Prime بوظيفته الصحيحة:',
+    pairs:[
+      { left:'مستشعر المسافة', right:'يكتشف العقبات أمام الروبوت' },
+      { left:'مستشعر الألوان', right:'يكتشف الألوان ويقيس شدة الإضاءة' },
+      { left:'مستشعر القوة', right:'يستشعر ويقيس قوة الضغط' },
+      { left:'مستشعر الدوران', right:'يقيس زاوية استدارة الروبوت' },
+    ], pts:20 },
+
+  { id:11, section:'robot',
+    type:'tf', badge:'✔️ صح أو خطأ', bc:'btf',
+    text:'مستشعر الدوران في روبوت SPIKE Prime هو قطعة منفصلة يجب توصيلها بوحدة التحكم.',
+    ans:false,
+    exp:'❌ خطأ — مستشعر الدوران (Gyro Sensor) مدمج داخل وحدة التحكم (Spike Hub) ولا يحتاج توصيلاً خارجياً. أما المستشعرات الأخرى الثلاثة (مستشعر المسافة، الألوان، القوة) فهي قطع منفصلة تُوصَّل بوحدة التحكم.',
+    pts:10 },
+
+  // ─────────────────────────────────────────────
+  // SECTION 3: التكرار في سكراتش
+  // ─────────────────────────────────────────────
+
+  { id:12, section:'loop',
+    type:'mcq', badge:'⭕ اختيار من متعدد', bc:'btl',
+    text:'في برنامج سكراتش، عندما نريد تنفيذ مجموعة من الأوامر عدداً محدداً من المرات، نستخدم لبنة:',
+    opts:[
+      'forever (كرر للأبد) ♾️',
+      'repeat until (كرر حتى) 🔁',
+      'repeat (كرر) مع تحديد العدد 🔢',
+      'لبنة الحركة (move) 🏃'
+    ], ans:2,
+    exp:'✅ لبنة repeat مع تحديد العدد هي الصحيحة — مثل "repeat 10" تعني: نفّذ الأوامر داخلها 10 مرات بالضبط ثم أوقف. هي من مجموعة لبنات التحكم (Control) الصفراء في سكراتش.',
+    pts:10 },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let sName='', curQ=0, sc=0;
+let resArr=[], shuffAlgo=[], shuffMatch={};
+let tUnlocked=false;
+const PASS='1234';
+const TOTPTS=QS.reduce((s,q)=>s+q.pts,0);
+
+// ============================================================
+// BUILD NAMES
+// ============================================================
+const ng=document.getElementById('ngrid');
+STUDENTS.forEach(n=>{
+  const b=document.createElement('button');
+  b.className='nb'; b.textContent=n;
+  b.onclick=()=>{
+    document.querySelectorAll('.nb').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel'); sName=n;
+    document.getElementById('btn-join').disabled=false;
+  };
+  ng.appendChild(b);
+});
+
+function start(){
+  if(!sName) return;
+  showScr('main-scr');
+  document.getElementById('tb-n').textContent=sName.split(' ')[0];
+  buildSteps(); renderQ(0);
+}
+
+// ============================================================
+// SCREENS
+// ============================================================
+function showScr(id){
+  ['splash','main-scr'].forEach(s=>document.getElementById(s).classList.remove('on'));
+  document.getElementById('res-scr').classList.remove('on');
+  document.getElementById('res-scr').style.display='none';
+  const t=document.getElementById(id);
+  if(id==='res-scr'){t.style.display='flex';t.classList.add('on');}
+  else t.classList.add('on');
+}
+
+// ============================================================
+// STEPS
+// ============================================================
+function buildSteps(){
+  const row=document.getElementById('strow'); row.innerHTML='';
+  QS.forEach((_,i)=>{
+    if(i>0){const l=document.createElement('div');l.className='sl';l.id='sl'+i;row.appendChild(l);}
+    const d=document.createElement('div');
+    d.className='sd'+(i===0?' active':'');d.id='sd'+i;d.textContent=i+1;
+    row.appendChild(d);
+  });
+}
+function updSteps(idx){
+  QS.forEach((_,i)=>{
+    const d=document.getElementById('sd'+i),l=document.getElementById('sl'+i);
+    if(i<idx){d.className='sd done';d.textContent='✓';}
+    else if(i===idx){d.className='sd active';d.textContent=i+1;}
+    else{d.className='sd';d.textContent=i+1;}
+    if(l) l.className='sl'+(i<=idx?' done':'');
+  });
+}
+
+// ============================================================
+// SECTION HEADERS
+// ============================================================
+const SEC_HDR = {
+  algo:  { cls:'sh-algo',  icon:'📋', title:'الخوارزمية في حياتنا اليومية',     sub:'الخوارزمية — أمثلة يومية — ترتيب الخطوات' },
+  robot: { cls:'sh-robot', icon:'🤖', title:'الروبوت ومكوناته',                sub:'تعريف الروبوت — وحدة التحكم — المحرّكات — المستشعرات' },
+  loop:  { cls:'sh-loop',  icon:'🔄', title:'التكرار في سكراتش',               sub:'مفهوم التكرار — لبنة repeat' },
+};
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderQ(idx){
+  curQ=idx; updSteps(idx);
+  const q=QS[idx];
+  const area=document.getElementById('carea');
+  area.innerHTML='';
+
+  // Section header when section changes
+  if(idx===0 || QS[idx-1].section !== q.section){
+    const h=SEC_HDR[q.section];
+    const div=document.createElement('div');
+    div.className=`sec-hdr ${h.cls}`;
+    div.innerHTML=`<div class="sh-icon">${h.icon}</div><div><div class="sh-title">${h.title}</div><div class="sh-sub">${h.sub}</div></div>`;
+    area.appendChild(div);
+  }
+
+  const card=document.createElement('div');
+  card.className='qcard';
+  if(q.type==='mcq')    bldMCQ(card,q,idx);
+  else if(q.type==='tf')     bldTF(card,q,idx);
+  else if(q.type==='sort')   bldSort(card,q,idx);
+  else if(q.type==='match')  bldMatch(card,q,idx);
+  else if(q.type==='define') bldDefine(card,q,idx);
+  area.appendChild(card);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── MCQ ───
+function bldMCQ(card,q,idx){
+  const L=['أ','ب','ج','د'];
+  card.innerHTML=`
+    <div class="qbadge ${q.bc}">${q.badge}</div>
+    <div class="qtxt"><span class="qnum">س${q.id}.</span> ${q.text}</div>
+    <div class="opts" id="op-${q.id}">
+      ${q.opts.map((o,i)=>`<button class="ob" id="ob-${q.id}-${i}" onclick="selO(${q.id},${i},${q.opts.length})">
+        <span class="ol">${L[i]}</span>${o}</button>`).join('')}
+    </div>
+    <div class="fb" id="fb-${q.id}"></div>
+    <div class="ar" id="ar-${q.id}"></div>
+    <div><button class="btn-nxt" id="nx-${q.id}" onclick="nxt(${idx})">التالي ◀</button>
+    <button class="btn-chk" id="ck-${q.id}" onclick="chkMCQ(${q.id},${q.ans},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ─── TF ───
+function bldTF(card,q,idx){
+  card.innerHTML=`
+    <div class="qbadge ${q.bc}">${q.badge}</div>
+    <div class="qtxt"><span class="qnum">س${q.id}.</span> ${q.text}</div>
+    <div class="opts" id="op-${q.id}">
+      <button class="ob" id="ob-${q.id}-0" onclick="selO(${q.id},0,2)"><span class="ol">أ</span>صحيح ✅</button>
+      <button class="ob" id="ob-${q.id}-1" onclick="selO(${q.id},1,2)"><span class="ol">ب</span>خطأ ❌</button>
+    </div>
+    <div class="fb" id="fb-${q.id}"></div>
+    <div class="ar" id="ar-${q.id}"></div>
+    <div><button class="btn-nxt" id="nx-${q.id}" onclick="nxt(${idx})">التالي ◀</button>
+    <button class="btn-chk" id="ck-${q.id}" onclick="chkTF(${q.id},${q.ans},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ─── SORT ───
+function bldSort(card,q,idx){
+  const shuf=[...q.steps].sort(()=>Math.random()-.5);
+  shuffAlgo=shuf;
+  const opts=shuf.map((s,i)=>`<option value="${i}">${s}</option>`).join('');
+  const slots=q.steps.map((_,i)=>`
+    <div class="sor" id="sor-${i}">
+      <div class="son">${i+1}</div>
+      <select class="sos" id="sos-${i}">
+        <option value="">— اختاري الخطوة —</option>${opts}
+      </select>
+    </div>`).join('');
+  card.innerHTML=`
+    <div class="qbadge ${q.bc}">${q.badge}</div>
+    <div class="qtxt"><span class="qnum">س${q.id}.</span> ${q.text}</div>
+    ${q.info?`<div class="info-c">${q.info}</div>`:''}
+    <div class="sort-g">${slots}</div>
+    <div class="ar" id="ar-${q.id}"></div>
+    <div><button class="btn-nxt" id="nx-${q.id}" onclick="nxt(${idx})">التالي ◀</button>
+    <button class="btn-chk" id="ck-${q.id}" onclick="chkSort(${q.id},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ─── MATCH ───
+function bldMatch(card,q,idx){
+  const rights=[...q.pairs.map(p=>p.right)].sort(()=>Math.random()-.5);
+  shuffMatch[q.id]=rights;
+  const rows=q.pairs.map((p,i)=>`
+    <div class="mr" id="mr-${q.id}-${i}">
+      <div class="ml">${p.left}</div>
+      <div class="marr">←</div>
+      <select class="ms" id="ms-${q.id}-${i}">
+        <option value="">— اختاري —</option>
+        ${rights.map((r,ri)=>`<option value="${ri}">${r}</option>`).join('')}
+      </select>
+    </div>`).join('');
+  card.innerHTML=`
+    <div class="qbadge ${q.bc}">${q.badge}</div>
+    <div class="qtxt"><span class="qnum">س${q.id}.</span> ${q.text}</div>
+    <div class="match-g">${rows}</div>
+    <div class="ar" id="ar-${q.id}"></div>
+    <div><button class="btn-nxt" id="nx-${q.id}" onclick="nxt(${idx})">التالي ◀</button>
+    <button class="btn-chk" id="ck-${q.id}" onclick="chkMatch(${q.id},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ─── DEFINE ───
+function bldDefine(card,q,idx){
+  card.innerHTML=`
+    <div class="qbadge ${q.bc}">${q.badge}</div>
+    <div class="qtxt"><span class="qnum">س${q.id}.</span> ${q.text}</div>
+    <textarea class="def-area" id="def-${q.id}" placeholder="اكتبي تعريفك هنا..." rows="4"></textarea>
+    <div class="hint"><strong>💡 مساعدة — الكلمات المفتاحية:</strong>${q.hint}</div>
+    <div class="ar" id="ar-${q.id}"></div>
+    <div><button class="btn-nxt" id="nx-${q.id}" onclick="nxt(${idx})">التالي ◀</button>
+    <button class="btn-chk" id="ck-${q.id}" onclick="chkDef(${q.id},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ============================================================
+// CHECK
+// ============================================================
+function selO(qId,idx,tot){
+  if(document.getElementById(`ob-${qId}-0`)?.disabled) return;
+  for(let i=0;i<tot;i++) document.getElementById(`ob-${qId}-${i}`)?.classList.remove('sel');
+  document.getElementById(`ob-${qId}-${idx}`).classList.add('sel');
+}
+
+function chkMCQ(qId,cor,idx,pts){
+  const q=QS[idx]; let sel=-1;
+  for(let i=0;i<q.opts.length;i++){
+    if(document.getElementById(`ob-${qId}-${i}`)?.classList.contains('sel')){sel=i;break;}
+  }
+  if(sel===-1){alert('اختاري إجابة!');return;}
+  const ok=sel===cor;
+  for(let i=0;i<q.opts.length;i++){
+    const b=document.getElementById(`ob-${qId}-${i}`);b.disabled=true;
+    if(i===cor) b.classList.add('cor');
+    else if(i===sel&&!ok) b.classList.add('wrg');
+    b.classList.remove('sel');
+  }
+  showFB(qId,ok); showAR(qId,q.exp);
+  if(ok){sc+=pts;document.getElementById('tb-s').textContent=sc;}
+  resArr.push({q:q.text.substring(0,40)+'…',ok,partial:ok?1:0,pts,earned:ok?pts:0});
+  tog(qId);
+}
+
+function chkTF(qId,corB,idx,pts){
+  const q=QS[idx]; let sel=-1;
+  for(let i=0;i<2;i++){if(document.getElementById(`ob-${qId}-${i}`)?.classList.contains('sel')){sel=i;break;}}
+  if(sel===-1){alert('اختاري صح أو خطأ!');return;}
+  const ok=(sel===0)===corB;
+  const ci=corB?0:1;
+  for(let i=0;i<2;i++){
+    const b=document.getElementById(`ob-${qId}-${i}`);b.disabled=true;
+    if(i===ci) b.classList.add('cor');
+    else if(i===sel&&!ok) b.classList.add('wrg');
+    b.classList.remove('sel');
+  }
+  showFB(qId,ok); showAR(qId,q.exp);
+  if(ok){sc+=pts;document.getElementById('tb-s').textContent=sc;}
+  resArr.push({q:q.text.substring(0,40)+'…',ok,partial:ok?1:0,pts,earned:ok?pts:0});
+  tog(qId);
+}
+
+function chkSort(qId,idx,pts){
+  const q=QS[idx]; let cor=0;
+  for(let i=0;i<q.steps.length;i++){
+    const sel=document.getElementById(`sos-${i}`);
+    const si=parseInt(sel.value); sel.disabled=true;
+    if(si===shuffAlgo.indexOf(q.steps[i])){
+      document.getElementById(`sor-${i}`).classList.add('sc'); cor++;
+    } else document.getElementById(`sor-${i}`).classList.add('sw');
+  }
+  const part=cor/q.steps.length, earned=Math.round(pts*part);
+  sc+=earned; document.getElementById('tb-s').textContent=sc;
+  const ar=document.getElementById(`ar-${qId}`);
+  ar.style.display='block';
+  ar.innerHTML=`<div class="ar-t">✅ الترتيب الصحيح (${earned} من ${pts} نقطة)</div>
+    <div class="ar-b">${q.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>`;
+  resArr.push({q:'ترتيب خوارزمية عصر البرتقال',ok:part>=0.75,partial:part,pts,earned});
+  tog(qId);
+}
+
+function chkMatch(qId,idx,pts){
+  const q=QS[idx]; const rights=shuffMatch[qId]; let cor=0;
+  q.pairs.forEach((p,i)=>{
+    const sel=document.getElementById(`ms-${qId}-${i}`);
+    const si=parseInt(sel.value); sel.disabled=true;
+    if(si===rights.indexOf(p.right)){
+      document.getElementById(`mr-${qId}-${i}`).classList.add('mc'); cor++;
+    } else document.getElementById(`mr-${qId}-${i}`).classList.add('mw');
+  });
+  const part=cor/q.pairs.length, earned=Math.round(pts*part);
+  sc+=earned; document.getElementById('tb-s').textContent=sc;
+  const ar=document.getElementById(`ar-${qId}`);
+  ar.style.display='block';
+  ar.innerHTML=`<div class="ar-t">✅ الإجابة الصحيحة (${earned} من ${pts} نقطة)</div>
+    <div class="ar-b">${q.pairs.map(p=>`• ${p.left} ← ${p.right}`).join('<br>')}</div>`;
+  resArr.push({q:q.text.substring(0,40)+'…',ok:part>=0.75,partial:part,pts,earned});
+  tog(qId);
+}
+
+function chkDef(qId,idx,pts){
+  const q=QS[idx];
+  const val=document.getElementById(`def-${qId}`).value.trim();
+  if(val.length<8){alert('اكتبي تعريفاً أطول من ذلك!');return;}
+  document.getElementById(`def-${qId}`).disabled=true;
+  const matched=q.keywords.filter(k=>val.includes(k)).length;
+  const part=Math.min(matched/4,1), earned=Math.round(pts*part);
+  sc+=earned; document.getElementById('tb-s').textContent=sc;
+  const ar=document.getElementById(`ar-${qId}`);
+  ar.style.display='block';
+  ar.innerHTML=`<div class="ar-t">✅ الإجابة النموذجية (${earned} من ${pts} نقطة)</div><div class="ar-b">${q.model}</div>`;
+  resArr.push({q:'تعريف الروبوت',ok:part>=0.5,partial:part,pts,earned});
+  tog(qId);
+}
+
+function showFB(qId,ok){
+  const fb=document.getElementById(`fb-${qId}`);if(!fb)return;
+  fb.style.display='block';
+  fb.className='fb '+(ok?'fb-ok':'fb-no');
+  fb.textContent=ok?'✅ إجابة صحيحة! أحسنتِ 🌟':'❌ إجابة خاطئة. راجعي التفسير أدناه.';
+}
+function showAR(qId,txt){
+  const ar=document.getElementById(`ar-${qId}`);if(!ar)return;
+  ar.style.display='block';
+  ar.innerHTML=`<div class="ar-t">💡 التفسير</div><div class="ar-b">${txt}</div>`;
+}
+function tog(qId){
+  document.getElementById(`ck-${qId}`)?.style.setProperty('display','none');
+  const n=document.getElementById(`nx-${qId}`);if(n)n.style.display='inline-block';
+}
+
+// ============================================================
+// NAVIGATION + RESULTS
+// ============================================================
+function nxt(idx){
+  if(idx+1<QS.length) renderQ(idx+1);
+  else showResults();
+}
+
+function showResults(){
+  showScr('res-scr');
+  const pct=Math.round((sc/TOTPTS)*100);
+  let cls,em,msg;
+  if(pct>=80){cls='rg';em='🌟';msg='ممتاز! أداء رائع يا '+sName.split(' ')[0]+'!';}
+  else if(pct>=60){cls='rb';em='👍';msg='جيد جداً! واصلي التميز!';}
+  else{cls='ro';em='📚';msg='راجعي المادة وحاولي مرة أخرى!';}
+  document.getElementById('r-em').textContent=em;
+  document.getElementById('r-ring').className='r-ring '+cls;
+  document.getElementById('r-pct').textContent=pct+'%';
+  document.getElementById('r-name').textContent=sName;
+  document.getElementById('r-msg').textContent=msg;
+  const det=document.getElementById('r-det');
+  det.innerHTML=`<div style="font-size:.82rem;font-weight:800;color:var(--pur2);margin-bottom:9px">📊 تفاصيل الإجابات</div>`+
+    resArr.map(r=>`<div class="rrow">
+      <span style="font-size:.95rem">${r.ok?'✅':r.partial>0?'🟡':'❌'}</span>
+      <div class="rq">${r.q}</div>
+      <div class="rst ${r.ok?'stc':r.partial>0?'stp':'stw'}">${r.ok?'صحيحة':r.partial>0?'جزئية':'خاطئة'} · ${r.earned}/${r.pts}</div>
+    </div>`).join('')+
+    `<div style="border-top:1px solid rgba(255,255,255,.05);padding-top:9px;margin-top:3px;text-align:center;
+      font-size:.86rem;color:var(--gld);font-weight:800">🏆 نقاطك: ${sc} من ${TOTPTS}</div>`;
+  const all=JSON.parse(localStorage.getItem('g4v2_res')||'[]');
+  all.push({name:sName,score:sc,total:TOTPTS,pct,date:new Date().toLocaleString('ar-QA'),results:resArr});
+  localStorage.setItem('g4v2_res',JSON.stringify(all));
+  if(pct>=80) confetti();
+}
+
+function restart(){
+  sc=0;resArr=[];curQ=0;
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('sel'));
+  sName='';
+  document.getElementById('btn-join').disabled=true;
+  document.getElementById('strow').innerHTML='';
+  showScr('splash');
+}
+
+// ============================================================
+// TEACHER
+// ============================================================
+window.openT=function(){document.getElementById('t-modal').classList.add('open');renderTI();};
+window.closeT=function(){document.getElementById('t-modal').classList.remove('open');};
+function renderTI(){
+  const inn=document.getElementById('t-inner');
+  if(!tUnlocked){
+    inn.innerHTML=`<div class="tpw"><div style="font-size:2.6rem;margin-bottom:11px">🔐</div>
+      <h3>لوحة تحكم المعلمة</h3><p>أدخلي كلمة المرور للوصول إلى نتائج الطالبات</p>
+      <input class="pw-i" type="password" id="pw-in" placeholder="****" maxlength="8"/>
+      <br><button class="pw-b" onclick="chkPW()">دخول</button>
+      <div class="terr" id="pw-err"></div></div>`;
+    document.getElementById('pw-in').addEventListener('keydown',e=>{if(e.key==='Enter')chkPW();});
+  } else buildDash(inn);
+}
+window.chkPW=function(){
+  const v=document.getElementById('pw-in').value;
+  if(v===PASS){tUnlocked=true;buildDash(document.getElementById('t-inner'));}
+  else document.getElementById('pw-err').textContent='كلمة المرور غير صحيحة';
+};
+
+function buildDash(c){
+  const all=JSON.parse(localStorage.getItem('g4v2_res')||'[]');
+  if(!all.length){
+    c.innerHTML=`<div class="temp"><div class="ei">📭</div><p>لا توجد نتائج بعد.<br>انتظري حتى تنهي الطالبات النشاط.</p></div>`;
+    return;
+  }
+  const avg=Math.round(all.reduce((s,r)=>s+r.pct,0)/all.length);
+  const passed=all.filter(r=>r.pct>=60).length;
+  const top=all.reduce((a,b)=>a.pct>b.pct?a:b);
+  const qa=QS.map((q,qi)=>{
+    const tot=all.length;
+    const cor=all.filter(r=>{const rd=r.results&&r.results[qi];return rd&&(rd.ok||(rd.partial&&rd.partial>=0.5));}).length;
+    return{lbl:q.text.substring(0,30)+'…',pct:tot?Math.round((cor/tot)*100):0};
+  });
+  const gF=p=>{
+    if(p>=80)return'<span class="gb ga">ممتاز</span>';
+    if(p>=65)return'<span class="gb gc">جيد جداً</span>';
+    if(p>=50)return'<span class="gb gd">جيد</span>';
+    return'<span class="gb ge">يحتاج دعم</span>';
+  };
+  c.innerHTML=`<div class="tbody">
+    <div class="tgrid">
+      <div class="tst sc2"><div class="tsv">${all.length}</div><div class="tsl">عدد الطالبات</div></div>
+      <div class="tst sg2"><div class="tsv">${avg}%</div><div class="tsl">المتوسط</div></div>
+      <div class="tst so2"><div class="tsv">${passed}</div><div class="tsl">ناجحات ≥60%</div></div>
+      <div class="tst sr2"><div class="tsv">${all.length-passed}</div><div class="tsl">تحتجن دعماً</div></div>
+      <div class="tst sgo2"><div class="tsv" style="font-size:.9rem">${top.name.split(' ')[0]}</div><div class="tsl">🏆 ${top.pct}%</div></div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div class="qa-t">📊 نسبة الإجابات الصحيحة لكل سؤال</div>
+      ${qa.map((q,i)=>{
+        const col=q.pct>=70?'var(--grn)':q.pct>=50?'var(--org)':'var(--red)';
+        return`<div class="qa-r"><div class="qa-n">س${i+1}</div><div class="qa-q">${q.lbl}</div>
+          <div class="qbw"><div class="qbf" style="width:${q.pct}%;background:${col}"></div></div>
+          <div class="qp" style="color:${col}">${q.pct}%</div></div>`;}).join('')}
+    </div>
+    <div class="t-sec">📋 نتائج جميع الطالبات</div>
+    <div class="sw"><table class="st">
+      <tr><th>الاسم</th><th>النقاط</th><th>النسبة</th><th>التقدير</th><th>التاريخ</th></tr>
+      ${all.map(r=>`<tr>
+        <td>${r.name}</td>
+        <td style="color:var(--gld);font-weight:800">${r.score}/${r.total}</td>
+        <td style="color:${r.pct>=80?'var(--grn)':r.pct>=60?'var(--cyn)':'var(--red)'};font-weight:800">${r.pct}%</td>
+        <td>${gF(r.pct)}</td>
+        <td style="font-size:.73rem">${r.date}</td>
+      </tr>`).join('')}
+    </table></div>
+    <button onclick="clrR()" style="padding:8px 16px;border-radius:8px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.07);color:var(--red);font-family:Tajawal,sans-serif;font-size:.8rem;cursor:pointer">🗑️ مسح النتائج</button>
+  </div>`;
+}
+window.clrR=function(){if(confirm('مسح جميع النتائج؟')){localStorage.removeItem('g4v2_res');buildDash(document.getElementById('t-inner'));}};
+
+function confetti(){
+  const cols=['#7c3aed','#a78bfa','#06b6d4','#10b981','#fbbf24','#ec4899'];
+  for(let i=0;i<55;i++){
+    const c=document.createElement('div');c.className='cp';
+    c.style.cssText=`left:${Math.random()*100}%;top:-20px;background:${cols[Math.floor(Math.random()*6)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*1.5}s;`;
+    document.body.appendChild(c);c.addEventListener('animationend',()=>c.remove());
+  }
+}
+</script>
+</body>
+</html>
