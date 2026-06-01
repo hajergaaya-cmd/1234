@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نشاط الصف الخامس - الروبوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1b2a;--purple:#7c3aed;--purple2:#a78bfa;
+  --green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;
+  --cyan:#06b6d4;--gold:#fbbf24;--card:#1a2535;--border:rgba(167,139,250,0.18);
+  --text:#e2e8f0;--text2:#94a3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ===== SCREENS ===== */
+.screen{display:none!important;}
+.screen.active{display:flex!important;flex-direction:column;min-height:100vh;}
+#results-screen{display:none!important;}
+#results-screen.active{display:flex!important;align-items:center;justify-content:center;min-height:100vh;}
+
+/* ===== SPLASH ===== */
+#splash{
+  align-items:center;justify-content:center;padding:30px 20px;text-align:center;
+  background:radial-gradient(ellipse at 40% 20%,rgba(124,58,237,0.15) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 80%,rgba(6,182,212,0.08) 0%,transparent 60%),var(--navy);
+}
+.splash-robot{font-size:6rem;animation:bounce 2s ease-in-out infinite;margin-bottom:20px;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+#splash h1{font-size:2rem;font-weight:900;color:#fff;margin-bottom:6px;}
+#splash h1 span{color:var(--purple2);}
+#splash p{color:var(--text2);margin-bottom:36px;}
+.name-inp{
+  width:100%;max-width:380px;padding:16px 20px;
+  background:rgba(255,255,255,0.05);border:2px solid var(--border);
+  border-radius:14px;color:#fff;font-family:'Tajawal',sans-serif;font-size:1.1rem;
+  outline:none;text-align:center;transition:.3s;margin-bottom:16px;
+}
+.name-inp:focus{border-color:var(--purple2);background:rgba(167,139,250,0.08);}
+.btn-start{
+  width:100%;max-width:380px;padding:16px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  border:none;border-radius:14px;color:#fff;
+  font-family:'Tajawal',sans-serif;font-size:1.1rem;font-weight:800;
+  cursor:pointer;transition:.3s;box-shadow:0 8px 30px rgba(124,58,237,0.35);
+}
+.btn-start:hover{transform:translateY(-3px);}
+.btn-start:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+/* ===== TOPBAR ===== */
+.topbar{
+  background:rgba(13,27,42,0.97);border-bottom:1px solid var(--border);
+  padding:12px 24px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);
+}
+.tb-title{font-size:1rem;font-weight:800;color:#fff;}
+.tb-title span{color:var(--purple2);}
+.student-pill{
+  display:flex;align-items:center;gap:8px;padding:6px 14px;
+  background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);
+  border-radius:20px;font-size:0.85rem;color:var(--purple2);font-weight:700;
+}
+.score-pill{
+  padding:6px 16px;background:rgba(251,191,36,0.12);
+  border:1px solid rgba(251,191,36,0.25);border-radius:20px;
+  font-size:0.9rem;font-weight:900;color:var(--gold);
+}
+
+/* ===== PROGRESS STEPS ===== */
+.steps-wrap{
+  background:rgba(13,27,42,0.97);padding:10px 24px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.steps-row{display:flex;gap:4px;align-items:center;}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:800;border:2px solid rgba(255,255,255,0.1);
+  color:var(--text2);background:rgba(255,255,255,0.04);transition:.3s;flex-shrink:0;
+}
+.step-dot.active{border-color:var(--purple2);color:var(--purple2);background:rgba(167,139,250,0.1);}
+.step-dot.done{border-color:var(--green);color:var(--green);background:rgba(16,185,129,0.1);}
+.step-line{flex:1;height:2px;background:rgba(255,255,255,0.07);border-radius:2px;}
+.step-line.done{background:var(--green);}
+
+/* ===== CONTENT ===== */
+.content-area{flex:1;padding:24px 20px;max-width:700px;margin:0 auto;width:100%;}
+
+/* ===== Q CARD ===== */
+.q-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:22px;padding:28px;margin-bottom:20px;
+  animation:fadeUp .4s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.q-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:20px;font-size:0.8rem;font-weight:700;margin-bottom:14px;
+}
+.badge-mcq{background:rgba(6,182,212,0.12);color:var(--cyan);border:1px solid rgba(6,182,212,0.25);}
+.badge-write{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
+.badge-algo{background:rgba(124,58,237,0.12);color:var(--purple2);border:1px solid rgba(124,58,237,0.25);}
+.badge-def{background:rgba(236,72,153,0.12);color:var(--pink);border:1px solid rgba(236,72,153,0.25);}
+.badge-tf{background:rgba(245,158,11,0.12);color:var(--orange);border:1px solid rgba(245,158,11,0.25);}
+.q-num{color:var(--purple2);font-size:1.1rem;margin-left:4px;}
+.q-text{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:18px;line-height:1.7;}
+.q-sub{font-size:0.88rem;color:var(--text2);margin-bottom:14px;line-height:1.6;}
+
+/* ===== FLOWCHART DISPLAY ===== */
+.flowchart-wrap{
+  background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.2);
+  border-radius:16px;padding:16px;margin:14px 0;
+  display:flex;justify-content:center;
+}
+.flowchart-wrap svg{max-width:100%;height:auto;}
+
+/* ===== MCQ ===== */
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt-btn{
+  padding:14px 18px;border-radius:12px;
+  background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.08);
+  color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.95rem;
+  cursor:pointer;transition:.25s;text-align:right;
+  display:flex;align-items:center;gap:12px;
+}
+.opt-letter{
+  min-width:32px;height:32px;border-radius:8px;
+  background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:0.85rem;color:var(--text2);flex-shrink:0;
+}
+.opt-btn:hover:not(:disabled){border-color:var(--purple2);background:rgba(167,139,250,0.08);}
+.opt-btn.selected{border-color:var(--purple2);background:rgba(167,139,250,0.1);}
+.opt-btn.selected .opt-letter{background:var(--purple2);color:#fff;}
+.opt-btn.correct{border-color:var(--green)!important;background:rgba(16,185,129,0.08)!important;}
+.opt-btn.correct .opt-letter{background:var(--green)!important;color:#fff!important;}
+.opt-btn.wrong{border-color:var(--red)!important;background:rgba(239,68,68,0.07)!important;}
+.opt-btn.wrong .opt-letter{background:var(--red)!important;color:#fff!important;}
+.opt-btn:disabled{cursor:default;}
+
+/* ===== FEEDBACK ===== */
+.feedback{margin-top:12px;padding:12px 16px;border-radius:10px;font-size:0.9rem;font-weight:600;display:none;}
+.fb-correct{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green);}
+.fb-wrong{background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.25);color:#fc8181;}
+.answer-reveal{margin-top:12px;padding:14px 16px;border-radius:12px;display:none;
+  background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.2);}
+.ar-title{color:var(--green);font-size:0.85rem;font-weight:800;margin-bottom:5px;}
+.ar-text{color:var(--text2);font-size:0.88rem;line-height:1.7;}
+
+/* ===== DEFINE / TEXT AREA ===== */
+.def-textarea{
+  width:100%;padding:14px 16px;min-height:120px;
+  background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:#fff;font-family:'Tajawal',sans-serif;
+  font-size:0.95rem;outline:none;resize:vertical;transition:.3s;line-height:1.7;text-align:right;
+}
+.def-textarea:focus{border-color:var(--purple2);}
+.hint-box{
+  margin-top:10px;padding:10px 14px;
+  background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.2);
+  border-radius:10px;font-size:0.83rem;color:var(--gold);line-height:1.6;
+}
+.hint-box strong{display:block;margin-bottom:3px;}
+
+/* ===== ALGO SLOTS ===== */
+.algo-slots{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.algo-row{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;padding:10px 14px;
+}
+.algo-num{
+  min-width:28px;height:28px;border-radius:8px;
+  background:rgba(124,58,237,0.15);color:var(--purple2);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;flex-shrink:0;
+}
+.algo-select{
+  flex:1;background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.1);
+  border-radius:8px;color:#fff;font-family:'Tajawal',sans-serif;font-size:0.88rem;
+  padding:8px 12px;outline:none;cursor:pointer;transition:.25s;
+}
+.algo-select:focus{border-color:var(--purple2);}
+.algo-select option{background:#1a2535;}
+.algo-row.correct-row .algo-select{border-color:var(--green);}
+.algo-row.wrong-row .algo-select{border-color:var(--red);}
+
+/* ===== TABLE QUESTION ===== */
+.data-table{width:100%;border-collapse:collapse;font-size:0.88rem;margin:12px 0;}
+.data-table th{
+  padding:10px 12px;background:rgba(16,185,129,0.12);color:var(--green);
+  font-weight:800;border:1px solid rgba(16,185,129,0.15);text-align:center;
+}
+.data-table td{
+  padding:9px 12px;border:1px solid rgba(255,255,255,0.05);
+  color:var(--text2);text-align:center;
+}
+.data-table td:first-child{color:var(--gold);font-weight:700;}
+.data-table tr.bad-row td{color:var(--red);background:rgba(239,68,68,0.05);}
+.bad-icon{color:var(--red);font-weight:800;}
+.good-icon{color:var(--green);}
+
+/* ===== BUTTONS ===== */
+.btn-check{
+  padding:12px 28px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-family:'Tajawal',sans-serif;font-size:0.95rem;font-weight:800;
+  cursor:pointer;transition:.25s;margin-top:16px;
+}
+.btn-check:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,58,237,0.3);}
+.btn-next{
+  padding:12px 28px;border-radius:12px;
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  color:var(--text2);font-family:'Tajawal',sans-serif;font-size:0.95rem;font-weight:700;
+  cursor:pointer;transition:.25s;margin-top:16px;margin-right:10px;display:none;
+}
+.btn-next:hover{background:rgba(255,255,255,0.1);color:#fff;}
+
+/* ===== RESULTS ===== */
+#results-screen{
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:30px 20px;text-align:center;
+  background:radial-gradient(ellipse at 50% 30%,rgba(16,185,129,0.12) 0%,transparent 60%),var(--navy);
+}
+.res-robot{font-size:5rem;margin-bottom:20px;animation:bounce 2s ease-in-out infinite;}
+.res-ring{
+  width:140px;height:140px;border-radius:50%;margin:0 auto 20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:4px solid;
+}
+.ring-great{border-color:var(--green);box-shadow:0 0 40px rgba(16,185,129,0.3);}
+.ring-good{border-color:var(--cyan);box-shadow:0 0 40px rgba(6,182,212,0.3);}
+.ring-ok{border-color:var(--orange);box-shadow:0 0 40px rgba(245,158,11,0.3);}
+.res-pct{font-size:2.6rem;font-weight:900;}
+.ring-great .res-pct{color:var(--green);}
+.ring-good .res-pct{color:var(--cyan);}
+.ring-ok .res-pct{color:var(--orange);}
+.res-lbl{font-size:0.75rem;color:var(--text2);}
+.res-name{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:6px;}
+.res-msg{font-size:1rem;color:var(--text2);margin-bottom:28px;}
+.res-details{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:24px;width:100%;max-width:480px;margin-bottom:24px;text-align:right;
+}
+.res-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.res-row:last-child{border-bottom:none;}
+.res-q{font-size:0.85rem;color:var(--text2);flex:1;}
+.res-st{font-size:0.8rem;font-weight:700;}
+.st-c{color:var(--green);}
+.st-p{color:var(--orange);}
+.st-w{color:var(--red);}
+.btn-restart{
+  padding:16px 40px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-family:'Tajawal',sans-serif;font-size:1.1rem;font-weight:800;
+  cursor:pointer;transition:.3s;box-shadow:0 8px 30px rgba(124,58,237,0.3);
+}
+.btn-restart:hover{transform:translateY(-3px);}
+
+/* ===== TEACHER BTN ===== */
+#teacher-fab{
+  position:fixed;bottom:22px;left:22px;z-index:500;
+  width:50px;height:50px;border-radius:50%;
+  background:rgba(124,58,237,0.9);border:2px solid rgba(167,139,250,0.4);
+  color:#fff;font-size:1.3rem;cursor:pointer;
+  box-shadow:0 4px 20px rgba(124,58,237,0.5);transition:.3s;
+  display:flex;align-items:center;justify-content:center;
+}
+#teacher-fab:hover{transform:scale(1.1);}
+
+/* ===== TEACHER MODAL ===== */
+.t-modal{
+  display:none;position:fixed;inset:0;z-index:600;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;padding:16px;
+}
+.t-modal.open{display:flex;}
+.t-panel{
+  background:#111827;border:1px solid rgba(124,58,237,0.3);
+  border-radius:24px;width:100%;max-width:860px;max-height:92vh;
+  overflow:hidden;display:flex;flex-direction:column;
+}
+.t-header{
+  padding:18px 24px;background:rgba(124,58,237,0.1);
+  border-bottom:1px solid rgba(124,58,237,0.2);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.t-header h2{color:var(--purple2);font-size:1.1rem;font-weight:800;}
+.close-btn{
+  width:34px;height:34px;border-radius:8px;border:none;
+  background:rgba(255,255,255,0.06);color:var(--text2);cursor:pointer;font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.close-btn:hover{background:rgba(255,255,255,0.12);color:#fff;}
+.t-pw-screen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 40px;text-align:center;
+}
+.t-pw-screen h3{color:var(--purple2);font-size:1.2rem;font-weight:800;margin-bottom:8px;}
+.t-pw-screen p{color:var(--text2);font-size:0.9rem;margin-bottom:24px;}
+.pw-inp{
+  padding:14px 20px;border-radius:12px;border:2px solid rgba(124,58,237,0.3);
+  background:rgba(124,58,237,0.08);color:#fff;font-family:'Tajawal',sans-serif;
+  font-size:1rem;outline:none;text-align:center;width:200px;letter-spacing:4px;transition:.3s;
+}
+.pw-inp:focus{border-color:var(--purple2);}
+.pw-btn{
+  margin-top:14px;padding:12px 30px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--purple),var(--purple2));
+  color:#fff;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;
+}
+.t-body{overflow-y:auto;padding:22px;}
+.t-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:24px;}
+.t-stat{
+  background:rgba(255,255,255,0.04);border-radius:14px;padding:16px;text-align:center;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.t-stat-val{font-size:1.8rem;font-weight:900;}
+.t-stat-lbl{font-size:0.75rem;color:var(--text2);margin-top:3px;}
+.stat-c .t-stat-val{color:var(--cyan);}
+.stat-g .t-stat-val{color:var(--green);}
+.stat-o .t-stat-val{color:var(--orange);}
+.stat-r .t-stat-val{color:var(--red);}
+.stat-gold .t-stat-val{color:var(--gold);}
+
+/* Q ANALYSIS */
+.q-analysis{margin-bottom:22px;}
+.qa-title{font-size:0.9rem;font-weight:800;color:var(--purple2);margin-bottom:12px;}
+.qa-row{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  background:rgba(255,255,255,0.03);border-radius:12px;margin-bottom:6px;
+  border:1px solid rgba(255,255,255,0.05);
+}
+.qa-num{min-width:28px;height:28px;border-radius:8px;background:rgba(124,58,237,0.15);color:var(--purple2);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.8rem;flex-shrink:0;}
+.qa-q{flex:1;font-size:0.83rem;color:var(--text2);}
+.qa-bar-wrap{width:100px;height:8px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;}
+.qa-bar{height:100%;border-radius:10px;}
+.qa-pct{font-size:0.8rem;font-weight:700;min-width:34px;text-align:center;}
+
+/* STUDENTS TABLE */
+.stu-table-wrap{overflow-x:auto;margin-bottom:16px;}
+table.stu-tbl{width:100%;border-collapse:collapse;font-size:0.83rem;}
+table.stu-tbl th{
+  padding:10px 12px;background:rgba(124,58,237,0.14);color:var(--purple2);
+  font-weight:800;border-bottom:2px solid rgba(124,58,237,0.2);text-align:right;
+}
+table.stu-tbl td{
+  padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);
+  color:var(--text2);text-align:right;
+}
+table.stu-tbl tr:hover td{background:rgba(255,255,255,0.02);}
+.grade-badge{padding:3px 10px;border-radius:10px;font-size:0.78rem;font-weight:700;}
+.ga{background:rgba(16,185,129,0.15);color:var(--green);}
+.gb{background:rgba(6,182,212,0.15);color:var(--cyan);}
+.gc{background:rgba(251,191,36,0.15);color:var(--gold);}
+.gd{background:rgba(239,68,68,0.15);color:var(--red);}
+
+.t-section-title{font-size:0.9rem;font-weight:800;color:var(--text2);margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;}
+.t-empty{text-align:center;padding:50px 20px;color:var(--text2);}
+.t-empty .icon{font-size:3rem;margin-bottom:12px;}
+.err-msg{color:var(--red);font-size:0.85rem;margin-top:8px;}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:rgba(167,139,250,0.2);border-radius:10px;}
+.confetti-p{position:fixed;width:8px;height:8px;pointer-events:none;z-index:999;animation:cfall linear forwards;}
+@keyframes cfall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- ===== SPLASH ===== -->
+<div id="splash" class="screen active">
+  <div class="splash-robot">🤖</div>
+  <h1>نشاط <span>الصف الخامس</span></h1>
+  <p>الروبوت في حياتنا اليومية 🚀</p>
+  <input class="name-inp" id="name-inp" type="text" placeholder="اكتبي اسمك هنا..." maxlength="40"/>
+  <button class="btn-start" id="btn-start" disabled onclick="startActivity()">ابدأ النشاط ◀</button>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div id="main-screen" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:1.4rem">🤖</span>
+      <div class="tb-title">نشاط <span>الصف الخامس</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="student-pill">👩‍🎓 <span id="tb-name">—</span></div>
+      <div class="score-pill">⭐ <span id="tb-score">0</span></div>
+    </div>
+  </div>
+  <div class="steps-wrap">
+    <div class="steps-row" id="steps-row"></div>
+  </div>
+  <div class="content-area" id="content-area"></div>
+</div>
+
+<!-- ===== RESULTS ===== -->
+<div id="results-screen">
+  <div style="width:100%;max-width:520px;padding:20px;text-align:center">
+    <div class="res-robot" id="res-emoji">🤖</div>
+    <div class="res-ring" id="res-ring">
+      <div class="res-pct" id="res-pct">0%</div>
+      <div class="res-lbl">نتيجتك</div>
+    </div>
+    <div class="res-name" id="res-name"></div>
+    <div class="res-msg" id="res-msg"></div>
+    <div class="res-details" id="res-details"></div>
+    <button class="btn-restart" onclick="restartActivity()">🔄 إعادة المحاولة</button>
+  </div>
+</div>
+
+<!-- TEACHER FAB -->
+<button id="teacher-fab" onclick="openTeacher()" title="لوحة المعلمة">👩‍🏫</button>
+
+<!-- TEACHER MODAL -->
+<div class="t-modal" id="t-modal">
+  <div class="t-panel">
+    <div class="t-header">
+      <h2>👩‍🏫 لوحة تحكم المعلمة</h2>
+      <button class="close-btn" onclick="closeTeacher()">✕</button>
+    </div>
+    <div id="t-inner"></div>
+  </div>
+</div>
+
+<script>
+// ========================================================
+// QUESTIONS DATA
+// ========================================================
+const QS = [
+
+  // Q1: تعريف الروبوت
+  { id:1, type:'define', badge:'✍️ اكتبي التعريف', bClass:'badge-def',
+    text:'ما هو الروبوت؟ اكتبي تعريفاً بكلماتك الخاصة.',
+    hint:'الكلمات المفتاحية: آلة • برمجة • مهامّ • تفاعل • تلقائي • عن بُعد',
+    model:'الروبوت هو آلة تتفاعل مع البيئة الخارجية، ويتم برمجتها لتقوم بمهامّ معيّنة مثل الحركة وحمل الأشياء. وقد يعمل عن بُعد أو بشكل تلقائي.',
+    keywords:['آلة','برمجة','مهام','تفاعل','تلقائي','بعد'],
+    pts:20 },
+
+  // Q2: أنواع الروبوتات
+  { id:2, type:'mcq', badge:'⭕ اختيار من متعدد', bClass:'badge-mcq',
+    text:'الروبوتات التي تمتلك قاعدة ثابتة وأذرعاً متحركة وتُستخدم في صناعة السيارات تُسمى:',
+    opts:['الروبوتات المتحركة 🚗','الروبوتات الثابتة 🦾','الروبوتات الطائرة ✈️','الروبوتات الذكية 🧠'],
+    answer:1, explain:'✅ الروبوتات الثابتة: قاعدة ثابتة + أذرع متحركة. تُستخدم في التصنيع وحمل الأشياء الثقيلة بسرعة ودقة عالية.', pts:10 },
+
+  // Q3: إيجابيات
+  { id:3, type:'mcq', badge:'⭕ اختيار من متعدد', bClass:'badge-mcq',
+    text:'أيٌّ مما يلي من إيجابيات استخدام الروبوت؟',
+    opts:['يحتاج إلى بطارية ليعمل 🔋','تكلفة تصنيعه مرتفعة 💸','يعمل باستمرار دون انقطاع ويتميز بالدقة العالية ✨','قد يحل محل البشر في بعض المهن 😟'],
+    answer:2, explain:'✅ من إيجابيات الروبوت: يعمل باستمرار، يتميز بالدقة، يمكن إصلاحه، ويؤدي المهام الخطرة التي قد لا يتمكن الإنسان من تنفيذها.', pts:10 },
+
+  // Q4: صح أو خطأ — تحدّيات
+  { id:4, type:'tf', badge:'✔️ صح أو خطأ', bClass:'badge-tf',
+    text:'الروبوتات لا تحتاج إلى مصدر طاقة لتعمل.',
+    answer:false, explain:'❌ خطأ — الروبوتات تحتاج إلى بطارية أو مصدر طاقة ليعمل. وهذه إحدى تحديات استخدام الروبوت.', pts:10 },
+
+  // Q5: مجالات الروبوت
+  { id:5, type:'mcq', badge:'⭕ اختيار من متعدد', bClass:'badge-mcq',
+    text:'من مجالات استخدام الروبوتات المتحركة:',
+    opts:['الطباعة والنشر فقط 📄','اكتشاف البيئات الخطرة وتجميع المحاصيل 🌾','تصفح الإنترنت 🌐','طهي الطعام في المنزل 🍳'],
+    answer:1, explain:'✅ الروبوتات المتحركة تُستخدم في: اكتشاف البيئات الخطرة، الزراعة، الأعمال الخدمية، والطب والبحث العلمي.', pts:10 },
+
+  // Q6: المخطط الانسيابي — الحركة الدائرية + MCQ الشكل
+  { id:6, type:'flowchart_mcq', badge:'📊 المخطط + اختيار', bClass:'badge-algo',
+    text:'انظري إلى المخطط الانسيابي التالي لحركة الروبوت حول استاد لوسيل. في أي شكل يتحرك الروبوت؟',
+    opts:['مربع 🟥','مستطيل 🟩','دائرة ⭕','مثلث 🔺'],
+    answer:2, explain:'✅ يتحرك الروبوت بشكل دائري ⭕ — الخوارزمية تأمره بـ "تحرّك دائرياً لمدة 7 ثوانٍ" مما يعني حركة مستمرة على شكل دائرة حول الاستاد.', pts:10 },
+
+  // Q7: ترتيب الخوارزمية الدائرية
+  { id:7, type:'algo', badge:'🔗 رتّبي الخوارزمية', bClass:'badge-algo',
+    text:'رتّبي خطوات خوارزمية حركة الروبوت الدائرية بالترتيب الصحيح:',
+    steps:['بداية الخوارزمية','ضبط محرّكات الروبوت','تحرّك دائرياً لمدة 7 ثوانٍ','نهاية الخوارزمية'],
+    flowchart:'circle', pts:20 },
+
+  // Q8: المخطط الانسيابي — الحركة المثلثية + MCQ الشكل
+  { id:8, type:'flowchart_mcq', badge:'📊 المخطط + اختيار', bClass:'badge-algo',
+    flowchart:'triangle',
+    text:'انظري إلى المخطط الانسيابي التالي لحركة الروبوت حول برج الشعلة. في أي شكل يتحرك الروبوت؟',
+    opts:['دائرة ⭕','مربع 🟥','مثلث 🔺','مستطيل 🟩'],
+    answer:2, explain:'✅ يتحرك الروبوت بشكل مثلث 🔺 — يتقدم للأمام ثم يلتف إلى اليمين، ويكرر هذا 3 مرات حتى يرسم مثلثاً كاملاً حول برج الشعلة.', pts:10 },
+
+  // Q9: ترتيب خوارزمية المثلث
+  { id:9, type:'algo', badge:'🔗 رتّبي الخوارزمية', bClass:'badge-algo',
+    text:'رتّبي خطوات خوارزمية حركة الروبوت على شكل مثلث حول برج الشعلة بالترتيب الصحيح:',
+    flowchart:'triangle',
+    steps:[
+      'بداية الخوارزمية',
+      'ضبط محرّكات الروبوت',
+      'تقدّم للأمام بسرعة 50 لمدة ثانيتين',
+      'التفّ إلى اليمين بقوة 15 لمدة 1.75 ثانية',
+      'هل تم التكرار 3 مرات؟ إذا لا → ارجع للخطوة 3',
+      'نهاية الخوارزمية'
+    ], pts:20 },
+
+  // Q10: صح أو خطأ — تنظيم البيانات
+  { id:8, type:'tf', badge:'✔️ صح أو خطأ', bClass:'badge-tf',
+    text:'يمكن خلط أنواع مختلفة من البيانات في نفس العمود عند تنظيمها في جدول.',
+    answer:false, explain:'❌ خطأ — كل عمود في الجدول يجب أن يحتوي على بيانات من نفس النوع. خلط الأنواع يجعل البيانات غير مترابطة.', pts:10 },
+
+  // Q9: MCQ أدوات جمع البيانات
+  { id:9, type:'mcq', badge:'⭕ اختيار من متعدد', bClass:'badge-mcq',
+    text:'أداة جمع البيانات التي تعتمد على نموذج ورقي أو إلكتروني للإجابة عن أسئلة متنوعة تُسمى:',
+    opts:['المقابلة 🗣️','الملاحظة المباشرة 👁️','الاستبانة 📋','الجدول 📊'],
+    answer:2, explain:'✅ الاستبانة: نموذج ورقي أو إلكتروني مصمم للإجابة عن مجموعة متنوعة من الأسئلة لجمع البيانات.', pts:10 },
+
+  // Q10: جدول البيانات — MCQ
+  { id:10, type:'table_mcq', badge:'📊 جدول + اختيار', bClass:'badge-mcq',
+    text:'انظري إلى الجدول التالي. أيّ الصفوف يحتوي على خطأ في تنظيم البيانات؟',
+    tableData:{
+      headers:['الجهاز','تاريخ الجمع','الكمية','الوزن (كجم)'],
+      rows:[
+        {cells:['لوحة المفاتيح','2018/1/17','28','14'],bad:false},
+        {cells:['الفأرة','2018/5/12','20','2'],bad:false},
+        {cells:['الشاشة','2018/3/8','4','13'],bad:false},
+        {cells:['الميكروفون','2018/4/25','8 / 2018/6/1','1'],bad:true},
+      ]
+    },
+    opts:['الصف الأول (لوحة المفاتيح)','الصف الثاني (الفأرة)','الصف الرابع (الميكروفون)','لا يوجد خطأ'],
+    answer:2, explain:'✅ الصف الرابع (الميكروفون) يحتوي على خطأ: عمود "الكمية" يضم كمية + تاريخ معاً، وهذا خلط لأنواع مختلفة في نفس الخلية.', pts:10 },
+
+  // Q11: صح أو خطأ — الملاحظة المباشرة
+  { id:11, type:'tf', badge:'✔️ صح أو خطأ', bClass:'badge-tf',
+    text:'الملاحظة المباشرة هي حوار لفظي وجهاً لوجه بين الباحث وشخص آخر لجمع البيانات.',
+    answer:false, explain:'❌ خطأ — هذا تعريف المقابلة. أما الملاحظة المباشرة فهي المشاهدة والمراقبة الدقيقة لسلوك ما أو ظاهرة معينة في ظل ظروف محددة.', pts:10 },
+];
+
+// ========================================================
+// FLOWCHART SVGs
+// ========================================================
+
+// مخطط الحركة الدائرية (حول استاد لوسيل)
+const FLOWCHART_CIRCLE = `
+<svg width="260" height="310" viewBox="0 0 260 310" xmlns="http://www.w3.org/2000/svg" font-family="Tajawal,sans-serif">
+  <defs>
+    <marker id="arrc" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L8,4z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <!-- label -->
+  <text x="130" y="16" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="bold">حركة دائرية ⭕ — استاد لوسيل</text>
+  <!-- البداية -->
+  <ellipse cx="130" cy="44" rx="78" ry="24" fill="#7c3aed" opacity=".9"/>
+  <text x="130" y="50" text-anchor="middle" fill="white" font-size="13" font-weight="bold">البداية</text>
+  <line x1="130" y1="68" x2="130" y2="92" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrc)"/>
+  <!-- ضبط -->
+  <rect x="24" y="92" width="212" height="38" rx="8" fill="#5b21b6" opacity=".9"/>
+  <text x="130" y="116" text-anchor="middle" fill="white" font-size="12" font-weight="bold">ضبط محرّكات الروبوت</text>
+  <line x1="130" y1="130" x2="130" y2="156" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrc)"/>
+  <!-- تحرك دائري -->
+  <rect x="10" y="156" width="240" height="38" rx="8" fill="#5b21b6" opacity=".9"/>
+  <text x="130" y="180" text-anchor="middle" fill="white" font-size="11.5" font-weight="bold">تحرّك دائرياً لمدة 7 ثوانٍ</text>
+  <line x1="130" y1="194" x2="130" y2="222" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrc)"/>
+  <!-- النهاية -->
+  <ellipse cx="130" cy="248" rx="78" ry="24" fill="#7c3aed" opacity=".9"/>
+  <text x="130" y="254" text-anchor="middle" fill="white" font-size="13" font-weight="bold">النهاية</text>
+  <!-- mini circle illustration -->
+  <circle cx="130" cy="290" r="12" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4,3"/>
+  <polygon points="130,278 134,284 130,282 126,284" fill="#a78bfa"/>
+</svg>`;
+
+// مخطط الحركة المثلثية (حول برج الشعلة)
+const FLOWCHART_TRIANGLE = `
+<svg width="300" height="520" viewBox="0 0 300 520" xmlns="http://www.w3.org/2000/svg" font-family="Tajawal,sans-serif">
+  <defs>
+    <marker id="arrt" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L8,4z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrt2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L8,4z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <!-- label -->
+  <text x="150" y="16" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">حركة مثلثية 🔺 — برج الشعلة</text>
+  <!-- البداية -->
+  <ellipse cx="150" cy="44" rx="78" ry="24" fill="#7c3aed" opacity=".9"/>
+  <text x="150" y="50" text-anchor="middle" fill="white" font-size="13" font-weight="bold">البداية</text>
+  <line x1="150" y1="68" x2="150" y2="92" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrt2)"/>
+  <!-- ضبط -->
+  <rect x="28" y="92" width="244" height="38" rx="8" fill="#5b21b6" opacity=".9"/>
+  <text x="150" y="116" text-anchor="middle" fill="white" font-size="12" font-weight="bold">ضبط محرّكات الروبوت</text>
+  <line x1="150" y1="130" x2="150" y2="156" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrt2)"/>
+  <!-- تقدم -->
+  <rect x="14" y="156" width="272" height="38" rx="8" fill="#b45309" opacity=".9"/>
+  <text x="150" y="175" text-anchor="middle" fill="white" font-size="11" font-weight="bold">تقدّم للأمام بسرعة 50</text>
+  <text x="150" y="188" text-anchor="middle" fill="white" font-size="10.5">ولمدة ثانيتين</text>
+  <line x1="150" y1="194" x2="150" y2="220" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrt)"/>
+  <!-- التفاف -->
+  <rect x="14" y="220" width="272" height="38" rx="8" fill="#b45309" opacity=".9"/>
+  <text x="150" y="239" text-anchor="middle" fill="white" font-size="11" font-weight="bold">التفّ إلى اليمين بقوة 15</text>
+  <text x="150" y="252" text-anchor="middle" fill="white" font-size="10.5">لمدة 1.75 ثانية</text>
+  <line x1="150" y1="258" x2="150" y2="284" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrt2)"/>
+  <!-- قرار -->
+  <polygon points="150,284 270,324 150,364 30,324" fill="#4c1d95" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="150" y="318" text-anchor="middle" fill="white" font-size="10.5" font-weight="bold">هل تكرر 3 مرات؟</text>
+  <!-- لا — سهم للأعلى يسار -->
+  <text x="22" y="310" fill="#ef4444" font-size="10" font-weight="bold">لا</text>
+  <path d="M50,324 L14,324 L14,175 L14,175" stroke="#ef4444" stroke-width="1.8" fill="none" marker-end="url(#arrt2)" stroke-dasharray="5,3"/>
+  <!-- نعم — للأسفل -->
+  <text x="155" y="382" fill="#10b981" font-size="10" font-weight="bold">نعم</text>
+  <line x1="150" y1="364" x2="150" y2="400" stroke="#10b981" stroke-width="2" marker-end="url(#arrt2)"/>
+  <!-- النهاية -->
+  <ellipse cx="150" cy="424" rx="78" ry="24" fill="#7c3aed" opacity=".9"/>
+  <text x="150" y="430" text-anchor="middle" fill="white" font-size="13" font-weight="bold">النهاية</text>
+  <!-- mini triangle illustration -->
+  <polygon points="150,462 170,492 130,492" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <polygon points="150,462 153,466 150,465 147,466" fill="#f59e0b"/>
+</svg>`;
+
+function getFlowchartSVG(type) {
+  if (type === 'triangle') return FLOWCHART_TRIANGLE;
+  return FLOWCHART_CIRCLE;
+}
+
+// ========================================================
+// STATE
+// ========================================================
+let studentName='', currentQ=0, score=0;
+let results=[], shuffledAlgo=[];
+let teacherUnlocked=false;
+const PASS='1234';
+const TOTAL_PTS = QS.reduce((s,q)=>s+q.pts,0);
+
+// ========================================================
+// SPLASH
+// ========================================================
+document.getElementById('name-inp').addEventListener('input',function(){
+  document.getElementById('btn-start').disabled=this.value.trim().length<2;
+});
+document.getElementById('name-inp').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('name-inp').value.trim().length>=2) startActivity();
+});
+function startActivity(){
+  studentName=document.getElementById('name-inp').value.trim();
+  showScreen('main-screen');
+  document.getElementById('tb-name').textContent=studentName;
+  buildSteps(); renderQ(0);
+}
+
+// ========================================================
+// SCREEN CONTROL
+// ========================================================
+function showScreen(id){
+  document.querySelectorAll('.screen,[id="results-screen"]').forEach(s=>{
+    s.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+}
+
+// ========================================================
+// STEPS
+// ========================================================
+function buildSteps(){
+  const row=document.getElementById('steps-row');
+  row.innerHTML='';
+  QS.forEach((_,i)=>{
+    if(i>0){const l=document.createElement('div');l.className='step-line';l.id='sl'+i;row.appendChild(l);}
+    const d=document.createElement('div');
+    d.className='step-dot'+(i===0?' active':'');d.id='sd'+i;d.textContent=i+1;
+    row.appendChild(d);
+  });
+}
+function updateSteps(idx){
+  QS.forEach((_,i)=>{
+    const d=document.getElementById('sd'+i);
+    const l=document.getElementById('sl'+i);
+    if(i<idx){d.className='step-dot done';d.textContent='✓';}
+    else if(i===idx){d.className='step-dot active';d.textContent=i+1;}
+    else{d.className='step-dot';d.textContent=i+1;}
+    if(l) l.className='step-line'+(i<=idx?' done':'');
+  });
+}
+
+// ========================================================
+// RENDER QUESTION
+// ========================================================
+function renderQ(idx){
+  currentQ=idx; updateSteps(idx);
+  const q=QS[idx];
+  const area=document.getElementById('content-area');
+  area.innerHTML='';
+  const card=document.createElement('div');
+  card.className='q-card';
+  if(q.type==='mcq') buildMCQ(card,q,idx);
+  else if(q.type==='tf') buildTF(card,q,idx);
+  else if(q.type==='define') buildDefine(card,q,idx);
+  else if(q.type==='algo') buildAlgo(card,q,idx);
+  else if(q.type==='flowchart_mcq') buildFlowchartMCQ(card,q,idx);
+  else if(q.type==='table_mcq') buildTableMCQ(card,q,idx);
+  area.appendChild(card);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ---- MCQ ----
+function buildMCQ(card,q,idx){
+  const L=['أ','ب','ج','د'];
+  card.innerHTML=`
+    <div class="q-badge ${q.bClass}">${q.badge}</div>
+    <div class="q-text"><span class="q-num">س${q.id}.</span> ${q.text}</div>
+    <div class="opts" id="opts-${q.id}">
+      ${q.opts.map((o,i)=>`<button class="opt-btn" id="ob-${q.id}-${i}" onclick="selOpt(${q.id},${i},${q.opts.length})">
+        <span class="opt-letter">${L[i]}</span>${o}</button>`).join('')}
+    </div>
+    <div class="feedback" id="fb-${q.id}"></div>
+    <div class="answer-reveal" id="ar-${q.id}"></div>
+    <div><button class="btn-next" id="nx-${q.id}" onclick="goNext(${idx})">التالي ◀</button>
+    <button class="btn-check" id="ck-${q.id}" onclick="checkMCQ(${q.id},${q.answer},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ---- TF ----
+function buildTF(card,q,idx){
+  card.innerHTML=`
+    <div class="q-badge ${q.bClass}">${q.badge}</div>
+    <div class="q-text"><span class="q-num">س${q.id}.</span> ${q.text}</div>
+    <div class="opts" id="opts-${q.id}">
+      <button class="opt-btn" id="ob-${q.id}-0" onclick="selOpt(${q.id},0,2)">
+        <span class="opt-letter">أ</span>صحيح ✅</button>
+      <button class="opt-btn" id="ob-${q.id}-1" onclick="selOpt(${q.id},1,2)">
+        <span class="opt-letter">ب</span>خطأ ❌</button>
+    </div>
+    <div class="feedback" id="fb-${q.id}"></div>
+    <div class="answer-reveal" id="ar-${q.id}"></div>
+    <div><button class="btn-next" id="nx-${q.id}" onclick="goNext(${idx})">التالي ◀</button>
+    <button class="btn-check" id="ck-${q.id}" onclick="checkTF(${q.id},${q.answer},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ---- FLOWCHART + MCQ ----
+function buildFlowchartMCQ(card,q,idx){
+  const L=['أ','ب','ج','د'];
+  const svg = getFlowchartSVG(q.flowchart||'circle');
+  card.innerHTML=`
+    <div class="q-badge ${q.bClass}">${q.badge}</div>
+    <div class="q-text"><span class="q-num">س${q.id}.</span> ${q.text}</div>
+    <div class="flowchart-wrap">${svg}</div>
+    <div class="opts" id="opts-${q.id}">
+      ${q.opts.map((o,i)=>`<button class="opt-btn" id="ob-${q.id}-${i}" onclick="selOpt(${q.id},${i},${q.opts.length})">
+        <span class="opt-letter">${L[i]}</span>${o}</button>`).join('')}
+    </div>
+    <div class="feedback" id="fb-${q.id}"></div>
+    <div class="answer-reveal" id="ar-${q.id}"></div>
+    <div><button class="btn-next" id="nx-${q.id}" onclick="goNext(${idx})">التالي ◀</button>
+    <button class="btn-check" id="ck-${q.id}" onclick="checkMCQ(${q.id},${q.answer},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ---- TABLE + MCQ ----
+function buildTableMCQ(card,q,idx){
+  const L=['أ','ب','ج','د'];
+  const tbl=`<table class="data-table">
+    <tr>${q.tableData.headers.map(h=>`<th>${h}</th>`).join('')}</tr>
+    ${q.tableData.rows.map(r=>`<tr class="${r.bad?'bad-row':''}">
+      ${r.cells.map((c,ci)=>`<td>${r.bad&&ci===2?'<span class="bad-icon">'+c+' ✗</span>':c}</td>`).join('')}
+    </tr>`).join('')}
+  </table>`;
+  card.innerHTML=`
+    <div class="q-badge ${q.bClass}">${q.badge}</div>
+    <div class="q-text"><span class="q-num">س${q.id}.</span> ${q.text}</div>
+    ${tbl}
+    <div class="opts" id="opts-${q.id}" style="margin-top:14px">
+      ${q.opts.map((o,i)=>`<button class="opt-btn" id="ob-${q.id}-${i}" onclick="selOpt(${q.id},${i},${q.opts.length})">
+        <span class="opt-letter">${L[i]}</span>${o}</button>`).join('')}
+    </div>
+    <div class="feedback" id="fb-${q.id}"></div>
+    <div class="answer-reveal" id="ar-${q.id}"></div>
+    <div><button class="btn-next" id="nx-${q.id}" onclick="goNext(${idx})">التالي ◀</button>
+    <button class="btn-check" id="ck-${q.id}" onclick="checkMCQ(${q.id},${q.answer},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ---- DEFINE ----
+function buildDefine(card,q,idx){
+  card.innerHTML=`
+    <div class="q-badge ${q.bClass}">${q.badge}</div>
+    <div class="q-text"><span class="q-num">س${q.id}.</span> ${q.text}</div>
+    <textarea class="def-textarea" id="def-${q.id}" placeholder="اكتبي تعريفك هنا..." rows="5"></textarea>
+    <div class="hint-box"><strong>💡 مساعدة — الكلمات المفتاحية:</strong>${q.hint}</div>
+    <div class="answer-reveal" id="ar-${q.id}"></div>
+    <div><button class="btn-next" id="nx-${q.id}" onclick="goNext(${idx})">التالي ◀</button>
+    <button class="btn-check" id="ck-${q.id}" onclick="checkDefine(${q.id},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ---- ALGO ----
+function buildAlgo(card,q,idx){
+  shuffledAlgo=[...q.steps].sort(()=>Math.random()-.5);
+  const opts=shuffledAlgo.map((s,i)=>`<option value="${i}">${s}</option>`).join('');
+  const slots=q.steps.map((_,i)=>`
+    <div class="algo-row" id="ar-row-${i}">
+      <div class="algo-num">${i+1}</div>
+      <select class="algo-select" id="asel-${i}">
+        <option value="">— اختاري الخطوة —</option>${opts}
+      </select>
+    </div>`).join('');
+  const svg = getFlowchartSVG(q.flowchart||'circle');
+  card.innerHTML=`
+    <div class="q-badge ${q.bClass}">${q.badge}</div>
+    <div class="q-text"><span class="q-num">س${q.id}.</span> ${q.text}</div>
+    <div class="flowchart-wrap">${svg}</div>
+    <p class="q-sub">📋 رتّبي الخطوات في الترتيب الصحيح:</p>
+    <div class="algo-slots">${slots}</div>
+    <div class="answer-reveal" id="ar-${q.id}"></div>
+    <div><button class="btn-next" id="nx-${q.id}" onclick="goNext(${idx})">التالي ◀</button>
+    <button class="btn-check" id="ck-${q.id}" onclick="checkAlgo(${q.id},${idx},${q.pts})">تحقق ✓</button></div>`;
+}
+
+// ========================================================
+// CHECK LOGIC
+// ========================================================
+function selOpt(qId,idx,total){
+  if(document.getElementById(`ob-${qId}-0`).disabled) return;
+  for(let i=0;i<total;i++) document.getElementById(`ob-${qId}-${i}`)?.classList.remove('selected');
+  document.getElementById(`ob-${qId}-${idx}`).classList.add('selected');
+}
+
+function checkMCQ(qId,correct,idx,pts){
+  const q=QS[idx];
+  let sel=-1;
+  for(let i=0;i<q.opts.length;i++){
+    if(document.getElementById(`ob-${qId}-${i}`)?.classList.contains('selected')){sel=i;break;}
+  }
+  if(sel===-1){alert('اختاري إجابة أولاً!');return;}
+  const ok=sel===correct;
+  for(let i=0;i<q.opts.length;i++){
+    const b=document.getElementById(`ob-${qId}-${i}`);b.disabled=true;
+    if(i===correct) b.classList.add('correct');
+    else if(i===sel&&!ok) b.classList.add('wrong');
+    b.classList.remove('selected');
+  }
+  showFB(qId,ok); showAR(qId,q.explain);
+  if(ok){score+=pts;document.getElementById('tb-score').textContent=score;}
+  results.push({q:q.text.substring(0,40)+'…',ok,partial:ok?1:0,pts,earned:ok?pts:0});
+  toggleBtns(qId);
+}
+
+function checkTF(qId,correctBool,idx,pts){
+  const q=QS[idx];
+  let sel=-1;
+  for(let i=0;i<2;i++){
+    if(document.getElementById(`ob-${qId}-${i}`)?.classList.contains('selected')){sel=i;break;}
+  }
+  if(sel===-1){alert('اختاري صح أو خطأ أولاً!');return;}
+  const answer=sel===0; // 0=صح, 1=خطأ
+  const ok=answer===correctBool;
+  const correctIdx=correctBool?0:1;
+  for(let i=0;i<2;i++){
+    const b=document.getElementById(`ob-${qId}-${i}`);b.disabled=true;
+    if(i===correctIdx) b.classList.add('correct');
+    else if(i===sel&&!ok) b.classList.add('wrong');
+    b.classList.remove('selected');
+  }
+  showFB(qId,ok); showAR(qId,q.explain);
+  if(ok){score+=pts;document.getElementById('tb-score').textContent=score;}
+  results.push({q:q.text.substring(0,40)+'…',ok,partial:ok?1:0,pts,earned:ok?pts:0});
+  toggleBtns(qId);
+}
+
+function checkDefine(qId,idx,pts){
+  const q=QS[idx];
+  const val=document.getElementById(`def-${qId}`).value.trim();
+  if(val.length<8){alert('اكتبي تعريفاً أطول!');return;}
+  document.getElementById(`def-${qId}`).disabled=true;
+  const matched=q.keywords.filter(k=>val.includes(k)).length;
+  const partial=Math.min(matched/4,1);
+  const earned=Math.round(pts*partial);
+  score+=earned;document.getElementById('tb-score').textContent=score;
+  const ar=document.getElementById(`ar-${qId}`);
+  ar.style.display='block';
+  ar.innerHTML=`<div class="ar-title">✅ الإجابة النموذجية (${earned} من ${pts} نقطة)</div><div class="ar-text">${q.model}</div>`;
+  results.push({q:'تعريف الروبوت',ok:partial>=0.5,partial,pts,earned});
+  toggleBtns(qId);
+}
+
+function checkAlgo(qId,idx,pts){
+  const q=QS[idx];
+  let correct=0;
+  for(let i=0;i<q.steps.length;i++){
+    const sel=document.getElementById(`asel-${i}`);
+    const selIdx=parseInt(sel.value);sel.disabled=true;
+    const correctStep=q.steps[i];
+    const correctShuffled=shuffledAlgo.indexOf(correctStep);
+    if(selIdx===correctShuffled){
+      document.getElementById(`ar-row-${i}`).classList.add('correct-row');correct++;
+    } else {
+      document.getElementById(`ar-row-${i}`).classList.add('wrong-row');
+    }
+  }
+  const partial=correct/q.steps.length;
+  const earned=Math.round(pts*partial);
+  score+=earned;document.getElementById('tb-score').textContent=score;
+  const ar=document.getElementById(`ar-${qId}`);
+  ar.style.display='block';
+  ar.innerHTML=`<div class="ar-title">✅ الترتيب الصحيح (${earned} من ${pts} نقطة)</div>
+    <div class="ar-text">${q.steps.map((s,i)=>`${i+1}. ${s}`).join('<br>')}</div>`;
+  results.push({q:'ترتيب الخوارزمية الدائرية',ok:partial>=0.75,partial,pts,earned});
+  toggleBtns(qId);
+}
+
+function showFB(qId,ok){
+  const fb=document.getElementById(`fb-${qId}`);
+  if(!fb) return;
+  fb.style.display='block';
+  fb.className='feedback '+(ok?'fb-correct':'fb-wrong');
+  fb.textContent=ok?'✅ إجابة صحيحة! أحسنتِ 🌟':'❌ إجابة خاطئة. راجعي التفسير أدناه.';
+}
+function showAR(qId,txt){
+  const ar=document.getElementById(`ar-${qId}`);
+  if(!ar) return;
+  ar.style.display='block';
+  ar.innerHTML=`<div class="ar-title">💡 التفسير</div><div class="ar-text">${txt}</div>`;
+}
+function toggleBtns(qId){
+  const ck=document.getElementById(`ck-${qId}`);
+  const nx=document.getElementById(`nx-${qId}`);
+  if(ck) ck.style.display='none';
+  if(nx) nx.style.display='inline-block';
+}
+
+// ========================================================
+// NAVIGATION + RESULTS
+// ========================================================
+function goNext(idx){
+  if(idx+1<QS.length) renderQ(idx+1);
+  else showResults();
+}
+
+function showResults(){
+  showScreen('results-screen');
+  const pct=Math.round((score/TOTAL_PTS)*100);
+  let cls,emoji,msg;
+  if(pct>=80){cls='ring-great';emoji='🌟';msg='ممتاز! أداء رائع يا '+studentName+'!';}
+  else if(pct>=60){cls='ring-good';emoji='👍';msg='جيد جداً! واصلي التميز!';}
+  else{cls='ring-ok';emoji='📚';msg='راجعي المادة وحاولي مرة أخرى!';}
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-ring').className='res-ring '+cls;
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-name').textContent=studentName;
+  document.getElementById('res-msg').textContent=msg;
+  const det=document.getElementById('res-details');
+  det.innerHTML=`<div style="font-size:.85rem;font-weight:800;color:var(--purple2);margin-bottom:12px">📊 تفاصيل الإجابات</div>`+
+    results.map(r=>`<div class="res-row">
+      <span style="font-size:1.1rem">${r.ok?'✅':r.partial>0?'🟡':'❌'}</span>
+      <div style="flex:1"><div class="res-q">${r.q}</div>
+      <div class="res-st ${r.ok?'st-c':r.partial>0?'st-p':'st-w'}">${r.ok?'صحيحة':r.partial>0?'جزئية':'خاطئة'} — ${r.earned} من ${r.pts}</div></div>
+    </div>`).join('')+
+    `<div style="border-top:1px solid rgba(255,255,255,.08);padding-top:12px;margin-top:4px;text-align:center;
+      font-size:.9rem;color:var(--gold);font-weight:800">🏆 نقاطك: ${score} من ${TOTAL_PTS}</div>`;
+  // save to localStorage
+  const all=JSON.parse(localStorage.getItem('g5_results')||'[]');
+  all.push({name:studentName,score,total:TOTAL_PTS,pct,date:new Date().toLocaleString('ar-QA'),results});
+  localStorage.setItem('g5_results',JSON.stringify(all));
+  if(pct>=80) confetti();
+}
+
+function restartActivity(){
+  score=0;results=[];currentQ=0;
+  document.getElementById('name-inp').value='';
+  document.getElementById('btn-start').disabled=true;
+  document.getElementById('steps-row').innerHTML='';
+  showScreen('splash');
+}
+
+// ========================================================
+// TEACHER PANEL
+// ========================================================
+window.openTeacher=function(){
+  document.getElementById('t-modal').classList.add('open');
+  renderTeacherInner();
+};
+window.closeTeacher=function(){document.getElementById('t-modal').classList.remove('open');};
+
+function renderTeacherInner(){
+  const inner=document.getElementById('t-inner');
+  if(!teacherUnlocked){
+    inner.innerHTML=`
+      <div class="t-pw-screen">
+        <div style="font-size:3rem;margin-bottom:14px">🔐</div>
+        <h3>لوحة تحكم المعلمة</h3>
+        <p>أدخلي كلمة المرور للوصول إلى نتائج الطالبات</p>
+        <input class="pw-inp" type="password" id="pw-in" placeholder="****" maxlength="8"/>
+        <br><button class="pw-btn" onclick="checkPW()">دخول</button>
+        <div class="err-msg" id="pw-err"></div>
+      </div>`;
+    document.getElementById('pw-in').addEventListener('keydown',e=>{if(e.key==='Enter') checkPW();});
+  } else {
+    buildDashboard(inner);
+  }
+}
+
+window.checkPW=function(){
+  const v=document.getElementById('pw-in').value;
+  if(v===PASS){teacherUnlocked=true;buildDashboard(document.getElementById('t-inner'));}
+  else document.getElementById('pw-err').textContent='كلمة المرور غير صحيحة';
+};
+
+function buildDashboard(container){
+  const all=JSON.parse(localStorage.getItem('g5_results')||'[]');
+  if(!all.length){
+    container.innerHTML=`<div class="t-empty"><div class="icon">📭</div><p>لا توجد نتائج بعد.<br>انتظري حتى تنهي الطالبات النشاط.</p></div>`;
+    return;
+  }
+  const avg=Math.round(all.reduce((s,r)=>s+r.pct,0)/all.length);
+  const passed=all.filter(r=>r.pct>=60).length;
+  const top=all.reduce((a,b)=>a.pct>b.pct?a:b);
+
+  // Q analysis
+  const qStats=QS.map((q,qi)=>{
+    const total=all.length;
+    const correct=all.filter(r=>{
+      const rd=r.results&&r.results[qi];
+      return rd&&(rd.ok||(rd.partial&&rd.partial>=0.5));
+    }).length;
+    return{text:q.text.substring(0,30)+'…',pct:total?Math.round((correct/total)*100):0,correct,total};
+  });
+
+  const gF=(p)=>{
+    if(p>=80) return '<span class="grade-badge ga">ممتاز</span>';
+    if(p>=65) return '<span class="grade-badge gb">جيد جداً</span>';
+    if(p>=50) return '<span class="grade-badge gc">جيد</span>';
+    return '<span class="grade-badge gd">يحتاج دعم</span>';
+  };
+
+  container.innerHTML=`<div class="t-body">
+    <div class="t-stats-grid">
+      <div class="t-stat stat-c"><div class="t-stat-val">${all.length}</div><div class="t-stat-lbl">عدد الطالبات</div></div>
+      <div class="t-stat stat-g"><div class="t-stat-val">${avg}%</div><div class="t-stat-lbl">متوسط النتائج</div></div>
+      <div class="t-stat stat-o"><div class="t-stat-val">${passed}</div><div class="t-stat-lbl">ناجحات (≥60%)</div></div>
+      <div class="t-stat stat-r"><div class="t-stat-val">${all.length-passed}</div><div class="t-stat-lbl">تحتجن دعماً</div></div>
+      <div class="t-stat stat-gold"><div class="t-stat-val" style="font-size:1rem">${top.name.split(' ')[0]}</div><div class="t-stat-lbl">🏆 الأعلى ${top.pct}%</div></div>
+    </div>
+
+    <div class="q-analysis">
+      <div class="t-section-title">📊 نسبة الإجابات الصحيحة لكل سؤال</div>
+      ${qStats.map((qs,i)=>{
+        const col=qs.pct>=70?'var(--green)':qs.pct>=50?'var(--orange)':'var(--red)';
+        return `<div class="qa-row">
+          <div class="qa-num">س${i+1}</div>
+          <div class="qa-q">${qs.text}</div>
+          <div class="qa-bar-wrap"><div class="qa-bar" style="width:${qs.pct}%;background:${col}"></div></div>
+          <div class="qa-pct" style="color:${col}">${qs.pct}%</div>
+        </div>`;}).join('')}
+    </div>
+
+    <div class="t-section-title">📋 نتائج جميع الطالبات</div>
+    <div class="stu-table-wrap">
+      <table class="stu-tbl">
+        <tr><th>الاسم</th><th>النقاط</th><th>النسبة</th><th>التقدير</th><th>التاريخ</th></tr>
+        ${all.map(r=>`<tr>
+          <td>${r.name}</td>
+          <td style="color:var(--gold);font-weight:800">${r.score}/${r.total}</td>
+          <td style="color:${r.pct>=80?'var(--green)':r.pct>=60?'var(--cyan)':'var(--red)'};font-weight:800">${r.pct}%</td>
+          <td>${gF(r.pct)}</td>
+          <td style="font-size:.78rem">${r.date}</td>
+        </tr>`).join('')}
+      </table>
+    </div>
+    <button onclick="clearResults()" style="padding:10px 20px;border-radius:10px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:var(--red);font-family:Tajawal,sans-serif;font-size:.85rem;cursor:pointer;">🗑️ مسح جميع النتائج</button>
+  </div>`;
+}
+
+window.clearResults=function(){
+  if(confirm('مسح جميع النتائج؟')){
+    localStorage.removeItem('g5_results');
+    buildDashboard(document.getElementById('t-inner'));
+  }
+};
+
+// ========================================================
+// CONFETTI
+// ========================================================
+function confetti(){
+  const cols=['#7c3aed','#a78bfa','#06b6d4','#10b981','#fbbf24','#ec4899'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');c.className='confetti-p';
+    c.style.cssText=`left:${Math.random()*100}%;top:-20px;background:${cols[Math.floor(Math.random()*6)]};
+      border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*3}s;
+      animation-delay:${Math.random()*1.5}s;`;
+    document.body.appendChild(c);
+    c.addEventListener('animationend',()=>c.remove());
+  }
+}
+</script>
+</body>
+</html>
