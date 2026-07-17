@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Nest Nursery — Doha | where nurture meets nature</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#2E4B32;
+    --moss:#5E7F58;
+    --sage:#A8BFA0;
+    --sand:#F5EFE3;
+    --bark:#4A3B2E;
+    --sun:#D9A441;
+    --leafline:rgba(94,127,88,.30);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Karla',sans-serif;background:var(--sand);color:var(--bark);line-height:1.75}
+  h1,h2,h3{font-family:'Fraunces',serif;color:var(--forest)}
+
+  .demo-banner{background:var(--forest);color:var(--sage);text-align:center;font-size:.78rem;padding:.45rem 1rem}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(245,239,227,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--leafline);display:flex;justify-content:space-between;align-items:center;padding:.85rem 5vw}
+  .logo{display:flex;align-items:center;gap:.55rem;text-decoration:none}
+  .logo .n{width:2.3rem;height:2.3rem;border-radius:50%;background:#fff;border:1.5px solid var(--moss);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:1.4rem;color:var(--moss)}
+  .logo .word{font-family:'Fraunces',serif;color:var(--forest);font-size:1.15rem;line-height:1.15}
+  .logo .word small{display:block;font-family:'Karla',sans-serif;font-size:.62rem;letter-spacing:.28em;color:var(--moss)}
+  .nav-links{display:flex;gap:1.5rem;font-size:.93rem}
+  .nav-links a{color:var(--bark);text-decoration:none}
+  .nav-links a:hover,.nav-links a:focus-visible{color:var(--forest);text-decoration:underline;text-underline-offset:4px}
+  .nav-cta{background:var(--forest);color:var(--sand);padding:.5rem 1.25rem;border-radius:2rem;text-decoration:none;font-size:.88rem;font-weight:700}
+  .nav-cta:hover{background:var(--moss)}
+
+  .hero{position:relative;background:linear-gradient(165deg,var(--forest),#3c6142 60%,var(--moss));color:var(--sand);padding:6rem 6vw 6.5rem;overflow:hidden}
+  .hero .inner{max-width:680px;position:relative;z-index:2}
+  .hero .eyebrow{letter-spacing:.3em;font-size:.75rem;color:var(--sage);margin-bottom:1.2rem;text-transform:uppercase}
+  .hero h1{color:#F3EEDF;font-size:clamp(2.3rem,6vw,3.8rem);font-weight:600;line-height:1.2;margin-bottom:1.3rem}
+  .hero h1 em{color:var(--sun);font-style:italic}
+  .hero p{max-width:33rem;font-weight:300;font-size:1.08rem;color:#E4E8D8;margin-bottom:2.2rem}
+  .hero .leaf{position:absolute;font-size:11rem;opacity:.08;line-height:1;user-select:none}
+  .hero .leaf.a{top:-1.5rem;left:-1rem;transform:rotate(-20deg)}
+  .hero .leaf.b{bottom:-2.5rem;right:2vw;transform:rotate(15deg)}
+  .btn{display:inline-block;background:var(--sun);color:var(--bark);font-weight:700;padding:.85rem 2.2rem;border-radius:2rem;text-decoration:none;transition:transform .2s,box-shadow .2s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.25)}
+  .btn.ghost{background:transparent;border:1.5px solid var(--sage);color:var(--sand);margin-inline-start:.8rem}
+
+  section{padding:4.5rem 6vw}
+  .head{text-align:center;max-width:640px;margin:0 auto 3rem}
+  .head .eyebrow{color:var(--moss);letter-spacing:.28em;font-size:.72rem;text-transform:uppercase;margin-bottom:.6rem}
+  .head h2{font-size:clamp(1.7rem,4vw,2.3rem);font-weight:600}
+  .head p{margin-top:.8rem;color:#6b5b4d}
+
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.4rem;max-width:1080px;margin:0 auto}
+  .pillar{background:#fff;border:1px solid var(--leafline);border-radius:1.2rem 1.2rem 1.2rem .25rem;padding:2rem 1.6rem;transition:transform .25s,box-shadow .25s}
+  .pillar:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(46,75,50,.12)}
+  .pillar .glyph{font-size:1.7rem;margin-bottom:.7rem}
+  .pillar h3{font-size:1.15rem;margin-bottom:.5rem}
+  .pillar p{font-size:.92rem;color:#6b5b4d}
+
+  .camp{background:var(--forest);color:var(--sand);border-radius:2rem;max-width:1080px;margin:0 auto;padding:3.2rem 2.5rem;display:grid;grid-template-columns:1.2fr .8fr;gap:2.5rem;align-items:center}
+  .camp .eyebrow{color:var(--sun);letter-spacing:.28em;font-size:.72rem;text-transform:uppercase;margin-bottom:.7rem}
+  .camp h2{color:#F3EEDF;font-size:clamp(1.6rem,3.5vw,2.2rem);margin-bottom:.9rem}
+  .camp p{color:#DDE3CF;font-weight:300;font-size:.98rem;margin-bottom:1.2rem}
+  .camp ul{list-style:none;font-size:.93rem;color:#DDE3CF}
+  .camp li{padding:.28rem 0}
+  .camp li::before{content:"🌿 ";font-size:.8rem}
+  .camp .price-card{background:rgba(255,255,255,.07);border:1px solid rgba(217,164,65,.4);border-radius:1.2rem;padding:1.8rem;text-align:center}
+  .camp .price-card .num{font-family:'Fraunces',serif;font-size:2.6rem;color:var(--sun);line-height:1.1}
+  .camp .price-card .unit{font-size:.85rem;color:var(--sage);margin-bottom:1rem}
+  .camp .price-card .btn{width:100%;padding:.75rem}
+
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.9rem;max-width:1080px;margin:0 auto}
+  .ph{aspect-ratio:4/5;border-radius:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--sand);font-size:.85rem;text-align:center;padding:1rem;background:
+    linear-gradient(150deg, rgba(46,75,50,.92), rgba(94,127,88,.92)),
+    repeating-linear-gradient(-45deg, transparent 0 16px, rgba(217,164,65,.12) 16px 17px)}
+  .ph small{color:var(--sage);margin-top:.35rem}
+
+  .tour{max-width:620px;margin:0 auto;background:#fff;border:1px solid var(--leafline);border-radius:1.5rem;padding:2.5rem 2rem;box-shadow:0 18px 44px rgba(46,75,50,.10)}
+  .tour label{display:block;font-weight:700;margin:1.05rem 0 .3rem;font-size:.9rem;color:var(--forest)}
+  .tour input,.tour select,.tour textarea{width:100%;padding:.7rem .9rem;border:1px solid #d5cbb9;border-radius:.6rem;font-family:inherit;font-size:.95rem;background:var(--sand)}
+  .tour input:focus,.tour select:focus,.tour textarea:focus{outline:2px solid var(--moss);border-color:var(--moss)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .tour button{margin-top:1.5rem;width:100%;background:var(--forest);color:var(--sand);border:none;padding:.95rem;border-radius:2rem;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer}
+  .tour button:hover{background:var(--moss)}
+  .note{text-align:center;font-size:.8rem;color:#8a7a6b;margin-top:.85rem}
+  .success{display:none;text-align:center;color:var(--forest);font-weight:700;margin-top:1.1rem}
+
+  footer{background:var(--bark);color:#D9CFC2;text-align:center;padding:2.6rem 6vw;font-size:.88rem}
+  footer .fl{font-family:'Fraunces',serif;color:var(--sage);font-size:1.2rem;margin-bottom:.5rem}
+  footer a{color:var(--sun);text-decoration:none}
+
+  @media (max-width:720px){
+    .nav-links{display:none}
+    .row{grid-template-columns:1fr}
+    .camp{grid-template-columns:1fr;padding:2.4rem 1.6rem}
+    .btn.ghost{margin-inline-start:0;margin-top:.7rem}
+    section{padding:3.2rem 6vw}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="demo-banner">Demo preview — photos &amp; content to be replaced with your own from Instagram (2.4K followers) · prepared by Gaaya Labs</div>
+
+<nav>
+  <a class="logo" href="#">
+    <span class="n">n</span>
+    <span class="word">the nest nursery<small>LEGTAIFIYA · DOHA</small></span>
+  </a>
+  <div class="nav-links">
+    <a href="#approach">Our Approach</a>
+    <a href="#camp">Summer Camp</a>
+    <a href="#gallery">Life at The Nest</a>
+    <a href="#tour">Book a Tour</a>
+  </div>
+  <a class="nav-cta" href="#tour">Book a Tour</a>
+</nav>
+
+<header class="hero">
+  <span class="leaf a">🌿</span><span class="leaf b">🍃</span>
+  <div class="inner">
+    <p class="eyebrow">Nature-based · Reggio Emilia · British EYFS</p>
+    <h1>where nurture<br>meets <em>nature</em></h1>
+    <p>The first and only nature-based, Reggio Emilia inspired British nursery in Legtaifiya — holistic, child-led learning for little ones from 2 months to 4 years.</p>
+    <a class="btn" href="#tour">Book a Free Tour</a>
+    <a class="btn ghost" href="#camp">Summer Camp 2026</a>
+  </div>
+</header>
+
+<section id="approach">
+  <div class="head">
+    <p class="eyebrow">Why The Nest</p>
+    <h2>Children are capable of constructing their own learning</h2>
+    <p>Reggio Emilia sits at the heart of everything we do — we follow your child's curiosity, outdoors and in.</p>
+  </div>
+  <div class="pillars">
+    <div class="pillar"><div class="glyph">🌱</div><h3>Nature-Based Learning</h3><p>A real veg garden, mud kitchen and outdoor classrooms — children learn with their hands in the earth.</p></div>
+    <div class="pillar"><div class="glyph">🇬🇧</div><h3>British EYFS Curriculum</h3><p>The Early Years Foundation Stage framework, delivered by a British-led team from 2 months to 4 years.</p></div>
+    <div class="pillar"><div class="glyph">🎨</div><h3>Child-Led Exploration</h3><p>When our little ones showed interest in light and shadow, it became our next project — that's Reggio in action.</p></div>
+    <div class="pillar"><div class="glyph">🤝</div><h3>Partners with Parents</h3><p>Founded by a behavioural therapist — with parent workshops and honest, daily communication.</p></div>
+  </div>
+</section>
+
+<section id="camp" style="background:transparent;padding-top:1rem">
+  <div class="camp">
+    <div>
+      <p class="eyebrow">Now Enrolling · July 5 – Aug 25</p>
+      <h2>Mini Makers Summer Adventure</h2>
+      <p>A summer of hands-on creativity and discovery for ages 1–4, Sunday to Thursday, 7 AM – 2 PM.</p>
+      <ul>
+        <li>Little Builders Workshop</li>
+        <li>Messy Makers Studio</li>
+        <li>Sensory Science Lab</li>
+        <li>Mini Explorers Mission</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="num">950 QAR</div>
+      <div class="unit">per full week · discounts on multi-week bookings</div>
+      <a class="btn" href="#tour">Reserve a Spot</a>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="head">
+    <p class="eyebrow">Life at The Nest</p>
+    <h2>From garden to plate, from mud to masterpiece</h2>
+  </div>
+  <div class="gallery">
+    <div class="ph">Your photo here<small>pulled from Instagram</small></div>
+    <div class="ph">Your photo here<small>veg garden harvest</small></div>
+    <div class="ph">Your photo here<small>outdoor classroom</small></div>
+    <div class="ph">Your photo here<small>messy play studio</small></div>
+    <div class="ph">Your photo here<small>bug season explorers</small></div>
+    <div class="ph">Your photo here<small>parent workshop</small></div>
+  </div>
+</section>
+
+<section id="tour" style="background:#EFE7D6">
+  <div class="head">
+    <p class="eyebrow">Come and See Us</p>
+    <h2>Book a Tour</h2>
+    <p>Limited seats each term — tell us a little about your child and we'll confirm your visit within 24 hours.</p>
+  </div>
+  <div class="tour">
+    <div class="row">
+      <div><label for="pname">Parent's name</label><input id="pname" type="text" placeholder="Your name"></div>
+      <div><label for="phone">WhatsApp number</label><input id="phone" type="tel" placeholder="+974 XXXX XXXX"></div>
+    </div>
+    <div class="row">
+      <div><label for="age">Child's age</label>
+        <select id="age"><option>Under 1 year</option><option>1 – 2 years</option><option>2 – 3 years</option><option>3 – 4 years</option></select>
+      </div>
+      <div><label for="start">Preferred start</label>
+        <select id="start"><option>Summer camp</option><option>Term 1 (Sept)</option><option>Term 2</option><option>Just exploring</option></select>
+      </div>
+    </div>
+    <label for="msg">Anything we should know?</label>
+    <textarea id="msg" rows="3" placeholder="Allergies, current nursery, questions about our approach..."></textarea>
+    <button onclick="document.querySelector('.success').style.display='block';this.textContent='Request sent ✓'">Request My Tour</button>
+    <p class="success">Thank you! We'll be in touch on WhatsApp within 24 hours. 🌿</p>
+    <p class="note">In the live version, requests land straight in your WhatsApp or inbox — no more lost DMs or missed calls.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">the nest nursery</div>
+  <p>Legtaifiya, Doha · Sun–Thu 6:30 AM – 4 PM · <a href="#">Instagram @thenestnurserydoha</a></p>
+  <p style="margin-top:.8rem;font-size:.76rem;color:#9b8b7c">Demo design prepared exclusively for The Nest Nursery · Gaaya Labs, Doha</p>
+</footer>
+
+</body>
+</html>
