@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brilliance Weddings Qatar — نموذج تجريبي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon:#6E1423;      /* عنابي قطري داكن */
+    --maroon-deep:#4A0D18;
+    --gold:#C9A227;
+    --gold-soft:#E3C878;
+    --ivory:#F7F1E6;
+    --ink:#241A17;
+    --line:rgba(201,162,39,.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Tajawal',sans-serif;background:var(--ivory);color:var(--ink);line-height:1.8}
+  h1,h2,h3,.display{font-family:'Amiri',serif}
+
+  /* ===== شريط علوي ===== */
+  .demo-banner{background:var(--ink);color:var(--gold-soft);text-align:center;font-size:.8rem;padding:.45rem 1rem;letter-spacing:.02em}
+  nav{position:sticky;top:0;z-index:50;background:rgba(247,241,230,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:.9rem 5vw}
+  .logo{font-family:'Amiri',serif;font-size:1.35rem;color:var(--maroon)}
+  .logo span{color:var(--gold);font-size:.8rem;display:block;letter-spacing:.25em;font-family:'Tajawal',sans-serif}
+  .nav-links{display:flex;gap:1.6rem;font-size:.95rem}
+  .nav-links a{color:var(--ink);text-decoration:none;transition:color .2s}
+  .nav-links a:hover,.nav-links a:focus-visible{color:var(--maroon)}
+  .nav-cta{background:var(--maroon);color:var(--ivory);padding:.5rem 1.2rem;border-radius:2rem;text-decoration:none;font-size:.9rem;transition:background .2s}
+  .nav-cta:hover{background:var(--maroon-deep)}
+
+  /* ===== الواجهة ===== */
+  header.hero{background:linear-gradient(160deg,var(--maroon-deep),var(--maroon) 55%,#7d2030);color:var(--ivory);text-align:center;padding:6.5rem 6vw 5.5rem;position:relative;overflow:hidden}
+  .hero::before,.hero::after{content:"";position:absolute;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .hero::before{top:2.2rem}.hero::after{bottom:2.2rem}
+  .hero .eyebrow{letter-spacing:.35em;font-size:.8rem;color:var(--gold-soft);margin-bottom:1.4rem}
+  .hero h1{font-size:clamp(2.2rem,6vw,4rem);font-weight:700;line-height:1.5;margin-bottom:1.2rem}
+  .hero p{max-width:34rem;margin:0 auto 2.2rem;color:#f1e4d2;font-weight:300;font-size:1.05rem}
+  .ornament{color:var(--gold);font-size:1.6rem;letter-spacing:.5em;margin-bottom:1.2rem}
+  .btn-gold{display:inline-block;background:var(--gold);color:var(--maroon-deep);font-weight:700;padding:.85rem 2.4rem;border-radius:2rem;text-decoration:none;transition:transform .2s, box-shadow .2s}
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+
+  section{padding:4.5rem 6vw}
+  .section-head{text-align:center;margin-bottom:3rem}
+  .section-head .eyebrow{color:var(--gold);letter-spacing:.3em;font-size:.75rem;margin-bottom:.6rem}
+  .section-head h2{font-size:clamp(1.7rem,4vw,2.4rem);color:var(--maroon)}
+
+  /* ===== الخدمات ===== */
+  .services{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.4rem;max-width:1100px;margin:0 auto}
+  .card{background:#fff;border:1px solid var(--line);border-radius:.4rem;padding:2rem 1.6rem;text-align:center;transition:transform .25s, box-shadow .25s}
+  .card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(110,20,35,.12)}
+  .card .icon{font-size:1.9rem;color:var(--gold);margin-bottom:.8rem;font-family:'Amiri',serif}
+  .card h3{color:var(--maroon);margin-bottom:.5rem;font-size:1.2rem}
+  .card p{font-size:.93rem;color:#5a4c46}
+
+  /* ===== قسمان ===== */
+  .split{background:var(--maroon-deep);color:var(--ivory)}
+  .split .section-head h2{color:var(--gold-soft)}
+  .split-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:960px;margin:0 auto}
+  .split-card{border:1px solid var(--line);border-radius:.4rem;padding:2.2rem;text-align:center;background:rgba(255,255,255,.04)}
+  .split-card h3{font-size:1.5rem;color:var(--gold-soft);margin-bottom:.8rem}
+  .split-card p{font-weight:300;font-size:.97rem;color:#eadfce}
+
+  /* ===== المعرض ===== */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.9rem;max-width:1100px;margin:0 auto}
+  .ph{aspect-ratio:4/5;border-radius:.35rem;display:flex;align-items:center;justify-content:center;color:var(--ivory);font-size:.85rem;text-align:center;padding:1rem;background:
+    linear-gradient(145deg, rgba(110,20,35,.92), rgba(74,13,24,.92)),
+    repeating-linear-gradient(45deg, transparent 0 14px, rgba(201,162,39,.15) 14px 15px)}
+  .ph small{display:block;color:var(--gold-soft);margin-top:.4rem}
+
+  /* ===== نموذج الحجز ===== */
+  .booking{max-width:640px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:.5rem;padding:2.5rem 2rem;box-shadow:0 16px 40px rgba(110,20,35,.08)}
+  .booking label{display:block;font-weight:500;margin:1.1rem 0 .35rem;font-size:.95rem}
+  .booking input,.booking select,.booking textarea{width:100%;padding:.7rem .9rem;border:1px solid #d8cbb8;border-radius:.35rem;font-family:inherit;font-size:.95rem;background:var(--ivory)}
+  .booking input:focus,.booking select:focus,.booking textarea:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .booking button{margin-top:1.6rem;width:100%;background:var(--maroon);color:var(--ivory);border:none;padding:.95rem;border-radius:2rem;font-family:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;transition:background .2s}
+  .booking button:hover{background:var(--maroon-deep)}
+  .form-note{text-align:center;font-size:.82rem;color:#8a776d;margin-top:.9rem}
+  .success{display:none;text-align:center;color:var(--maroon);font-weight:700;margin-top:1.2rem}
+
+  /* ===== تذييل ===== */
+  footer{background:var(--ink);color:#cbb9a8;text-align:center;padding:2.6rem 6vw;font-size:.9rem}
+  footer .logo{color:var(--gold-soft);margin-bottom:.6rem}
+  footer a{color:var(--gold-soft);text-decoration:none}
+
+  @media (max-width:640px){
+    .nav-links{display:none}
+    .row{grid-template-columns:1fr}
+    section{padding:3.2rem 6vw}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">نموذج تجريبي — يُستبدل المحتوى والصور بمحتواكم الحقيقي من حساب انستغرام (28K متابع)</div>
+
+<nav>
+  <div class="logo">بريليانس<span>BRILLIANCE WEDDINGS · QATAR</span></div>
+  <div class="nav-links">
+    <a href="#services">خدماتنا</a>
+    <a href="#gallery">أعمالنا</a>
+    <a href="#booking">احجزي استشارتك</a>
+  </div>
+  <a class="nav-cta" href="#booking">احجزي الآن</a>
+</nav>
+
+<header class="hero">
+  <p class="eyebrow">BRILLIANCE WEDDINGS QATAR</p>
+  <div class="ornament">❖ ❖ ❖</div>
+  <h1>ليلة العمر تستحق<br>من يُتقن تفاصيلها</h1>
+  <p>تنظيم وتنسيق أعراس فاخرة في قطر — من الفكرة الأولى إلى آخر لحظة في الحفل، بذوق خليجي أصيل ولمسة عصرية.</p>
+  <a class="btn-gold" href="#booking">احجزي استشارتك المجانية</a>
+</header>
+
+<section id="services">
+  <div class="section-head">
+    <p class="eyebrow">خدماتنا</p>
+    <h2>كل ما تحتاجه ليلتك الكبيرة</h2>
+  </div>
+  <div class="services">
+    <div class="card"><div class="icon">۞</div><h3>تنظيم متكامل</h3><p>إدارة كاملة للحفل من التخطيط والميزانية إلى الإشراف ليلة العرس.</p></div>
+    <div class="card"><div class="icon">۞</div><h3>تنسيق القاعات</h3><p>ديكور وكوش وإضاءة وورود تُصمَّم خصيصاً لكل عروس.</p></div>
+    <div class="card"><div class="icon">۞</div><h3>الضيافة والتقديم</h3><p>تنسيق البوفيهات وركن القهوة العربية وتقديم يليق بضيوفكم.</p></div>
+    <div class="card"><div class="icon">۞</div><h3>تنسيق الفعاليات</h3><p>حناء، ملجة، استقبال مواليد ومناسبات خاصة بنفس مستوى الإتقان.</p></div>
+  </div>
+</section>
+
+<section class="split">
+  <div class="section-head">
+    <p class="eyebrow">خصوصيتكم أولويتنا</p>
+    <h2>تنظيم يراعي عاداتنا</h2>
+  </div>
+  <div class="split-grid">
+    <div class="split-card"><h3>قسم النساء</h3><p>طاقم نسائي كامل للتنسيق والتصوير داخل قاعة النساء، مع خصوصية تامة قبل الحفل وبعده.</p></div>
+    <div class="split-card"><h3>قسم الرجال</h3><p>تنسيق مجلس الرجال والضيافة والاستقبال بما يليق بمقام أهل العروسين وضيوفهم.</p></div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="section-head">
+    <p class="eyebrow">من أعمالنا</p>
+    <h2>لحظات صنعناها بحب</h2>
+  </div>
+  <div class="gallery">
+    <div class="ph">صورة من أعمالكم<small>تُسحب من حساب انستغرام</small></div>
+    <div class="ph">صورة من أعمالكم<small>كوشة · قاعة النساء</small></div>
+    <div class="ph">صورة من أعمالكم<small>تنسيق طاولات</small></div>
+    <div class="ph">صورة من أعمالكم<small>ركن الضيافة</small></div>
+    <div class="ph">صورة من أعمالكم<small>إضاءة ومسرح</small></div>
+    <div class="ph">صورة من أعمالكم<small>تفاصيل الورد</small></div>
+  </div>
+</section>
+
+<section id="booking" style="background:#fdf9f2">
+  <div class="section-head">
+    <p class="eyebrow">الخطوة الأولى</p>
+    <h2>احجزي استشارتك المجانية</h2>
+  </div>
+  <div class="booking">
+    <div class="row">
+      <div><label for="name">الاسم الكريم</label><input id="name" type="text" placeholder="اسم العروس أو ولية الأمر"></div>
+      <div><label for="phone">رقم الواتساب</label><input id="phone" type="tel" placeholder="+974 XXXX XXXX"></div>
+    </div>
+    <div class="row">
+      <div><label for="date">تاريخ المناسبة (تقريبي)</label><input id="date" type="date"></div>
+      <div><label for="guests">عدد الضيوف المتوقع</label>
+        <select id="guests"><option>أقل من 100</option><option>100 – 300</option><option>300 – 600</option><option>أكثر من 600</option></select>
+      </div>
+    </div>
+    <label for="type">نوع المناسبة</label>
+    <select id="type"><option>عرس</option><option>ملجة / عقد قران</option><option>حناء</option><option>مناسبة خاصة</option></select>
+    <label for="notes">تفاصيل إضافية</label>
+    <textarea id="notes" rows="3" placeholder="القاعة، الألوان المفضلة، أي طلبات خاصة..."></textarea>
+    <button onclick="document.querySelector('.success').style.display='block';this.textContent='تم الإرسال ✓'">إرسال الطلب — نرد خلال 24 ساعة</button>
+    <p class="success">وصلنا طلبك! سيتواصل معك فريقنا عبر الواتساب قريباً.</p>
+    <p class="form-note">في النسخة النهائية: الطلبات تصل مباشرة لواتساب الإدارة أو بريدها — بدون أي رسائل ضائعة في الدايركت.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="logo display">بريليانس ودينغز قطر</div>
+  <p>الدوحة · قطر — <a href="#">Instagram @brillianceweddingsqatar</a></p>
+  <p style="margin-top:.8rem;font-size:.78rem;color:#8a776d">نموذج تصميم مُعد خصيصاً لكم · Gaaya Labs</p>
+</footer>
+
+</body>
+</html>
