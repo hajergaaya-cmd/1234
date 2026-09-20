@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تعزيز حصة الحاسب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --bg1:#fdf2f8; --bg2:#eef4ff;
+    --card:#ffffff; --ink:#26203a; --muted:#6f6b85;
+    --purple:#8e44ad; --purple-soft:#f1e4f8;
+    --teal:#149a86; --teal-soft:#dcf6f0;
+    --orange:#f39c12; --orange-soft:#fef1dc;
+    --pink:#e84393; --pink-soft:#fde6f0;
+    --red:#e74c3c; --red-soft:#fce6e4;
+    --gold:#f6c744; --silver:#c9cfd8; --bronze:#d68a4c;
+    --line:#ece6f5;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; color:var(--ink); font-family:'Tajawal',sans-serif; min-height:100%;
+    -webkit-font-smoothing:antialiased;
+    background:linear-gradient(160deg,var(--bg1) 0%, var(--bg2) 100%);
+  }
+  .wrap{max-width:1020px; margin:0 auto; padding:20px 16px 70px;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:18px;}
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand .emoji{font-size:38px;}
+  h1{font-size:24px; margin:0; font-weight:900; color:var(--purple);}
+  .sub{color:var(--muted); font-size:14px; margin-top:3px; font-weight:700;}
+  .linkbtn{background:var(--purple-soft); border:none; color:var(--purple); font-weight:800; font-size:14px; cursor:pointer; padding:9px 16px; border-radius:20px;}
+  .card{background:var(--card); border:none; border-radius:22px; padding:22px; margin-bottom:20px; box-shadow:0 6px 20px rgba(120,70,150,.08); border-right:6px solid var(--purple);}
+  .card.c-teal{border-right-color:var(--teal);}
+  .card.c-orange{border-right-color:var(--orange);}
+  .card.c-pink{border-right-color:var(--pink);}
+  .card.c-red{border-right-color:var(--red);}
+  .card h2{font-size:19px; margin:0 0 16px; font-weight:900; display:flex; align-items:center; gap:8px;}
+  label{font-size:15px; color:var(--muted); display:block; margin-bottom:8px; font-weight:800;}
+  input[type=text], input[type=number], input[type=password]{
+    width:100%; padding:15px 16px; border-radius:14px; border:2px solid var(--line);
+    background:#fbfaff; color:var(--ink); font-family:inherit; font-size:18px; font-weight:700;
+  }
+  input:focus{outline:3px solid var(--purple-soft); border-color:var(--purple);}
+  .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+  .chk{display:flex; align-items:center; gap:9px; font-size:15px; font-weight:800; cursor:pointer; user-select:none;}
+  .chk input{width:22px; height:22px; accent-color:var(--purple);}
+  button.btn{border:none; border-radius:16px; padding:15px 22px; font-weight:900; font-size:16px; cursor:pointer; font-family:inherit; transition:transform .08s ease;}
+  button.btn:active{transform:scale(.96);}
+  .btn-purple{background:var(--purple); color:#fff;}
+  .btn-teal{background:var(--teal); color:#fff;}
+  .btn-orange{background:var(--orange); color:#3a2400;}
+  .btn-pink{background:var(--pink); color:#fff;}
+  .btn-red{background:var(--red); color:#fff;}
+  .btn-soft{background:var(--purple-soft); color:var(--purple);}
+  .btn-outline{background:#fff; border:2px solid var(--line); color:var(--ink);}
+  .btn-sm{padding:9px 14px; font-size:14px; border-radius:12px;}
+  .full{width:100%;}
+  .center{text-align:center;}
+  .hidden{display:none !important;}
+  .banner{background:var(--teal-soft); color:var(--teal); padding:18px; border-radius:16px; font-weight:900; font-size:17px; text-align:center; margin-bottom:16px;}
+  .muted{color:var(--muted); font-size:14px; font-weight:700;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px;}
+  .pupil{
+    border:3px solid var(--line); border-radius:20px; padding:16px 10px; text-align:center;
+    position:relative; transition:box-shadow .2s, border-color .2s, transform .2s; overflow:visible;
+  }
+  .pupil.rank0{border-color:var(--gold); background:linear-gradient(180deg,#fffbe9,#fff);}
+  .pupil.rank1{border-color:var(--silver); background:linear-gradient(180deg,#f6f8fb,#fff);}
+  .pupil.rank2{border-color:var(--bronze); background:linear-gradient(180deg,#fdf3e9,#fff);}
+  .pupil.c0{background:#fff; border-color:#fbe0ef;} .pupil.c1{background:#fff; border-color:#dcf6f0;}
+  .pupil.c2{background:#fff; border-color:#fef1dc;} .pupil.c3{background:#fff; border-color:#e4f0fd;}
+  .pupil.c4{background:#fff; border-color:#f1e4f8;}
+  .pupil.picked{border-color:var(--purple); box-shadow:0 0 0 5px var(--purple-soft); animation:pulse .8s ease-in-out 3;}
+  @keyframes pulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.06)}}
+  .pupil .medal{font-size:22px; display:block;}
+  .pupil .name{font-weight:900; font-size:19px; margin:4px 0 6px; word-break:break-word; line-height:1.25;}
+  .pupil .book{font-size:13px; margin-bottom:8px; font-weight:800; border-radius:20px; padding:3px 10px; display:inline-block;}
+  .pupil .book.no{color:var(--red); background:var(--red-soft);}
+  .pupil .book.yes{color:var(--teal); background:var(--teal-soft);}
+  .pupil .pts{font-size:30px; font-weight:900; margin:6px 0; color:var(--orange);}
+  .pupil .ptsrow{display:flex; gap:8px; justify-content:center; margin-top:8px;}
+  .pupil .ptsrow button{width:42px; height:42px; border-radius:50%; font-size:20px; font-weight:900; border:none; cursor:pointer;}
+  .plus{background:var(--teal); color:#fff;}
+  .minus{background:var(--red-soft); color:var(--red);}
+  .pupil .del{position:absolute; top:6px; left:8px; background:none; border:none; color:var(--muted); font-size:16px; cursor:pointer; padding:2px 6px;}
+  .pupil .sel{position:absolute; top:8px; right:8px; width:24px; height:24px; accent-color:var(--purple);}
+  .empty{color:var(--muted); text-align:center; padding:36px 10px; font-size:16px; font-weight:700;}
+  .timer{font-size:56px; font-weight:900; text-align:center; letter-spacing:2px; margin:6px 0 14px; color:var(--purple);}
+  .timer.done{color:var(--red);}
+  .qr-box{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  #qrcode{background:#fff; padding:10px; border-radius:14px; display:inline-block; box-shadow:0 4px 14px rgba(0,0,0,.08);}
+  .linkbox{flex:1; min-width:190px; word-break:break-all; font-size:13px; background:#fbfaff; border:2px dashed var(--line); border-radius:12px; padding:12px; color:var(--muted); font-weight:700;}
+  .toast{position:fixed; bottom:30px; right:50%; transform:translateX(50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:30px; font-weight:800; font-size:14px; z-index:60; box-shadow:0 6px 20px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:opacity .25s, bottom .25s;}
+  .toast.show{opacity:1; bottom:42px;}
+  .count-pill{background:var(--teal-soft); color:var(--teal); border-radius:20px; padding:6px 14px; font-size:14px; font-weight:900;}
+  .overlay{position:fixed; inset:0; background:rgba(40,20,60,.5); display:flex; align-items:center; justify-content:center; z-index:100; padding:16px;}
+  .modal{background:var(--card); border-radius:22px; padding:26px; max-width:340px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,.3);}
+  .modal h3{margin:0 0 14px; font-size:18px; font-weight:900;}
+  .modal .row{justify-content:flex-end; margin-top:16px;}
+  .star-fx{position:absolute; font-size:20px; pointer-events:none; animation:floatUp .9s ease-out forwards; z-index:5;}
+  @keyframes floatUp{0%{opacity:1; transform:translateY(0) scale(1);} 100%{opacity:0; transform:translateY(-55px) scale(1.3);}}
+  .winnerbox{background:linear-gradient(120deg,var(--purple-soft),var(--pink-soft)); border-radius:16px; padding:16px; text-align:center; font-size:19px; font-weight:900; color:var(--purple);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toast" id="toast"></div>
+  <div id="modalHost"></div>
+
+  <!-- ================= STUDENT VIEW ================= -->
+  <div id="studentView">
+    <div class="topbar">
+      <div class="brand"><span class="emoji">💻</span>
+        <div><h1>حصة الحاسب — تسجيل الحضور</h1><div class="sub">أدخلي اسمك ليتم تسجيل حضورك تلقائيًا ⭐</div></div>
+      </div>
+      <button class="linkbtn" onclick="teacherLoginPrompt()">دخول المعلمة 🔑</button>
+    </div>
+    <div id="studentBanner" class="banner hidden"></div>
+    <div class="card c-teal">
+      <h2>📝 تسجيل الحضور</h2>
+      <div style="margin-bottom:14px;"><label>اسم الطالبة</label><input type="text" id="stuName" placeholder="اكتبي اسمك هنا"></div>
+      <label class="chk" style="margin-bottom:18px;"><input type="checkbox" id="stuBook"> أحضرت كتاب الحاسب اليوم 📘</label>
+      <button class="btn btn-teal full" onclick="submitAttendance()">تسجيل الحضور ✅</button>
+    </div>
+    <div class="muted center">بعد التسجيل أعيدي الجهاز لزميلتك التالية إذا كنتن تتشاركن جهازًا واحدًا</div>
+  </div>
+
+  <!-- ================= TEACHER VIEW ================= -->
+  <div id="teacherView" class="hidden">
+    <div class="topbar">
+      <div class="brand"><span class="emoji">🏆</span>
+        <div><h1>لوحة تعزيز الطالبات</h1><div class="sub"><span id="countPill" class="count-pill">0 حاضرة</span></div></div>
+      </div>
+      <button class="linkbtn" onclick="teacherLogout()">تسجيل الخروج ↩</button>
+    </div>
+
+    <div class="card c-pink">
+      <h2>🔗 رابط دخول الطالبات</h2>
+      <div class="qr-box">
+        <div id="qrcode"></div>
+        <div style="flex:1;">
+          <div class="linkbox" id="shareLink"></div>
+          <button class="btn btn-soft btn-sm" style="margin-top:10px;" onclick="copyLink()">نسخ الرابط 📋</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card c-orange">
+      <h2>⏱️ المؤقّت</h2>
+      <div class="timer" id="timerDisplay">02:00</div>
+      <div class="row center" style="justify-content:center;">
+        <input type="number" id="timerMin" value="2" min="0" max="59" style="width:80px;" title="دقائق">
+        <span class="muted">دقيقة</span>
+        <input type="number" id="timerSec" value="0" min="0" max="59" style="width:80px;" title="ثواني">
+        <span class="muted">ثانية</span>
+        <button class="btn btn-orange btn-sm" onclick="timerStart()">▶ تشغيل</button>
+        <button class="btn btn-outline btn-sm" onclick="timerPause()">⏸ إيقاف مؤقت</button>
+        <button class="btn btn-outline btn-sm" onclick="timerReset()">⟲ إعادة ضبط</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🎲 اختيار طالبة عشوائيًا</h2>
+      <div class="row" style="justify-content:space-between;">
+        <label class="chk"><input type="checkbox" id="noRepeat" checked> بدون تكرار حتى تُختار جميع الطالبات</label>
+        <div class="row">
+          <button class="btn btn-purple" onclick="pickRandom()">اختيار الآن 🎯</button>
+          <button class="btn btn-outline btn-sm" onclick="resetDraw()">إعادة تعيين القرعة</button>
+        </div>
+      </div>
+      <div id="pickedText" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="card c-teal">
+      <h2>➕ إضافة طالبة يدويًا</h2>
+      <div class="row">
+        <input type="text" id="manName" placeholder="اسم الطالبة" style="flex:2; min-width:160px;">
+        <label class="chk"><input type="checkbox" id="manBook"> أحضرت الكتاب</label>
+        <button class="btn btn-teal" onclick="manualAdd()">إضافة ➕</button>
+      </div>
+    </div>
+
+    <div class="card c-pink">
+      <h2>👥 التعزيز الجماعي</h2>
+      <div class="row" style="justify-content:space-between;">
+        <label class="chk"><input type="checkbox" id="bulkMode" onchange="onBulkToggle()"> تفعيل تحديد مجموعة</label>
+        <div class="row" id="bulkControls" style="display:none;">
+          <button class="btn btn-outline btn-sm" onclick="selectAll(true)">تحديد الكل</button>
+          <button class="btn btn-outline btn-sm" onclick="selectAll(false)">إلغاء التحديد</button>
+          <input type="number" id="bulkPts" value="1" style="width:70px;">
+          <button class="btn btn-pink btn-sm" onclick="applyBulk()">إضافة للمحدَّدات ⭐</button>
+        </div>
+      </div>
+      <div id="bulkCount" class="muted" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>⭐ الطالبات (مرتبة حسب النقاط)</h2>
+      <div id="grid" class="grid"></div>
+      <div id="emptyMsg" class="empty hidden">لم تسجّل أي طالبة حضورها بعد — شاركي الرابط أو الرمز أعلاه، أو أضيفي طالبة يدويًا.</div>
+    </div>
+
+    <div class="card c-red">
+      <h2>🔚 نهاية الحصة</h2>
+      <div class="row">
+        <button class="btn btn-orange" onclick="downloadReport()">تنزيل سجل الحصة 📄</button>
+        <button class="btn btn-red" onclick="endClass()">إنهاء الحصة ومسح جميع البيانات 🗑️</button>
+      </div>
+      <div class="muted" style="margin-top:10px;">نزّلي السجل أولًا إن رغبتِ بالاحتفاظ بالنقاط، ثم امسحي البيانات لاستخدام الصفحة مع الصف التالي.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ إعداد Firebase (REST مباشر — لا يحتاج تسجيل دخول الطالبات) ============ */
+const FIREBASE_BASE = "https://cyber-safety-class-default-rtdb.firebaseio.com";
+const TEACHER_PIN = "1234"; // غيّري هذا الرقم إن رغبتِ
+
+let students = [];
+let pollTimer = null;
+let pickedIds = new Set();
+let selectedIds = new Set();   // تحديد المجموعات — يبقى ثابتًا بين كل تحديث للقائمة
+let timerInterval = null, timerRemaining = 120, timerActive = false;
+const PASTELS = ['c0','c1','c2','c3','c4'];
+
+/* ---------- helpers: toast + modal (بديل عن prompt/confirm) ---------- */
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function closeModal(){ document.getElementById('modalHost').innerHTML=''; }
+function askConfirm(message){
+  return new Promise(resolve=>{
+    document.getElementById('modalHost').innerHTML = `
+      <div class="overlay"><div class="modal">
+        <h3>${escapeHtml(message)}</h3>
+        <div class="row">
+          <button class="btn btn-outline btn-sm" id="mCancel">إلغاء</button>
+          <button class="btn btn-red btn-sm" id="mOk">تأكيد</button>
+        </div>
+      </div></div>`;
+    document.getElementById('mOk').onclick = ()=>{ closeModal(); resolve(true); };
+    document.getElementById('mCancel').onclick = ()=>{ closeModal(); resolve(false); };
+  });
+}
+function askPin(){
+  return new Promise(resolve=>{
+    document.getElementById('modalHost').innerHTML = `
+      <div class="overlay"><div class="modal">
+        <h3>🔑 رمز دخول المعلمة</h3>
+        <input type="password" id="pinInput" placeholder="أدخلي الرمز" inputmode="numeric">
+        <div class="row">
+          <button class="btn btn-outline btn-sm" id="pCancel">إلغاء</button>
+          <button class="btn btn-purple btn-sm" id="pOk">دخول</button>
+        </div>
+      </div></div>`;
+    const input = document.getElementById('pinInput');
+    input.focus();
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ finish(); } });
+    function finish(){ const v = input.value; closeModal(); resolve(v); }
+    document.getElementById('pOk').onclick = finish;
+    document.getElementById('pCancel').onclick = ()=>{ closeModal(); resolve(null); };
+  });
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---------- Firebase REST calls ---------- */
+async function fbGet(path){ const r = await fetch(FIREBASE_BASE + path + ".json"); if(!r.ok) throw new Error('read_failed'); return r.json(); }
+async function fbPost(path, data){ const r = await fetch(FIREBASE_BASE + path + ".json", {method:"POST", body: JSON.stringify(data)}); if(!r.ok) throw new Error('write_failed'); return r.json(); }
+async function fbPatch(path, data){ const r = await fetch(FIREBASE_BASE + path + ".json", {method:"PATCH", body: JSON.stringify(data)}); if(!r.ok) throw new Error('write_failed'); return r.json(); }
+async function fbDelete(path){ const r = await fetch(FIREBASE_BASE + path + ".json", {method:"DELETE"}); if(!r.ok) throw new Error('write_failed'); return r.json(); }
+
+/* ---------- role switching ---------- */
+function isTeacher(){ return localStorage.getItem('ct_role') === 'teacher'; }
+async function teacherLoginPrompt(){
+  const pin = await askPin();
+  if(pin === null) return;
+  if(pin === TEACHER_PIN){ localStorage.setItem('ct_role','teacher'); showView(); }
+  else toast('رمز غير صحيح');
+}
+function teacherLogout(){ localStorage.removeItem('ct_role'); showView(); }
+function showView(){
+  const teacher = isTeacher();
+  document.getElementById('studentView').classList.toggle('hidden', teacher);
+  document.getElementById('teacherView').classList.toggle('hidden', !teacher);
+  if(teacher) setupTeacherExtras();
+}
+
+/* ---------- polling loop ---------- */
+async function refreshList(){
+  try{
+    const data = await fbGet('/students');
+    students = data ? Object.keys(data).map(id=>({id, ...data[id]})) : [];
+    // نزيل من التحديد أي طالبة حُذفت
+    for(const id of [...selectedIds]) if(!students.find(s=>s.id===id)) selectedIds.delete(id);
+    if(isTeacher()) renderStudents();
+  }catch(e){ /* شبكة مؤقتة، تجاهل */ }
+}
+function startPolling(){
+  refreshList();
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(refreshList, 1500);
+}
+
+/* ---------- Student side ---------- */
+async function submitAttendance(){
+  const name = document.getElementById('stuName').value.trim();
+  if(!name){ toast('يرجى كتابة الاسم'); return; }
+  const hasBook = document.getElementById('stuBook').checked;
+  try{
+    await fbPost('/students', {name, hasBook, points:0, addedBy:'self', ts: Date.now()});
+    const b = document.getElementById('studentBanner');
+    b.textContent = '🎉 تم تسجيل حضورك يا ' + name + '!';
+    b.classList.remove('hidden');
+    document.getElementById('stuName').value=''; document.getElementById('stuBook').checked=false;
+    setTimeout(()=>b.classList.add('hidden'), 3500);
+  }catch(e){ toast('تعذّر الاتصال — تأكدي من الإنترنت وحاولي مجددًا'); }
+}
+
+/* ---------- Teacher side: render ---------- */
+function onBulkToggle(){
+  if(!document.getElementById('bulkMode').checked) selectedIds.clear();
+  renderStudents();
+}
+function renderStudents(){
+  document.getElementById('countPill').textContent = students.length + ' حاضرة';
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyMsg');
+  const bulk = document.getElementById('bulkMode').checked;
+  document.getElementById('bulkControls').style.display = bulk ? 'flex' : 'none';
+  document.getElementById('bulkCount').textContent = bulk ? ('محدَّد: ' + selectedIds.size + ' طالبة') : '';
+  if(students.length===0){ grid.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  const sorted = [...students].sort((a,b)=>(b.points||0)-(a.points||0));
+  const medals = ['🥇','🥈','🥉'];
+  grid.innerHTML = sorted.map((s, idx)=>{
+    const rankClass = idx<3 ? ('rank'+idx) : PASTELS[idx % PASTELS.length];
+    const medal = idx<3 ? medals[idx] : '';
+    const checked = selectedIds.has(s.id) ? 'checked' : '';
+    return `
+    <div class="pupil ${rankClass} ${window._flashId===s.id ? 'picked':''}" id="card-${s.id}">
+      ${bulk ? `<input type="checkbox" class="sel" data-id="${s.id}" ${checked}>` : `<button class="del" onclick="deleteStudent('${s.id}')" title="حذف">✕</button>`}
+      ${medal ? `<span class="medal">${medal}</span>` : ''}
+      <div class="name">${escapeHtml(s.name)}</div>
+      <div class="book ${s.hasBook?'yes':'no'}">${s.hasBook? '📘 معها الكتاب':'❌ بدون كتاب'}</div>
+      <div class="pts">⭐ ${s.points||0}</div>
+      <div class="ptsrow">
+        <button class="minus" onclick="addPoints('${s.id}',-1)">−</button>
+        <button class="plus" onclick="addPoints('${s.id}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+  // ربط أحداث تحديد المجموعة (delegation بسيط عبر إعادة الربط بعد كل رسم)
+  grid.querySelectorAll('.sel').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const id = cb.getAttribute('data-id');
+      if(cb.checked) selectedIds.add(id); else selectedIds.delete(id);
+      document.getElementById('bulkCount').textContent = 'محدَّد: ' + selectedIds.size + ' طالبة';
+    });
+  });
+}
+
+function spawnStars(cardId){
+  const card = document.getElementById('card-'+cardId);
+  if(!card) return;
+  for(let i=0;i<4;i++){
+    const s = document.createElement('span');
+    s.className='star-fx'; s.textContent='⭐';
+    s.style.left = (20 + Math.random()*60) + '%';
+    s.style.bottom = '30%';
+    s.style.animationDelay = (i*70)+'ms';
+    card.appendChild(s);
+    setTimeout(()=>s.remove(), 1000+i*70);
+  }
+}
+
+async function addPoints(id, delta){
+  const s = students.find(x=>x.id===id);
+  if(!s) return;
+  const next = Math.max(0, (s.points||0)+delta);
+  s.points = next; renderStudents();
+  if(delta>0) spawnStars(id);
+  try{ await fbPatch('/students/'+id, {points: next}); }catch(e){ toast('تعذّر الحفظ، حاولي مجددًا'); }
+}
+async function deleteStudent(id){
+  const ok = await askConfirm('حذف هذه الطالبة من القائمة؟');
+  if(!ok) return;
+  selectedIds.delete(id);
+  try{ await fbDelete('/students/'+id); refreshList(); }catch(e){ toast('تعذّر الحذف'); }
+}
+async function manualAdd(){
+  const name = document.getElementById('manName').value.trim();
+  if(!name){ toast('اكتبي اسم الطالبة'); return; }
+  const hasBook = document.getElementById('manBook').checked;
+  try{
+    await fbPost('/students', {name, hasBook, points:0, addedBy:'teacher', ts: Date.now()});
+    document.getElementById('manName').value=''; document.getElementById('manBook').checked=false;
+    refreshList();
+  }catch(e){ toast('تعذّر الإضافة'); }
+}
+
+/* ---------- Bulk / group reinforcement ---------- */
+function selectAll(val){
+  if(val) students.forEach(s=>selectedIds.add(s.id));
+  else selectedIds.clear();
+  renderStudents();
+}
+async function applyBulk(){
+  const pts = parseInt(document.getElementById('bulkPts').value,10) || 0;
+  const ids = [...selectedIds];
+  if(ids.length===0){ toast('حددي طالبة واحدة على الأقل'); return; }
+  for(const id of ids){ await addPoints(id, pts); }
+  toast('تمت إضافة النقاط لـ ' + ids.length + ' طالبة ⭐');
+}
+
+/* ---------- Random picker ---------- */
+window._flashId = null;
+function pickRandom(){
+  if(students.length===0){ toast('لا توجد طالبات مسجّلات بعد'); return; }
+  const noRepeat = document.getElementById('noRepeat').checked;
+  let pool = students;
+  if(noRepeat){
+    pool = students.filter(s=>!pickedIds.has(s.id));
+    if(pool.length===0){ pickedIds.clear(); pool = students; toast('تم اختيار الجميع — بدء جولة جديدة'); }
+  }
+  let i=0; const total=14;
+  const el = document.getElementById('pickedText');
+  const spin = setInterval(()=>{
+    const r = pool[Math.floor(Math.random()*pool.length)];
+    el.innerHTML = '<div class="winnerbox">🎲 ' + escapeHtml(r.name) + ' ...</div>';
+    i++;
+    if(i>=total){
+      clearInterval(spin);
+      const winner = pool[Math.floor(Math.random()*pool.length)];
+      pickedIds.add(winner.id);
+      window._flashId = winner.id;
+      el.innerHTML = '<div class="winnerbox">🌟 الطالبة المختارة: ' + escapeHtml(winner.name) + ' 🌟</div>';
+      renderStudents();
+      setTimeout(()=>{ window._flashId=null; renderStudents(); }, 3000);
+    }
+  }, 90);
+}
+function resetDraw(){ pickedIds.clear(); document.getElementById('pickedText').textContent=''; toast('تمت إعادة تعيين القرعة'); }
+
+/* ---------- Timer ---------- */
+function timerFormat(sec){ const m=Math.floor(sec/60).toString().padStart(2,'0'); const s=(sec%60).toString().padStart(2,'0'); return m+':'+s; }
+function timerStart(){
+  if(timerInterval) return;
+  if(!timerActive){
+    const min = parseInt(document.getElementById('timerMin').value,10)||0;
+    const sec = parseInt(document.getElementById('timerSec').value,10)||0;
+    timerRemaining = min*60+sec; timerActive = true;
+  }
+  if(timerRemaining<=0){ toast('اضبطي وقتًا أولًا'); timerActive=false; return; }
+  document.getElementById('timerDisplay').classList.remove('done');
+  timerInterval = setInterval(()=>{
+    timerRemaining--;
+    if(timerRemaining<=0){
+      timerRemaining=0;
+      document.getElementById('timerDisplay').textContent='00:00';
+      document.getElementById('timerDisplay').classList.add('done');
+      clearInterval(timerInterval); timerInterval=null;
+      toast('انتهى الوقت! ⏰');
+      return;
+    }
+    document.getElementById('timerDisplay').textContent = timerFormat(timerRemaining);
+  },1000);
+}
+function timerPause(){ clearInterval(timerInterval); timerInterval=null; }
+function timerReset(){
+  clearInterval(timerInterval); timerInterval=null; timerActive=false;
+  const min = parseInt(document.getElementById('timerMin').value,10)||0;
+  const sec = parseInt(document.getElementById('timerSec').value,10)||0;
+  timerRemaining = min*60+sec;
+  document.getElementById('timerDisplay').classList.remove('done');
+  document.getElementById('timerDisplay').textContent = timerFormat(timerRemaining);
+}
+
+/* ---------- Share link + QR ---------- */
+function setupTeacherExtras(){
+  document.getElementById('shareLink').textContent = location.href;
+  const qrEl = document.getElementById('qrcode'); qrEl.innerHTML='';
+  if(window.QRCode){ new QRCode(qrEl, {text: location.href, width:120, height:120}); }
+  timerReset();
+}
+function copyLink(){ navigator.clipboard.writeText(location.href).then(()=>toast('تم نسخ الرابط')).catch(()=>toast('تعذّر النسخ')); }
+
+/* ---------- End of class ---------- */
+function downloadReport(){
+  if(students.length===0){ toast('لا توجد بيانات لتنزيلها'); return; }
+  const sorted = [...students].sort((a,b)=>(b.points||0)-(a.points||0));
+  let text = 'سجل الحصة — ' + new Date().toLocaleDateString('ar') + '\n';
+  text += 'الاسم | الكتاب | النقاط\n----------------------------\n';
+  sorted.forEach(s=>{ text += `${s.name} | ${s.hasBook?'نعم':'لا'} | ${s.points||0}\n`; });
+  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'سجل_الحصة.txt'; a.click();
+}
+async function endClass(){
+  const ok = await askConfirm('سيتم حذف جميع بيانات الطالبات (الأسماء والنقاط) نهائيًا. هل أنتِ متأكدة؟');
+  if(!ok) return;
+  try{ await fbDelete('/students'); }catch(e){ toast('تعذّر المسح، تحققي من الإنترنت'); return; }
+  pickedIds.clear(); selectedIds.clear(); timerReset(); refreshList();
+  toast('تم مسح البيانات — جاهزة لصف جديد');
+}
+
+/* ---------- init ---------- */
+showView();
+startPolling();
+</script>
+</body>
+</html>
